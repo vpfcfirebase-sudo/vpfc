@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SRI VISHNU PRIYA FINANCE - Official Portal v8</title>
+    <title>SRI VISHNU PRIYA FINANCE - Official Portal v8 (Secure)</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
         :root { --primary: #0a2540; --secondary: #00c853; --bg: #f0f4f8; --danger: #e53e3e; --sidebar: #061626; --text-dark: #0f172a; --seized: #334155; --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1); }
@@ -36,13 +36,10 @@
         .summary-box { background: #e0f2fe; padding: 15px; border-radius: 12px; text-align: center; font-weight: 700; color: #1e3a8a; margin-bottom: 15px; border:1px solid #bae6fd;}
         .global-month-bar { background: var(--primary); color: white; padding: 10px 20px; display: flex; justify-content: flex-end; align-items: center; gap: 15px; border-bottom: 3px solid var(--secondary); margin-bottom: 20px; border-radius: 8px;}
         .global-month-bar input { width: auto; margin: 0; padding: 8px; border:none; border-radius:4px; font-weight:bold;}
-        
-        /* 🪪 Premium Digital ID Card Styles */
         .id-card-wrapper { background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%); border-radius: 12px; padding: 25px; max-width: 320px; margin: 20px auto; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 2px solid #0a2540; text-align: center; position: relative; z-index: 1; }
         .id-logo { width: 100%; max-height: 90px; object-fit: contain; margin-bottom: 15px; position:relative; z-index:2;}
         .id-photo { width: 115px; height: 140px; object-fit: cover; border-radius: 8px; border: 3px solid #0a2540; margin-bottom: 15px; position:relative; z-index:2; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
         .id-details-container { background: rgba(255,255,255,0.95); padding: 15px 10px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: left; position:relative; z-index:2; box-shadow: 0 4px 10px rgba(0,0,0,0.05); overflow: hidden;}
-        /* Watermark inside the details box, transparent and round */
         .id-details-container .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; height: 85%; background-image: var(--logo-url); background-size: contain; background-repeat: no-repeat; background-position: center; opacity: 0.18; z-index: -1; border-radius:50%;}
         .id-row { display: grid; grid-template-columns: 80px 10px 1fr; font-size: 13px; margin-bottom: 8px; align-items: center;}
         .id-lbl { font-weight: 800; color: #0a2540; text-transform: uppercase; letter-spacing: 0.3px;}
@@ -50,19 +47,10 @@
         .id-val { font-weight: 800; color: #0f172a; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
         .id-status { background: #00c853; color: white; font-weight: 800; padding: 8px 30px; border-radius: 25px; display: inline-block; margin-top: 20px; font-size: 14px; position:relative; z-index:2; letter-spacing:1px; box-shadow: 0 4px 10px rgba(0,200,83,0.3);}
         .id-status.inactive { background: #e53e3e; box-shadow: 0 4px 10px rgba(229,62,62,0.3); }
-
-        /* 📱 Mobile Responsive Fixes */
-        @media (max-width: 768px) { 
-            .dashboard-layout { flex-direction: column; } 
-            .sidebar { width: 100%; flex-direction: row; overflow-x: auto; white-space:nowrap; padding:10px;} 
-            .nav-item { font-size:13px; padding:10px 15px;}
-            .main-content { width: 100%; padding: 15px; } 
-            .global-month-bar{ justify-content:center; flex-direction:column; gap:5px;} 
-            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } /* Ensures Side-by-Side Boxes */
-            .stat-card { padding: 12px 10px; }
-            .stat-card h3 { font-size: 20px; }
-            .stat-card p { font-size: 11px; }
-        }
+        .bio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background: #fff; padding: 20px; border-radius: 12px; border: 2px solid var(--primary); }
+        .bio-item label { color: #64748b; font-size: 12px; text-transform: uppercase; font-weight: 700; margin-bottom: 2px; display: block; }
+        .bio-item div { font-size: 16px; font-weight: 700; color: var(--primary); }
+        @media (max-width: 768px) { .dashboard-layout { flex-direction: column; } .sidebar { width: 100%; flex-direction: row; overflow-x: auto; white-space:nowrap; padding:10px;} .nav-item { font-size:13px; padding:10px 15px;} .main-content { width: 100%; padding: 15px; } .global-month-bar{ justify-content:center; flex-direction:column; gap:5px;} .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } .stat-card { padding: 12px 10px; } .stat-card h3 { font-size: 20px; } .stat-card p { font-size: 11px; } .bio-grid { grid-template-columns: 1fr; } }
         @media print { .no-print, .sidebar, header, button { display: none !important; } .main-content, .card { width: 100%; padding: 0; box-shadow: none; border:none;} .id-card-wrapper { border: 2px solid #000; box-shadow:none;} .table-container { max-height: none; overflow: visible; border: none; } }
     </style>
 </head>
@@ -74,17 +62,20 @@
     <div class="login-card no-print">
         <h3>Secure Login</h3>
         <label class="form-label">Login ID</label>
-        <input type="text" id="l-id" placeholder="ID">
+        <input type="text" id="l-id" placeholder="ID (e.g. 001, TW01)">
         <label class="form-label">Password</label>
         <input type="password" id="l-pass" placeholder="Password" onkeypress="if(event.key === 'Enter') window.handleLogin()">
         <button id="login-btn" onclick="window.handleLogin()">LOGIN</button>
     </div>
 </div>
+
 <div id="admin-dashboard" class="hidden dashboard-layout">
     <div class="sidebar no-print">
-        <div style="padding:15px; text-align:center; color:white; font-weight:bold; border-bottom:1px solid #334155; margin-bottom:10px;">ADMIN PANEL</div>
+        <div id="admin-sidebar-header" style="padding:15px; text-align:center; color:white; font-weight:bold; border-bottom:1px solid #334155; margin-bottom:10px; font-size:18px;">ADMIN PANEL</div>
         <div class="nav-item active" onclick="window.showSub('a-home', this)">📊 Dashboard Home</div>
         <div class="nav-item" onclick="window.showSub('a-view-emp', this)">👨‍💻 View Emp Dash</div>
+        <div class="nav-item" onclick="window.showSub('a-emp-bio', this)">👨‍💼 Employee Details</div>
+        <div class="nav-item" onclick="window.showSub('a-complaints', this)">⚠️ Complaints</div>
         <div class="nav-item" onclick="window.showSub('a-branch-mgmt', this)">🏢 Branch Mgmt 🔒</div>
         <div class="nav-item" onclick="window.showSub('a-reg', this)">👥 Emp Register 🔒</div>
         <div class="nav-item" onclick="window.showSub('a-identity', this)">🪪 Emp Identity</div>
@@ -95,13 +86,15 @@
         <div class="nav-item" onclick="window.showSub('a-branch', this)">📈 Branch Emp Rep</div>
         <div class="nav-item" onclick="window.showSub('a-overall-branch', this)">📊 Overall Branch</div>
         <div class="nav-item" onclick="window.showSub('a-att', this)">⏱️ Attendance Log</div>
+        <div class="nav-item" onclick="window.showSub('a-telewings', this)">📞 Telewings Mgmt 🔒</div>
+        <div class="nav-item hidden" id="nav-tw-profile" onclick="window.showSub('a-tw-profile', this)">🔑 Change Password</div>
         <div class="nav-item" onclick="window.showSub('a-settings', this)">⚙️ App Settings 🔒</div>
         <div class="nav-item" onclick="window.showSub('a-security', this)">🔐 Admin Security</div>
         <div class="nav-item" style="color:#ff6b6b; margin-top:auto;" onclick="location.reload()">🚪 Logout</div>
     </div>
     
     <div class="main-content">
-        <div class="global-month-bar no-print"><label>SELECTION MONTH:</label><input type="month" id="admin-dash-month-global" onchange="window.updateAdminDashboardStats()"></div>
+        <div class="global-month-bar no-print"><label>SELECTION MONTH:</label><input type="month" id="admin-dash-month-global" onchange="window.onAdminMonthChange()"></div>
 
         <div id="a-lock-screen" class="sub-section card hidden" style="max-width:400px; margin: 50px auto; text-align:center;">
             <h4 style="color:var(--danger); justify-content:center;">🔒 SECURITY LOCK</h4>
@@ -119,6 +112,113 @@
             <div class="stats-grid"><div class="stat-card"><h3 id="stat-mat-assign-c">0</h3><p>Assigned</p></div><div class="stat-card"><h3 id="stat-mat-comp-c" style="color:var(--secondary);">0</h3><p>Completed</p></div><div class="stat-card" style="border-bottom-color:var(--seized);"><h3 id="stat-mat-seized-c" style="color:var(--seized);">0</h3><p>Seized Count</p></div><div class="stat-card"><h3 id="stat-mat-pend-c" style="color:var(--danger);">0</h3><p>Pending</p></div><div class="stat-card"><h3 id="stat-mat-t-amt">₹0</h3><p>Target Amt</p></div><div class="stat-card"><h3 id="stat-mat-c-amt" style="color:var(--secondary);">₹0</h3><p>Collected</p></div><div class="stat-card" style="border-bottom-color:var(--seized);"><h3 id="stat-mat-seized-amt" style="color:var(--seized);">₹0</h3><p>Seized Amt</p></div><div class="stat-card"><h3 id="stat-mat-r-amt" style="color:var(--danger);">₹0</h3><p>Remaining</p></div></div>
         </div>
 
+        <div id="tw-home" class="sub-section hidden">
+            <h4>📞 MY TELECALLING OVERVIEW (<span id="tw-overview-month-label"></span>)</h4>
+            <h5 style="color:var(--primary); font-size:16px;">📊 ASSIGNMENTS & RESOURCES</h5>
+            <div class="stats-grid">
+                <div class="stat-card"><h3><span id="tw-stat-branches">0</span></h3><p>Branches</p></div>
+                <div class="stat-card"><h3><span id="tw-stat-execs">0</span></h3><p>Executives</p></div>
+                <div class="stat-card"><h3><span id="tw-stat-accs">0</span></h3><p>Assigned Accounts</p></div>
+            </div>
+            <h5 style="color:#d97706; font-size:16px; margin-top:20px;">📍 VISIT STATUS</h5>
+            <div class="stats-grid">
+                <div class="stat-card"><h3 id="tw-stat-visited" style="color:var(--secondary);">0</h3><p>Visited / Done</p></div>
+                <div class="stat-card"><h3 id="tw-stat-pending" style="color:var(--danger);">0</h3><p>Pending Visits</p></div>
+                <div class="stat-card"><h3 id="tw-stat-complaints" style="color:var(--seized);">0</h3><p>Complaints Raised</p></div>
+            </div>
+            <h5 style="color:#0284c7; font-size:16px; margin-top:20px;">💰 COLLECTION OVERVIEW</h5>
+            <div class="stats-grid">
+                <div class="stat-card"><h3 id="tw-stat-target">₹0</h3><p>Target Amount</p></div>
+                <div class="stat-card"><h3 id="tw-stat-collected" style="color:var(--secondary);">₹0</h3><p>Collected Amount</p></div>
+            </div>
+            
+            <div id="tw01-team-container" class="hidden" style="margin-top: 30px;">
+                <h5 style="color:var(--primary); font-size:16px; border-bottom:2px solid #cbd5e1; padding-bottom:5px;">👑 TEAM PERFORMANCE (ALL TELECALLERS)</h5>
+                <div class="table-container">
+                    <table class="report-table">
+                        <thead><tr><th>Telecaller</th><th>Branches</th><th>Execs</th><th>Assigned</th><th>Visited</th><th>Pending</th><th>Target ₹</th><th>Col ₹</th><th>Success %</th><th>Complaints</th></tr></thead>
+                        <tbody id="tw01-team-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="a-telewings" class="sub-section card hidden">
+            <h4>📞 TELEWINGS MANAGEMENT</h4>
+            <div id="tw-edit-msg" class="summary-box hidden" style="background:#f8d7da; color:#721c24; border-color:#f5c6cb; text-align:left;">⚠️ EDITING MODE: Update Telewings details. <input type="hidden" id="tw-edit-id"></div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
+                <div><label class="form-label">Login ID</label><input type="text" id="tw-id" placeholder="e.g. TW01"></div>
+                <div><label class="form-label">Name</label><input type="text" id="tw-name" placeholder="Name"></div>
+                <div><label class="form-label">Password</label><input type="password" id="tw-pass" placeholder="Password"></div>
+            </div>
+            <label class="form-label" style="margin-top:15px; color:var(--danger);">Select Permissions</label>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #cbd5e1; margin-bottom:15px;" id="tw-permissions">
+                <label><input type="checkbox" value="a-home"> 📊 Dashboard Home</label>
+                <label><input type="checkbox" value="a-view-emp"> 👨‍💻 View Emp Dash</label>
+                <label><input type="checkbox" value="a-emp-bio"> 👨‍💼 Employee Bio</label>
+                <label><input type="checkbox" value="a-complaints"> ⚠️ Complaints</label>
+                <label><input type="checkbox" value="a-reg"> 👥 Emp Register</label>
+                <label><input type="checkbox" value="a-assign"> 📋 Assign Accounts</label>
+                <label><input type="checkbox" value="a-visit-stat"> 📍 Assign Status</label>
+                <label><input type="checkbox" value="a-emp-rep"> 🔍 Visit Search</label>
+                <label><input type="checkbox" value="a-ins-rep"> 📑 INS Collection Rep</label>
+                <label><input type="checkbox" value="a-branch"> 📈 Branch Emp Rep</label>
+                <label><input type="checkbox" value="a-overall-branch"> 📊 Overall Branch</label>
+                <label><input type="checkbox" value="a-att"> ⏱️ Attendance Log</label>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-green" id="save-tw-btn" onclick="window.saveTwUser()">SAVE TELEWINGS USER</button>
+                <button class="btn-blue hidden" id="update-tw-btn" onclick="window.updateTwUser()">UPDATE USER</button>
+                <button class="btn-red hidden" id="cancel-tw-btn" onclick="window.cancelTwEdit()">CANCEL</button>
+            </div>
+            <div class="table-container" style="margin-top:20px;">
+                <table class="report-table">
+                    <thead><tr><th>ID</th><th>Name</th><th>Action</th></tr></thead>
+                    <tbody id="tw-users-list"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="a-tw-profile" class="sub-section card hidden">
+            <h4>🔑 CHANGE PASSWORD (TELEWINGS)</h4>
+            <div class="summary-box">Please contact Main Admin to reset your password.</div>
+        </div>
+
+        <div id="a-emp-bio" class="sub-section card hidden">
+            <h4>👨‍💼 EMPLOYEE DETAILS (BIO FORM)</h4>
+            <div class="no-print" style="display:flex; gap:10px; flex-wrap:wrap;">
+                <div style="flex:1;"><label class="form-label">Select Branch</label><select id="bio-br-sel" onchange="window.populateEmpsByBranch('bio-br-sel', 'bio-em-sel', 'Select Employee')"></select></div>
+                <div style="flex:1;"><label class="form-label">Select Employee</label><select id="bio-em-sel"></select></div>
+                <button class="btn-green" onclick="window.viewEmpBio()" style="margin-top:20px; width:auto; padding:0 30px;">SEARCH</button>
+            </div>
+            <div id="bio-result-area" class="hidden" style="margin-top: 25px;">
+                <button onclick="window.print()" class="btn-print no-print" style="margin-bottom:15px;">PRINT BIO</button>
+                <div class="bio-grid" id="bio-content-box"></div>
+            </div>
+        </div>
+
+        <div id="a-complaints" class="sub-section card hidden">
+            <h4>⚠️ COMPLAINTS REGISTER</h4>
+            <div id="raise-complaint-box" style="background:#fef2f2; padding:20px; border-radius:12px; border:2px solid #fca5a5; margin-bottom:25px;">
+                <h5 style="color:var(--danger); margin-top:0; font-size:16px;">📝 RAISE A NEW COMPLAINT</h5>
+                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
+                    <div><label class="form-label">Branch</label><select id="comp-br-sel" onchange="window.populateEmpsByBranch('comp-br-sel', 'comp-em-sel', 'Select Employee')"></select></div>
+                    <div><label class="form-label">Employee</label><select id="comp-em-sel"></select></div>
+                    <div><label class="form-label">HP Number (Optional)</label><input type="text" id="comp-hp" placeholder="HP Number"></div>
+                </div>
+                <label class="form-label" style="margin-top:10px;">Complaint Details</label>
+                <textarea id="comp-text" rows="3" placeholder="Explain the issue clearly..."></textarea>
+                <button class="btn-red" onclick="window.submitComplaint()">SUBMIT COMPLAINT</button>
+            </div>
+            <h5 style="color:var(--primary); font-size:16px;">📋 COMPLAINTS LIST</h5>
+            <div class="table-container">
+                <table class="report-table">
+                    <thead><tr><th>Date & Time</th><th>Raised By</th><th>Against (Emp)</th><th>HP No</th><th>Complaint Details</th></tr></thead>
+                    <tbody id="complaints-list-body"></tbody>
+                </table>
+            </div>
+        </div>
+
         <div id="a-view-emp" class="sub-section card hidden">
             <h4>👨‍💻 VIEW EMPLOYEE DASHBOARD</h4>
             <div style="display:flex; gap:10px; flex-wrap:wrap;">
@@ -132,21 +232,23 @@
 
         <div id="a-branch-mgmt" class="sub-section card hidden">
             <h4>🏢 BRANCH MANAGEMENT</h4>
-            <label class="form-label">Add New Branch</label>
-            <div style="display:flex; gap:10px;"><input type="text" id="new-branch-name" placeholder="Branch Name"><button class="btn-green" onclick="window.addBranch()" style="width:150px; margin-top:5px;">ADD</button></div>
+            <div id="branch-edit-msg" class="summary-box hidden" style="background:#f8d7da; color:#721c24; border-color:#f5c6cb; text-align:left;">⚠️ EDITING BRANCH: Update Details <input type="hidden" id="edit-branch-key"></div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
+                <div><label class="form-label">Branch Name</label><input type="text" id="new-branch-name" placeholder="Branch Name"></div>
+                <div><label class="form-label">Telegram Chat ID (For Telecaller Alerts)</label><input type="text" id="new-branch-chat-id" placeholder="Ex: -100123456789"></div>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-green" id="add-branch-btn" onclick="window.addBranch()">ADD BRANCH</button>
+                <button class="btn-blue hidden" id="update-branch-btn" onclick="window.updateBranch()">UPDATE BRANCH</button>
+                <button class="btn-red hidden" id="cancel-branch-btn" onclick="window.cancelBranchEdit()">CANCEL</button>
+            </div>
             <div id="branch-display-list" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap:15px; margin-top:20px;"></div>
         </div>
 
         <div id="a-reg" class="sub-section card hidden">
             <h4>👥 EMPLOYEE REGISTRATION / EDIT</h4>
-            <div id="new-emp-msg" class="summary-box" style="background:#fff3cd; color:#856404; border-color:#ffeeba; text-align:left;">
-                System Generated Next Auto ID: <span id="next-auto-id" style="font-size:22px; color:var(--danger); font-weight:800;">---</span>
-            </div>
-            <div id="edit-emp-msg" class="summary-box hidden" style="background:#f8d7da; color:#721c24; border-color:#f5c6cb; text-align:left;">
-                ⚠️ EDITING MODE: You can update Mobile, Address, Location, Designation, Photo, and ID Proof.
-                <input type="hidden" id="edit-emp-id">
-            </div>
-
+            <div id="new-emp-msg" class="summary-box" style="background:#fff3cd; color:#856404; border-color:#ffeeba; text-align:left;">System Generated Next Auto ID: <span id="next-auto-id" style="font-size:22px; color:var(--danger); font-weight:800;">---</span></div>
+            <div id="edit-emp-msg" class="summary-box hidden" style="background:#f8d7da; color:#721c24; border-color:#f5c6cb; text-align:left;">⚠️ EDITING MODE: You can update Mobile, Address, Location, Designation, Photo, and ID Proof.<input type="hidden" id="edit-emp-id"></div>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px 15px;">
                 <div><label class="form-label">Full Name</label><input type="text" id="r-name" placeholder="Employee Name"></div>
                 <div><label class="form-label">Branch</label><select id="r-branch-select"></select></div>
@@ -154,15 +256,13 @@
                 <div><label class="form-label">Designation</label><input type="text" id="r-designation" placeholder="e.g. Agent"></div>
                 <div><label class="form-label">Village / Location</label><input type="text" id="r-vill" placeholder="Location"></div>
                 <div id="join-div"><label class="form-label">Joining Date</label><input type="date" id="r-join"></div>
-                <div id="pass-div" style="grid-column: span 2;"><label class="form-label">Login Password</label><input type="password" id="r-pass" placeholder="Set Password"></div>
+                <div id="pass-div" style="grid-column: span 2;"><label class="form-label">Set Initial Password</label><input type="password" id="r-pass" placeholder="Set Password for First Login"></div>
             </div>
             <label class="form-label" style="margin-top:10px;">Full Address</label><textarea id="r-address" placeholder="Complete Address" rows="2"></textarea>
-            
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #cbd5e1;">
-                <div id="photo-div"><label class="form-label">Passport Size Photo (For ID Card)</label><input type="file" id="r-photo" accept="image/*"></div>
-                <div><label class="form-label">ID Proof Image (Aadhar/PAN)</label><input type="file" id="r-id-proof" accept="image/*"></div>
+                <div id="photo-div"><label class="form-label">Passport Size Photo</label><input type="file" id="r-photo" accept="image/*"></div>
+                <div><label class="form-label">ID Proof Image</label><input type="file" id="r-id-proof" accept="image/*"></div>
             </div>
-            
             <div style="display:flex; gap:10px; margin-top:15px;">
                 <button class="btn-green" id="save-emp-btn" onclick="window.saveEmployee()">SAVE NEW EMPLOYEE</button>
                 <button class="btn-blue hidden" id="update-emp-btn" onclick="window.updateEmployee()">UPDATE DETAILS</button>
@@ -294,12 +394,13 @@
         <div class="nav-item" onclick="window.showSub('e-reminders', this)">📅 My Reminders</div>
         <div class="nav-item" onclick="window.showSub('e-target', this)">🎯 Target Summary</div>
         <div class="nav-item" onclick="window.showSub('e-report', this)">📋 My History</div>
+        <div class="nav-item" onclick="window.showSub('e-complaints', this)">⚠️ My Complaints</div>
         <div class="nav-item" style="color:#ff6b6b; margin-top:auto;" onclick="location.reload()">🚪 Logout</div>
     </div>
 
     <div class="main-content">
         <div class="global-month-bar no-print"><label>SELECTION MONTH:</label><input type="month" id="emp-dash-month-global" onchange="window.onGlobalMonthChange()"></div>
-
+        
         <div id="e-home" class="sub-section">
             <h4 style="color:var(--primary); font-size:18px;">🟢 REGULAR ACCOUNTS</h4>
             <div class="stats-grid"><div class="stat-card"><h3><span id="e-reg-assign">0</span></h3><p>Assigned</p></div><div class="stat-card"><h3><span id="e-reg-comp" style="color:var(--secondary);">0</span></h3><p>Completed</p></div><div class="stat-card" style="border-bottom-color:var(--seized);"><h3><span id="e-reg-seized-c" style="color:var(--seized);">0</span></h3><p>Seized Count</p></div><div class="stat-card"><h3 style="color:#0284c7;">₹<span id="e-reg-t-amt">0</span></h3><p>Target Amt</p></div><div class="stat-card"><h3 style="color:var(--secondary);">₹<span id="e-reg-c-amt">0</span></h3><p>Collected</p></div><div class="stat-card" style="border-bottom-color:var(--seized);"><h3 style="color:var(--seized);">₹<span id="e-reg-seized-amt">0</span></h3><p>Seized Amt</p></div></div>
@@ -325,13 +426,21 @@
 
             <div id="quick-report-box" class="hidden card" style="border-top:4px solid var(--primary);"><h4 id="quick-report-title">REPORT</h4><div class="table-container"><table class="report-table"><thead><tr><th>Date & Time</th><th>Customer/HP</th><th>Amt</th><th>Type</th><th>Images</th></tr></thead><tbody id="quick-report-body"></tbody></table></div><button class="btn-red" onclick="document.getElementById('quick-report-box').classList.add('hidden')">Close Report</button></div>
         </div>
+        
+        <div id="e-complaints" class="sub-section card hidden">
+            <h4>⚠️ MY COMPLAINTS</h4>
+            <div class="summary-box" style="background:#fff3cd; color:#856404; border-color:#ffeeba; text-align:left;">ఇక్కడ టెలికాలింగ్ టీమ్ వారు మీ మీద పెట్టిన కంప్లైంట్స్ కనిపిస్తాయి.</div>
+            <div class="table-container">
+                <table class="report-table">
+                    <thead><tr><th>Date & Time</th><th>Raised By</th><th>HP No</th><th>Complaint Details</th></tr></thead>
+                    <tbody id="e-complaints-body"></tbody>
+                </table>
+            </div>
+        </div>
 
         <div id="e-idcard" class="sub-section card hidden"><h4>🪪 DIGITAL ID CARD</h4><div id="my-digital-id-area"></div><button onclick="window.print()" class="btn-print no-print" style="margin:20px auto; display:block;">PRINT ID CARD</button></div>
-
         <div id="e-reminders" class="sub-section card hidden"><h4>📅 MY REMINDERS</h4><div class="no-print" style="display:flex; gap:10px;"><div style="flex:1;"><label class="form-label">Select Date</label><input type="date" id="rem-date" style="margin-top:0;"></div><button class="btn-green" onclick="window.renderReminders()" style="margin-top:15px; width:auto; padding:0 25px;">GET</button></div><button onclick="window.print()" class="btn-print no-print" style="margin-top:15px;">PRINT REPORT</button><div class="table-container"><table class="report-table"><thead><tr><th>HP Number</th><th>Customer</th><th>Mobile</th><th>Reason</th></tr></thead><tbody id="rem-table-body"></tbody></table></div></div>
-
         <div id="e-visit-stat" class="sub-section card hidden"><h4>📍 MY VISIT STATUS</h4><div class="no-print" style="display:flex; gap:10px;"><div style="flex:1;"><label class="form-label">Select Month</label><input type="month" id="e-vstat-month" style="margin-top:0;"></div><button class="btn-green" onclick="window.renderEmpVisitStatus()" style="margin-top:15px; width:auto; padding:0 25px;">SEARCH</button></div><button onclick="window.print()" class="btn-print no-print" style="margin-top:15px;">PRINT REPORT</button><div id="e-vstat-summary" class="summary-box hidden"></div><div class="table-container"><table class="report-table"><thead><tr><th>HP Number</th><th>INS</th><th>Customer</th><th>Status</th><th>Date & Time</th></tr></thead><tbody id="e-vstat-table-body"></tbody></table></div></div>
-
         <div id="e-visit" class="sub-section card hidden no-print">
             <h4>🤝 CUSTOMER VISIT FORM</h4>
             <div id="gps-status" style="background:#fef2f2; color:var(--danger); padding:10px; border-radius:5px; font-weight:bold; margin-bottom:15px; border:1px solid #fca5a5;">CHECKING GPS...</div>
@@ -361,9 +470,24 @@
                 <div id="dynamic-fields" style="margin-top:20px; border-top:2px dashed #cbd5e1; padding-top:15px;">
                     <div id="v-op-to-div" class="hidden"><label class="form-label">Who did you pay OP to?</label><input type="text" id="v-op-to" placeholder="Person Name"></div>
                     <div id="qr-visit-div" class="hidden" style="margin-bottom:10px;"><label class="form-label">కస్టమర్ ఇంటికి వెళ్ళారా?</label><select id="v-visited-home" onchange="window.updateDynamicImages()"><option value="No">No</option><option value="Yes">Yes</option></select></div>
-                    <div id="img-receipt-div" class="hidden" style="margin-bottom:10px;"><label id="lbl-receipt" class="form-label" style="color:var(--secondary); font-size:14px;"></label><input type="file" id="img-receipt" accept="image/*" capture="environment"><div id="extra-qr-images" class="hidden" style="background:#e2e8f0; padding:10px; border-radius:5px; margin-top:5px;"><label class="form-label" style="font-size:12px;">Extra Screenshots (Max 3)</label><input type="file" id="img-receipt-2"><input type="file" id="img-receipt-3"><input type="file" id="img-receipt-4"></div></div>
-                    <div id="img-cust-div" class="hidden" style="margin-bottom:10px;"><label id="lbl-cust-img" class="form-label" style="font-size:14px;"></label><input type="file" id="img-cust" accept="image/*" capture="environment"></div>
-                    <div id="img-house-div" class="hidden"><label id="lbl-house-img" class="form-label" style="font-size:14px;"></label><input type="file" id="img-house" accept="image/*" capture="environment"></div>
+                    <div id="img-receipt-div" class="hidden" style="margin-bottom:10px;">
+                        <label id="lbl-receipt" class="form-label" style="color:var(--secondary); font-size:14px;"></label>
+                        <input type="file" id="img-receipt" accept="image/*">
+                        <div id="extra-qr-images" class="hidden" style="background:#e2e8f0; padding:10px; border-radius:5px; margin-top:5px;">
+                            <label class="form-label" style="font-size:12px;">Extra Screenshots (Max 3)</label>
+                            <input type="file" id="img-receipt-2" accept="image/*">
+                            <input type="file" id="img-receipt-3" accept="image/*">
+                            <input type="file" id="img-receipt-4" accept="image/*">
+                        </div>
+                    </div>
+                    <div id="img-cust-div" class="hidden" style="margin-bottom:10px;">
+                        <label id="lbl-cust-img" class="form-label" style="font-size:14px;"></label>
+                        <input type="file" id="img-cust" accept="image/*" capture="environment">
+                    </div>
+                    <div id="img-house-div" class="hidden">
+                        <label id="lbl-house-img" class="form-label" style="font-size:14px;"></label>
+                        <input type="file" id="img-house" accept="image/*" capture="environment">
+                    </div>
                 </div>
             </div>
             <button class="btn-green" id="v-submit-btn" onclick="window.submitVisit()" style="height:55px;">✅ SUBMIT VISIT DATA</button>
@@ -388,13 +512,27 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-    const firebaseConfig = { apiKey: "AIzaSyC9PnjAdBeOEy0TLQvUBJUznlZFKSS82uI", authDomain: "sri-vishnu-priya-finance-c591f.firebaseapp.com", databaseURL: "https://sri-vishnu-priya-finance-c591f-default-rtdb.firebaseio.com", projectId: "sri-vishnu-priya-finance-c591f", storageBucket: "sri-vishnu-priya-finance-c591f.firebasestorage.app", messagingSenderId: "184676228358", appId: "1:184676228358:web:86cea86c88c1531bdfd287" };
-    const app = initializeApp(firebaseConfig); const db = getDatabase(app); const auth = getAuth(app);
+    const firebaseConfig = { 
+        apiKey: "AIzaSyC9PnjAdBeOEy0TLQvUBJUznlZFKSS82uI", 
+        authDomain: "sri-vishnu-priya-finance-c591f.firebaseapp.com", 
+        databaseURL: "https://sri-vishnu-priya-finance-c591f-default-rtdb.firebaseio.com", 
+        projectId: "sri-vishnu-priya-finance-c591f", 
+        storageBucket: "sri-vishnu-priya-finance-c591f.firebasestorage.app", 
+        messagingSenderId: "184676228358", 
+        appId: "1:184676228358:web:86cea86c88c1531bdfd287" 
+    };
+    
+    const app = initializeApp(firebaseConfig); 
+    const db = getDatabase(app); 
+    const auth = getAuth(app);
+    const secondaryApp = initializeApp(firebaseConfig, "SecondaryApp");
+    const secondaryAuth = getAuth(secondaryApp);
 
     window.current = null; window.isImpersonating = false; window.gps = "0,0"; 
     window.allEmps = []; window.allVisits = []; window.allBranches = []; window.allAssigns = {};
+    window.allTwUsers = []; window.allComplaints = [];
     window.appLogoBase64 = "https://via.placeholder.com/300x120?text=Upload+Logo";
     window.adminSettings = { lockPass: "rajesh" }; window.isSecuredUnlocked = false; 
     window.pendingTargetId = ''; window.pendingTargetNav = null;
@@ -402,44 +540,259 @@
 
     window.getLocalDate = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
     window.getLocalTime = () => new Date().toLocaleTimeString('en-US', { hour12: true, hour: 'numeric', minute: '2-digit' });
-
     window.compressImage = (file) => new Promise((resolve) => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = e => { const img = new Image(); img.src = e.target.result; img.onload = () => { const canvas = document.createElement('canvas'); const MAX = 400; let w = img.width, h = img.height; if (w > h) { if (w > MAX) { h *= MAX / w; w = MAX; } } else { if (h > MAX) { w *= MAX / h; h = MAX; } } canvas.width = w; canvas.height = h; canvas.getContext('2d').drawImage(img, 0, 0, w, h); resolve(canvas.toDataURL('image/jpeg', 0.4)); }; }; });
 
+    // --- SECURE LOGIN LOGIC ---
     window.handleLogin = async () => {
-        const idStr = document.getElementById('l-id').value.trim(); const ps = document.getElementById('l-pass').value.trim();
+        const idStr = document.getElementById('l-id').value.trim(); 
+        const ps = document.getElementById('l-pass').value.trim();
         if(!idStr || !ps) return alert("Please enter Login ID and Password!");
-        const btn = document.getElementById('login-btn'); btn.innerText = "VERIFYING..."; btn.disabled = true;
+        
+        const btn = document.getElementById('login-btn'); 
+        btn.innerText = "VERIFYING..."; btn.disabled = true;
+        
         try {
             let loginEmail = idStr;
-            if(idStr.toLowerCase() === 'admin' || (idStr.toLowerCase() === 'siva' && ps === 'sai')) loginEmail = 'admin@vpfc.com';
+            if(idStr.toLowerCase() === 'admin') loginEmail = 'admin@vpfc.com';
+            else if(!loginEmail.includes('@')) loginEmail = idStr.toLowerCase() + '@vpfc.com';
+
+            await signInWithEmailAndPassword(auth, loginEmail, ps);
             
-            if(loginEmail.includes('@')) {
-                await signInWithEmailAndPassword(auth, loginEmail, ps); window.current = {id:'admin', name:'Admin'}; 
+            if (loginEmail === 'admin@vpfc.com') {
+                window.current = {id:'admin', name:'Admin', role:'admin'}; 
+                document.getElementById('admin-sidebar-header').innerText = "ADMIN PANEL";
                 const mStr = window.getLocalDate().slice(0, 7); if(document.getElementById('admin-dash-month-global')) document.getElementById('admin-dash-month-global').value = mStr; if(document.getElementById('ins-month-val')) document.getElementById('ins-month-val').value = mStr;
                 document.getElementById('main-login-wrap').classList.add('hidden'); document.body.classList.remove('login-active'); document.getElementById('admin-dashboard').classList.remove('hidden'); window.updateAdminDashboardStats(); 
-            } else {
-                const e = window.allEmps.find(x => x.id === idStr && x.pass === ps);
-                if(!e) { alert("Invalid Employee ID or Password!"); btn.innerText = "LOGIN"; btn.disabled = false; return; }
-                if(e.status === 'Inactive') { alert("❌ మీ అకౌంట్ డియాక్టివేట్ చేయబడింది. మీరు లాగిన్ అవ్వలేరు!"); btn.innerText = "LOGIN"; btn.disabled = false; return; }
-                if (!auth.currentUser || auth.currentUser.email !== 'emp@vpfc.com') { signInWithEmailAndPassword(auth, 'emp@vpfc.com', 'Emp@123').catch(err=>{}); }
-                window.current = e; 
-                const mStr = window.getLocalDate().slice(0, 7); ['emp-dash-month-global', 'e-rep-month', 'e-vstat-month', 'targ-month'].forEach(id => { if(document.getElementById(id)) document.getElementById(id).value = mStr; });
-                document.getElementById('main-login-wrap').classList.add('hidden'); document.body.classList.remove('login-active'); document.getElementById('employee-dashboard').classList.remove('hidden'); document.getElementById('e-name-tag').innerText = "👨‍💼 " + e.name; 
-                window.startGPS(); window.populateAssignedHPs(); window.updateEmployeeDashState(); window.updateEmployeeDashboardStats(); window.renderIDCard(); 
+                return;
+            } 
+            
+            const twUser = window.allTwUsers.find(x => x.id.toLowerCase() === idStr.toLowerCase());
+            if(twUser) {
+                window.current = { id: twUser.id, name: twUser.name, role: 'telewings', perms: twUser.perms || [] };
+                document.getElementById('admin-sidebar-header').innerText = (twUser.id.toUpperCase() === 'TW01' ? "👑 HEAD TELECALLER: " : "📞 TELECALLER: ") + twUser.name.toUpperCase();
+                const mStr = window.getLocalDate().slice(0, 7); if(document.getElementById('admin-dash-month-global')) document.getElementById('admin-dash-month-global').value = mStr;
+                document.getElementById('main-login-wrap').classList.add('hidden'); document.body.classList.remove('login-active'); document.getElementById('admin-dashboard').classList.remove('hidden'); 
+                
+                document.querySelectorAll('#admin-dashboard .sidebar .nav-item').forEach(nav => {
+                    const onclickAttr = nav.getAttribute('onclick') || '';
+                    if(onclickAttr.includes('showSub')) {
+                        const targetId = onclickAttr.match(/'([^']+)'/)[1];
+                        let hasAccess = false;
+                        if(twUser.perms.includes(targetId) || targetId === 'a-tw-profile' || targetId === 'Logout') hasAccess = true;
+                        if(twUser.id.toUpperCase() === 'TW01' && targetId === 'a-telewings') hasAccess = true; 
+                        if(!hasAccess) nav.classList.add('hidden');
+                        if(targetId === 'a-home') nav.setAttribute('onclick', "window.showSub('tw-home', this)");
+                    }
+                });
+                document.getElementById('nav-tw-profile').classList.remove('hidden');
+                if(twUser.perms.includes('a-home')) {
+                    document.getElementById('a-home').classList.add('hidden');
+                    document.getElementById('tw-home').classList.remove('hidden');
+                    window.updateTwDashboardStats();
+                }
+                return;
             }
-        } catch (error) { alert("Login Failed! Check internet or credentials."); } finally { btn.innerText = "LOGIN"; btn.disabled = false; }
+
+            const e = window.allEmps.find(x => x.id.toLowerCase() === idStr.toLowerCase());
+            if(!e) { alert("Employee record not found in database!"); btn.innerText = "LOGIN"; btn.disabled = false; return; }
+            if(e.status === 'Inactive') { alert("❌ మీ అకౌంట్ డియాక్టివేట్ చేయబడింది. మీరు లాగిన్ అవ్వలేరు!"); btn.innerText = "LOGIN"; btn.disabled = false; return; }
+            
+            window.current = e; 
+            const mStr = window.getLocalDate().slice(0, 7); ['emp-dash-month-global', 'e-rep-month', 'e-vstat-month', 'targ-month'].forEach(id => { if(document.getElementById(id)) document.getElementById(id).value = mStr; });
+            document.getElementById('main-login-wrap').classList.add('hidden'); document.body.classList.remove('login-active'); document.getElementById('employee-dashboard').classList.remove('hidden'); document.getElementById('e-name-tag').innerText = "👨‍💼 " + e.name; 
+            window.startGPS(); window.populateAssignedHPs(); window.updateEmployeeDashState(); window.updateEmployeeDashboardStats(); window.renderIDCard(); window.renderEmpComplaints();
+            
+        } catch (error) { 
+            alert("Login Failed! Please check your ID and Password."); console.error(error);
+        } finally { btn.innerText = "LOGIN"; btn.disabled = false; }
     };
 
-    onValue(ref(db, 'adminSettings'), s => { if(s.val()) window.adminSettings = { ...window.adminSettings, ...s.val() }; });
-    onValue(ref(db, 'settings/logo'), s => { if(s.val()) { window.appLogoBase64 = s.val(); document.documentElement.style.setProperty('--logo-url', `url('${window.appLogoBase64}')`); if(window.current && window.current.id !== 'admin') window.updateEmployeeDashState(); } });
-    onValue(ref(db, 'branches'), s => { window.allBranches = s.val() ? Object.keys(s.val()).map(k => ({key: k, name: s.val()[k].name})) : []; window.updateDropdowns(); });
-    onValue(ref(db, 'employees'), s => { window.allEmps = s.val() ? Object.values(s.val()) : []; window.renderEmpList(); if(document.getElementById('next-auto-id')) document.getElementById('next-auto-id').innerText = window.getNextEmpId(); if(window.current && window.current.id === 'admin' && !window.isImpersonating) window.updateAdminDashboardStats(); if(window.current && window.current.id !== 'admin') { window.current = window.allEmps.find(x => x.id === window.current.id); window.updateEmployeeDashState(); } });
-    onValue(ref(db, 'visits'), s => { window.allVisits = s.val() ? Object.values(s.val()) : []; if(window.current && window.current.id === 'admin' && !window.isImpersonating) window.updateAdminDashboardStats(); if(window.current && window.current.id !== 'admin') { window.updateEmployeeDashboardStats(); if(!document.getElementById('e-target').classList.contains('hidden')) window.renderTarget(); } });
-    onValue(ref(db, 'assignments'), s => { window.allAssigns = s.val() || {}; if(window.current && window.current.id === 'admin' && !window.isImpersonating) { window.updateAdminDashboardStats(); if(document.getElementById('as-emp-sel').value) window.renderAssignedList(); } if(window.current && window.current.id !== 'admin') { window.populateAssignedHPs(); window.updateEmployeeDashboardStats(); } });
+    window.onAdminMonthChange = () => {
+        if(window.current && window.current.role === 'admin') window.updateAdminDashboardStats();
+        if(window.current && window.current.role === 'telewings') window.updateTwDashboardStats();
+    };
 
-    window.getNextEmpId = () => { if(window.allEmps.length === 0) return "001"; const ids = window.allEmps.map(e => parseInt(e.id)||0); const max = Math.max(...ids); return String(max + 1).padStart(3, '0'); };
-    window.updateDropdowns = () => { const selects = ['imp-br-sel', 'as-branch-sel', 'stat-br-sel', 'a-rep-branch-sel', 'r-branch-select', 'ins-branch-sel', 'b-search-select', 'b-perf-branch', 'att-branch-sel']; let options = '<option value="">Select Branch</option>'; window.allBranches.forEach(b => { options += `<option value="${b.name}">${b.name}</option>`; }); selects.forEach(id => { let el = document.getElementById(id); if(el) el.innerHTML = options; }); let listHTML = ''; window.allBranches.forEach(b => { listHTML += `<div style="background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #cbd5e1; font-weight:bold; color:var(--primary); display:flex; justify-content:space-between; align-items:center;"><span>${b.name}</span> <button onclick="window.deleteBranch('${b.key}')" style="background:var(--danger); color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">Delete</button></div>`; }); let listEl = document.getElementById('branch-display-list'); if(listEl) listEl.innerHTML = listHTML; };
-    window.addBranch = async () => { const bName = document.getElementById('new-branch-name').value.trim(); if(bName) { await push(ref(db, 'branches'), { name: bName }); document.getElementById('new-branch-name').value = ''; } };
+    // --- DATABASE LISTENERS ---
+    onValue(ref(db, 'adminSettings'), s => { if(s.val()) window.adminSettings = { ...window.adminSettings, ...s.val() }; });
+    onValue(ref(db, 'settings/logo'), s => { if(s.val()) { window.appLogoBase64 = s.val(); document.documentElement.style.setProperty('--logo-url', `url('${window.appLogoBase64}')`); if(window.current && window.current.id !== 'admin' && window.current.role !== 'telewings') window.updateEmployeeDashState(); } });
+    onValue(ref(db, 'branches'), s => { window.allBranches = s.val() ? Object.keys(s.val()).map(k => ({key: k, name: s.val()[k].name, chatId: s.val()[k].chatId || ''})) : []; window.updateDropdowns(); });
+    onValue(ref(db, 'employees'), s => { window.allEmps = s.val() ? Object.values(s.val()) : []; window.renderEmpList(); if(document.getElementById('next-auto-id')) document.getElementById('next-auto-id').innerText = window.getNextEmpId(); if(window.current && window.current.role === 'admin') window.updateAdminDashboardStats(); if(window.current && window.current.role === 'telewings') window.updateTwDashboardStats(); if(window.current && window.current.id !== 'admin' && window.current.role !== 'telewings') { window.current = window.allEmps.find(x => x.id === window.current.id); window.updateEmployeeDashState(); } });
+    onValue(ref(db, 'visits'), s => { window.allVisits = s.val() ? Object.values(s.val()) : []; if(window.current && window.current.role === 'admin') window.updateAdminDashboardStats(); if(window.current && window.current.role === 'telewings') window.updateTwDashboardStats(); if(window.current && window.current.id !== 'admin' && window.current.role !== 'telewings') { window.updateEmployeeDashboardStats(); if(!document.getElementById('e-target').classList.contains('hidden')) window.renderTarget(); } });
+    onValue(ref(db, 'assignments'), s => { window.allAssigns = s.val() || {}; if(window.current && window.current.role === 'admin') { window.updateAdminDashboardStats(); if(document.getElementById('as-emp-sel').value) window.renderAssignedList(); } if(window.current && window.current.role === 'telewings') { window.updateTwDashboardStats(); if(document.getElementById('as-emp-sel').value) window.renderAssignedList(); } if(window.current && window.current.id !== 'admin' && window.current.role !== 'telewings') { window.populateAssignedHPs(); window.updateEmployeeDashboardStats(); } });
+    onValue(ref(db, 'telewingsUsers'), s => { window.allTwUsers = s.val() ? Object.values(s.val()) : []; window.renderTwList(); if(window.current && window.current.role === 'telewings') window.updateTwDashboardStats(); });
+    onValue(ref(db, 'complaints'), s => { window.allComplaints = s.val() ? Object.values(s.val()) : []; if(window.current) { if(window.current.role === 'admin' || window.current.role === 'telewings') { window.renderAdminComplaints(); if(window.current.role === 'telewings') window.updateTwDashboardStats(); } else window.renderEmpComplaints(); } });
+
+    // --- SECURE TELEWINGS MANAGEMENT ---
+    window.saveTwUser = async () => {
+        const id = document.getElementById('tw-id').value.trim().toUpperCase(); const name = document.getElementById('tw-name').value.trim(); const pass = document.getElementById('tw-pass').value.trim();
+        if(!id || !name || !pass) return alert("Fill all details!");
+        let perms = []; document.querySelectorAll('#tw-permissions input[type="checkbox"]:checked').forEach(cb => perms.push(cb.value));
+        if(perms.length === 0) return alert("Select at least one permission!");
+        const btn = document.getElementById('save-tw-btn'); btn.innerText = "SAVING..."; btn.disabled = true;
+        try {
+            const newEmail = id.toLowerCase() + "@vpfc.com";
+            await createUserWithEmailAndPassword(secondaryAuth, newEmail, pass); await signOut(secondaryAuth);
+            await set(ref(db, 'telewingsUsers/' + id), { id, name, perms }); 
+            alert("Telewings User Saved Securely!"); window.cancelTwEdit();
+        } catch(e) { alert("Auth Error: " + e.message); } finally { btn.innerText = "SAVE TELEWINGS USER"; btn.disabled = false; }
+    };
+    window.editTwUser = (id) => {
+        const tw = window.allTwUsers.find(x => x.id === id); if(!tw) return;
+        document.getElementById('tw-edit-id').value = id; document.getElementById('tw-id').value = tw.id; document.getElementById('tw-id').disabled = true;
+        document.getElementById('tw-name').value = tw.name; document.getElementById('tw-pass').value = ""; document.getElementById('tw-pass').placeholder = "Leave blank unless resetting";
+        document.querySelectorAll('#tw-permissions input').forEach(cb => cb.checked = false);
+        (tw.perms || []).forEach(p => { const cb = document.querySelector(`#tw-permissions input[value="${p}"]`); if(cb) cb.checked = true; });
+        document.getElementById('tw-edit-msg').classList.remove('hidden'); document.getElementById('save-tw-btn').classList.add('hidden'); document.getElementById('update-tw-btn').classList.remove('hidden'); document.getElementById('cancel-tw-btn').classList.remove('hidden'); window.scrollTo(0, 0);
+    };
+    window.updateTwUser = async () => {
+        const id = document.getElementById('tw-edit-id').value; const name = document.getElementById('tw-name').value.trim(); const pass = document.getElementById('tw-pass').value.trim();
+        if(!name) return alert("Fill Name!");
+        let perms = []; document.querySelectorAll('#tw-permissions input[type="checkbox"]:checked').forEach(cb => perms.push(cb.value));
+        if(perms.length === 0) return alert("Select at least one permission!");
+        if(pass) {
+            try { const newEmail = id.toLowerCase() + "@vpfc.com"; await createUserWithEmailAndPassword(secondaryAuth, newEmail, pass); await signOut(secondaryAuth); alert("Password recreated successfully!");
+            } catch(e) { if(e.code === 'auth/email-already-in-use') return alert("⚠️ Please delete old account in Firebase Auth console first!"); else return alert(e.message); }
+        }
+        await set(ref(db, 'telewingsUsers/' + id), { id, name, perms }); alert("User Updated!"); window.cancelTwEdit();
+    };
+    window.cancelTwEdit = () => {
+        document.getElementById('tw-id').disabled = false; ['tw-id', 'tw-name', 'tw-pass', 'tw-edit-id'].forEach(i => document.getElementById(i).value = '');
+        document.getElementById('tw-pass').placeholder = "Password"; document.querySelectorAll('#tw-permissions input').forEach(cb => cb.checked = false);
+        document.getElementById('tw-edit-msg').classList.add('hidden'); document.getElementById('save-tw-btn').classList.remove('hidden'); document.getElementById('update-tw-btn').classList.add('hidden'); document.getElementById('cancel-tw-btn').classList.add('hidden');
+    };
+        window.renderTwList = () => {
+        const tbody = document.getElementById('tw-users-list'); 
+        if(!tbody) return; 
+        let h = '';
+        
+        window.allTwUsers.forEach(u => { 
+            let actions = '';
+            
+            // లాగిన్ అయి ఉన్న టెలికాలర్ తన స్వంత ఐడీని చూస్తున్నట్లయితే (ముఖ్యంగా TW01)
+            // ఎడిట్ మరియు డిలీట్ బటన్స్ చూపించదు.
+            if(window.current && window.current.role === 'telewings' && u.id.toUpperCase() === window.current.id.toUpperCase()) {
+                actions = `<b style="color:var(--secondary)">🔒 MY ACCOUNT (Locked)</b>`;
+            } 
+            // మిగతా వాళ్ళందరికీ ఎడిట్/డిలీట్ బటన్స్ కనిపిస్తాయి
+            else {
+                actions = `<button class="btn-blue" style="padding:5px 10px; width:auto; margin-right:5px;" onclick="window.editTwUser('${u.id}')">Edit</button>
+                           <button class="btn-red" style="padding:5px 10px; width:auto;" onclick="window.deleteTwUser('${u.id}')">Delete</button>`;
+            }
+            
+            h += `<tr><td><b>${u.id}</b></td><td>${u.name}</td><td>${actions}</td></tr>`; 
+        });
+        tbody.innerHTML = h;
+    };
+
+    window.deleteTwUser = async (id) => { if(confirm(`Delete User: ${id}? \n\nNote: Please also delete them from Firebase Auth console.`)) { await remove(ref(db, 'telewingsUsers/' + id)); } };
+
+    // --- EMPLOYEE BIO (FIXED) ---
+    window.viewEmpBio = () => {
+        const eid = document.getElementById('bio-em-sel').value; if(!eid) return alert("Select Employee!");
+        const e = window.allEmps.find(x => x.id === eid); if(!e) return alert("Not found");
+        document.getElementById('bio-content-box').innerHTML = `<div class="bio-item"><label>ID</label><div>${e.id}</div></div><div class="bio-item"><label>Name</label><div>${e.name}</div></div><div class="bio-item"><label>Branch</label><div>${e.branch}</div></div><div class="bio-item"><label>Mobile</label><div>${e.mobile||'---'}</div></div><div class="bio-item"><label>Designation</label><div>${e.designation||'---'}</div></div><div class="bio-item"><label>Join Date</label><div>${e.joinDate||'---'}</div></div><div class="bio-item" style="grid-column: 1 / -1;"><label>Full Address</label><div>${e.address||'---'}</div></div><div class="bio-item"><label>Passport Photo</label><div><img src="${e.photo||'https://via.placeholder.com/150'}" style="width:120px; border-radius:8px; border:2px solid var(--primary);"></div></div><div class="bio-item"><label>ID Proof (Aadhar/PAN)</label><div><img src="${e.idProof||'https://via.placeholder.com/150'}" style="max-width:250px; border-radius:8px; border:2px solid var(--primary); cursor:pointer;" onclick="window.open(this.src)"></div></div>`;
+        document.getElementById('bio-result-area').classList.remove('hidden');
+    };
+
+    // --- TELECALLER DASHBOARD ---
+    window.updateTwDashboardStats = () => {
+        if(!window.current || window.current.role !== 'telewings') return;
+        const moInput = document.getElementById('admin-dash-month-global'); let mo = moInput ? moInput.value : window.getLocalDate().slice(0, 7);
+        document.getElementById('tw-overview-month-label').innerText = mo;
+        
+        const myId = window.current.id.toUpperCase();
+        const isHead = (myId === 'TW01'); 
+
+        let myAssigns = 0, myTarget = 0, myBranches = new Set(), myExecs = new Set();
+        let myVisited = new Set(), myCollected = 0;
+        
+        Object.keys(window.allAssigns).forEach(eid => {
+            const a = window.allAssigns[eid];
+            if(a && a[mo] && a[mo].details) {
+                Object.keys(a[mo].details).forEach(hp => {
+                    if(isHead || a[mo].details[hp].assignedBy === myId) {
+                        myAssigns++; myTarget += parseFloat(a[mo].details[hp].amt || 0); myExecs.add(eid);
+                        const emp = window.allEmps.find(e => e.id === eid); if(emp) myBranches.add(emp.branch);
+                    }
+                });
+            }
+        });
+
+        const vsts = window.allVisits.filter(v => v.date.startsWith(mo));
+        vsts.forEach(v => {
+            const a = window.getEmpAssignments(v.eid, mo);
+            if(a && a.details && a.details[v.hp]) {
+                if(isHead || a.details[v.hp].assignedBy === myId) {
+                    myVisited.add(v.hp);
+                    if(v.stat === 'Paid') { myCollected += parseFloat(v.amt || 0); }
+                }
+            }
+        });
+
+        document.getElementById('tw-stat-branches').innerText = myBranches.size;
+        document.getElementById('tw-stat-execs').innerText = myExecs.size;
+        document.getElementById('tw-stat-accs').innerText = myAssigns;
+        document.getElementById('tw-stat-visited').innerText = myVisited.size;
+        document.getElementById('tw-stat-pending').innerText = Math.max(0, myAssigns - myVisited.size);
+        document.getElementById('tw-stat-target').innerText = "₹" + myTarget;
+        document.getElementById('tw-stat-collected').innerText = "₹" + myCollected;
+        document.getElementById('tw-stat-complaints').innerText = window.allComplaints.filter(c => isHead || c.raisedBy.includes(myId)).length;
+
+        if(isHead) { document.getElementById('tw01-team-container').classList.remove('hidden'); window.renderTW01TeamTable(mo); } 
+        else { if(document.getElementById('tw01-team-container')) document.getElementById('tw01-team-container').classList.add('hidden'); }
+    };
+
+    window.renderTW01TeamTable = (mo) => {
+        let html = '';
+        window.allTwUsers.forEach(tw => {
+            let tAss = 0, tVis = new Set(), tTarg = 0, tCol = 0, tBr = new Set(), tEx = new Set();
+            Object.keys(window.allAssigns).forEach(eid => {
+                const a = window.allAssigns[eid];
+                if(a && a[mo] && a[mo].details) {
+                    Object.keys(a[mo].details).forEach(hp => {
+                        if(a[mo].details[hp].assignedBy === tw.id.toUpperCase()) {
+                            tAss++; tTarg += parseFloat(a[mo].details[hp].amt || 0); tEx.add(eid);
+                            const emp = window.allEmps.find(e => e.id === eid); if(emp) tBr.add(emp.branch);
+                        }
+                    });
+                }
+            });
+            window.allVisits.filter(v => v.date.startsWith(mo)).forEach(v => {
+                const a = window.getEmpAssignments(v.eid, mo);
+                if(a && a.details && a.details[v.hp] && a.details[v.hp].assignedBy === tw.id.toUpperCase()) {
+                    tVis.add(v.hp); if(v.stat === 'Paid') tCol += parseFloat(v.amt || 0);
+                }
+            });
+            let compCount = window.allComplaints.filter(c => c.raisedBy.includes(tw.id.toUpperCase())).length;
+            let succ = tAss > 0 ? Math.round((tVis.size / tAss) * 100) : 0;
+            let succColor = succ >= 80 ? 'var(--secondary)' : (succ >= 50 ? '#d97706' : 'var(--danger)');
+            html += `<tr><td><b>${tw.name} (${tw.id})</b></td><td>${tBr.size}</td><td>${tEx.size}</td><td>${tAss}</td><td><b style="color:var(--secondary)">${tVis.size}</b></td><td><b style="color:var(--danger)">${tAss - tVis.size}</b></td><td>₹${tTarg}</td><td>₹${tCol}</td><td><b style="color:${succColor}">${succ}%</b></td><td>${compCount}</td></tr>`;
+        });
+        document.getElementById('tw01-team-body').innerHTML = html || `<tr><td colspan="10" align="center">No Telecallers Found</td></tr>`;
+    };
+
+    // --- OTHER LOGIC (Complaints, Branches, Employees, Assignments) ---
+    window.submitComplaint = async () => {
+        const eid = document.getElementById('comp-em-sel').value; const hp = document.getElementById('comp-hp').value.trim() || '---'; const txt = document.getElementById('comp-text').value.trim();
+        if(!eid || !txt) return alert("Select Employee and Write Complaint!");
+        const emp = window.allEmps.find(e => e.id === eid); const raisedByName = window.current.id === 'admin' ? 'ADMIN' : `TW - ${window.current.name} (${window.current.id})`;
+        await push(ref(db, 'complaints'), { date: window.getLocalDate(), time: window.getLocalTime(), raisedBy: raisedByName, empId: eid, empName: emp ? emp.name : 'Unknown', hp: hp, details: txt, timestamp: Date.now() });
+        alert("Complaint Registered!"); document.getElementById('comp-hp').value = ''; document.getElementById('comp-text').value = '';
+    };
+    window.renderAdminComplaints = () => { let h = ''; [...window.allComplaints].sort((a,b) => (b.timestamp||0) - (a.timestamp||0)).forEach(c => { h += `<tr><td>${c.date}<br><small>${c.time}</small></td><td><b>${c.raisedBy}</b></td><td><b>${c.empName}</b> (${c.empId})</td><td>${c.hp}</td><td style="white-space: normal; min-width:200px; color:var(--danger); font-weight:bold;">${c.details}</td></tr>`; }); document.getElementById('complaints-list-body').innerHTML = h || '<tr><td colspan="5" align="center">No Complaints Found</td></tr>'; };
+    window.renderEmpComplaints = () => { let h = ''; window.allComplaints.filter(c => c.empId === window.current.id).sort((a,b) => (b.timestamp||0) - (a.timestamp||0)).forEach(c => { h += `<tr><td>${c.date}<br><small>${c.time}</small></td><td><b style="color:var(--danger)">HQ / Admin Team</b></td><td>${c.hp}</td><td style="white-space: normal; min-width:200px; color:var(--danger); font-weight:bold;">${c.details}</td></tr>`; }); const tbody = document.getElementById('e-complaints-body'); if(tbody) tbody.innerHTML = h || '<tr><td colspan="4" align="center">No Complaints found</td></tr>'; };
+
+    window.updateDropdowns = () => { 
+        const selects = ['imp-br-sel', 'as-branch-sel', 'stat-br-sel', 'a-rep-branch-sel', 'r-branch-select', 'ins-branch-sel', 'b-search-select', 'b-perf-branch', 'att-branch-sel', 'bio-br-sel', 'comp-br-sel']; 
+        let options = '<option value="">Select Branch</option>'; window.allBranches.forEach(b => { options += `<option value="${b.name}">${b.name}</option>`; }); 
+        selects.forEach(id => { let el = document.getElementById(id); if(el) el.innerHTML = options; }); 
+        let listHTML = ''; window.allBranches.forEach(b => { let cIdTxt = b.chatId ? `(ID: ${b.chatId})` : `<span style="color:#e53e3e">(No Chat ID)</span>`; listHTML += `<div style="background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #cbd5e1; font-weight:bold; color:var(--primary); display:flex; justify-content:space-between; align-items:center;"><span>${b.name} <br><small style="color:gray">${cIdTxt}</small></span> <div><button onclick="window.editBranch('${b.key}')" class="btn-blue" style="padding:5px 10px; width:auto; margin-right:5px;">Edit</button><button onclick="window.deleteBranch('${b.key}')" class="btn-red" style="padding:5px 10px; width:auto;">Delete</button></div></div>`; }); 
+        const listEl = document.getElementById('branch-display-list'); if(listEl) listEl.innerHTML = listHTML; 
+    };
+    window.addBranch = async () => { const bName = document.getElementById('new-branch-name').value.trim(); const bChat = document.getElementById('new-branch-chat-id').value.trim(); if(!bName) return alert("Enter Branch Name!"); await push(ref(db, 'branches'), { name: bName, chatId: bChat }); document.getElementById('new-branch-name').value = ''; document.getElementById('new-branch-chat-id').value = ''; };
+    window.editBranch = (key) => { const b = window.allBranches.find(x => x.key === key); if(!b) return; document.getElementById('edit-branch-key').value = b.key; document.getElementById('new-branch-name').value = b.name; document.getElementById('new-branch-chat-id').value = b.chatId || ''; document.getElementById('branch-edit-msg').classList.remove('hidden'); document.getElementById('add-branch-btn').classList.add('hidden'); document.getElementById('update-branch-btn').classList.remove('hidden'); document.getElementById('cancel-branch-btn').classList.remove('hidden'); window.scrollTo(0,0); };
+    window.updateBranch = async () => { const key = document.getElementById('edit-branch-key').value; const bName = document.getElementById('new-branch-name').value.trim(); const bChat = document.getElementById('new-branch-chat-id').value.trim(); if(!bName) return alert("Enter Branch Name!"); await set(ref(db, 'branches/'+key), { name: bName, chatId: bChat }); alert("Branch Updated!"); window.cancelBranchEdit(); };
+    window.cancelBranchEdit = () => { document.getElementById('edit-branch-key').value = ''; document.getElementById('new-branch-name').value = ''; document.getElementById('new-branch-chat-id').value = ''; document.getElementById('branch-edit-msg').classList.add('hidden'); document.getElementById('add-branch-btn').classList.remove('hidden'); document.getElementById('update-branch-btn').classList.add('hidden'); document.getElementById('cancel-branch-btn').classList.add('hidden'); };
     window.deleteBranch = async (key) => { if(confirm("Delete this branch?")) await remove(ref(db, 'branches/'+key)); };
 
     window.populateEmpsByBranch = (brSel, empSel, defText) => { const b = document.getElementById(brSel).value; let opts = `<option value="">${defText}</option>`; window.allEmps.filter(e => e.branch === b).forEach(e => { opts += `<option value="${e.id}">${e.name} (${e.id})</option>`; }); document.getElementById(empSel).innerHTML = opts; };
@@ -449,63 +802,72 @@
     window.loadImpEmps = () => window.populateEmpsByBranch('imp-br-sel', 'imp-em-sel', 'Select Employee');
     window.getEmpAssignments = (empId, month) => { let a = window.allAssigns[empId]; if(!a || !a[month]) return { r:[], m:[], rAmt:0, mAmt:0, details:{} }; return { r: a[month].regularHPs || [], m: a[month].maturedHPs || [], rAmt: parseFloat(a[month].regularTargetAmt) || 0, mAmt: parseFloat(a[month].maturedTargetAmt) || 0, details: a[month].details || {} }; };
 
-    window.saveEmployee = async () => { const id = window.getNextEmpId(); const n = document.getElementById('r-name').value; const br = document.getElementById('r-branch-select').value; const ps = document.getElementById('r-pass').value; if(!n || !br || !ps) return alert("Fill Name, Branch, Password!"); let photo="N/A", proof="N/A"; const fP = document.getElementById('r-photo').files[0]; const fI = document.getElementById('r-id-proof').files[0]; if(fP) photo = await window.compressImage(fP); if(fI) proof = await window.compressImage(fI); const data = { id:id, name:n, branch:br, pass:ps, mobile:document.getElementById('r-mobile').value, designation:document.getElementById('r-designation').value, village:document.getElementById('r-vill').value, address:document.getElementById('r-address').value, joinDate:document.getElementById('r-join').value, photo:photo, idProof:proof, status: "Active" }; await set(ref(db, 'employees/'+id), data); alert(`Employee Saved! Auto ID: ${id}`); window.cancelEdit(); };
-    window.updateEmployee = async () => { const id = document.getElementById('edit-emp-id').value; const ex = window.allEmps.find(x => x.id === id); if(!ex) return; let proof = ex.idProof || "N/A"; const fI = document.getElementById('r-id-proof').files[0]; if(fI) proof = await window.compressImage(fI); let photo = ex.photo || "N/A"; const fP = document.getElementById('r-photo').files[0]; if(fP) photo = await window.compressImage(fP); const updatedData = { ...ex, mobile:document.getElementById('r-mobile').value, designation:document.getElementById('r-designation').value, village:document.getElementById('r-vill').value, address:document.getElementById('r-address').value, idProof:proof, photo:photo }; await set(ref(db, 'employees/'+id), updatedData); alert("Details Updated!"); window.cancelEdit(); };
-    window.editEmp = (id) => { const e = window.allEmps.find(x => x.id === id); if(e) { document.getElementById('edit-emp-id').value = id; document.getElementById('r-mobile').value = e.mobile || ""; document.getElementById('r-designation').value = e.designation || ""; document.getElementById('r-vill').value = e.village || ""; document.getElementById('r-address').value = e.address || ""; ['r-name', 'r-branch-select', 'r-pass', 'r-join'].forEach(fid => { if(document.getElementById(fid)) { document.getElementById(fid).disabled = true; document.getElementById(fid).style.opacity = '0.5'; } }); document.getElementById('pass-div').style.display='none'; document.getElementById('new-emp-msg').classList.add('hidden'); document.getElementById('edit-emp-msg').classList.remove('hidden'); document.getElementById('save-emp-btn').classList.add('hidden'); document.getElementById('update-emp-btn').classList.remove('hidden'); document.getElementById('cancel-edit-btn').classList.remove('hidden'); window.scrollTo(0,0); } };
-    window.cancelEdit = () => { ['r-name', 'r-mobile', 'r-designation', 'r-vill', 'r-address', 'r-pass', 'r-photo', 'r-id-proof', 'r-join'].forEach(i => { if(document.getElementById(i)) {document.getElementById(i).value=""; document.getElementById(i).disabled=false; document.getElementById(i).style.opacity='1';} }); document.getElementById('r-branch-select').disabled=false; document.getElementById('r-branch-select').style.opacity='1'; document.getElementById('pass-div').style.display='block'; document.getElementById('new-emp-msg').classList.remove('hidden'); document.getElementById('edit-emp-msg').classList.add('hidden'); document.getElementById('save-emp-btn').classList.remove('hidden'); document.getElementById('update-emp-btn').classList.add('hidden'); document.getElementById('cancel-edit-btn').classList.add('hidden'); };
+    window.getNextEmpId = () => { if(window.allEmps.length === 0) return "001"; const ids = window.allEmps.map(e => parseInt(e.id)||0); const max = Math.max(...ids); return String(max + 1).padStart(3, '0'); };
+    window.saveEmployee = async () => { 
+        const id = window.getNextEmpId(); const n = document.getElementById('r-name').value; const br = document.getElementById('r-branch-select').value; const ps = document.getElementById('r-pass').value; 
+        if(!n || !br || !ps) return alert("Fill Name, Branch, Password!"); 
+        const btn = document.getElementById('save-emp-btn'); btn.innerText = "SAVING SECURELY..."; btn.disabled = true;
+        let photo="N/A", proof="N/A"; const fP = document.getElementById('r-photo').files[0]; const fI = document.getElementById('r-id-proof').files[0]; 
+        if(fP) photo = await window.compressImage(fP); if(fI) proof = await window.compressImage(fI); 
+        try {
+            const newEmail = id.toLowerCase() + "@vpfc.com"; await createUserWithEmailAndPassword(secondaryAuth, newEmail, ps); await signOut(secondaryAuth);
+            const data = { id:id, name:n, branch:br, mobile:document.getElementById('r-mobile').value, designation:document.getElementById('r-designation').value, village:document.getElementById('r-vill').value, address:document.getElementById('r-address').value, joinDate:document.getElementById('r-join').value, photo:photo, idProof:proof, status: "Active" }; 
+            await set(ref(db, 'employees/'+id), data); alert(`Employee Saved! Auto ID: ${id}`); window.cancelEdit(); 
+        } catch(e) { alert("Auth Error: " + e.message); } finally { btn.innerText = "SAVE NEW EMPLOYEE"; btn.disabled = false; }
+    };
+    window.updateEmployee = async () => { 
+        const id = document.getElementById('edit-emp-id').value; const ex = window.allEmps.find(x => x.id === id); if(!ex) return; 
+        const btn = document.getElementById('update-emp-btn'); btn.innerText = "UPDATING..."; btn.disabled = true;
+        let proof = ex.idProof || "N/A"; const fI = document.getElementById('r-id-proof').files[0]; if(fI) proof = await window.compressImage(fI); 
+        let photo = ex.photo || "N/A"; const fP = document.getElementById('r-photo').files[0]; if(fP) photo = await window.compressImage(fP); 
+        const newPass = document.getElementById('r-pass').value.trim();
+        if(newPass) {
+            try { const newEmail = id.toLowerCase() + "@vpfc.com"; await createUserWithEmailAndPassword(secondaryAuth, newEmail, newPass); await signOut(secondaryAuth); alert("Password recreated successfully in Firebase!");
+            } catch (err) { if(err.code === 'auth/email-already-in-use') { btn.innerText = "UPDATE DETAILS"; btn.disabled = false; return alert("⚠️ To reset password, please delete the old account in Firebase Auth Console first!"); } else { alert("Auth Error: " + err.message); btn.innerText = "UPDATE DETAILS"; btn.disabled = false; return; } }
+        }
+        const updatedData = { ...ex, mobile:document.getElementById('r-mobile').value, designation:document.getElementById('r-designation').value, village:document.getElementById('r-vill').value, address:document.getElementById('r-address').value, idProof:proof, photo:photo }; 
+        await set(ref(db, 'employees/'+id), updatedData); alert("Details Updated!"); window.cancelEdit(); btn.innerText = "UPDATE DETAILS"; btn.disabled = false;
+    };
+    window.editEmp = (id) => { const e = window.allEmps.find(x => x.id === id); if(e) { document.getElementById('edit-emp-id').value = id; document.getElementById('r-mobile').value = e.mobile || ""; document.getElementById('r-designation').value = e.designation || ""; document.getElementById('r-vill').value = e.village || ""; document.getElementById('r-address').value = e.address || ""; ['r-name', 'r-branch-select', 'r-join'].forEach(fid => { if(document.getElementById(fid)) { document.getElementById(fid).disabled = true; document.getElementById(fid).style.opacity = '0.5'; } }); document.getElementById('r-pass').value = ''; document.getElementById('r-pass').placeholder = 'Leave blank unless resetting password'; document.getElementById('pass-div').style.display='block'; document.getElementById('new-emp-msg').classList.add('hidden'); document.getElementById('edit-emp-msg').classList.remove('hidden'); document.getElementById('save-emp-btn').classList.add('hidden'); document.getElementById('update-emp-btn').classList.remove('hidden'); document.getElementById('cancel-edit-btn').classList.remove('hidden'); window.scrollTo(0,0); } };
+    window.cancelEdit = () => { ['r-name', 'r-mobile', 'r-designation', 'r-vill', 'r-address', 'r-pass', 'r-photo', 'r-id-proof', 'r-join'].forEach(i => { if(document.getElementById(i)) {document.getElementById(i).value=""; document.getElementById(i).disabled=false; document.getElementById(i).style.opacity='1'; document.getElementById('r-pass').placeholder = 'Set Password for First Login'; } }); document.getElementById('r-branch-select').disabled=false; document.getElementById('r-branch-select').style.opacity='1'; document.getElementById('pass-div').style.display='block'; document.getElementById('new-emp-msg').classList.remove('hidden'); document.getElementById('edit-emp-msg').classList.add('hidden'); document.getElementById('save-emp-btn').classList.remove('hidden'); document.getElementById('update-emp-btn').classList.add('hidden'); document.getElementById('cancel-edit-btn').classList.add('hidden'); };
     window.renderEmpList = () => { let h=''; window.allEmps.forEach(e => h+=`<tr><td><b>${e.id}</b></td><td>${e.name}</td><td>${e.mobile||'-'}</td><td>${e.joinDate||'-'}</td><td><b style="color:${e.status==='Inactive'?'var(--danger)':'var(--secondary)'}">${e.status||'Active'}</b></td><td><button class="btn-blue" style="padding:5px 10px; width:auto;" onclick="window.editEmp('${e.id}')">Edit</button></td></tr>`); const tbody=document.getElementById('a-reg-list'); if(tbody) tbody.innerHTML=h; };
 
-    // 🪪 Premium Digital ID Card
     window.generateIDCardHTML = (emp) => { let statClass = emp.status === 'Inactive' ? 'inactive' : ''; return `<div class="id-card-wrapper"><img src="${window.appLogoBase64}" class="id-logo"><img src="${emp.photo||'https://via.placeholder.com/130'}" class="id-photo"><div class="id-details-container"><div class="watermark"></div><div class="id-row"><div class="id-lbl">EMP ID</div><div class="id-colon">:</div><div class="id-val">${emp.id}</div></div><div class="id-row"><div class="id-lbl">NAME</div><div class="id-colon">:</div><div class="id-val">${emp.name}</div></div><div class="id-row"><div class="id-lbl">ROLE</div><div class="id-colon">:</div><div class="id-val">${emp.designation || 'COLLECTION AGENT'}</div></div><div class="id-row"><div class="id-lbl">BRANCH</div><div class="id-colon">:</div><div class="id-val">${emp.branch}</div></div><div class="id-row"><div class="id-lbl">MOBILE</div><div class="id-colon">:</div><div class="id-val">${emp.mobile||'-'}</div></div><div class="id-row"><div class="id-lbl">JOINED</div><div class="id-colon">:</div><div class="id-val">${emp.joinDate||'-'}</div></div></div><div class="id-status ${statClass}">${emp.status||'ACTIVE'}</div></div>`; };
     window.searchIdentity = () => { const val = document.getElementById('i-search-val').value.toLowerCase().trim(); const emp = window.allEmps.find(e => e.id.toLowerCase() === val || e.name.toLowerCase() === val); if(!emp) return alert("Not found!"); document.getElementById('admin-id-card-view').innerHTML = window.generateIDCardHTML(emp); document.getElementById('i-emp-id').value = emp.id; document.getElementById('i-emp-status').value = emp.status || 'Active'; document.getElementById('identity-result-area').classList.remove('hidden'); };
     window.updateEmpStatus = () => { const id = document.getElementById('i-emp-id').value; const s = document.getElementById('i-emp-status').value; const emp = window.allEmps.find(x => x.id === id); if(emp) { emp.status = s; set(ref(db, 'employees/'+id), emp).then(() => { alert("Status Updated!"); window.searchIdentity(); }); } };
-    window.renderIDCard = () => { if(window.current && window.current.id !== 'admin') document.getElementById('my-digital-id-area').innerHTML = window.generateIDCardHTML(window.current); };
+    window.renderIDCard = () => { if(window.current && window.current.id !== 'admin' && window.current.role !== 'telewings') document.getElementById('my-digital-id-area').innerHTML = window.generateIDCardHTML(window.current); };
 
-    // Assignments
     window.generateAssignBoxes = () => { let count = parseInt(document.getElementById('as-box-count').value); if(!count || count <= 0) return alert("Enter count"); let html = '<div style="display:grid; grid-template-columns: 2fr 1fr 1.5fr; gap:10px; font-weight:bold; color:var(--text-light); margin-bottom:5px;"><span>HP Number</span><span>INS</span><span>Amount (₹)</span></div>'; for(let i=1; i<=count; i++) { let nextHpId = (i < count) ? `as-hp-${i+1}` : `as-btn`; html += `<div style="display:grid; grid-template-columns: 2fr 1fr 1.5fr; gap:10px; margin-bottom:10px;"><input type="text" id="as-hp-${i}" placeholder="${i}. HP" style="margin:0;" onkeypress="if(event.key==='Enter') document.getElementById('as-ins-${i}').focus()"><input type="text" id="as-ins-${i}" placeholder="INS" style="margin:0;" onkeypress="if(event.key==='Enter') document.getElementById('as-amt-${i}').focus()"><input type="number" id="as-amt-${i}" placeholder="Amt" style="margin:0;" onkeypress="if(event.key==='Enter') { event.preventDefault(); document.getElementById('${nextHpId}').focus(); }" oninput="window.calcAssignTotals()"></div>`; } document.getElementById('dynamic-assign-boxes').innerHTML = html; document.getElementById('dynamic-assign-boxes').classList.remove('hidden'); document.getElementById('assign-totals').classList.remove('hidden'); document.getElementById('as-btn').classList.remove('hidden'); };
     window.calcAssignTotals = () => { let tAmt = 0, vAcc = 0; let i = 1; while(document.getElementById(`as-hp-${i}`)) { let hp = document.getElementById(`as-hp-${i}`); let amt = document.getElementById(`as-amt-${i}`); if(hp && hp.value.trim() !== "") vAcc++; if(amt && !isNaN(parseFloat(amt.value))) tAmt += parseFloat(amt.value); i++; } document.getElementById('tot-acc-count').innerText = vAcc; document.getElementById('tot-acc-amt').innerText = "₹" + tAmt; };
     window.assignAccounts = async () => { 
         const eid = document.getElementById('as-emp-sel').value; const mo = document.getElementById('as-month-sel').value; const type = document.getElementById('as-type-sel').value; 
         if(!eid || !mo) return alert("Select Employee & Month!"); 
-        const ex = window.getEmpAssignments(eid, mo); let rHPs = [...ex.r]; let mHPs = [...ex.m]; let rAmt = ex.rAmt; let mAmt = ex.mAmt; let det = {...ex.details}; 
-        let added = 0; let i = 1;
-        while(document.getElementById(`as-hp-${i}`)) {
+        const ex = window.getEmpAssignments(eid, mo); let rHPs = [...ex.r]; let mHPs = [...ex.m]; let rAmt = ex.rAmt; let mAmt = ex.mAmt; let det = {...ex.details}; let added = 0; let i = 1; 
+        const assignedBy = window.current.role === 'admin' ? 'ADMIN' : window.current.id.toUpperCase();
+        while(document.getElementById(`as-hp-${i}`)) { 
             let hp = document.getElementById(`as-hp-${i}`).value.trim(); let ins = document.getElementById(`as-ins-${i}`).value.trim(); let amt = parseFloat(document.getElementById(`as-amt-${i}`).value) || 0; 
             if(hp) { 
                 if(type === 'Regular') { if(!rHPs.includes(hp)) rHPs.push(hp); rAmt += amt; } else { if(!mHPs.includes(hp)) mHPs.push(hp); mAmt += amt; } 
-                det[hp] = { ins: ins, amt: amt, type: type }; added++; 
-            } i++;
+                det[hp] = { ins: ins, amt: amt, type: type, assignedBy: assignedBy }; added++; 
+            } i++; 
         } 
         if(added === 0) return alert("Enter at least 1 account!"); 
         await set(ref(db, `assignments/${eid}/${mo}`), { regularHPs: rHPs, maturedHPs: mHPs, regularTargetAmt: rAmt, maturedTargetAmt: mAmt, details: det }); 
-        alert(`${added} Accounts Assigned!`); 
-        document.getElementById('dynamic-assign-boxes').innerHTML = ""; document.getElementById('dynamic-assign-boxes').classList.add('hidden'); document.getElementById('as-box-count').value = ""; document.getElementById('assign-totals').classList.add('hidden'); document.getElementById('as-btn').classList.add('hidden'); window.renderAssignedList(); 
+        alert(`${added} Accounts Assigned!`); document.getElementById('dynamic-assign-boxes').innerHTML = ""; document.getElementById('dynamic-assign-boxes').classList.add('hidden'); document.getElementById('as-box-count').value = ""; document.getElementById('assign-totals').classList.add('hidden'); document.getElementById('as-btn').classList.add('hidden'); window.renderAssignedList(); 
     };
     window.renderAssignedList = () => { const eid = document.getElementById('as-emp-sel').value; const mo = document.getElementById('as-month-sel').value; const tbody = document.getElementById('as-list-body'); if(!eid || !mo) { tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;">Select Employee & Month</td></tr>`; return; } const ass = window.getEmpAssignments(eid, mo); if(ass.r.length === 0 && ass.m.length === 0) { tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;">No accounts assigned.</td></tr>`; return; } let html = ''; ass.r.forEach(hp => { let d = ass.details[hp] || {}; html += `<tr><td><b>${hp}</b><br><small>Amt: ₹${d.amt} | INS: ${d.ins||'N/A'}</small></td><td><span style="color:var(--primary); font-weight:bold;">🟢 REG</span></td><td><button class="btn-red" style="padding:5px 10px; width:auto;" onclick="window.deleteAssignedHP('${eid}', '${mo}', '${hp}', 'Regular')">Del</button></td></tr>`; }); ass.m.forEach(hp => { let d = ass.details[hp] || {}; html += `<tr><td><b>${hp}</b><br><small>Amt: ₹${d.amt} | INS: ${d.ins||'N/A'}</small></td><td><span style="color:#d97706; font-weight:bold;">🟠 MAT</span></td><td><button class="btn-red" style="padding:5px 10px; width:auto;" onclick="window.deleteAssignedHP('${eid}', '${mo}', '${hp}', 'Matured')">Del</button></td></tr>`; }); tbody.innerHTML = html; };
     window.deleteAssignedHP = async (eid, mo, hp, type) => { if(!confirm(`Delete ${hp}?`)) return; const ex = window.getEmpAssignments(eid, mo); let rHPs = [...ex.r], mHPs = [...ex.m], rAmt = ex.rAmt, mAmt = ex.mAmt, det = {...ex.details}; let delAmt = det[hp] ? (parseFloat(det[hp].amt) || 0) : 0; if(type === 'Regular') { rHPs = rHPs.filter(x => x !== hp); rAmt -= delAmt; } if(type === 'Matured') { mHPs = mHPs.filter(x => x !== hp); mAmt -= delAmt; } delete det[hp]; await set(ref(db, `assignments/${eid}/${mo}`), { regularHPs: rHPs, maturedHPs: mHPs, regularTargetAmt: Math.max(0, rAmt), maturedTargetAmt: Math.max(0, mAmt), details: det }); window.renderAssignedList(); };
 
     window.startGPS = () => { if(navigator.geolocation) { navigator.geolocation.getCurrentPosition(p => { window.gps = p.coords.latitude.toFixed(5)+","+p.coords.longitude.toFixed(5); document.getElementById('gps-status').innerHTML = "✅ GPS CONNECTED"; document.getElementById('gps-status').style.background = "#dcfce7"; document.getElementById('gps-status').style.color = "green"; document.getElementById('gps-status').style.borderColor = "#10b981"; }, e => { document.getElementById('gps-status').innerHTML = "❌ GPS FAILED. Please enable Location."; }); } };
-    window.populateAssignedHPs = () => { if(!window.current||window.current.id==='admin') return; const mo=document.getElementById('emp-dash-month-global').value; const a=window.getEmpAssignments(window.current.id,mo); let o=''; [...a.r,...a.m].forEach(h=>o+=`<option value="${h}">`); document.getElementById('hp-list').innerHTML=o; };
+    window.populateAssignedHPs = () => { if(!window.current||window.current.role==='admin'||window.current.role==='telewings') return; const mo=document.getElementById('emp-dash-month-global').value; const a=window.getEmpAssignments(window.current.id,mo); let o=''; [...a.r,...a.m].forEach(h=>o+=`<option value="${h}">`); document.getElementById('hp-list').innerHTML=o; };
     window.checkHpType = () => { const hp=document.getElementById('v-hp').value.trim(); const mo=document.getElementById('emp-dash-month-global').value; const a=window.getEmpAssignments(window.current.id,mo); if(a.r.includes(hp)) document.getElementById('v-hp-type-display').innerHTML="<span style='color:var(--primary);'>🟢 REGULAR ACCOUNT</span>"; else if(a.m.includes(hp)) document.getElementById('v-hp-type-display').innerHTML="<span style='color:#d97706;'>🟠 MATURED ACCOUNT</span>"; else document.getElementById('v-hp-type-display').innerHTML=""; };
     window.toggleV = () => { const s=document.getElementById('v-stat').value; document.getElementById('v-paid-logic').classList.toggle('hidden', s!=='Paid'); document.getElementById('v-seized-logic').classList.toggle('hidden', s!=='Seized'); document.getElementById('v-unpaid-logic').classList.toggle('hidden', s==='Paid'||s==='Seized'); window.updateDynamicImages(); };
     window.toggleL = () => { const t=document.getElementById('v-pay-type').value; document.getElementById('v-pcr-box').classList.toggle('hidden', t!=='PCR'); document.getElementById('v-lock-box').classList.toggle('hidden', t!=='Lock Amount'); window.updateDynamicImages(); };
     window.togglePCRDate = () => { document.getElementById('v-pcr-date').classList.toggle('hidden', document.getElementById('v-pcr-later').value !== 'Yes'); };
-    window.updateDynamicImages = () => { 
-        const s=document.getElementById('v-stat').value; const p=document.getElementById('v-pay-type').value; const qrV = document.getElementById('v-visited-home').value; const ppfc = document.getElementById('v-ppfc') ? document.getElementById('v-ppfc').value : 'No';
-        ['img-receipt-div','extra-qr-images','img-cust-div','img-house-div','qr-visit-div','v-op-to-div', 'ppfc-no-reason'].forEach(i=> { if(document.getElementById(i)) document.getElementById(i).classList.add('hidden'); });
-        if(s==='Not Paid'){ document.getElementById('img-cust-div').classList.remove('hidden'); document.getElementById('img-house-div').classList.remove('hidden'); document.getElementById('lbl-cust-img').innerText="Customer Photo (Mandatory)"; document.getElementById('lbl-house-img').innerText="House/Vehicle Photo (Mandatory)"; }
-        else if(s==='Seized'){ document.getElementById('img-cust-div').classList.remove('hidden'); document.getElementById('img-house-div').classList.remove('hidden'); document.getElementById('lbl-cust-img').innerText="Seized Bike Photo 1 (Mandatory)"; document.getElementById('lbl-house-img').innerText="Seized Bike Photo 2 (Mandatory)"; }
-        else if(s==='Paid'){ 
-            document.getElementById('lbl-cust-img').innerText="Customer Photo"; document.getElementById('lbl-house-img').innerText="House/Vehicle Photo";
-            if(p==='PCR'){ document.getElementById('lbl-receipt').innerText="PCR Receipt Image"; document.getElementById('img-cust-div').classList.remove('hidden'); document.getElementById('img-receipt-div').classList.remove('hidden'); document.getElementById('img-house-div').classList.remove('hidden'); }
-            else if(p==='Lock Amount'){ document.getElementById('img-cust-div').classList.remove('hidden'); document.getElementById('img-house-div').classList.remove('hidden'); if(ppfc==='Yes'){ document.getElementById('lbl-receipt').innerText="PPFC Receipt"; document.getElementById('img-receipt-div').classList.remove('hidden');} else { document.getElementById('ppfc-no-reason').classList.remove('hidden'); } }
-            else if(p==='Office QR'){ document.getElementById('lbl-receipt').innerText="Payment Proof/Screenshot"; document.getElementById('img-receipt-div').classList.remove('hidden'); document.getElementById('extra-qr-images').classList.remove('hidden'); document.getElementById('qr-visit-div').classList.remove('hidden'); if(qrV==='Yes'){ document.getElementById('img-cust-div').classList.remove('hidden'); document.getElementById('img-house-div').classList.remove('hidden'); } }
-            else if(p==='OP'){ document.getElementById('v-op-to-div').classList.remove('hidden'); document.getElementById('qr-visit-div').classList.remove('hidden'); if(qrV==='Yes'){ document.getElementById('lbl-receipt').innerText="OP Receipt Image"; document.getElementById('img-receipt-div').classList.remove('hidden'); document.getElementById('img-cust-div').classList.remove('hidden'); document.getElementById('img-house-div').classList.remove('hidden'); } }
-        } 
-    };
+    window.updateDynamicImages = () => { const s=document.getElementById('v-stat').value; const p=document.getElementById('v-pay-type').value; const qrV = document.getElementById('v-visited-home').value; const ppfc = document.getElementById('v-ppfc') ? document.getElementById('v-ppfc').value : 'No'; ['img-receipt-div','extra-qr-images','img-cust-div','img-house-div','qr-visit-div','v-op-to-div', 'ppfc-no-reason'].forEach(i=> { if(document.getElementById(i)) document.getElementById(i).classList.add('hidden'); }); if(s==='Not Paid'){ document.getElementById('img-cust-div').classList.remove('hidden'); document.getElementById('img-house-div').classList.remove('hidden'); document.getElementById('lbl-cust-img').innerText="Customer Photo (Mandatory)"; document.getElementById('lbl-house-img').innerText="House/Vehicle Photo (Mandatory)"; } else if(s==='Seized'){ document.getElementById('img-cust-div').classList.remove('hidden'); document.getElementById('img-house-div').classList.remove('hidden'); document.getElementById('lbl-cust-img').innerText="Seized Bike Photo 1 (Mandatory)"; document.getElementById('lbl-house-img').innerText="Seized Bike Photo 2 (Mandatory)"; } else if(s==='Paid'){ document.getElementById('lbl-cust-img').innerText="Customer Photo"; document.getElementById('lbl-house-img').innerText="House/Vehicle Photo"; if(p==='PCR'){ document.getElementById('lbl-receipt').innerText="PCR Receipt Image"; document.getElementById('img-cust-div').classList.remove('hidden'); document.getElementById('img-receipt-div').classList.remove('hidden'); document.getElementById('img-house-div').classList.remove('hidden'); } else if(p==='Lock Amount'){ document.getElementById('img-cust-div').classList.remove('hidden'); document.getElementById('img-house-div').classList.remove('hidden'); if(ppfc==='Yes'){ document.getElementById('lbl-receipt').innerText="PPFC Receipt"; document.getElementById('img-receipt-div').classList.remove('hidden');} else { document.getElementById('ppfc-no-reason').classList.remove('hidden'); } } else if(p==='Office QR'){ document.getElementById('lbl-receipt').innerText="Payment Proof/Screenshot"; document.getElementById('img-receipt-div').classList.remove('hidden'); document.getElementById('extra-qr-images').classList.remove('hidden'); document.getElementById('qr-visit-div').classList.remove('hidden'); if(qrV==='Yes'){ document.getElementById('img-cust-div').classList.remove('hidden'); document.getElementById('img-house-div').classList.remove('hidden'); } } else if(p==='OP'){ document.getElementById('v-op-to-div').classList.remove('hidden'); document.getElementById('qr-visit-div').classList.remove('hidden'); if(qrV==='Yes'){ document.getElementById('lbl-receipt').innerText="OP Receipt Image"; document.getElementById('img-receipt-div').classList.remove('hidden'); document.getElementById('img-cust-div').classList.remove('hidden'); document.getElementById('img-house-div').classList.remove('hidden'); } } } };
 
     window.submitVisit = async () => {
-        if(!window.current || window.current.id==='admin' || window.current.status === 'Inactive') return alert("Cannot submit!");
+        if(!window.current || window.current.role==='admin' || window.current.role==='telewings' || window.current.status === 'Inactive') return alert("Cannot submit!");
         const hp = document.getElementById('v-hp').value.trim(); const mo = document.getElementById('emp-dash-month-global').value;
         if(!hp || !document.getElementById('v-name').value) return alert("Customer Name & HP are mandatory!");
         const ass = window.getEmpAssignments(window.current.id, mo); if(!ass.r.includes(hp) && !ass.m.includes(hp)) return alert("HP Not assigned for this month!");
@@ -518,21 +880,18 @@
             if(document.getElementById('img-receipt-2') && document.getElementById('img-receipt-2').files[0]) pr2 = await window.compressImage(document.getElementById('img-receipt-2').files[0]);
             if(document.getElementById('img-receipt-3') && document.getElementById('img-receipt-3').files[0]) pr3 = await window.compressImage(document.getElementById('img-receipt-3').files[0]);
             if(document.getElementById('img-receipt-4') && document.getElementById('img-receipt-4').files[0]) pr4 = await window.compressImage(document.getElementById('img-receipt-4').files[0]);
-            
             let pType = document.getElementById('v-pay-type').value; let stat = document.getElementById('v-stat').value;
             let ppfcNoR = "---"; if(stat==='Paid' && pType==='Lock Amount' && document.getElementById('v-ppfc').value === 'No') ppfcNoR = document.getElementById('v-ppfc-unr').value || "No Reason Given";
-
             const data = { eid:window.current.id, ename:window.current.name, cname:document.getElementById('v-name').value, hp:hp, accType:ass.r.includes(hp)?'Regular':'Matured', custMobile:document.getElementById('v-number').value||"---", vill:document.getElementById('v-vill').value||"---", stat:stat, amt:document.getElementById('v-amt').value||0, type:pType, pcrDate:document.getElementById('v-pcr-date').value||"---", ppfc:document.getElementById('v-ppfc')?document.getElementById('v-ppfc').value:"No", ppfcUnr: ppfcNoR, unr:document.getElementById('v-unr').value||"---", next:document.getElementById('v-next').value||"---", seizeTime:document.getElementById('v-seize-time').value||"---", opTo:document.getElementById('v-op-to').value||"---", loc:window.gps, i1:p1, i2:p2, ir:pr, ir2:pr2, ir3:pr3, ir4:pr4, date:window.getLocalDate(), time:window.getLocalTime() };
-            
             await push(ref(db, 'visits'), data); 
             
-            // Telegram Alert
             try {
-                const botToken = "8642256494:AAFSLiYtB6UgxQXXneLGubZs0LeeJ9t7uDQ"; const chatId = "7860895973"; 
-                const empMob = window.current.mobile || "N/A"; const brName = window.current.branch || "N/A";
+                const botToken = "8642256494:AAFSLiYtB6UgxQXXneLGubZs0LeeJ9t7uDQ"; const adminChatId = "7860895973"; const empMob = window.current.mobile || "N/A"; const brName = window.current.branch || "N/A";
+                const branchObj = window.allBranches.find(b => b.name === brName); const branchChatId = branchObj ? branchObj.chatId : null;
                 let extraMsg = stat === 'Not Paid' ? `\n🚫 *Reason:* ${data.unr}\n📅 *Next Date:* ${data.next}` : stat === 'Paid' ? `\n💳 *Type:* ${data.type}\n🔖 *PPFC:* ${data.ppfc}${data.ppfcUnr !== '---' ? `\n⚠️ *PPFC Reason:* ${data.ppfcUnr}` : ''}` : `\n⏱ *Seize Time:* ${data.seizeTime}`;
                 const msg = `🔔 *New Visit Alert!*\n🏢 *Branch:* ${brName}\n👤 *Emp:* ${data.ename}\n📞 *Emp Mob:* ${empMob}\n🤝 *Cust:* ${data.cname} (${data.accType})\n📱 *Cust Mob:* ${data.custMobile}\n📄 *HP:* ${data.hp}\n📊 *Stat:* ${data.stat}\n💰 *Amt:* ₹${data.amt}${extraMsg}\n🗺 *Loc:* [View Map](https://maps.google.com/?q=${data.loc})\n⏰ *Time:* ${data.date}, ${data.time}`;
-                await fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
+                await fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${adminChatId}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
+                if(branchChatId && branchChatId.trim() !== '') { await fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${branchChatId}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`); }
             } catch(tgErr) { console.log(tgErr); }
 
             alert("Visit Submitted Successfully!"); 
@@ -545,44 +904,21 @@
     window.buildLocLink = (loc) => loc && loc!=='0,0' ? `<a href="https://maps.google.com/?q=${loc}" target="_blank" style="color:#3b82f6; font-weight:bold; text-decoration:underline;">📍 Map</a>` : 'No GPS';
 
     window.updateAdminDashboardStats = () => {
-        if(!window.current || window.current.id !== 'admin') return;
+        if(!window.current || window.current.role !== 'admin') return;
         const moInput = document.getElementById('admin-dash-month-global'); let mo = moInput ? moInput.value : window.getLocalDate().slice(0, 7); if(moInput) moInput.value = mo;
         document.getElementById('admin-overview-month-label').innerText = mo; document.getElementById('stat-tot-emps').innerText = window.allEmps.length; document.getElementById('stat-act-emps').innerText = window.allEmps.filter(e => e.status !== 'Inactive').length; document.getElementById('stat-tot-branches').innerText = window.allBranches.length;
         let rt=0, mt=0, rc=0, mc=0, rac=0, mac=0, rsa=0, msa=0; let rComp=new Set(), mComp=new Set(), rSeiz=new Set(), mSeiz=new Set();
         Object.keys(window.allAssigns).forEach(eid => { const a = window.allAssigns[eid]; if(a && a[mo]) { rt+=parseFloat(a[mo].regularTargetAmt)||0; mt+=parseFloat(a[mo].maturedTargetAmt)||0; rac+=(a[mo].regularHPs||[]).length; mac+=(a[mo].maturedHPs||[]).length; } });
-        window.allVisits.filter(v => v.date.startsWith(mo)).forEach(v => { 
-            const ass = window.getEmpAssignments(v.eid, mo); 
-            let isR = ass.r.includes(v.hp), isM = ass.m.includes(v.hp); 
-            if(!isR && !isM) { isR=v.accType==='Regular'; isM=v.accType==='Matured'; } 
-            if (v.stat === 'Paid') { 
-                if(isR) { rc+=parseFloat(v.amt||0); rComp.add(v.hp); } 
-                if(isM) { mc+=parseFloat(v.amt||0); mComp.add(v.hp); } 
-            } else if (v.stat === 'Seized') { 
-                let sa = (ass.details&&ass.details[v.hp])?parseFloat(ass.details[v.hp].amt||0):0; 
-                if(isR) { if(!rSeiz.has(v.hp)) { rsa+=sa; rSeiz.add(v.hp); } } 
-                if(isM) { if(!mSeiz.has(v.hp)) { msa+=sa; mSeiz.add(v.hp); } } 
-            } 
-        });
+        window.allVisits.filter(v => v.date.startsWith(mo)).forEach(v => { const ass = window.getEmpAssignments(v.eid, mo); let isR = ass.r.includes(v.hp), isM = ass.m.includes(v.hp); if(!isR && !isM) { isR=v.accType==='Regular'; isM=v.accType==='Matured'; } if (v.stat === 'Paid') { if(isR) { rc+=parseFloat(v.amt||0); rComp.add(v.hp); } if(isM) { mc+=parseFloat(v.amt||0); mComp.add(v.hp); } } else if (v.stat === 'Seized') { let sa = (ass.details&&ass.details[v.hp])?parseFloat(ass.details[v.hp].amt||0):0; if(isR) { if(!rSeiz.has(v.hp)) { rsa+=sa; rSeiz.add(v.hp); } } if(isM) { if(!mSeiz.has(v.hp)) { msa+=sa; mSeiz.add(v.hp); } } } });
         document.getElementById('stat-reg-assign-c').innerText = rac; document.getElementById('stat-reg-comp-c').innerText = rComp.size; document.getElementById('stat-reg-seized-c').innerText = rSeiz.size; document.getElementById('stat-reg-pend-c').innerText = rac - rComp.size - rSeiz.size; document.getElementById('stat-reg-t-amt').innerText = "₹"+rt; document.getElementById('stat-reg-c-amt').innerText = "₹"+rc; document.getElementById('stat-reg-seized-amt').innerText = "₹"+rsa; document.getElementById('stat-reg-r-amt').innerText = "₹"+Math.max(0, rt-rc-rsa);
         document.getElementById('stat-mat-assign-c').innerText = mac; document.getElementById('stat-mat-comp-c').innerText = mComp.size; document.getElementById('stat-mat-seized-c').innerText = mSeiz.size; document.getElementById('stat-mat-pend-c').innerText = mac - mComp.size - mSeiz.size; document.getElementById('stat-mat-t-amt').innerText = "₹"+mt; document.getElementById('stat-mat-c-amt').innerText = "₹"+mc; document.getElementById('stat-mat-seized-amt').innerText = "₹"+msa; document.getElementById('stat-mat-r-amt').innerText = "₹"+Math.max(0, mt-mc-msa);
     };
 
     window.updateEmployeeDashboardStats = () => {
-        if(!window.current || window.current.id === 'admin') return; const mo = document.getElementById('emp-dash-month-global').value;
+        if(!window.current || window.current.role === 'admin' || window.current.role === 'telewings') return; const mo = document.getElementById('emp-dash-month-global').value;
         const ass = window.getEmpAssignments(window.current.id, mo); const myV = window.allVisits.filter(v => v.eid === window.current.id && v.date.startsWith(mo));
         let rc=0, mc=0, rsa=0, msa=0; let rComp=new Set(), mComp=new Set(), rSeiz=new Set(), mSeiz=new Set();
-        myV.forEach(v => { 
-            let isR = ass.r.includes(v.hp), isM = ass.m.includes(v.hp); 
-            if(!isR&&!isM){isR=v.accType==='Regular';isM=v.accType==='Matured';} 
-            if (v.stat === 'Paid') { 
-                if(isR) { rc+=parseFloat(v.amt||0); rComp.add(v.hp); } 
-                if(isM) { mc+=parseFloat(v.amt||0); mComp.add(v.hp); } 
-            } else if (v.stat === 'Seized') { 
-                let sa = (ass.details&&ass.details[v.hp])?parseFloat(ass.details[v.hp].amt||0):0; 
-                if(isR) { if(!rSeiz.has(v.hp)) { rsa+=sa; rSeiz.add(v.hp); } } 
-                if(isM) { if(!mSeiz.has(v.hp)) { msa+=sa; mSeiz.add(v.hp); } } 
-            } 
-        });
+        myV.forEach(v => { let isR = ass.r.includes(v.hp), isM = ass.m.includes(v.hp); if(!isR&&!isM){isR=v.accType==='Regular';isM=v.accType==='Matured';} if (v.stat === 'Paid') { if(isR) { rc+=parseFloat(v.amt||0); rComp.add(v.hp); } if(isM) { mc+=parseFloat(v.amt||0); mComp.add(v.hp); } } else if (v.stat === 'Seized') { let sa = (ass.details&&ass.details[v.hp])?parseFloat(ass.details[v.hp].amt||0):0; if(isR) { if(!rSeiz.has(v.hp)) { rsa+=sa; rSeiz.add(v.hp); } } if(isM) { if(!mSeiz.has(v.hp)) { msa+=sa; mSeiz.add(v.hp); } } } });
         document.getElementById('e-reg-assign').innerText = ass.r.length; document.getElementById('e-reg-comp').innerText = rComp.size; document.getElementById('e-reg-seized-c').innerText = rSeiz.size; document.getElementById('e-reg-t-amt').innerText = ass.rAmt || 0; document.getElementById('e-reg-c-amt').innerText = rc; document.getElementById('e-reg-seized-amt').innerText = rsa;
         document.getElementById('e-mat-assign').innerText = ass.m.length; document.getElementById('e-mat-comp').innerText = mComp.size; document.getElementById('e-mat-seized-c').innerText = mSeiz.size; document.getElementById('e-mat-t-amt').innerText = ass.mAmt || 0; document.getElementById('e-mat-c-amt').innerText = mc; document.getElementById('e-mat-seized-amt').innerText = msa;
         const paid = myV.filter(v => v.stat === 'Paid'); let pa=0, la=0, qa=0, oa=0, pc=0, lc=0, qc=0, oc=0;
@@ -609,25 +945,53 @@
     window.onGlobalMonthChange = () => { window.populateAssignedHPs(); window.updateEmployeeDashboardStats(); document.getElementById('targ-month').value = document.getElementById('emp-dash-month-global').value; if(!document.getElementById('e-target').classList.contains('hidden')) window.renderTarget(); };
     window.renderEmpVisitStatus = () => { const mo=document.getElementById('e-vstat-month').value; const ass = window.getEmpAssignments(window.current.id, mo); const hps = [...ass.r, ...ass.m]; const vsts = window.allVisits.filter(v => v.eid === window.current.id && v.date.startsWith(mo)); let h='', c=0; hps.forEach(hp => { let d=ass.details[hp]||{}; const v = vsts.find(x => x.hp == hp); if(v) { c++; h+=`<tr><td>${hp}</td><td>${d.ins||'N/A'}</td><td>${v.cname}</td><td>✅ VISITED</td><td>${v.date}</td></tr>`; } else { h+=`<tr><td>${hp}</td><td>${d.ins||'N/A'}</td><td>---</td><td>🔴 PENDING</td><td>---</td></tr>`; } }); document.getElementById('e-vstat-table-body').innerHTML = h; document.getElementById('e-vstat-summary').innerText = `Total: ${hps.length} | Visited: ${c} | Pend: ${hps.length-c}`; document.getElementById('e-vstat-summary').classList.remove('hidden'); };
     window.checkVisitStatus = () => { const id=document.getElementById('stat-em-sel').value, mo=document.getElementById('stat-month-val').value; if(!id||!mo) return; const ass = window.getEmpAssignments(id, mo); const hps = [...ass.r, ...ass.m]; const vsts = window.allVisits.filter(v => v.eid === id && v.date.startsWith(mo)); let h='', c=0; hps.forEach(hp => { const v = vsts.find(x => x.hp == hp); if(v) { c++; h+=`<tr><td>${hp}</td><td>${v.cname}</td><td>✅ VISITED</td><td>${v.date}</td></tr>`; } else { h+=`<tr><td>${hp}</td><td>---</td><td>🔴 PENDING</td><td>---</td></tr>`; } }); document.getElementById('stat-table-body').innerHTML = h; document.getElementById('stat-summary-box').innerText = `Total: ${hps.length} | Visited: ${c} | Pend: ${hps.length-c}`; document.getElementById('stat-summary-box').classList.remove('hidden'); };
-    
     window.renderBranchReport = () => { const b = document.getElementById('b-search-select').value; const mo = document.getElementById('b-month-val').value; if(!b || !mo) return alert("Select Branch & Month!"); let h = `<table class="report-table"><thead><tr><th>Name</th><th>Target Cnt</th><th>Target ₹</th><th>Done Cnt</th><th>Seized Cnt</th><th>Seized ₹</th><th>Collected ₹</th><th>%</th></tr></thead><tbody>`; let tot = 0, totS = 0; window.allEmps.filter(e => e.branch === b).forEach(e => { const a = window.getEmpAssignments(e.id, mo); const t = a.r.length + a.m.length; const tAmt = a.rAmt + a.mAmt; const v = window.allVisits.filter(x => x.eid === e.id && x.date.startsWith(mo) && (x.stat === 'Paid' || x.stat === 'Seized')); const d = [...new Set(v.filter(x=>x.stat==='Paid').map(x => x.hp))].length; const sC = [...new Set(v.filter(x=>x.stat==='Seized').map(x => x.hp))].length; const amt = v.filter(x => x.stat === 'Paid').reduce((s, x) => s + parseFloat(x.amt || 0), 0); const sAmt = v.filter(x => x.stat === 'Seized').reduce((s, x) => s + ((a.details&&a.details[x.hp])?parseFloat(a.details[x.hp].amt||0):0), 0); tot += amt; totS += sAmt; let p = tAmt > 0 ? (((amt+sAmt)/tAmt)*100).toFixed(1) : 0; h += `<tr><td><b>${e.name}</b></td><td>${t}</td><td>₹${tAmt}</td><td><b style="color:var(--secondary);">${d}</b></td><td><b style="color:var(--seized);">${sC}</b></td><td><b style="color:var(--seized);">₹${sAmt}</b></td><td><b style="color:var(--primary);">₹${amt}</b></td><td>${p}%</td></tr>`; }); h += `</tbody></table><div class="summary-box" style="margin-top:15px; display:flex; justify-content:space-around;"><div>TOTAL COL: ₹${tot}</div><div>TOTAL SEIZED: ₹${totS}</div></div>`; document.getElementById('b-results').innerHTML = h; };
     window.renderBranchPerformance = () => { const branch = document.getElementById('b-perf-branch').value; const mo = document.getElementById('b-perf-month').value; const type = document.getElementById('b-perf-type').value; if(!branch || !mo) return alert("Select Branch and Month!"); const eIds = window.allEmps.filter(e => e.branch === branch).map(e => e.id); let rt=0, rAmt=0, mt=0, mAmt=0, rcAmt=0, mcAmt=0, rsa=0, msa=0; let rComp=new Set(), mComp=new Set(), rSeiz=new Set(), mSeiz=new Set(); eIds.forEach(id => { const a = window.getEmpAssignments(id, mo); rt += a.r.length; rAmt += a.rAmt; mt += a.m.length; mAmt += a.mAmt; }); window.allVisits.filter(v => eIds.includes(v.eid) && v.date.startsWith(mo)).forEach(v => { const a = window.getEmpAssignments(v.eid, mo); let isR = a.r.includes(v.hp); let isM = a.m.includes(v.hp); if(!isR&&!isM){isR=v.accType==='Regular';isM=v.accType==='Matured';} if (v.stat==='Paid') { if (isR) { rComp.add(v.hp); rcAmt += parseFloat(v.amt || 0); } if (isM) { mComp.add(v.hp); mcAmt += parseFloat(v.amt || 0); } } else if(v.stat==='Seized') { let sa = (a.details&&a.details[v.hp])?parseFloat(a.details[v.hp].amt||0):0; if(isR) { if(!rSeiz.has(v.hp)){ rsa += sa; rSeiz.add(v.hp); } } if(isM) { if(!mSeiz.has(v.hp)){ msa += sa; mSeiz.add(v.hp); } } } }); document.getElementById('bp-reg-assign-c').innerText = rt; document.getElementById('bp-reg-comp-c').innerText = rComp.size; document.getElementById('bp-reg-seized-c').innerText = rSeiz.size; document.getElementById('bp-reg-t-amt').innerText = "₹" + rAmt; document.getElementById('bp-reg-c-amt').innerText = "₹" + rcAmt; document.getElementById('bp-reg-seized-amt').innerText = "₹" + rsa; document.getElementById('bp-mat-assign-c').innerText = mt; document.getElementById('bp-mat-comp-c').innerText = mComp.size; document.getElementById('bp-mat-seized-c').innerText = mSeiz.size; document.getElementById('bp-mat-t-amt').innerText = "₹" + mAmt; document.getElementById('bp-mat-c-amt').innerText = "₹" + mcAmt; document.getElementById('bp-mat-seized-amt').innerText = "₹" + msa; document.getElementById('bp-reg-section').classList.add('hidden'); document.getElementById('bp-mat-section').classList.add('hidden'); if(type === 'Regular' || type === 'Both') document.getElementById('bp-reg-section').classList.remove('hidden'); if(type === 'Matured' || type === 'Both') document.getElementById('bp-mat-section').classList.remove('hidden'); document.getElementById('bp-results-area').classList.remove('hidden'); document.getElementById('bp-title-display').innerText = `PERFORMANCE SUMMARY - ${branch} (${type})`; };
     
-    window.renderInsReport = () => { 
-        const branch = document.getElementById('ins-branch-sel').value, mo = document.getElementById('ins-month-val').value, type = document.getElementById('ins-type-sel').value, fromVal = document.getElementById('ins-from').value, toVal = document.getElementById('ins-to').value; if(!branch || !mo) return alert("Select Branch and Month!"); const eIds = window.allEmps.filter(e => e.branch === branch).map(e => e.id); let insD = {}; let isC = fromVal && toVal; let st = isC?parseInt(fromVal):1, en = isC?parseInt(toVal):9; if(isC) { for(let i=st; i<=en; i++) insD[i.toString()] = { tA: 0, tAm: 0, pC:0, pA:0, lC:0, lA:0, qC:0, qA:0, oC:0, oA:0, sC:0, sA:0, colAmt:0 }; } else { for(let i=1; i<=9; i++) insD[i.toString()] = { tA: 0, tAm: 0, pC:0, pA:0, lC:0, lA:0, qC:0, qA:0, oC:0, oA:0, sC:0, sA:0, colAmt:0 }; insD["10+"] = { tA: 0, tAm: 0, pC:0, pA:0, lC:0, lA:0, qC:0, qA:0, oC:0, oA:0, sC:0, sA:0, colAmt:0 }; } 
-        eIds.forEach(id => { const ass = window.getEmpAssignments(id, mo); let hps = type==='Both'?[...ass.r,...ass.m]:(type==='Regular'?[...ass.r]:[...ass.m]); hps.forEach(hp => { let d = ass.details[hp]||{}; let iv = parseInt(d.ins)||1; let k = isC?(iv>=st&&iv<=en?iv.toString():""):(iv>=10?"10+":iv.toString()); if(k&&insD[k]) { insD[k].tA++; insD[k].tAm+=parseFloat(d.amt)||0; } }); }); 
-        window.allVisits.filter(v => eIds.includes(v.eid) && v.date.startsWith(mo)).forEach(v => { const ass = window.getEmpAssignments(v.eid, mo); let isR = ass.r.includes(v.hp), isM = ass.m.includes(v.hp); if(!isR&&!isM){isR=v.accType==='Regular';isM=v.accType==='Matured';} let valid=(type==='Both'&&(isR||isM))||(type==='Regular'&&isR)||(type==='Matured'&&isM); if(valid) { let iv = parseInt((ass.details[v.hp]||{}).ins)||1; let k = isC?(iv>=st&&iv<=en?iv.toString():""):(iv>=10?"10+":iv.toString()); if(k&&insD[k]) { if(v.stat==='Paid'){ let vA=parseFloat(v.amt||0); insD[k].colAmt+=vA; if(v.type==='PCR'){insD[k].pC++; insD[k].pA+=vA;} else if(v.type==='Lock Amount'){insD[k].lC++; insD[k].lA+=vA;} else if(v.type==='Office QR'){insD[k].qC++; insD[k].qA+=vA;} else if(v.type&&v.type.startsWith('OP')){insD[k].oC++; insD[k].oA+=vA;} } else if(v.stat==='Seized'){ let sA=parseFloat((ass.details[v.hp]||{}).amt||0); insD[k].sC++; insD[k].sA+=sA; } } } }); 
-        let h='', sn=1, ttA=0, ttAm=0, tpC=0, tpA=0, tlC=0, tlA=0, tqC=0, tqA=0, toC=0, toA=0, tsC=0, tsA=0, tcAm=0, tRem=0; 
-        Object.keys(insD).forEach(k => { let d=insD[k]; let rem=Math.max(0, d.tAm-d.colAmt-d.sA); let pct=d.tAm>0?(((d.colAmt+d.sA)/d.tAm)*100).toFixed(1):0; let pc=pct>=100?'var(--secondary)':'var(--danger)'; ttA+=d.tA; ttAm+=d.tAm; tpC+=d.pC; tpA+=d.pA; tlC+=d.lC; tlA+=d.lA; tqC+=d.qC; tqA+=d.qA; toC+=d.oC; toA+=d.oA; tsC+=d.sC; tsA+=d.sA; tcAm+=d.colAmt; tRem+=rem; h+=`<tr><td><b>${k}</b></td><td>${d.tA} <small>(₹${d.tAm})</small></td><td>${d.pC} <small>(₹${d.pA})</small></td><td>${d.lC} <small>(₹${d.lA})</small></td><td>${d.qC} <small>(₹${d.qA})</small></td><td>${d.oC} <small>(₹${d.oA})</small></td><td><b style="color:var(--seized)">${d.sC}</b> <small>(₹${d.sA})</small></td><td><b style="color:var(--primary)">₹${d.colAmt}</b></td><td><b style="color:var(--danger)">₹${rem}</b></td><td><b style="color:${pc}">${pct}%</b></td></tr>`; }); 
-        if(h==='') h='<tr><td colspan="10" align="center">No Data</td></tr>'; document.getElementById('ins-table-body').innerHTML=h; 
-        document.getElementById('ins-table-foot').innerHTML = `<tr><td>TOTAL</td><td>${ttA} (₹${ttAm})</td><td>${tpC} (₹${tpA})</td><td>${tlC} (₹${tlA})</td><td>${tqC} (₹${tqA})</td><td>${toC} (₹${toA})</td><td>${tsC} (₹${tsA})</td><td>₹${tcAm}</td><td>₹${tRem}</td><td>-</td></tr>`;
-        document.getElementById('ins-summary').innerHTML=`Assigned: ${ttA} (₹${ttAm}) | Total Col Amt: ₹${tcAm} | Remaining Amt: ₹${tRem}`; document.getElementById('ins-summary').classList.remove('hidden'); 
-    };
+    // --- INS REPORT (ADDED SEIZED AMOUNT TO TOTAL COL) ---
+    window.renderInsReport = () => { const branch = document.getElementById('ins-branch-sel').value, mo = document.getElementById('ins-month-val').value, type = document.getElementById('ins-type-sel').value, fromVal = document.getElementById('ins-from').value, toVal = document.getElementById('ins-to').value; if(!branch || !mo) return alert("Select Branch and Month!"); const eIds = window.allEmps.filter(e => e.branch === branch).map(e => e.id); let insD = {}; let isC = fromVal && toVal; let st = isC?parseInt(fromVal):1, en = isC?parseInt(toVal):9; if(isC) { for(let i=st; i<=en; i++) insD[i.toString()] = { tA: 0, tAm: 0, pC:0, pA:0, lC:0, lA:0, qC:0, qA:0, oC:0, oA:0, sC:0, sA:0, colAmt:0 }; } else { for(let i=1; i<=9; i++) insD[i.toString()] = { tA: 0, tAm: 0, pC:0, pA:0, lC:0, lA:0, qC:0, qA:0, oC:0, oA:0, sC:0, sA:0, colAmt:0 }; insD["10+"] = { tA: 0, tAm: 0, pC:0, pA:0, lC:0, lA:0, qC:0, qA:0, oC:0, oA:0, sC:0, sA:0, colAmt:0 }; } eIds.forEach(id => { const ass = window.getEmpAssignments(id, mo); let hps = type==='Both'?[...ass.r,...ass.m]:(type==='Regular'?[...ass.r]:[...ass.m]); hps.forEach(hp => { let d = ass.details[hp]||{}; let iv = parseInt(d.ins)||1; let k = isC?(iv>=st&&iv<=en?iv.toString():""):(iv>=10?"10+":iv.toString()); if(k&&insD[k]) { insD[k].tA++; insD[k].tAm+=parseFloat(d.amt)||0; } }); }); window.allVisits.filter(v => eIds.includes(v.eid) && v.date.startsWith(mo)).forEach(v => { const ass = window.getEmpAssignments(v.eid, mo); let isR = ass.r.includes(v.hp), isM = ass.m.includes(v.hp); if(!isR&&!isM){isR=v.accType==='Regular';isM=v.accType==='Matured';} let valid=(type==='Both'&&(isR||isM))||(type==='Regular'&&isR)||(type==='Matured'&&isM); if(valid) { let iv = parseInt((ass.details[v.hp]||{}).ins)||1; let k = isC?(iv>=st&&iv<=en?iv.toString():""):(iv>=10?"10+":iv.toString()); if(k&&insD[k]) { if(v.stat==='Paid'){ let vA=parseFloat(v.amt||0); insD[k].colAmt+=vA; if(v.type==='PCR'){insD[k].pC++; insD[k].pA+=vA;} else if(v.type==='Lock Amount'){insD[k].lC++; insD[k].lA+=vA;} else if(v.type==='Office QR'){insD[k].qC++; insD[k].qA+=vA;} else if(v.type&&v.type.startsWith('OP')){insD[k].oC++; insD[k].oA+=vA;} } else if(v.stat==='Seized'){ let sA=parseFloat((ass.details[v.hp]||{}).amt||0); insD[k].sC++; insD[k].sA+=sA; } } } }); let h='', sn=1, ttA=0, ttAm=0, tpC=0, tpA=0, tlC=0, tlA=0, tqC=0, tqA=0, toC=0, toA=0, tsC=0, tsA=0, tcAm=0, tRem=0; Object.keys(insD).forEach(k => { let d=insD[k]; let rem=Math.max(0, d.tAm-d.colAmt-d.sA); let pct=d.tAm>0?(((d.colAmt+d.sA)/d.tAm)*100).toFixed(1):0; let pc=pct>=100?'var(--secondary)':'var(--danger)'; ttA+=d.tA; ttAm+=d.tAm; tpC+=d.pC; tpA+=d.pA; tlC+=d.lC; tlA+=d.lA; tqC+=d.qC; tqA+=d.qA; toC+=d.oC; toA+=d.oA; tsC+=d.sC; tsA+=d.sA; tcAm+=d.colAmt; tRem+=rem; 
+        
+        let displayTotalCol = d.colAmt + d.sA; // Seized amount is added to display Column
 
-    window.renderReminders = () => { let d=document.getElementById('rem-date').value; if(!d) { d=window.getLocalDate(); document.getElementById('rem-date').value=d; } const r=window.allVisits.filter(v=>v.eid===window.current.id&&v.stat==='Not Paid'&&v.next===d); let h=''; r.forEach(v => h+=`<tr><td>${v.hp}</td><td>${v.cname}</td><td>${v.custMobile}</td><td>${v.unr}</td></tr>`); document.getElementById('rem-table-body').innerHTML = h||`<tr><td colspan="4" align="center">No Reminders</td></tr>`; };
+        h+=`<tr><td><b>${k}</b></td><td>${d.tA} <small>(₹${d.tAm})</small></td><td>${d.pC} <small>(₹${d.pA})</small></td><td>${d.lC} <small>(₹${d.lA})</small></td><td>${d.qC} <small>(₹${d.qA})</small></td><td>${d.oC} <small>(₹${d.oA})</small></td><td><b style="color:var(--seized)">${d.sC}</b> <small>(₹${d.sA})</small></td><td><b style="color:var(--primary)">₹${displayTotalCol}</b></td><td><b style="color:var(--danger)">₹${rem}</b></td><td><b style="color:${pc}">${pct}%</b></td></tr>`; }); if(h==='') h='<tr><td colspan="10" align="center">No Data</td></tr>'; document.getElementById('ins-table-body').innerHTML=h; document.getElementById('ins-table-foot').innerHTML = `<tr><td>TOTAL</td><td>${ttA} (₹${ttAm})</td><td>${tpC} (₹${tpA})</td><td>${tlC} (₹${tlA})</td><td>${tqC} (₹${tqA})</td><td>${toC} (₹${toA})</td><td>${tsC} (₹${tsA})</td><td>₹${tcAm + tsA}</td><td>₹${tRem}</td><td>-</td></tr>`; document.getElementById('ins-summary').innerHTML=`Assigned: ${ttA} (₹${ttAm}) | Total Col Amt (incl Seized): ₹${tcAm + tsA} | Remaining Amt: ₹${tRem}`; document.getElementById('ins-summary').classList.remove('hidden'); };
+    
+    // --- REMINDERS (WITH CALL BUTTONS) ---
+    window.renderReminders = () => { 
+        let d=document.getElementById('rem-date').value; if(!d) { d=window.getLocalDate(); document.getElementById('rem-date').value=d; } 
+        const r=window.allVisits.filter(v=>v.eid===window.current.id&&v.stat==='Not Paid'&&v.next===d); let h=''; 
+        r.forEach(v => {
+            let callBtns = v.custMobile && v.custMobile !== "---" ? `<a href="tel:${v.custMobile}" style="text-decoration:none; margin-right:15px; font-size:22px;">📞</a> <a href="https://wa.me/91${v.custMobile}" target="_blank" style="text-decoration:none; font-size:22px;">💬</a>` : `<small style="color:gray;">No Number</small>`;
+            h+=`<tr><td>${v.hp}</td><td>${v.cname}</td><td>${callBtns} <br><small>${v.custMobile}</small></td><td style="color:var(--danger); font-weight:bold;">${v.unr}</td></tr>`;
+        }); 
+        document.getElementById('rem-table-body').innerHTML = h||`<tr><td colspan="4" align="center">No Reminders for this date</td></tr>`; 
+    };
+    
     window.renderAttendance = () => { const b=document.getElementById('att-branch-sel').value, mo=document.getElementById('att-month').value; if(!b||!mo) return; let h=''; window.allEmps.filter(e=>e.branch===b).forEach(e => { const d = [...new Set(window.allVisits.filter(v=>v.eid===e.id&&v.date.startsWith(mo)).map(v=>v.date))].length; h+=`<tr><td>${e.name}</td><td>${e.id}</td><td>${e.branch}</td><td><b style="color:var(--secondary);">${d} Days</b></td></tr>`; }); document.getElementById('att-body').innerHTML=h; };
     
-    window.showSub = (id, element = null) => { const secured = ['a-branch-mgmt', 'a-reg', 'a-settings']; if (window.current && window.current.id === 'admin' && secured.includes(id) && !window.isSecuredUnlocked) { window.pendingTargetId = id; window.pendingTargetNav = element; document.querySelectorAll('.sub-section').forEach(s => s.classList.add('hidden')); document.getElementById('a-lock-screen').classList.remove('hidden'); if(element) { document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); element.classList.add('active'); } return; } document.querySelectorAll('.sub-section').forEach(s => s.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); if(element) { document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); element.classList.add('active'); } if(id === 'e-target') { if(!document.getElementById('targ-month').value) document.getElementById('targ-month').value = document.getElementById('emp-dash-month-global').value; window.renderTarget(); } if(id === 'e-visit') window.updateDynamicImages(); if(id === 'e-idcard') window.renderIDCard(); if(id === 'e-reminders') { if(!document.getElementById('rem-date').value) document.getElementById('rem-date').value = window.getLocalDate(); window.renderReminders(); } if(id === 'e-visit-stat') { if(!document.getElementById('e-vstat-month').value) document.getElementById('e-vstat-month').value = window.getLocalDate().slice(0, 7); window.renderEmpVisitStatus(); } if(id === 'a-ins-rep') { if(!document.getElementById('ins-month-val').value) document.getElementById('ins-month-val').value = window.getLocalDate().slice(0, 7); } };
+    window.showSub = (id, element = null) => { 
+        const secured = ['a-branch-mgmt', 'a-reg', 'a-settings', 'a-telewings']; 
+        if (window.current && window.current.role === 'admin' && secured.includes(id) && !window.isSecuredUnlocked) { 
+            window.pendingTargetId = id; window.pendingTargetNav = element; 
+            document.querySelectorAll('.sub-section').forEach(s => s.classList.add('hidden')); 
+            document.getElementById('a-lock-screen').classList.remove('hidden'); 
+            if(element) { document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); element.classList.add('active'); } 
+            return; 
+        } 
+        document.querySelectorAll('.sub-section').forEach(s => s.classList.add('hidden')); 
+        document.getElementById(id).classList.remove('hidden'); 
+        if(element) { document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); element.classList.add('active'); } 
+        
+        if(id === 'e-target') { if(!document.getElementById('targ-month').value) document.getElementById('targ-month').value = document.getElementById('emp-dash-month-global').value; window.renderTarget(); } 
+        if(id === 'e-visit') window.updateDynamicImages(); 
+        if(id === 'e-idcard') window.renderIDCard(); 
+        if(id === 'e-reminders') { if(!document.getElementById('rem-date').value) document.getElementById('rem-date').value = window.getLocalDate(); window.renderReminders(); } 
+        if(id === 'e-visit-stat') { if(!document.getElementById('e-vstat-month').value) document.getElementById('e-vstat-month').value = window.getLocalDate().slice(0, 7); window.renderEmpVisitStatus(); } 
+        if(id === 'a-ins-rep') { if(!document.getElementById('ins-month-val').value) document.getElementById('ins-month-val').value = window.getLocalDate().slice(0, 7); } 
+        if(id === 'a-emp-bio') document.getElementById('bio-result-area').classList.add('hidden');
+        if(id === 'a-complaints' && window.current && (window.current.role === 'admin' || window.current.role === 'telewings')) window.renderAdminComplaints();
+        if(id === 'e-complaints') window.renderEmpComplaints();
+    };
+    
     window.unlockSecurity = () => { const pwd = document.getElementById('sec-lock-input').value; if(pwd === window.adminSettings.lockPass) { window.isSecuredUnlocked = true; document.getElementById('sec-lock-input').value = ""; window.showSub(window.pendingTargetId, window.pendingTargetNav); } else { alert("Incorrect Security Password!"); } };
     window.updateLockPass = () => { const oldL = document.getElementById('sec-old-lock').value; const newL = document.getElementById('sec-new-lock').value.trim(); if(!oldL || !newL) return alert("Please fill all fields!"); if(oldL !== window.adminSettings.lockPass) return alert("Old Lock Password is wrong!"); set(ref(db, 'adminSettings/lockPass'), newL); alert("Security Lock Password Updated!"); ['sec-old-lock','sec-new-lock'].forEach(i => document.getElementById(i).value=''); };
     window.uploadAdminLogo = async () => { const file = document.getElementById('admin-logo-upload').files[0]; if(!file) return alert("Select Logo First!"); try { const base64Logo = await window.compressImage(file); await set(ref(db, 'settings/logo'), base64Logo); alert("App Logo Updated!"); } catch(e) { alert("Error: " + e.message); } };
