@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRI VISHNU PRIYA FINANCE - Official Portal v8</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+        :root { --primary: #0a2540; --secondary: #00c853; --bg: #f0f4f8; --danger: #e53e3e; --sidebar: #061626; --text-dark: #0f172a; --seized: #334155; --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1); }
+        body { font-family: 'Poppins', sans-serif; margin: 0; padding: 0; background: var(--bg); color: var(--text-dark); font-weight: 500; overflow-x: hidden; }
+        body.login-active { background: linear-gradient(135deg, #0a2540 0%, #175d96 100%); min-height: 100vh; display: flex; flex-direction: column; }
+        header { background: var(--primary); color: white; padding: 20px; text-align: center; font-size: 1.6rem; font-weight: 800; position: sticky; top:0; z-index:1000; box-shadow: 0 4px 12px rgba(0,0,0,0.15); text-transform: uppercase; letter-spacing: 1px;}
+        .login-container { display: flex; align-items: center; justify-content: center; flex-grow: 1; padding: 20px; }
+        .login-card { background: white; padding: 40px 30px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); width: 100%; max-width: 400px; text-align: center; }
+        input, select, textarea { width: 100%; padding: 14px; margin: 5px 0 15px 0; border: 2px solid #cbd5e1; border-radius: 10px; font-size: 15px; font-weight: 600; box-sizing: border-box; }
+        button { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: 700; margin-top: 10px; text-transform: uppercase; transition: 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn-green { background: var(--secondary); } .btn-red { background: var(--danger); } .btn-blue { background: #3b82f6; } .btn-print { background: #475569; width: auto; padding: 10px 25px; margin-bottom: 15px;}
+        .form-label { font-size: 13px; font-weight: 800; color: var(--primary); display: block; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px; text-align:left;}
+        .dashboard-layout { display: flex; min-height: calc(100vh - 72px); }
+        .sidebar { width: 270px; background: var(--sidebar); color: #a0aec0; flex-shrink: 0; display: flex; flex-direction: column; padding: 15px 10px; overflow-y: auto;}
+        .nav-item { padding: 14px 18px; margin: 4px 8px; cursor: pointer; border-radius: 10px; font-size: 15px; font-weight: 600; transition: 0.3s; display: flex; align-items: center; gap: 12px; }
+        .nav-item.active, .nav-item:hover { background: var(--secondary); color: white; }
+        .main-content { flex-grow: 1; padding: 30px; width: calc(100% - 270px); box-sizing: border-box; overflow-y: auto;}
+        .card { background: white; padding: 25px; border-radius: 16px; box-shadow: var(--card-shadow); margin-bottom: 25px; }
+        .card h4 { margin-top: 0; color: var(--primary); font-size: 20px; font-weight: 800; border-bottom: 3px solid var(--bg); padding-bottom: 15px; margin-bottom: 20px; text-transform: uppercase;}
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .stat-card { background: white; padding: 15px; border-radius: 12px; text-align: center; border-bottom: 5px solid var(--secondary); box-shadow: var(--card-shadow); cursor: default; transition: 0.3s;}
+        .stat-card.clickable:hover { transform: translateY(-5px); box-shadow: 0 15px 25px rgba(0,0,0,0.15); cursor:pointer;}
+        .stat-card h3 { margin: 0 0 5px 0; font-size: 22px; color: var(--primary); font-weight: 800; } .stat-card p { margin: 0; color: #475569; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+        .hidden { display: none !important; }
+        .table-container { max-height: 60vh; overflow: auto; border: 1px solid #e2e8f0; border-radius: 10px; background: white; margin-top:15px; }
+        .report-table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+        .report-table th, .report-table td { border-bottom: 1px solid #e2e8f0; padding: 12px; text-align: left; font-size: 14px; }
+        .report-table th { background: var(--primary); color: white; position: sticky; top: 0; z-index:10; font-weight: 700; }
+        .img-preview { width: 50px; height: 50px; object-fit: cover; border-radius: 5px; cursor: pointer; margin: 2px; border: 1px solid #ddd; transition: 0.3s; } .img-preview:hover { transform: scale(3.5); position:relative; z-index:100; box-shadow:0 0 10px rgba(0,0,0,0.5);}
+        .summary-box { background: #e0f2fe; padding: 15px; border-radius: 12px; text-align: center; font-weight: 700; color: #1e3a8a; margin-bottom: 15px; border:1px solid #bae6fd;}
+        .global-month-bar { background: var(--primary); color: white; padding: 10px 20px; display: flex; justify-content: flex-end; align-items: center; gap: 15px; border-bottom: 3px solid var(--secondary); margin-bottom: 20px; border-radius: 8px;}
+        .global-month-bar input { width: auto; margin: 0; padding: 8px; border:none; border-radius:4px; font-weight:bold;}
+        
+        /* 🪪 Premium Digital ID Card Styles */
+        .id-card-wrapper { background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%); border-radius: 12px; padding: 25px; max-width: 320px; margin: 20px auto; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 2px solid #0a2540; text-align: center; position: relative; z-index: 1; }
+        .id-logo { width: 100%; max-height: 90px; object-fit: contain; margin-bottom: 15px; position:relative; z-index:2;}
+        .id-photo { width: 115px; height: 140px; object-fit: cover; border-radius: 8px; border: 3px solid #0a2540; margin-bottom: 15px; position:relative; z-index:2; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .id-details-container { background: rgba(255,255,255,0.95); padding: 15px 10px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: left; position:relative; z-index:2; box-shadow: 0 4px 10px rgba(0,0,0,0.05); overflow: hidden;}
+        /* Watermark inside the details box, transparent and round */
+        .id-details-container .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; height: 85%; background-image: var(--logo-url); background-size: contain; background-repeat: no-repeat; background-position: center; opacity: 0.18; z-index: -1; border-radius:50%;}
+        .id-row { display: grid; grid-template-columns: 80px 10px 1fr; font-size: 13px; margin-bottom: 8px; align-items: center;}
+        .id-lbl { font-weight: 800; color: #0a2540; text-transform: uppercase; letter-spacing: 0.3px;}
+        .id-colon { font-weight: 800; color: #0a2540; text-align:center;}
+        .id-val { font-weight: 800; color: #0f172a; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+        .id-status { background: #00c853; color: white; font-weight: 800; padding: 8px 30px; border-radius: 25px; display: inline-block; margin-top: 20px; font-size: 14px; position:relative; z-index:2; letter-spacing:1px; box-shadow: 0 4px 10px rgba(0,200,83,0.3);}
+        .id-status.inactive { background: #e53e3e; box-shadow: 0 4px 10px rgba(229,62,62,0.3); }
+
+        /* 📱 Mobile Responsive Fixes */
+        @media (max-width: 768px) { 
+            .dashboard-layout { flex-direction: column; } 
+            .sidebar { width: 100%; flex-direction: row; overflow-x: auto; white-space:nowrap; padding:10px;} 
+            .nav-item { font-size:13px; padding:10px 15px;}
+            .main-content { width: 100%; padding: 15px; } 
+            .global-month-bar{ justify-content:center; flex-direction:column; gap:5px;} 
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } /* Ensures Side-by-Side Boxes */
+            .stat-card { padding: 12px 10px; }
+            .stat-card h3 { font-size: 20px; }
+            .stat-card p { font-size: 11px; }
+        }
+        @media print { .no-print, .sidebar, header, button { display: none !important; } .main-content, .card { width: 100%; padding: 0; box-shadow: none; border:none;} .id-card-wrapper { border: 2px solid #000; box-shadow:none;} .table-container { max-height: none; overflow: visible; border: none; } }
+    </style>
+</head>
+<body class="login-active">
+
+<header>SRI VISHNU PRIYA FINANCE</header>
+
+<div class="login-container" id="main-login-wrap">
+    <div class="login-card no-print">
+        <h3>Secure Login</h3>
+        <label class="form-label">Login ID</label>
+        <input type="text" id="l-id" placeholder="ID">
+        <label class="form-label">Password</label>
+        <input type="password" id="l-pass" placeholder="Password" onkeypress="if(event.key === 'Enter') window.handleLogin()">
+        <button id="login-btn" onclick="window.handleLogin()">LOGIN</button>
+    </div>
+</div>
+<div id="admin-dashboard" class="hidden dashboard-layout">
+    <div class="sidebar no-print">
+        <div style="padding:15px; text-align:center; color:white; font-weight:bold; border-bottom:1px solid #334155; margin-bottom:10px;">ADMIN PANEL</div>
+        <div class="nav-item active" onclick="window.showSub('a-home', this)">📊 Dashboard Home</div>
+        <div class="nav-item" onclick="window.showSub('a-view-emp', this)">👨‍💻 View Emp Dash</div>
+        <div class="nav-item" onclick="window.showSub('a-branch-mgmt', this)">🏢 Branch Mgmt 🔒</div>
+        <div class="nav-item" onclick="window.showSub('a-reg', this)">👥 Emp Register 🔒</div>
+        <div class="nav-item" onclick="window.showSub('a-identity', this)">🪪 Emp Identity</div>
+        <div class="nav-item" onclick="window.showSub('a-assign', this)">📋 Assign Accounts</div>
+        <div class="nav-item" onclick="window.showSub('a-visit-stat', this)">📍 Assign Status</div>
+        <div class="nav-item" onclick="window.showSub('a-emp-rep', this)">🔍 Visit Search</div>
+        <div class="nav-item" onclick="window.showSub('a-ins-rep', this)">📑 INS Collection Rep</div>
+        <div class="nav-item" onclick="window.showSub('a-branch', this)">📈 Branch Emp Rep</div>
+        <div class="nav-item" onclick="window.showSub('a-overall-branch', this)">📊 Overall Branch</div>
+        <div class="nav-item" onclick="window.showSub('a-att', this)">⏱️ Attendance Log</div>
+        <div class="nav-item" onclick="window.showSub('a-settings', this)">⚙️ App Settings 🔒</div>
+        <div class="nav-item" onclick="window.showSub('a-security', this)">🔐 Admin Security</div>
+        <div class="nav-item" style="color:#ff6b6b; margin-top:auto;" onclick="location.reload()">🚪 Logout</div>
+    </div>
+    
+    <div class="main-content">
+        <div class="global-month-bar no-print"><label>SELECTION MONTH:</label><input type="month" id="admin-dash-month-global" onchange="window.updateAdminDashboardStats()"></div>
+
+        <div id="a-lock-screen" class="sub-section card hidden" style="max-width:400px; margin: 50px auto; text-align:center;">
+            <h4 style="color:var(--danger); justify-content:center;">🔒 SECURITY LOCK</h4>
+            <label class="form-label" style="text-align:center;">Enter Admin Password</label>
+            <input type="password" id="sec-lock-input" placeholder="Password to access">
+            <button class="btn-green" onclick="window.unlockSecurity()">UNLOCK SECTION</button>
+        </div>
+
+        <div id="a-home" class="sub-section">
+            <h4>📊 ADMIN OVERVIEW (<span id="admin-overview-month-label"></span>)</h4>
+            <div class="stats-grid"><div class="stat-card"><h3><span id="stat-tot-emps">0</span></h3><p>Total Emps</p></div><div class="stat-card"><h3><span id="stat-act-emps">0</span></h3><p>Active</p></div><div class="stat-card"><h3><span id="stat-tot-branches">0</span></h3><p>Branches</p></div></div>
+            <h5 style="color:var(--primary); font-size:16px;">🟢 REGULAR ACCOUNTS</h5>
+            <div class="stats-grid"><div class="stat-card"><h3 id="stat-reg-assign-c">0</h3><p>Assigned</p></div><div class="stat-card"><h3 id="stat-reg-comp-c" style="color:var(--secondary);">0</h3><p>Completed</p></div><div class="stat-card" style="border-bottom-color:var(--seized);"><h3 id="stat-reg-seized-c" style="color:var(--seized);">0</h3><p>Seized Count</p></div><div class="stat-card"><h3 id="stat-reg-pend-c" style="color:var(--danger);">0</h3><p>Pending</p></div><div class="stat-card"><h3 id="stat-reg-t-amt">₹0</h3><p>Target Amt</p></div><div class="stat-card"><h3 id="stat-reg-c-amt" style="color:var(--secondary);">₹0</h3><p>Collected</p></div><div class="stat-card" style="border-bottom-color:var(--seized);"><h3 id="stat-reg-seized-amt" style="color:var(--seized);">₹0</h3><p>Seized Amt</p></div><div class="stat-card"><h3 id="stat-reg-r-amt" style="color:var(--danger);">₹0</h3><p>Remaining</p></div></div>
+            <h5 style="color:#d97706; font-size:16px; margin-top:20px;">🟠 MATURED ACCOUNTS</h5>
+            <div class="stats-grid"><div class="stat-card"><h3 id="stat-mat-assign-c">0</h3><p>Assigned</p></div><div class="stat-card"><h3 id="stat-mat-comp-c" style="color:var(--secondary);">0</h3><p>Completed</p></div><div class="stat-card" style="border-bottom-color:var(--seized);"><h3 id="stat-mat-seized-c" style="color:var(--seized);">0</h3><p>Seized Count</p></div><div class="stat-card"><h3 id="stat-mat-pend-c" style="color:var(--danger);">0</h3><p>Pending</p></div><div class="stat-card"><h3 id="stat-mat-t-amt">₹0</h3><p>Target Amt</p></div><div class="stat-card"><h3 id="stat-mat-c-amt" style="color:var(--secondary);">₹0</h3><p>Collected</p></div><div class="stat-card" style="border-bottom-color:var(--seized);"><h3 id="stat-mat-seized-amt" style="color:var(--seized);">₹0</h3><p>Seized Amt</p></div><div class="stat-card"><h3 id="stat-mat-r-amt" style="color:var(--danger);">₹0</h3><p>Remaining</p></div></div>
+        </div>
+
+        <div id="a-view-emp" class="sub-section card hidden">
+            <h4>👨‍💻 VIEW EMPLOYEE DASHBOARD</h4>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <div style="flex:1;"><label class="form-label">Select Branch</label><select id="imp-br-sel" onchange="window.loadImpEmps()"></select></div>
+                <div style="flex:1;"><label class="form-label">Select Employee</label><select id="imp-em-sel"></select></div>
+                <div style="flex:1;"><label class="form-label">Select Month</label><input type="month" id="imp-mo-sel"></div>
+            </div>
+            <button class="btn-blue" onclick="window.viewAdminEmpDash()">LOAD DASHBOARD</button>
+            <div id="admin-emp-dash-view-content" class="hidden" style="margin-top:20px; border:2px solid var(--primary); padding:15px; border-radius:10px;"></div>
+        </div>
+
+        <div id="a-branch-mgmt" class="sub-section card hidden">
+            <h4>🏢 BRANCH MANAGEMENT</h4>
+            <label class="form-label">Add New Branch</label>
+            <div style="display:flex; gap:10px;"><input type="text" id="new-branch-name" placeholder="Branch Name"><button class="btn-green" onclick="window.addBranch()" style="width:150px; margin-top:5px;">ADD</button></div>
+            <div id="branch-display-list" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap:15px; margin-top:20px;"></div>
+        </div>
+
+        <div id="a-reg" class="sub-section card hidden">
+            <h4>👥 EMPLOYEE REGISTRATION / EDIT</h4>
+            <div id="new-emp-msg" class="summary-box" style="background:#fff3cd; color:#856404; border-color:#ffeeba; text-align:left;">
+                System Generated Next Auto ID: <span id="next-auto-id" style="font-size:22px; color:var(--danger); font-weight:800;">---</span>
+            </div>
+            <div id="edit-emp-msg" class="summary-box hidden" style="background:#f8d7da; color:#721c24; border-color:#f5c6cb; text-align:left;">
+                ⚠️ EDITING MODE: You can update Mobile, Address, Location, Designation, Photo, and ID Proof.
+                <input type="hidden" id="edit-emp-id">
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px 15px;">
+                <div><label class="form-label">Full Name</label><input type="text" id="r-name" placeholder="Employee Name"></div>
+                <div><label class="form-label">Branch</label><select id="r-branch-select"></select></div>
+                <div><label class="form-label">Mobile Number</label><input type="number" id="r-mobile" placeholder="Mobile"></div>
+                <div><label class="form-label">Designation</label><input type="text" id="r-designation" placeholder="e.g. Agent"></div>
+                <div><label class="form-label">Village / Location</label><input type="text" id="r-vill" placeholder="Location"></div>
+                <div id="join-div"><label class="form-label">Joining Date</label><input type="date" id="r-join"></div>
+                <div id="pass-div" style="grid-column: span 2;"><label class="form-label">Login Password</label><input type="password" id="r-pass" placeholder="Set Password"></div>
+            </div>
+            <label class="form-label" style="margin-top:10px;">Full Address</label><textarea id="r-address" placeholder="Complete Address" rows="2"></textarea>
+            
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #cbd5e1;">
+                <div id="photo-div"><label class="form-label">Passport Size Photo (For ID Card)</label><input type="file" id="r-photo" accept="image/*"></div>
+                <div><label class="form-label">ID Proof Image (Aadhar/PAN)</label><input type="file" id="r-id-proof" accept="image/*"></div>
+            </div>
+            
+            <div style="display:flex; gap:10px; margin-top:15px;">
+                <button class="btn-green" id="save-emp-btn" onclick="window.saveEmployee()">SAVE NEW EMPLOYEE</button>
+                <button class="btn-blue hidden" id="update-emp-btn" onclick="window.updateEmployee()">UPDATE DETAILS</button>
+                <button class="btn-red hidden" id="cancel-edit-btn" onclick="window.cancelEdit()">CANCEL EDIT</button>
+            </div>
+            <div class="table-container"><table class="report-table"><thead><tr><th>ID</th><th>Name</th><th>Mobile</th><th>Join Date</th><th>Status</th><th>Action</th></tr></thead><tbody id="a-reg-list"></tbody></table></div>
+        </div>
+
+        <div id="a-settings" class="sub-section card hidden">
+            <h4>⚙️ APP SETTINGS</h4>
+            <label class="form-label">Upload Company Logo (Appears on ID Cards & Dashboards)</label>
+            <input type="file" id="admin-logo-upload" accept="image/*"><button class="btn-green" onclick="window.uploadAdminLogo()">Save New Logo</button>
+        </div>
+
+        <div id="a-security" class="sub-section card hidden">
+            <h4>🔐 ADMIN SECURITY</h4>
+            <label class="form-label">Old Lock Password</label><input type="password" id="sec-old-lock" placeholder="Old Lock Password">
+            <label class="form-label">New Lock Password</label><input type="password" id="sec-new-lock" placeholder="New Lock Password">
+            <button class="btn-red" onclick="window.updateLockPass()">UPDATE LOCK PASSWORD</button>
+        </div>
+
+        <div id="a-identity" class="sub-section card hidden">
+            <h4>🪪 EMPLOYEES IDENTITY</h4>
+            <label class="form-label">Search Employee</label>
+            <div style="display:flex; gap:10px;"><input type="text" id="i-search-val" placeholder="Enter ID or Name" style="margin-top:0;"><button class="btn-green" onclick="window.searchIdentity()" style="margin-top:0;">SEARCH</button></div>
+            <div id="identity-result-area" class="hidden" style="margin-top: 20px;"><div id="admin-id-card-view"></div><button onclick="window.print()" class="btn-print no-print" style="margin:10px auto; display:block;">PRINT ID CARD</button><div class="summary-box no-print" style="max-width:350px; margin:20px auto;"><label class="form-label" style="text-align:left;">Change ID Status</label><select id="i-emp-status" style="margin-bottom:10px;"><option value="Active">🟢 ACTIVE</option><option value="Inactive">🔴 INACTIVE</option></select><input type="hidden" id="i-emp-id"><button class="btn-red" onclick="window.updateEmpStatus()">UPDATE STATUS</button></div></div>
+        </div>
+
+        <div id="a-assign" class="sub-section card hidden">
+            <h4>📋 ASSIGN HP NUMBERS</h4>
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
+                <div><label class="form-label">Branch</label><select id="as-branch-sel" onchange="window.loadAssignEmps()"></select></div>
+                <div><label class="form-label">Employee</label><select id="as-emp-sel" onchange="window.renderAssignedList()"></select></div>
+                <div><label class="form-label">Month</label><input type="month" id="as-month-sel" onchange="window.renderAssignedList()"></div>
+            </div>
+            <label class="form-label" style="margin-top:10px;">Account Type</label>
+            <select id="as-type-sel" style="border:2px solid var(--primary);"><option value="Regular">🟢 Regular Accounts</option><option value="Matured">🟠 MATURED Accounts</option></select>
+            <div style="background:#f8fafc; padding:15px; border-radius:8px; border:2px solid #e2e8f0; margin-top:15px;">
+                <label class="form-label">How many accounts to assign?</label>
+                <div style="display:flex; gap:10px;"><input type="number" id="as-box-count" placeholder="Ex: 5" style="margin-top:0;"><button class="btn-blue" onclick="window.generateAssignBoxes()" style="margin-top:0;">GENERATE</button></div>
+                <div id="dynamic-assign-boxes" class="hidden" style="max-height: 300px; overflow-y: auto; margin-top: 15px;"></div>
+                <div id="assign-totals" class="hidden summary-box" style="display:flex; justify-content:space-around;"><div>Accounts: <span id="tot-acc-count">0</span></div><div>Total: <span id="tot-acc-amt">₹0</span></div></div>
+            </div>
+            <button class="btn-green hidden" id="as-btn" onclick="window.assignAccounts()">✅ SAVE ASSIGNMENTS</button>
+            <div style="margin-top:20px;"><h5 style="color:var(--primary);">📋 ALREADY ASSIGNED</h5><div class="table-container"><table class="report-table"><thead><tr><th>HP Number</th><th>Type</th><th>Action</th></tr></thead><tbody id="as-list-body"></tbody></table></div></div>
+        </div>
+
+        <div id="a-visit-stat" class="sub-section card hidden">
+            <h4>📍 ASSIGNMENT VISIT STATUS</h4>
+            <div class="no-print" style="display:flex; gap:10px; flex-wrap:wrap;">
+                <div style="flex:1;"><label class="form-label">Branch</label><select id="stat-br-sel" onchange="window.loadStatEmps()"></select></div>
+                <div style="flex:1;"><label class="form-label">Employee</label><select id="stat-em-sel"></select></div>
+                <div style="flex:1;"><label class="form-label">Month</label><input type="month" id="stat-month-val"></div>
+            </div>
+            <button class="btn-green" onclick="window.checkVisitStatus()">SEARCH STATUS</button>
+            <button onclick="window.print()" class="btn-print no-print" style="margin-top:15px;">PRINT REPORT</button>
+            <div id="stat-summary-box" class="summary-box hidden" style="margin-top:15px;"></div><div class="table-container"><table class="report-table"><thead><tr><th>HP Number</th><th>Customer</th><th>Status</th><th>Date & Time</th></tr></thead><tbody id="stat-table-body"></tbody></table></div>
+        </div>
+
+        <div id="a-emp-rep" class="sub-section card hidden">
+            <h4>🔍 EMPLOYEE DETAILED SEARCH (VISITS)</h4>
+            <div class="no-print" style="display:flex; gap:10px; flex-wrap:wrap;">
+                <div style="flex:1;"><label class="form-label">Branch</label><select id="a-rep-branch-sel" onchange="window.loadSearchEmps()"></select></div>
+                <div style="flex:1;"><label class="form-label">Employee</label><select id="a-rep-emp-sel"></select></div>
+                <div style="flex:1;"><label class="form-label">Month</label><input type="month" id="a-rep-month"></div>
+            </div>
+            <button class="btn-green" onclick="window.renderAdminEmpReport()">SEARCH ALL VISITS</button>
+            <button onclick="window.print()" class="btn-print no-print" style="margin-top:15px;">PRINT REPORT</button>
+            <div class="table-container"><table class="report-table"><thead><tr><th>Date & Time</th><th>Customer/HP/INS</th><th>Amt/Stat</th><th>Reason/Details</th><th>Location</th><th>Images</th></tr></thead><tbody id="a-emp-rep-body"></tbody></table></div>
+        </div>
+
+        <div id="a-ins-rep" class="sub-section card hidden">
+            <h4>📑 INS COLLECTION REPORT</h4>
+            <div class="no-print" style="display:flex; gap:10px; flex-wrap:wrap;">
+                <div style="flex:1;"><label class="form-label">Branch</label><select id="ins-branch-sel"></select></div>
+                <div style="flex:1;"><label class="form-label">Month</label><input type="month" id="ins-month-val"></div>
+                <div style="flex:1;"><label class="form-label">Type</label><select id="ins-type-sel"><option value="Both">Both</option><option value="Regular">Regular</option><option value="Matured">Matured</option></select></div>
+            </div>
+            <label class="form-label" style="margin-top:10px;">INS Range (Optional)</label>
+            <div class="no-print" style="display:flex; gap:10px;"><input type="number" id="ins-from" placeholder="From INS" style="margin-top:0;"><input type="number" id="ins-to" placeholder="To INS" style="margin-top:0;"><button class="btn-green" onclick="window.renderInsReport()" style="margin-top:0;">SEARCH</button></div>
+            <div id="ins-summary" class="summary-box hidden" style="margin-top:15px;"></div>
+            <button onclick="window.print()" class="btn-print no-print">PRINT REPORT</button>
+            <div class="table-container" style="margin-top:0;"><table class="report-table"><thead><tr><th>INS No</th><th>Assigned C/A</th><th>PCR C/A</th><th>Lock C/A</th><th>QR C/A</th><th>OP C/A</th><th>Seized C/A</th><th>Col ₹</th><th>Rem ₹</th><th>%</th></tr></thead><tbody id="ins-table-body"></tbody><tfoot id="ins-table-foot" style="background:var(--primary); color:white; font-weight:bold;"></tfoot></table></div>
+        </div>
+
+        <div id="a-branch" class="sub-section card hidden">
+            <h4>📈 BRANCH EMPLOYEES REPORT</h4>
+            <div class="no-print" style="display:flex; gap:10px;"><div style="flex:1;"><label class="form-label">Branch</label><select id="b-search-select"></select></div><div style="flex:1;"><label class="form-label">Month</label><input type="month" id="b-month-val"></div></div>
+            <button class="btn-green" onclick="window.renderBranchReport()">GENERATE REPORT</button>
+            <button onclick="window.print()" class="btn-print no-print" style="margin-top:15px;">PRINT REPORT</button>
+            <div id="b-results" class="table-container"></div>
+        </div>
+
+        <div id="a-overall-branch" class="sub-section card hidden">
+            <h4>📊 OVERALL BRANCH PERFORMANCE</h4>
+            <div class="no-print" style="display:flex; gap:10px; flex-wrap:wrap;">
+                <div style="flex:1;"><label class="form-label">Branch</label><select id="b-perf-branch"></select></div>
+                <div style="flex:1;"><label class="form-label">Month</label><input type="month" id="b-perf-month"></div>
+                <div style="flex:1;"><label class="form-label">Type</label><select id="b-perf-type"><option value="Both">Both</option><option value="Regular">Regular</option><option value="Matured">Matured</option></select></div>
+            </div>
+            <button class="btn-green" onclick="window.renderBranchPerformance()">GENERATE</button>
+            <button onclick="window.print()" class="btn-print no-print" style="margin-top:15px;">PRINT REPORT</button>
+            <div id="bp-results-area" class="hidden" style="margin-top:15px;">
+                <h5 id="bp-title-display" style="color:var(--primary); font-size:18px; text-transform:uppercase;"></h5>
+                <div id="bp-reg-section" class="hidden"><h5>🟢 REGULAR</h5><div class="stats-grid"><div class="stat-card"><h3 id="bp-reg-assign-c">0</h3><p>Assign</p></div><div class="stat-card"><h3 id="bp-reg-comp-c">0</h3><p>Done</p></div><div class="stat-card" style="border-bottom-color:var(--seized);"><h3 id="bp-reg-seized-c" style="color:var(--seized);">0</h3><p>Seized</p></div><div class="stat-card"><h3 id="bp-reg-t-amt">₹0</h3><p>Target</p></div><div class="stat-card"><h3 id="bp-reg-c-amt">₹0</h3><p>Collected</p></div><div class="stat-card" style="border-bottom-color:var(--seized);"><h3 id="bp-reg-seized-amt" style="color:var(--seized);">₹0</h3><p>Seized Amt</p></div></div></div>
+                <div id="bp-mat-section" class="hidden"><h5>🟠 MATURED</h5><div class="stats-grid"><div class="stat-card"><h3 id="bp-mat-assign-c">0</h3><p>Assign</p></div><div class="stat-card"><h3 id="bp-mat-comp-c">0</h3><p>Done</p></div><div class="stat-card" style="border-bottom-color:var(--seized);"><h3 id="bp-mat-seized-c" style="color:var(--seized);">0</h3><p>Seized</p></div><div class="stat-card"><h3 id="bp-mat-t-amt">₹0</h3><p>Target</p></div><div class="stat-card"><h3 id="bp-mat-c-amt">₹0</h3><p>Collected</p></div><div class="stat-card" style="border-bottom-color:var(--seized);"><h3 id="bp-mat-seized-amt" style="color:var(--seized);">₹0</h3><p>Seized Amt</p></div></div></div>
+            </div>
+        </div>
+
+        <div id="a-att" class="sub-section card hidden">
+            <h4>⏱️ ATTENDANCE LOG</h4>
+            <div class="no-print" style="display:flex; gap:10px;"><div style="flex:1;"><label class="form-label">Branch</label><select id="att-branch-sel"></select></div><div style="flex:1;"><label class="form-label">Month</label><input type="month" id="att-month"></div></div>
+            <button class="btn-green" onclick="window.renderAttendance()">SEARCH</button>
+            <button onclick="window.print()" class="btn-print no-print" style="margin-top:15px;">PRINT LOG</button>
+            <div class="table-container"><table class="report-table"><thead><tr><th>Name</th><th>ID</th><th>Branch</th><th>Days Present</th></tr></thead><tbody id="att-body"></tbody></table></div>
+        </div>
+    </div>
+</div>
+
+<div id="employee-dashboard" class="hidden dashboard-layout">
+    <div class="sidebar no-print">
+        <div style="padding:15px; text-align:center; border-bottom:1px solid #334155; margin-bottom:10px;">
+            <h3 id="e-name-tag" style="margin:0; color:var(--secondary); font-size:18px;"></h3><div id="emp-status-warning" style="font-size:12px; margin-top:5px; font-weight:bold;"></div>
+        </div>
+        <div class="nav-item active" onclick="window.showSub('e-home', this)">📊 My Dashboard</div>
+        <div class="nav-item" onclick="window.showSub('e-idcard', this)">🪪 Digital ID Card</div>
+        <div class="nav-item" id="nav-e-visit" onclick="window.showSub('e-visit', this)">🤝 Customer Visit</div>
+        <div class="nav-item" onclick="window.showSub('e-visit-stat', this)">📍 Visit Status</div>
+        <div class="nav-item" onclick="window.showSub('e-reminders', this)">📅 My Reminders</div>
+        <div class="nav-item" onclick="window.showSub('e-target', this)">🎯 Target Summary</div>
+        <div class="nav-item" onclick="window.showSub('e-report', this)">📋 My History</div>
+        <div class="nav-item" style="color:#ff6b6b; margin-top:auto;" onclick="location.reload()">🚪 Logout</div>
+    </div>
+
+    <div class="main-content">
+        <div class="global-month-bar no-print"><label>SELECTION MONTH:</label><input type="month" id="emp-dash-month-global" onchange="window.onGlobalMonthChange()"></div>
+
+        <div id="e-home" class="sub-section">
+            <h4 style="color:var(--primary); font-size:18px;">🟢 REGULAR ACCOUNTS</h4>
+            <div class="stats-grid"><div class="stat-card"><h3><span id="e-reg-assign">0</span></h3><p>Assigned</p></div><div class="stat-card"><h3><span id="e-reg-comp" style="color:var(--secondary);">0</span></h3><p>Completed</p></div><div class="stat-card" style="border-bottom-color:var(--seized);"><h3><span id="e-reg-seized-c" style="color:var(--seized);">0</span></h3><p>Seized Count</p></div><div class="stat-card"><h3 style="color:#0284c7;">₹<span id="e-reg-t-amt">0</span></h3><p>Target Amt</p></div><div class="stat-card"><h3 style="color:var(--secondary);">₹<span id="e-reg-c-amt">0</span></h3><p>Collected</p></div><div class="stat-card" style="border-bottom-color:var(--seized);"><h3 style="color:var(--seized);">₹<span id="e-reg-seized-amt">0</span></h3><p>Seized Amt</p></div></div>
+            
+            <h4 style="color:#d97706; font-size:18px;">🟠 MATURED ACCOUNTS</h4>
+            <div class="stats-grid"><div class="stat-card"><h3><span id="e-mat-assign">0</span></h3><p>Assigned</p></div><div class="stat-card"><h3><span id="e-mat-comp" style="color:var(--secondary);">0</span></h3><p>Completed</p></div><div class="stat-card" style="border-bottom-color:var(--seized);"><h3><span id="e-mat-seized-c" style="color:var(--seized);">0</span></h3><p>Seized Count</p></div><div class="stat-card"><h3 style="color:#d97706;">₹<span id="e-mat-t-amt">0</span></h3><p>Target Amt</p></div><div class="stat-card"><h3 style="color:var(--secondary);">₹<span id="e-mat-c-amt">0</span></h3><p>Collected</p></div><div class="stat-card" style="border-bottom-color:var(--seized);"><h3 style="color:var(--seized);">₹<span id="e-mat-seized-amt">0</span></h3><p>Seized Amt</p></div></div>
+            
+            <h4 style="font-size:18px;">💰 RECEIPTS OVERVIEW</h4>
+            <div class="stats-grid">
+                <div class="stat-card clickable" onclick="window.showQuickReport('PCR', false)"><h3 style="color:#3b82f6;">₹<span id="e-stat-pcr-amt">0</span></h3><p>PCR (<span id="e-stat-pcr-rec">0</span>)</p></div>
+                <div class="stat-card clickable" onclick="window.showQuickReport('Lock Amount', false)"><h3 style="color:#8b5cf6;">₹<span id="e-stat-lock-amt">0</span></h3><p>Lock (<span id="e-stat-lock-rec">0</span>)</p></div>
+                <div class="stat-card clickable" onclick="window.showQuickReport('Office QR', false)"><h3 style="color:#10b981;">₹<span id="e-stat-qr-amt">0</span></h3><p>QR (<span id="e-stat-qr-rec">0</span>)</p></div>
+                <div class="stat-card clickable" onclick="window.showQuickReport('OP', false)"><h3 style="color:#f59e0b;">₹<span id="e-stat-op-amt">0</span></h3><p>OP (<span id="e-stat-op-rec">0</span>)</p></div>
+            </div>
+
+            <h4 style="font-size:18px;">🏠 HOME VISITS OVERVIEW</h4>
+            <div class="stats-grid">
+                <div class="stat-card clickable" onclick="window.showQuickReport('PCR', true)"><h3 style="color:#3b82f6;"><span id="e-stat-pcr-vis">0</span></h3><p>PCR Visits</p></div>
+                <div class="stat-card clickable" onclick="window.showQuickReport('Lock Amount', true)"><h3 style="color:#8b5cf6;"><span id="e-stat-lock-vis">0</span></h3><p>Lock Visits</p></div>
+                <div class="stat-card clickable" onclick="window.showQuickReport('Office QR', true)"><h3 style="color:#10b981;"><span id="e-stat-qr-vis">0</span></h3><p>QR Visits</p></div>
+                <div class="stat-card clickable" onclick="window.showQuickReport('OP', true)"><h3 style="color:#f59e0b;"><span id="e-stat-op-vis">0</span></h3><p>OP Visits</p></div>
+            </div>
+
+            <div id="quick-report-box" class="hidden card" style="border-top:4px solid var(--primary);"><h4 id="quick-report-title">REPORT</h4><div class="table-container"><table class="report-table"><thead><tr><th>Date & Time</th><th>Customer/HP</th><th>Amt</th><th>Type</th><th>Images</th></tr></thead><tbody id="quick-report-body"></tbody></table></div><button class="btn-red" onclick="document.getElementById('quick-report-box').classList.add('hidden')">Close Report</button></div>
+        </div>
+
+        <div id="e-idcard" class="sub-section card hidden"><h4>🪪 DIGITAL ID CARD</h4><div id="my-digital-id-area"></div><button onclick="window.print()" class="btn-print no-print" style="margin:20px auto; display:block;">PRINT ID CARD</button></div>
+
+        <div id="e-reminders" class="sub-section card hidden"><h4>📅 MY REMINDERS</h4><div class="no-print" style="display:flex; gap:10px;"><div style="flex:1;"><label class="form-label">Select Date</label><input type="date" id="rem-date" style="margin-top:0;"></div><button class="btn-green" onclick="window.renderReminders()" style="margin-top:15px; width:auto; padding:0 25px;">GET</button></div><button onclick="window.print()" class="btn-print no-print" style="margin-top:15px;">PRINT REPORT</button><div class="table-container"><table class="report-table"><thead><tr><th>HP Number</th><th>Customer</th><th>Mobile</th><th>Reason</th></tr></thead><tbody id="rem-table-body"></tbody></table></div></div>
+
+        <div id="e-visit-stat" class="sub-section card hidden"><h4>📍 MY VISIT STATUS</h4><div class="no-print" style="display:flex; gap:10px;"><div style="flex:1;"><label class="form-label">Select Month</label><input type="month" id="e-vstat-month" style="margin-top:0;"></div><button class="btn-green" onclick="window.renderEmpVisitStatus()" style="margin-top:15px; width:auto; padding:0 25px;">SEARCH</button></div><button onclick="window.print()" class="btn-print no-print" style="margin-top:15px;">PRINT REPORT</button><div id="e-vstat-summary" class="summary-box hidden"></div><div class="table-container"><table class="report-table"><thead><tr><th>HP Number</th><th>INS</th><th>Customer</th><th>Status</th><th>Date & Time</th></tr></thead><tbody id="e-vstat-table-body"></tbody></table></div></div>
+
+        <div id="e-visit" class="sub-section card hidden no-print">
+            <h4>🤝 CUSTOMER VISIT FORM</h4>
+            <div id="gps-status" style="background:#fef2f2; color:var(--danger); padding:10px; border-radius:5px; font-weight:bold; margin-bottom:15px; border:1px solid #fca5a5;">CHECKING GPS...</div>
+            <label class="form-label">Customer Name</label><input type="text" id="v-name" placeholder="Full Name">
+            <label class="form-label">Assigned HP Number</label>
+            <input type="text" id="v-hp" list="hp-list" placeholder="Type to search HP" autocomplete="off" oninput="window.checkHpType()">
+            <datalist id="hp-list"></datalist><div id="v-hp-type-display" style="font-weight:800; font-size:15px; margin-bottom:10px;"></div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><div><label class="form-label">Customer Mobile</label><input type="number" id="v-number" placeholder="Mobile Number"></div><div><label class="form-label">Location</label><input type="text" id="v-vill" placeholder="Location"></div></div>
+            
+            <label class="form-label" style="margin-top:15px; font-size:16px;">Select Visit Status</label>
+            <select id="v-stat" onchange="window.toggleV()" style="border:2px solid var(--primary); font-size:16px;"><option value="Not Paid">🔴 NOT PAID</option><option value="Paid">🟢 PAID</option><option value="Seized">⚫ SEIZED</option></select>
+            
+            <div style="background:#f8fafc; padding:20px; border-radius:10px; border:2px solid #e2e8f0; margin-top:15px;">
+                <div id="v-paid-logic" class="hidden">
+                    <label class="form-label">Amount Paid</label><input type="number" id="v-amt" placeholder="Amount (₹)" style="font-size:20px; color:var(--secondary);">
+                    <label class="form-label">Payment Mode</label><select id="v-pay-type" onchange="window.toggleL()"><option value="PCR">PCR</option><option value="Lock Amount">Lock Amount</option><option value="Office QR">Office QR</option><option value="OP">OP</option></select>
+                    <div id="v-pcr-box" class="hidden"><label class="form-label">తర్వాత అమౌంట్ కడతారా?</label><select id="v-pcr-later" onchange="window.togglePCRDate()"><option value="No">No</option><option value="Yes">Yes</option></select><input type="date" id="v-pcr-date" class="hidden"></div>
+                    <div id="v-lock-box" class="hidden">
+                        <label class="form-label">Are you entered PPFC apk?</label><select id="v-ppfc" onchange="window.updateDynamicImages()"><option value="No">No</option><option value="Yes">Yes</option></select>
+                        <div id="ppfc-no-reason" class="hidden"><label class="form-label" style="color:var(--danger); margin-top:10px;">Reason for no PPFC entry</label><input type="text" id="v-ppfc-unr" placeholder="Type reason"></div>
+                    </div>
+                </div>
+                
+                <div id="v-unpaid-logic"><label class="form-label" style="color:var(--danger);">Reason for not paying</label><input type="text" id="v-unr" placeholder="Valid Reason"><label class="form-label">Next Promised Date</label><input type="date" id="v-next"></div>
+                <div id="v-seized-logic" class="hidden"><label class="form-label" style="color:var(--danger);">Seize Time</label><input type="time" id="v-seize-time"></div>
+                
+                <div id="dynamic-fields" style="margin-top:20px; border-top:2px dashed #cbd5e1; padding-top:15px;">
+                    <div id="v-op-to-div" class="hidden"><label class="form-label">Who did you pay OP to?</label><input type="text" id="v-op-to" placeholder="Person Name"></div>
+                    <div id="qr-visit-div" class="hidden" style="margin-bottom:10px;"><label class="form-label">కస్టమర్ ఇంటికి వెళ్ళారా?</label><select id="v-visited-home" onchange="window.updateDynamicImages()"><option value="No">No</option><option value="Yes">Yes</option></select></div>
+                    <div id="img-receipt-div" class="hidden" style="margin-bottom:10px;"><label id="lbl-receipt" class="form-label" style="color:var(--secondary); font-size:14px;"></label><input type="file" id="img-receipt" accept="image/*" capture="environment"><div id="extra-qr-images" class="hidden" style="background:#e2e8f0; padding:10px; border-radius:5px; margin-top:5px;"><label class="form-label" style="font-size:12px;">Extra Screenshots (Max 3)</label><input type="file" id="img-receipt-2"><input type="file" id="img-receipt-3"><input type="file" id="img-receipt-4"></div></div>
+                    <div id="img-cust-div" class="hidden" style="margin-bottom:10px;"><label id="lbl-cust-img" class="form-label" style="font-size:14px;"></label><input type="file" id="img-cust" accept="image/*" capture="environment"></div>
+                    <div id="img-house-div" class="hidden"><label id="lbl-house-img" class="form-label" style="font-size:14px;"></label><input type="file" id="img-house" accept="image/*" capture="environment"></div>
+                </div>
+            </div>
+            <button class="btn-green" id="v-submit-btn" onclick="window.submitVisit()" style="height:55px;">✅ SUBMIT VISIT DATA</button>
+        </div>
+
+        <div id="e-target" class="sub-section card hidden">
+            <h4>🎯 MY TARGET SUMMARY</h4>
+            <div class="no-print" style="display:flex; gap:10px; margin-bottom:15px;"><div style="flex:1;"><label class="form-label">Select Month</label><input type="month" id="targ-month" style="margin-top:0;" onchange="window.renderTarget()"></div></div>
+            <div id="e-target-summary" style="margin-bottom:15px; padding:15px; background:#f0f9ff; border-radius:10px; border:2px solid #bae6fd;"></div>
+            <button onclick="window.print()" class="btn-print no-print" style="margin-bottom:15px;">PRINT REPORT</button>
+            <div class="table-container"><table class="report-table"><thead><tr><th>HP Number</th><th>Type</th><th>Customer</th><th>Status</th><th>Date & Time</th></tr></thead><tbody id="e-target-body"></tbody></table></div>
+        </div>
+
+        <div id="e-report" class="sub-section card hidden">
+            <h4>📋 MY DETAILED HISTORY</h4>
+            <div class="no-print" style="display:flex; gap:10px;"><div style="flex:1;"><label class="form-label">Select Month</label><input type="month" id="e-rep-month" style="margin-top:0;"></div><button class="btn-green" onclick="window.renderEmployeeSelfReport()" style="margin-top:15px; width:auto; padding:0 25px;">SEARCH</button></div>
+            <button onclick="window.print()" class="btn-print no-print" style="margin-top:15px;">PRINT REPORT</button>
+            <div class="table-container"><table class="report-table"><thead><tr><th>Date & Time</th><th>Customer/HP/INS</th><th>Stat/Amt</th><th>Reason/Details</th><th>Location</th><th>Images</th></tr></thead><tbody id="e-report-body"></tbody></table></div>
+        </div>
+    </div>
+</div>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    const firebaseConfig = { apiKey: "AIzaSyC9PnjAdBeOEy0TLQvUBJUznlZFKSS82uI", authDomain: "sri-vishnu-priya-finance-c591f.firebaseapp.com", databaseURL: "https://sri-vishnu-priya-finance-c591f-default-rtdb.firebaseio.com", projectId: "sri-vishnu-priya-finance-c591f", storageBucket: "sri-vishnu-priya-finance-c591f.firebasestorage.app", messagingSenderId: "184676228358", appId: "1:184676228358:web:86cea86c88c1531bdfd287" };
+    const app = initializeApp(firebaseConfig); const db = getDatabase(app); const auth = getAuth(app);
+
+    window.current = null; window.isImpersonating = false; window.gps = "0,0"; 
+    window.allEmps = []; window.allVisits = []; window.allBranches = []; window.allAssigns = {};
+    window.appLogoBase64 = "https://via.placeholder.com/300x120?text=Upload+Logo";
+    window.adminSettings = { lockPass: "rajesh" }; window.isSecuredUnlocked = false; 
+    window.pendingTargetId = ''; window.pendingTargetNav = null;
+    window.updateEmployeeDashState = window.updateEmployeeDashState || (() => {});
+
+    window.getLocalDate = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+    window.getLocalTime = () => new Date().toLocaleTimeString('en-US', { hour12: true, hour: 'numeric', minute: '2-digit' });
+
+    window.compressImage = (file) => new Promise((resolve) => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = e => { const img = new Image(); img.src = e.target.result; img.onload = () => { const canvas = document.createElement('canvas'); const MAX = 400; let w = img.width, h = img.height; if (w > h) { if (w > MAX) { h *= MAX / w; w = MAX; } } else { if (h > MAX) { w *= MAX / h; h = MAX; } } canvas.width = w; canvas.height = h; canvas.getContext('2d').drawImage(img, 0, 0, w, h); resolve(canvas.toDataURL('image/jpeg', 0.4)); }; }; });
+
+    window.handleLogin = async () => {
+        const idStr = document.getElementById('l-id').value.trim(); const ps = document.getElementById('l-pass').value.trim();
+        if(!idStr || !ps) return alert("Please enter Login ID and Password!");
+        const btn = document.getElementById('login-btn'); btn.innerText = "VERIFYING..."; btn.disabled = true;
+        try {
+            let loginEmail = idStr;
+            if(idStr.toLowerCase() === 'admin' || (idStr.toLowerCase() === 'siva' && ps === 'sai')) loginEmail = 'admin@vpfc.com';
+            
+            if(loginEmail.includes('@')) {
+                await signInWithEmailAndPassword(auth, loginEmail, ps); window.current = {id:'admin', name:'Admin'}; 
+                const mStr = window.getLocalDate().slice(0, 7); if(document.getElementById('admin-dash-month-global')) document.getElementById('admin-dash-month-global').value = mStr; if(document.getElementById('ins-month-val')) document.getElementById('ins-month-val').value = mStr;
+                document.getElementById('main-login-wrap').classList.add('hidden'); document.body.classList.remove('login-active'); document.getElementById('admin-dashboard').classList.remove('hidden'); window.updateAdminDashboardStats(); 
+            } else {
+                const e = window.allEmps.find(x => x.id === idStr && x.pass === ps);
+                if(!e) { alert("Invalid Employee ID or Password!"); btn.innerText = "LOGIN"; btn.disabled = false; return; }
+                if(e.status === 'Inactive') { alert("❌ మీ అకౌంట్ డియాక్టివేట్ చేయబడింది. మీరు లాగిన్ అవ్వలేరు!"); btn.innerText = "LOGIN"; btn.disabled = false; return; }
+                if (!auth.currentUser || auth.currentUser.email !== 'emp@vpfc.com') { signInWithEmailAndPassword(auth, 'emp@vpfc.com', 'Emp@123').catch(err=>{}); }
+                window.current = e; 
+                const mStr = window.getLocalDate().slice(0, 7); ['emp-dash-month-global', 'e-rep-month', 'e-vstat-month', 'targ-month'].forEach(id => { if(document.getElementById(id)) document.getElementById(id).value = mStr; });
+                document.getElementById('main-login-wrap').classList.add('hidden'); document.body.classList.remove('login-active'); document.getElementById('employee-dashboard').classList.remove('hidden'); document.getElementById('e-name-tag').innerText = "👨‍💼 " + e.name; 
+                window.startGPS(); window.populateAssignedHPs(); window.updateEmployeeDashState(); window.updateEmployeeDashboardStats(); window.renderIDCard(); 
+            }
+        } catch (error) { alert("Login Failed! Check internet or credentials."); } finally { btn.innerText = "LOGIN"; btn.disabled = false; }
+    };
+
+    onValue(ref(db, 'adminSettings'), s => { if(s.val()) window.adminSettings = { ...window.adminSettings, ...s.val() }; });
+    onValue(ref(db, 'settings/logo'), s => { if(s.val()) { window.appLogoBase64 = s.val(); document.documentElement.style.setProperty('--logo-url', `url('${window.appLogoBase64}')`); if(window.current && window.current.id !== 'admin') window.updateEmployeeDashState(); } });
+    onValue(ref(db, 'branches'), s => { window.allBranches = s.val() ? Object.keys(s.val()).map(k => ({key: k, name: s.val()[k].name})) : []; window.updateDropdowns(); });
+    onValue(ref(db, 'employees'), s => { window.allEmps = s.val() ? Object.values(s.val()) : []; window.renderEmpList(); if(document.getElementById('next-auto-id')) document.getElementById('next-auto-id').innerText = window.getNextEmpId(); if(window.current && window.current.id === 'admin' && !window.isImpersonating) window.updateAdminDashboardStats(); if(window.current && window.current.id !== 'admin') { window.current = window.allEmps.find(x => x.id === window.current.id); window.updateEmployeeDashState(); } });
+    onValue(ref(db, 'visits'), s => { window.allVisits = s.val() ? Object.values(s.val()) : []; if(window.current && window.current.id === 'admin' && !window.isImpersonating) window.updateAdminDashboardStats(); if(window.current && window.current.id !== 'admin') { window.updateEmployeeDashboardStats(); if(!document.getElementById('e-target').classList.contains('hidden')) window.renderTarget(); } });
+    onValue(ref(db, 'assignments'), s => { window.allAssigns = s.val() || {}; if(window.current && window.current.id === 'admin' && !window.isImpersonating) { window.updateAdminDashboardStats(); if(document.getElementById('as-emp-sel').value) window.renderAssignedList(); } if(window.current && window.current.id !== 'admin') { window.populateAssignedHPs(); window.updateEmployeeDashboardStats(); } });
+
+    window.getNextEmpId = () => { if(window.allEmps.length === 0) return "001"; const ids = window.allEmps.map(e => parseInt(e.id)||0); const max = Math.max(...ids); return String(max + 1).padStart(3, '0'); };
+    window.updateDropdowns = () => { const selects = ['imp-br-sel', 'as-branch-sel', 'stat-br-sel', 'a-rep-branch-sel', 'r-branch-select', 'ins-branch-sel', 'b-search-select', 'b-perf-branch', 'att-branch-sel']; let options = '<option value="">Select Branch</option>'; window.allBranches.forEach(b => { options += `<option value="${b.name}">${b.name}</option>`; }); selects.forEach(id => { let el = document.getElementById(id); if(el) el.innerHTML = options; }); let listHTML = ''; window.allBranches.forEach(b => { listHTML += `<div style="background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #cbd5e1; font-weight:bold; color:var(--primary); display:flex; justify-content:space-between; align-items:center;"><span>${b.name}</span> <button onclick="window.deleteBranch('${b.key}')" style="background:var(--danger); color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">Delete</button></div>`; }); let listEl = document.getElementById('branch-display-list'); if(listEl) listEl.innerHTML = listHTML; };
+    window.addBranch = async () => { const bName = document.getElementById('new-branch-name').value.trim(); if(bName) { await push(ref(db, 'branches'), { name: bName }); document.getElementById('new-branch-name').value = ''; } };
+    window.deleteBranch = async (key) => { if(confirm("Delete this branch?")) await remove(ref(db, 'branches/'+key)); };
+
+    window.populateEmpsByBranch = (brSel, empSel, defText) => { const b = document.getElementById(brSel).value; let opts = `<option value="">${defText}</option>`; window.allEmps.filter(e => e.branch === b).forEach(e => { opts += `<option value="${e.id}">${e.name} (${e.id})</option>`; }); document.getElementById(empSel).innerHTML = opts; };
+    window.loadAssignEmps = () => window.populateEmpsByBranch('as-branch-sel', 'as-emp-sel', 'Select Employee');
+    window.loadStatEmps = () => window.populateEmpsByBranch('stat-br-sel', 'stat-em-sel', 'Select Employee');
+    window.loadSearchEmps = () => window.populateEmpsByBranch('a-rep-branch-sel', 'a-rep-emp-sel', 'All Employees');
+    window.loadImpEmps = () => window.populateEmpsByBranch('imp-br-sel', 'imp-em-sel', 'Select Employee');
+    window.getEmpAssignments = (empId, month) => { let a = window.allAssigns[empId]; if(!a || !a[month]) return { r:[], m:[], rAmt:0, mAmt:0, details:{} }; return { r: a[month].regularHPs || [], m: a[month].maturedHPs || [], rAmt: parseFloat(a[month].regularTargetAmt) || 0, mAmt: parseFloat(a[month].maturedTargetAmt) || 0, details: a[month].details || {} }; };
+
+    window.saveEmployee = async () => { const id = window.getNextEmpId(); const n = document.getElementById('r-name').value; const br = document.getElementById('r-branch-select').value; const ps = document.getElementById('r-pass').value; if(!n || !br || !ps) return alert("Fill Name, Branch, Password!"); let photo="N/A", proof="N/A"; const fP = document.getElementById('r-photo').files[0]; const fI = document.getElementById('r-id-proof').files[0]; if(fP) photo = await window.compressImage(fP); if(fI) proof = await window.compressImage(fI); const data = { id:id, name:n, branch:br, pass:ps, mobile:document.getElementById('r-mobile').value, designation:document.getElementById('r-designation').value, village:document.getElementById('r-vill').value, address:document.getElementById('r-address').value, joinDate:document.getElementById('r-join').value, photo:photo, idProof:proof, status: "Active" }; await set(ref(db, 'employees/'+id), data); alert(`Employee Saved! Auto ID: ${id}`); window.cancelEdit(); };
+    window.updateEmployee = async () => { const id = document.getElementById('edit-emp-id').value; const ex = window.allEmps.find(x => x.id === id); if(!ex) return; let proof = ex.idProof || "N/A"; const fI = document.getElementById('r-id-proof').files[0]; if(fI) proof = await window.compressImage(fI); let photo = ex.photo || "N/A"; const fP = document.getElementById('r-photo').files[0]; if(fP) photo = await window.compressImage(fP); const updatedData = { ...ex, mobile:document.getElementById('r-mobile').value, designation:document.getElementById('r-designation').value, village:document.getElementById('r-vill').value, address:document.getElementById('r-address').value, idProof:proof, photo:photo }; await set(ref(db, 'employees/'+id), updatedData); alert("Details Updated!"); window.cancelEdit(); };
+    window.editEmp = (id) => { const e = window.allEmps.find(x => x.id === id); if(e) { document.getElementById('edit-emp-id').value = id; document.getElementById('r-mobile').value = e.mobile || ""; document.getElementById('r-designation').value = e.designation || ""; document.getElementById('r-vill').value = e.village || ""; document.getElementById('r-address').value = e.address || ""; ['r-name', 'r-branch-select', 'r-pass', 'r-join'].forEach(fid => { if(document.getElementById(fid)) { document.getElementById(fid).disabled = true; document.getElementById(fid).style.opacity = '0.5'; } }); document.getElementById('pass-div').style.display='none'; document.getElementById('new-emp-msg').classList.add('hidden'); document.getElementById('edit-emp-msg').classList.remove('hidden'); document.getElementById('save-emp-btn').classList.add('hidden'); document.getElementById('update-emp-btn').classList.remove('hidden'); document.getElementById('cancel-edit-btn').classList.remove('hidden'); window.scrollTo(0,0); } };
+    window.cancelEdit = () => { ['r-name', 'r-mobile', 'r-designation', 'r-vill', 'r-address', 'r-pass', 'r-photo', 'r-id-proof', 'r-join'].forEach(i => { if(document.getElementById(i)) {document.getElementById(i).value=""; document.getElementById(i).disabled=false; document.getElementById(i).style.opacity='1';} }); document.getElementById('r-branch-select').disabled=false; document.getElementById('r-branch-select').style.opacity='1'; document.getElementById('pass-div').style.display='block'; document.getElementById('new-emp-msg').classList.remove('hidden'); document.getElementById('edit-emp-msg').classList.add('hidden'); document.getElementById('save-emp-btn').classList.remove('hidden'); document.getElementById('update-emp-btn').classList.add('hidden'); document.getElementById('cancel-edit-btn').classList.add('hidden'); };
+    window.renderEmpList = () => { let h=''; window.allEmps.forEach(e => h+=`<tr><td><b>${e.id}</b></td><td>${e.name}</td><td>${e.mobile||'-'}</td><td>${e.joinDate||'-'}</td><td><b style="color:${e.status==='Inactive'?'var(--danger)':'var(--secondary)'}">${e.status||'Active'}</b></td><td><button class="btn-blue" style="padding:5px 10px; width:auto;" onclick="window.editEmp('${e.id}')">Edit</button></td></tr>`); const tbody=document.getElementById('a-reg-list'); if(tbody) tbody.innerHTML=h; };
+
+    // 🪪 Premium Digital ID Card
+    window.generateIDCardHTML = (emp) => { let statClass = emp.status === 'Inactive' ? 'inactive' : ''; return `<div class="id-card-wrapper"><img src="${window.appLogoBase64}" class="id-logo"><img src="${emp.photo||'https://via.placeholder.com/130'}" class="id-photo"><div class="id-details-container"><div class="watermark"></div><div class="id-row"><div class="id-lbl">EMP ID</div><div class="id-colon">:</div><div class="id-val">${emp.id}</div></div><div class="id-row"><div class="id-lbl">NAME</div><div class="id-colon">:</div><div class="id-val">${emp.name}</div></div><div class="id-row"><div class="id-lbl">ROLE</div><div class="id-colon">:</div><div class="id-val">${emp.designation || 'COLLECTION AGENT'}</div></div><div class="id-row"><div class="id-lbl">BRANCH</div><div class="id-colon">:</div><div class="id-val">${emp.branch}</div></div><div class="id-row"><div class="id-lbl">MOBILE</div><div class="id-colon">:</div><div class="id-val">${emp.mobile||'-'}</div></div><div class="id-row"><div class="id-lbl">JOINED</div><div class="id-colon">:</div><div class="id-val">${emp.joinDate||'-'}</div></div></div><div class="id-status ${statClass}">${emp.status||'ACTIVE'}</div></div>`; };
+    window.searchIdentity = () => { const val = document.getElementById('i-search-val').value.toLowerCase().trim(); const emp = window.allEmps.find(e => e.id.toLowerCase() === val || e.name.toLowerCase() === val); if(!emp) return alert("Not found!"); document.getElementById('admin-id-card-view').innerHTML = window.generateIDCardHTML(emp); document.getElementById('i-emp-id').value = emp.id; document.getElementById('i-emp-status').value = emp.status || 'Active'; document.getElementById('identity-result-area').classList.remove('hidden'); };
+    window.updateEmpStatus = () => { const id = document.getElementById('i-emp-id').value; const s = document.getElementById('i-emp-status').value; const emp = window.allEmps.find(x => x.id === id); if(emp) { emp.status = s; set(ref(db, 'employees/'+id), emp).then(() => { alert("Status Updated!"); window.searchIdentity(); }); } };
+    window.renderIDCard = () => { if(window.current && window.current.id !== 'admin') document.getElementById('my-digital-id-area').innerHTML = window.generateIDCardHTML(window.current); };
+
+    // Assignments
+    window.generateAssignBoxes = () => { let count = parseInt(document.getElementById('as-box-count').value); if(!count || count <= 0) return alert("Enter count"); let html = '<div style="display:grid; grid-template-columns: 2fr 1fr 1.5fr; gap:10px; font-weight:bold; color:var(--text-light); margin-bottom:5px;"><span>HP Number</span><span>INS</span><span>Amount (₹)</span></div>'; for(let i=1; i<=count; i++) { let nextHpId = (i < count) ? `as-hp-${i+1}` : `as-btn`; html += `<div style="display:grid; grid-template-columns: 2fr 1fr 1.5fr; gap:10px; margin-bottom:10px;"><input type="text" id="as-hp-${i}" placeholder="${i}. HP" style="margin:0;" onkeypress="if(event.key==='Enter') document.getElementById('as-ins-${i}').focus()"><input type="text" id="as-ins-${i}" placeholder="INS" style="margin:0;" onkeypress="if(event.key==='Enter') document.getElementById('as-amt-${i}').focus()"><input type="number" id="as-amt-${i}" placeholder="Amt" style="margin:0;" onkeypress="if(event.key==='Enter') { event.preventDefault(); document.getElementById('${nextHpId}').focus(); }" oninput="window.calcAssignTotals()"></div>`; } document.getElementById('dynamic-assign-boxes').innerHTML = html; document.getElementById('dynamic-assign-boxes').classList.remove('hidden'); document.getElementById('assign-totals').classList.remove('hidden'); document.getElementById('as-btn').classList.remove('hidden'); };
+    window.calcAssignTotals = () => { let tAmt = 0, vAcc = 0; let i = 1; while(document.getElementById(`as-hp-${i}`)) { let hp = document.getElementById(`as-hp-${i}`); let amt = document.getElementById(`as-amt-${i}`); if(hp && hp.value.trim() !== "") vAcc++; if(amt && !isNaN(parseFloat(amt.value))) tAmt += parseFloat(amt.value); i++; } document.getElementById('tot-acc-count').innerText = vAcc; document.getElementById('tot-acc-amt').innerText = "₹" + tAmt; };
+    window.assignAccounts = async () => { 
+        const eid = document.getElementById('as-emp-sel').value; const mo = document.getElementById('as-month-sel').value; const type = document.getElementById('as-type-sel').value; 
+        if(!eid || !mo) return alert("Select Employee & Month!"); 
+        const ex = window.getEmpAssignments(eid, mo); let rHPs = [...ex.r]; let mHPs = [...ex.m]; let rAmt = ex.rAmt; let mAmt = ex.mAmt; let det = {...ex.details}; 
+        let added = 0; let i = 1;
+        while(document.getElementById(`as-hp-${i}`)) {
+            let hp = document.getElementById(`as-hp-${i}`).value.trim(); let ins = document.getElementById(`as-ins-${i}`).value.trim(); let amt = parseFloat(document.getElementById(`as-amt-${i}`).value) || 0; 
+            if(hp) { 
+                if(type === 'Regular') { if(!rHPs.includes(hp)) rHPs.push(hp); rAmt += amt; } else { if(!mHPs.includes(hp)) mHPs.push(hp); mAmt += amt; } 
+                det[hp] = { ins: ins, amt: amt, type: type }; added++; 
+            } i++;
+        } 
+        if(added === 0) return alert("Enter at least 1 account!"); 
+        await set(ref(db, `assignments/${eid}/${mo}`), { regularHPs: rHPs, maturedHPs: mHPs, regularTargetAmt: rAmt, maturedTargetAmt: mAmt, details: det }); 
+        alert(`${added} Accounts Assigned!`); 
+        document.getElementById('dynamic-assign-boxes').innerHTML = ""; document.getElementById('dynamic-assign-boxes').classList.add('hidden'); document.getElementById('as-box-count').value = ""; document.getElementById('assign-totals').classList.add('hidden'); document.getElementById('as-btn').classList.add('hidden'); window.renderAssignedList(); 
+    };
+    window.renderAssignedList = () => { const eid = document.getElementById('as-emp-sel').value; const mo = document.getElementById('as-month-sel').value; const tbody = document.getElementById('as-list-body'); if(!eid || !mo) { tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;">Select Employee & Month</td></tr>`; return; } const ass = window.getEmpAssignments(eid, mo); if(ass.r.length === 0 && ass.m.length === 0) { tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;">No accounts assigned.</td></tr>`; return; } let html = ''; ass.r.forEach(hp => { let d = ass.details[hp] || {}; html += `<tr><td><b>${hp}</b><br><small>Amt: ₹${d.amt} | INS: ${d.ins||'N/A'}</small></td><td><span style="color:var(--primary); font-weight:bold;">🟢 REG</span></td><td><button class="btn-red" style="padding:5px 10px; width:auto;" onclick="window.deleteAssignedHP('${eid}', '${mo}', '${hp}', 'Regular')">Del</button></td></tr>`; }); ass.m.forEach(hp => { let d = ass.details[hp] || {}; html += `<tr><td><b>${hp}</b><br><small>Amt: ₹${d.amt} | INS: ${d.ins||'N/A'}</small></td><td><span style="color:#d97706; font-weight:bold;">🟠 MAT</span></td><td><button class="btn-red" style="padding:5px 10px; width:auto;" onclick="window.deleteAssignedHP('${eid}', '${mo}', '${hp}', 'Matured')">Del</button></td></tr>`; }); tbody.innerHTML = html; };
+    window.deleteAssignedHP = async (eid, mo, hp, type) => { if(!confirm(`Delete ${hp}?`)) return; const ex = window.getEmpAssignments(eid, mo); let rHPs = [...ex.r], mHPs = [...ex.m], rAmt = ex.rAmt, mAmt = ex.mAmt, det = {...ex.details}; let delAmt = det[hp] ? (parseFloat(det[hp].amt) || 0) : 0; if(type === 'Regular') { rHPs = rHPs.filter(x => x !== hp); rAmt -= delAmt; } if(type === 'Matured') { mHPs = mHPs.filter(x => x !== hp); mAmt -= delAmt; } delete det[hp]; await set(ref(db, `assignments/${eid}/${mo}`), { regularHPs: rHPs, maturedHPs: mHPs, regularTargetAmt: Math.max(0, rAmt), maturedTargetAmt: Math.max(0, mAmt), details: det }); window.renderAssignedList(); };
+
+    window.startGPS = () => { if(navigator.geolocation) { navigator.geolocation.getCurrentPosition(p => { window.gps = p.coords.latitude.toFixed(5)+","+p.coords.longitude.toFixed(5); document.getElementById('gps-status').innerHTML = "✅ GPS CONNECTED"; document.getElementById('gps-status').style.background = "#dcfce7"; document.getElementById('gps-status').style.color = "green"; document.getElementById('gps-status').style.borderColor = "#10b981"; }, e => { document.getElementById('gps-status').innerHTML = "❌ GPS FAILED. Please enable Location."; }); } };
+    window.populateAssignedHPs = () => { if(!window.current||window.current.id==='admin') return; const mo=document.getElementById('emp-dash-month-global').value; const a=window.getEmpAssignments(window.current.id,mo); let o=''; [...a.r,...a.m].forEach(h=>o+=`<option value="${h}">`); document.getElementById('hp-list').innerHTML=o; };
+    window.checkHpType = () => { const hp=document.getElementById('v-hp').value.trim(); const mo=document.getElementById('emp-dash-month-global').value; const a=window.getEmpAssignments(window.current.id,mo); if(a.r.includes(hp)) document.getElementById('v-hp-type-display').innerHTML="<span style='color:var(--primary);'>🟢 REGULAR ACCOUNT</span>"; else if(a.m.includes(hp)) document.getElementById('v-hp-type-display').innerHTML="<span style='color:#d97706;'>🟠 MATURED ACCOUNT</span>"; else document.getElementById('v-hp-type-display').innerHTML=""; };
+    window.toggleV = () => { const s=document.getElementById('v-stat').value; document.getElementById('v-paid-logic').classList.toggle('hidden', s!=='Paid'); document.getElementById('v-seized-logic').classList.toggle('hidden', s!=='Seized'); document.getElementById('v-unpaid-logic').classList.toggle('hidden', s==='Paid'||s==='Seized'); window.updateDynamicImages(); };
+    window.toggleL = () => { const t=document.getElementById('v-pay-type').value; document.getElementById('v-pcr-box').classList.toggle('hidden', t!=='PCR'); document.getElementById('v-lock-box').classList.toggle('hidden', t!=='Lock Amount'); window.updateDynamicImages(); };
+    window.togglePCRDate = () => { document.getElementById('v-pcr-date').classList.toggle('hidden', document.getElementById('v-pcr-later').value !== 'Yes'); };
+    window.updateDynamicImages = () => { 
+        const s=document.getElementById('v-stat').value; const p=document.getElementById('v-pay-type').value; const qrV = document.getElementById('v-visited-home').value; const ppfc = document.getElementById('v-ppfc') ? document.getElementById('v-ppfc').value : 'No';
+        ['img-receipt-div','extra-qr-images','img-cust-div','img-house-div','qr-visit-div','v-op-to-div', 'ppfc-no-reason'].forEach(i=> { if(document.getElementById(i)) document.getElementById(i).classList.add('hidden'); });
+        if(s==='Not Paid'){ document.getElementById('img-cust-div').classList.remove('hidden'); document.getElementById('img-house-div').classList.remove('hidden'); document.getElementById('lbl-cust-img').innerText="Customer Photo (Mandatory)"; document.getElementById('lbl-house-img').innerText="House/Vehicle Photo (Mandatory)"; }
+        else if(s==='Seized'){ document.getElementById('img-cust-div').classList.remove('hidden'); document.getElementById('img-house-div').classList.remove('hidden'); document.getElementById('lbl-cust-img').innerText="Seized Bike Photo 1 (Mandatory)"; document.getElementById('lbl-house-img').innerText="Seized Bike Photo 2 (Mandatory)"; }
+        else if(s==='Paid'){ 
+            document.getElementById('lbl-cust-img').innerText="Customer Photo"; document.getElementById('lbl-house-img').innerText="House/Vehicle Photo";
+            if(p==='PCR'){ document.getElementById('lbl-receipt').innerText="PCR Receipt Image"; document.getElementById('img-cust-div').classList.remove('hidden'); document.getElementById('img-receipt-div').classList.remove('hidden'); document.getElementById('img-house-div').classList.remove('hidden'); }
+            else if(p==='Lock Amount'){ document.getElementById('img-cust-div').classList.remove('hidden'); document.getElementById('img-house-div').classList.remove('hidden'); if(ppfc==='Yes'){ document.getElementById('lbl-receipt').innerText="PPFC Receipt"; document.getElementById('img-receipt-div').classList.remove('hidden');} else { document.getElementById('ppfc-no-reason').classList.remove('hidden'); } }
+            else if(p==='Office QR'){ document.getElementById('lbl-receipt').innerText="Payment Proof/Screenshot"; document.getElementById('img-receipt-div').classList.remove('hidden'); document.getElementById('extra-qr-images').classList.remove('hidden'); document.getElementById('qr-visit-div').classList.remove('hidden'); if(qrV==='Yes'){ document.getElementById('img-cust-div').classList.remove('hidden'); document.getElementById('img-house-div').classList.remove('hidden'); } }
+            else if(p==='OP'){ document.getElementById('v-op-to-div').classList.remove('hidden'); document.getElementById('qr-visit-div').classList.remove('hidden'); if(qrV==='Yes'){ document.getElementById('lbl-receipt').innerText="OP Receipt Image"; document.getElementById('img-receipt-div').classList.remove('hidden'); document.getElementById('img-cust-div').classList.remove('hidden'); document.getElementById('img-house-div').classList.remove('hidden'); } }
+        } 
+    };
+
+    window.submitVisit = async () => {
+        if(!window.current || window.current.id==='admin' || window.current.status === 'Inactive') return alert("Cannot submit!");
+        const hp = document.getElementById('v-hp').value.trim(); const mo = document.getElementById('emp-dash-month-global').value;
+        if(!hp || !document.getElementById('v-name').value) return alert("Customer Name & HP are mandatory!");
+        const ass = window.getEmpAssignments(window.current.id, mo); if(!ass.r.includes(hp) && !ass.m.includes(hp)) return alert("HP Not assigned for this month!");
+        const btn = document.getElementById('v-submit-btn'); btn.innerText = "Submitting securely..."; btn.disabled = true;
+        try {
+            let p1="N/A", p2="N/A", pr="N/A", pr2="N/A", pr3="N/A", pr4="N/A"; 
+            if(document.getElementById('img-cust').files[0]) p1 = await window.compressImage(document.getElementById('img-cust').files[0]); 
+            if(document.getElementById('img-house').files[0]) p2 = await window.compressImage(document.getElementById('img-house').files[0]); 
+            if(document.getElementById('img-receipt').files[0]) pr = await window.compressImage(document.getElementById('img-receipt').files[0]);
+            if(document.getElementById('img-receipt-2') && document.getElementById('img-receipt-2').files[0]) pr2 = await window.compressImage(document.getElementById('img-receipt-2').files[0]);
+            if(document.getElementById('img-receipt-3') && document.getElementById('img-receipt-3').files[0]) pr3 = await window.compressImage(document.getElementById('img-receipt-3').files[0]);
+            if(document.getElementById('img-receipt-4') && document.getElementById('img-receipt-4').files[0]) pr4 = await window.compressImage(document.getElementById('img-receipt-4').files[0]);
+            
+            let pType = document.getElementById('v-pay-type').value; let stat = document.getElementById('v-stat').value;
+            let ppfcNoR = "---"; if(stat==='Paid' && pType==='Lock Amount' && document.getElementById('v-ppfc').value === 'No') ppfcNoR = document.getElementById('v-ppfc-unr').value || "No Reason Given";
+
+            const data = { eid:window.current.id, ename:window.current.name, cname:document.getElementById('v-name').value, hp:hp, accType:ass.r.includes(hp)?'Regular':'Matured', custMobile:document.getElementById('v-number').value||"---", vill:document.getElementById('v-vill').value||"---", stat:stat, amt:document.getElementById('v-amt').value||0, type:pType, pcrDate:document.getElementById('v-pcr-date').value||"---", ppfc:document.getElementById('v-ppfc')?document.getElementById('v-ppfc').value:"No", ppfcUnr: ppfcNoR, unr:document.getElementById('v-unr').value||"---", next:document.getElementById('v-next').value||"---", seizeTime:document.getElementById('v-seize-time').value||"---", opTo:document.getElementById('v-op-to').value||"---", loc:window.gps, i1:p1, i2:p2, ir:pr, ir2:pr2, ir3:pr3, ir4:pr4, date:window.getLocalDate(), time:window.getLocalTime() };
+            
+            await push(ref(db, 'visits'), data); 
+            
+            // Telegram Alert
+            try {
+                const botToken = "8642256494:AAFSLiYtB6UgxQXXneLGubZs0LeeJ9t7uDQ"; const chatId = "7860895973"; 
+                const empMob = window.current.mobile || "N/A"; const brName = window.current.branch || "N/A";
+                let extraMsg = stat === 'Not Paid' ? `\n🚫 *Reason:* ${data.unr}\n📅 *Next Date:* ${data.next}` : stat === 'Paid' ? `\n💳 *Type:* ${data.type}\n🔖 *PPFC:* ${data.ppfc}${data.ppfcUnr !== '---' ? `\n⚠️ *PPFC Reason:* ${data.ppfcUnr}` : ''}` : `\n⏱ *Seize Time:* ${data.seizeTime}`;
+                const msg = `🔔 *New Visit Alert!*\n🏢 *Branch:* ${brName}\n👤 *Emp:* ${data.ename}\n📞 *Emp Mob:* ${empMob}\n🤝 *Cust:* ${data.cname} (${data.accType})\n📱 *Cust Mob:* ${data.custMobile}\n📄 *HP:* ${data.hp}\n📊 *Stat:* ${data.stat}\n💰 *Amt:* ₹${data.amt}${extraMsg}\n🗺 *Loc:* [View Map](https://maps.google.com/?q=${data.loc})\n⏰ *Time:* ${data.date}, ${data.time}`;
+                await fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
+            } catch(tgErr) { console.log(tgErr); }
+
+            alert("Visit Submitted Successfully!"); 
+            ['v-hp','v-name','v-number','v-vill','v-amt','v-pcr-date','v-unr','v-next','v-seize-time','v-op-to','v-ppfc-unr','img-cust','img-house','img-receipt','img-receipt-2','img-receipt-3','img-receipt-4'].forEach(id => { if(document.getElementById(id)) document.getElementById(id).value=''; });
+            document.getElementById('v-hp-type-display').innerHTML=""; document.getElementById('v-stat').value = 'Not Paid'; window.toggleV();
+        } catch(e){ alert("Error: "+e.message); } finally { btn.innerText = "✅ SUBMIT VISIT DATA"; btn.disabled = false; }
+    };
+
+    window.buildImageLinks = (v) => { let ph = ''; const imgs = [v.i1, v.i2, v.ir, v.ir2, v.ir3, v.ir4]; imgs.forEach(i => { if(i && i!=='N/A') ph += `<img src="${i}" class="img-preview" onclick="window.open(this.src)">`; }); return ph || '---'; };
+    window.buildLocLink = (loc) => loc && loc!=='0,0' ? `<a href="https://maps.google.com/?q=${loc}" target="_blank" style="color:#3b82f6; font-weight:bold; text-decoration:underline;">📍 Map</a>` : 'No GPS';
+
+    window.updateAdminDashboardStats = () => {
+        if(!window.current || window.current.id !== 'admin') return;
+        const moInput = document.getElementById('admin-dash-month-global'); let mo = moInput ? moInput.value : window.getLocalDate().slice(0, 7); if(moInput) moInput.value = mo;
+        document.getElementById('admin-overview-month-label').innerText = mo; document.getElementById('stat-tot-emps').innerText = window.allEmps.length; document.getElementById('stat-act-emps').innerText = window.allEmps.filter(e => e.status !== 'Inactive').length; document.getElementById('stat-tot-branches').innerText = window.allBranches.length;
+        let rt=0, mt=0, rc=0, mc=0, rac=0, mac=0, rsa=0, msa=0; let rComp=new Set(), mComp=new Set(), rSeiz=new Set(), mSeiz=new Set();
+        Object.keys(window.allAssigns).forEach(eid => { const a = window.allAssigns[eid]; if(a && a[mo]) { rt+=parseFloat(a[mo].regularTargetAmt)||0; mt+=parseFloat(a[mo].maturedTargetAmt)||0; rac+=(a[mo].regularHPs||[]).length; mac+=(a[mo].maturedHPs||[]).length; } });
+        window.allVisits.filter(v => v.date.startsWith(mo)).forEach(v => { 
+            const ass = window.getEmpAssignments(v.eid, mo); 
+            let isR = ass.r.includes(v.hp), isM = ass.m.includes(v.hp); 
+            if(!isR && !isM) { isR=v.accType==='Regular'; isM=v.accType==='Matured'; } 
+            if (v.stat === 'Paid') { 
+                if(isR) { rc+=parseFloat(v.amt||0); rComp.add(v.hp); } 
+                if(isM) { mc+=parseFloat(v.amt||0); mComp.add(v.hp); } 
+            } else if (v.stat === 'Seized') { 
+                let sa = (ass.details&&ass.details[v.hp])?parseFloat(ass.details[v.hp].amt||0):0; 
+                if(isR) { if(!rSeiz.has(v.hp)) { rsa+=sa; rSeiz.add(v.hp); } } 
+                if(isM) { if(!mSeiz.has(v.hp)) { msa+=sa; mSeiz.add(v.hp); } } 
+            } 
+        });
+        document.getElementById('stat-reg-assign-c').innerText = rac; document.getElementById('stat-reg-comp-c').innerText = rComp.size; document.getElementById('stat-reg-seized-c').innerText = rSeiz.size; document.getElementById('stat-reg-pend-c').innerText = rac - rComp.size - rSeiz.size; document.getElementById('stat-reg-t-amt').innerText = "₹"+rt; document.getElementById('stat-reg-c-amt').innerText = "₹"+rc; document.getElementById('stat-reg-seized-amt').innerText = "₹"+rsa; document.getElementById('stat-reg-r-amt').innerText = "₹"+Math.max(0, rt-rc-rsa);
+        document.getElementById('stat-mat-assign-c').innerText = mac; document.getElementById('stat-mat-comp-c').innerText = mComp.size; document.getElementById('stat-mat-seized-c').innerText = mSeiz.size; document.getElementById('stat-mat-pend-c').innerText = mac - mComp.size - mSeiz.size; document.getElementById('stat-mat-t-amt').innerText = "₹"+mt; document.getElementById('stat-mat-c-amt').innerText = "₹"+mc; document.getElementById('stat-mat-seized-amt').innerText = "₹"+msa; document.getElementById('stat-mat-r-amt').innerText = "₹"+Math.max(0, mt-mc-msa);
+    };
+
+    window.updateEmployeeDashboardStats = () => {
+        if(!window.current || window.current.id === 'admin') return; const mo = document.getElementById('emp-dash-month-global').value;
+        const ass = window.getEmpAssignments(window.current.id, mo); const myV = window.allVisits.filter(v => v.eid === window.current.id && v.date.startsWith(mo));
+        let rc=0, mc=0, rsa=0, msa=0; let rComp=new Set(), mComp=new Set(), rSeiz=new Set(), mSeiz=new Set();
+        myV.forEach(v => { 
+            let isR = ass.r.includes(v.hp), isM = ass.m.includes(v.hp); 
+            if(!isR&&!isM){isR=v.accType==='Regular';isM=v.accType==='Matured';} 
+            if (v.stat === 'Paid') { 
+                if(isR) { rc+=parseFloat(v.amt||0); rComp.add(v.hp); } 
+                if(isM) { mc+=parseFloat(v.amt||0); mComp.add(v.hp); } 
+            } else if (v.stat === 'Seized') { 
+                let sa = (ass.details&&ass.details[v.hp])?parseFloat(ass.details[v.hp].amt||0):0; 
+                if(isR) { if(!rSeiz.has(v.hp)) { rsa+=sa; rSeiz.add(v.hp); } } 
+                if(isM) { if(!mSeiz.has(v.hp)) { msa+=sa; mSeiz.add(v.hp); } } 
+            } 
+        });
+        document.getElementById('e-reg-assign').innerText = ass.r.length; document.getElementById('e-reg-comp').innerText = rComp.size; document.getElementById('e-reg-seized-c').innerText = rSeiz.size; document.getElementById('e-reg-t-amt').innerText = ass.rAmt || 0; document.getElementById('e-reg-c-amt').innerText = rc; document.getElementById('e-reg-seized-amt').innerText = rsa;
+        document.getElementById('e-mat-assign').innerText = ass.m.length; document.getElementById('e-mat-comp').innerText = mComp.size; document.getElementById('e-mat-seized-c').innerText = mSeiz.size; document.getElementById('e-mat-t-amt').innerText = ass.mAmt || 0; document.getElementById('e-mat-c-amt').innerText = mc; document.getElementById('e-mat-seized-amt').innerText = msa;
+        const paid = myV.filter(v => v.stat === 'Paid'); let pa=0, la=0, qa=0, oa=0, pc=0, lc=0, qc=0, oc=0;
+        paid.forEach(v => { let a = parseFloat(v.amt||0); if(v.type === 'PCR') { pc++; pa+=a; } else if(v.type === 'Lock Amount') { lc++; la+=a; } else if(v.type === 'Office QR') { qc++; qa+=a; } else if(v.type&&v.type.startsWith('OP')) { oc++; oa+=a; } });
+        document.getElementById('e-stat-pcr-amt').innerText=pa; document.getElementById('e-stat-pcr-rec').innerText=pc; document.getElementById('e-stat-lock-amt').innerText=la; document.getElementById('e-stat-lock-rec').innerText=lc; document.getElementById('e-stat-qr-amt').innerText=qa; document.getElementById('e-stat-qr-rec').innerText=qc; document.getElementById('e-stat-op-amt').innerText=oa; document.getElementById('e-stat-op-rec').innerText=oc;
+        document.getElementById('e-stat-pcr-vis').innerText = paid.filter(v => v.type === 'PCR' && v.i1 !== 'N/A').length; document.getElementById('e-stat-lock-vis').innerText = paid.filter(v => v.type === 'Lock Amount' && v.i1 !== 'N/A').length; document.getElementById('e-stat-qr-vis').innerText = paid.filter(v => v.type === 'Office QR' && v.i1 !== 'N/A').length; document.getElementById('e-stat-op-vis').innerText = paid.filter(v => v.type&&v.type.startsWith('OP') && v.i1 !== 'N/A').length;
+    };
+
+    window.viewAdminEmpDash = () => {
+        const eid=document.getElementById('imp-em-sel').value, mo=document.getElementById('imp-mo-sel').value; if(!eid||!mo) return alert("Select Emp & Month");
+        const impEmp = window.allEmps.find(e => e.id === eid); const ass = window.getEmpAssignments(eid, mo); const myV = window.allVisits.filter(v => v.eid === eid && v.date.startsWith(mo));
+        let rc=0, mc=0, rsa=0, msa=0; let rComp=new Set(), mComp=new Set(), rSeiz=new Set(), mSeiz=new Set();
+        myV.forEach(v => { let isR = ass.r.includes(v.hp), isM = ass.m.includes(v.hp); if(!isR&&!isM){isR=v.accType==='Regular';isM=v.accType==='Matured';} if (v.stat === 'Paid') { if(isR) { rc+=parseFloat(v.amt||0); rComp.add(v.hp); } if(isM) { mc+=parseFloat(v.amt||0); mComp.add(v.hp); } } else if (v.stat === 'Seized') { let sa = (ass.details&&ass.details[v.hp])?parseFloat(ass.details[v.hp].amt||0):0; if(isR) { rSeiz.add(v.hp); rsa+=sa; } if(isM) { mSeiz.add(v.hp); msa+=sa; } } });
+        const paid = myV.filter(v => v.stat === 'Paid'); let pa=0, la=0, qa=0, oa=0, pc=0, lc=0, qc=0, oc=0;
+        paid.forEach(v => { let a = parseFloat(v.amt||0); if(v.type === 'PCR') { pc++; pa+=a; } else if(v.type === 'Lock Amount') { lc++; la+=a; } else if(v.type === 'Office QR') { qc++; qa+=a; } else if(v.type&&v.type.startsWith('OP')) { oc++; oa+=a; } });
+        let html = `<h3 style="color:var(--primary); text-align:center; text-transform:uppercase;">${impEmp.name} DASHBOARD (${mo})</h3><h4 style="color:var(--primary);">🟢 REGULAR</h4><div class="stats-grid"><div class="stat-card"><h3>${ass.r.length}</h3><p>Assign</p></div><div class="stat-card"><h3>${rComp.size}</h3><p>Done</p></div><div class="stat-card" style="border-bottom-color:var(--seized);"><h3>${rSeiz.size}</h3><p>Seized</p></div><div class="stat-card"><h3>₹${ass.rAmt}</h3><p>Target</p></div><div class="stat-card"><h3>₹${rc}</h3><p>Collected</p></div><div class="stat-card" style="border-bottom-color:var(--seized);"><h3>₹${rsa}</h3><p>Seized Amt</p></div></div><h4 style="color:#d97706;">🟠 MATURED</h4><div class="stats-grid"><div class="stat-card"><h3>${ass.m.length}</h3><p>Assign</p></div><div class="stat-card"><h3>${mComp.size}</h3><p>Done</p></div><div class="stat-card" style="border-bottom-color:var(--seized);"><h3>${mSeiz.size}</h3><p>Seized</p></div><div class="stat-card"><h3>₹${ass.mAmt}</h3><p>Target</p></div><div class="stat-card"><h3>₹${mc}</h3><p>Collected</p></div><div class="stat-card" style="border-bottom-color:var(--seized);"><h3>₹${msa}</h3><p>Seized Amt</p></div></div><h4>💰 RECEIPTS</h4><div class="stats-grid"><div class="stat-card"><h3>₹${pa}</h3><p>PCR (${pc})</p></div><div class="stat-card"><h3>₹${la}</h3><p>Lock (${lc})</p></div><div class="stat-card"><h3>₹${qa}</h3><p>QR (${qc})</p></div><div class="stat-card"><h3>₹${oa}</h3><p>OP (${oc})</p></div></div>`;
+        document.getElementById('admin-emp-dash-view-content').innerHTML = html; document.getElementById('admin-emp-dash-view-content').classList.remove('hidden');
+    };
+
+    window.renderAdminEmpReport = () => { const b=document.getElementById('a-rep-branch-sel').value, eid=document.getElementById('a-rep-emp-sel').value, mo=document.getElementById('a-rep-month').value; let data = window.allVisits; if(b) { const ids = window.allEmps.filter(e => e.branch === b).map(e => e.id); data = data.filter(v => ids.includes(v.eid)); } if(eid) data = data.filter(v => v.eid === eid); if(mo) data = data.filter(v => v.date.startsWith(mo)); let r = ''; data.forEach(v => { const ass = window.getEmpAssignments(v.eid, v.date.slice(0,7)); let sc = v.stat==='Paid'?'var(--secondary)':(v.stat==='Seized'?'var(--seized)':'var(--danger)'); let vAmt = v.stat==='Seized' ? ((ass.details&&ass.details[v.hp])?parseFloat(ass.details[v.hp].amt||0):0) : v.amt; let dh = v.stat==='Paid'?`Type: ${v.type}<br>PPFC: ${v.ppfc}<br>${v.ppfcUnr&&v.ppfcUnr!=='---'?`Reason: <b style='color:red'>${v.ppfcUnr}</b>`:''}`:(v.stat==='Seized'?`Time: ${v.seizeTime}`:`Reason: ${v.unr}<br>Next: ${v.next}`); let ins = (ass.details&&ass.details[v.hp])?ass.details[v.hp].ins:'N/A'; r+=`<tr><td>${v.date}<br><small style="color:gray">${v.time||''}</small></td><td><b>${v.cname}</b><br><span style="color:var(--primary)">${v.hp}</span><br>INS: ${ins}</td><td><b style="color:${sc}">₹${vAmt}</b><br><b style="color:${sc}">${v.stat}</b></td><td>${dh}</td><td>${window.buildLocLink(v.loc)}</td><td>${window.buildImageLinks(v)}</td></tr>`; }); document.getElementById('a-emp-rep-body').innerHTML = r; };
+    window.renderEmployeeSelfReport = () => { const mo = document.getElementById('e-rep-month').value; if(!mo) return; let r = ''; window.allVisits.filter(v => v.eid === window.current.id && v.date.startsWith(mo)).forEach(v => { const ass = window.getEmpAssignments(window.current.id, mo); let ins = (ass.details&&ass.details[v.hp])?ass.details[v.hp].ins:'N/A'; let vAmt = v.stat==='Seized' ? ((ass.details&&ass.details[v.hp])?parseFloat(ass.details[v.hp].amt||0):0) : v.amt; let sc = v.stat==='Paid'?'var(--secondary)':(v.stat==='Seized'?'var(--seized)':'var(--danger)'); let dh = v.stat==='Paid'?`${v.type}<br>${v.ppfcUnr&&v.ppfcUnr!=='---'?`<b style='color:red'>${v.ppfcUnr}</b>`:''}`:(v.stat==='Seized'?v.seizeTime:v.unr); r+=`<tr><td>${v.date}<br><small style="color:gray">${v.time||''}</small></td><td><b>${v.cname}</b><br>${v.hp}<br>INS: ${ins}</td><td><b style="color:${sc}">₹${vAmt}</b><br><b style="color:${sc}">${v.stat}</b></td><td>${dh}</td><td>${window.buildLocLink(v.loc)}</td><td>${window.buildImageLinks(v)}</td></tr>`; }); document.getElementById('e-report-body').innerHTML = r; };
+    window.showQuickReport = (type, reqV) => { const mo = document.getElementById('emp-dash-month-global').value; document.getElementById('quick-report-box').classList.remove('hidden'); let d = window.allVisits.filter(v => v.eid === window.current.id && v.date.startsWith(mo) && v.stat === 'Paid'); d = d.filter(v => type === 'OP' ? (v.type && v.type.startsWith('OP')) : v.type === type); if (reqV) { d = d.filter(v => v.i1 !== 'N/A'); document.getElementById('quick-report-title').innerText = `🏠 ${type.toUpperCase()} VISITS`; } else document.getElementById('quick-report-title').innerText = `📋 ${type.toUpperCase()} RECEIPTS`; let h=''; d.forEach(v => { h+=`<tr><td>${v.date}<br><small>${v.time||''}</small></td><td><b>${v.cname}</b><br>${v.hp}</td><td>₹${v.amt}</td><td>${v.type}</td><td>${window.buildImageLinks(v)}</td></tr>`; }); document.getElementById('quick-report-body').innerHTML = h; document.getElementById('quick-report-box').scrollIntoView(); };
+    window.renderTarget = () => { let mo = document.getElementById('targ-month').value; if(!mo){ mo = window.getLocalDate().slice(0, 7); document.getElementById('targ-month').value = mo; } const ass = window.getEmpAssignments(window.current.id, mo); const myP = window.allVisits.filter(v => v.eid === window.current.id && (v.stat === 'Paid' || v.stat === 'Seized') && v.date.startsWith(mo)); const dReg = [...new Set(myP.filter(v=>ass.r.includes(v.hp)).map(v=>v.hp))].length; const dMat = [...new Set(myP.filter(v=>ass.m.includes(v.hp)).map(v=>v.hp))].length; document.getElementById('e-target-summary').innerHTML = `<div style="color:var(--primary); font-weight:bold;">🟢 REGULAR: Assign ${ass.r.length} | Done ${dReg} | Pend ${ass.r.length-dReg}</div><div style="color:#d97706; margin-top:10px; font-weight:bold;">🟠 MATURED: Assign ${ass.m.length} | Done ${dMat} | Pend ${ass.m.length-dMat}</div>`; let r=''; myP.forEach(v => { let tc = v.accType === 'Regular' ? 'var(--primary)' : '#d97706'; let sc = v.stat === 'Seized' ? 'var(--seized)' : 'var(--secondary)'; r += `<tr><td><b>${v.hp}</b></td><td><b style="color:${tc}">${v.accType||'---'}</b></td><td>${v.cname}</td><td><b style="color:${sc}">${v.stat}</b></td><td>${v.date}<br><small>${v.time||''}</small></td></tr>`; }); document.getElementById('e-target-body').innerHTML = r || `<tr><td colspan="5" align="center">No Data Found</td></tr>`; };
+    window.onGlobalMonthChange = () => { window.populateAssignedHPs(); window.updateEmployeeDashboardStats(); document.getElementById('targ-month').value = document.getElementById('emp-dash-month-global').value; if(!document.getElementById('e-target').classList.contains('hidden')) window.renderTarget(); };
+    window.renderEmpVisitStatus = () => { const mo=document.getElementById('e-vstat-month').value; const ass = window.getEmpAssignments(window.current.id, mo); const hps = [...ass.r, ...ass.m]; const vsts = window.allVisits.filter(v => v.eid === window.current.id && v.date.startsWith(mo)); let h='', c=0; hps.forEach(hp => { let d=ass.details[hp]||{}; const v = vsts.find(x => x.hp == hp); if(v) { c++; h+=`<tr><td>${hp}</td><td>${d.ins||'N/A'}</td><td>${v.cname}</td><td>✅ VISITED</td><td>${v.date}</td></tr>`; } else { h+=`<tr><td>${hp}</td><td>${d.ins||'N/A'}</td><td>---</td><td>🔴 PENDING</td><td>---</td></tr>`; } }); document.getElementById('e-vstat-table-body').innerHTML = h; document.getElementById('e-vstat-summary').innerText = `Total: ${hps.length} | Visited: ${c} | Pend: ${hps.length-c}`; document.getElementById('e-vstat-summary').classList.remove('hidden'); };
+    window.checkVisitStatus = () => { const id=document.getElementById('stat-em-sel').value, mo=document.getElementById('stat-month-val').value; if(!id||!mo) return; const ass = window.getEmpAssignments(id, mo); const hps = [...ass.r, ...ass.m]; const vsts = window.allVisits.filter(v => v.eid === id && v.date.startsWith(mo)); let h='', c=0; hps.forEach(hp => { const v = vsts.find(x => x.hp == hp); if(v) { c++; h+=`<tr><td>${hp}</td><td>${v.cname}</td><td>✅ VISITED</td><td>${v.date}</td></tr>`; } else { h+=`<tr><td>${hp}</td><td>---</td><td>🔴 PENDING</td><td>---</td></tr>`; } }); document.getElementById('stat-table-body').innerHTML = h; document.getElementById('stat-summary-box').innerText = `Total: ${hps.length} | Visited: ${c} | Pend: ${hps.length-c}`; document.getElementById('stat-summary-box').classList.remove('hidden'); };
+    
+    window.renderBranchReport = () => { const b = document.getElementById('b-search-select').value; const mo = document.getElementById('b-month-val').value; if(!b || !mo) return alert("Select Branch & Month!"); let h = `<table class="report-table"><thead><tr><th>Name</th><th>Target Cnt</th><th>Target ₹</th><th>Done Cnt</th><th>Seized Cnt</th><th>Seized ₹</th><th>Collected ₹</th><th>%</th></tr></thead><tbody>`; let tot = 0, totS = 0; window.allEmps.filter(e => e.branch === b).forEach(e => { const a = window.getEmpAssignments(e.id, mo); const t = a.r.length + a.m.length; const tAmt = a.rAmt + a.mAmt; const v = window.allVisits.filter(x => x.eid === e.id && x.date.startsWith(mo) && (x.stat === 'Paid' || x.stat === 'Seized')); const d = [...new Set(v.filter(x=>x.stat==='Paid').map(x => x.hp))].length; const sC = [...new Set(v.filter(x=>x.stat==='Seized').map(x => x.hp))].length; const amt = v.filter(x => x.stat === 'Paid').reduce((s, x) => s + parseFloat(x.amt || 0), 0); const sAmt = v.filter(x => x.stat === 'Seized').reduce((s, x) => s + ((a.details&&a.details[x.hp])?parseFloat(a.details[x.hp].amt||0):0), 0); tot += amt; totS += sAmt; let p = tAmt > 0 ? (((amt+sAmt)/tAmt)*100).toFixed(1) : 0; h += `<tr><td><b>${e.name}</b></td><td>${t}</td><td>₹${tAmt}</td><td><b style="color:var(--secondary);">${d}</b></td><td><b style="color:var(--seized);">${sC}</b></td><td><b style="color:var(--seized);">₹${sAmt}</b></td><td><b style="color:var(--primary);">₹${amt}</b></td><td>${p}%</td></tr>`; }); h += `</tbody></table><div class="summary-box" style="margin-top:15px; display:flex; justify-content:space-around;"><div>TOTAL COL: ₹${tot}</div><div>TOTAL SEIZED: ₹${totS}</div></div>`; document.getElementById('b-results').innerHTML = h; };
+    window.renderBranchPerformance = () => { const branch = document.getElementById('b-perf-branch').value; const mo = document.getElementById('b-perf-month').value; const type = document.getElementById('b-perf-type').value; if(!branch || !mo) return alert("Select Branch and Month!"); const eIds = window.allEmps.filter(e => e.branch === branch).map(e => e.id); let rt=0, rAmt=0, mt=0, mAmt=0, rcAmt=0, mcAmt=0, rsa=0, msa=0; let rComp=new Set(), mComp=new Set(), rSeiz=new Set(), mSeiz=new Set(); eIds.forEach(id => { const a = window.getEmpAssignments(id, mo); rt += a.r.length; rAmt += a.rAmt; mt += a.m.length; mAmt += a.mAmt; }); window.allVisits.filter(v => eIds.includes(v.eid) && v.date.startsWith(mo)).forEach(v => { const a = window.getEmpAssignments(v.eid, mo); let isR = a.r.includes(v.hp); let isM = a.m.includes(v.hp); if(!isR&&!isM){isR=v.accType==='Regular';isM=v.accType==='Matured';} if (v.stat==='Paid') { if (isR) { rComp.add(v.hp); rcAmt += parseFloat(v.amt || 0); } if (isM) { mComp.add(v.hp); mcAmt += parseFloat(v.amt || 0); } } else if(v.stat==='Seized') { let sa = (a.details&&a.details[v.hp])?parseFloat(a.details[v.hp].amt||0):0; if(isR) { if(!rSeiz.has(v.hp)){ rsa += sa; rSeiz.add(v.hp); } } if(isM) { if(!mSeiz.has(v.hp)){ msa += sa; mSeiz.add(v.hp); } } } }); document.getElementById('bp-reg-assign-c').innerText = rt; document.getElementById('bp-reg-comp-c').innerText = rComp.size; document.getElementById('bp-reg-seized-c').innerText = rSeiz.size; document.getElementById('bp-reg-t-amt').innerText = "₹" + rAmt; document.getElementById('bp-reg-c-amt').innerText = "₹" + rcAmt; document.getElementById('bp-reg-seized-amt').innerText = "₹" + rsa; document.getElementById('bp-mat-assign-c').innerText = mt; document.getElementById('bp-mat-comp-c').innerText = mComp.size; document.getElementById('bp-mat-seized-c').innerText = mSeiz.size; document.getElementById('bp-mat-t-amt').innerText = "₹" + mAmt; document.getElementById('bp-mat-c-amt').innerText = "₹" + mcAmt; document.getElementById('bp-mat-seized-amt').innerText = "₹" + msa; document.getElementById('bp-reg-section').classList.add('hidden'); document.getElementById('bp-mat-section').classList.add('hidden'); if(type === 'Regular' || type === 'Both') document.getElementById('bp-reg-section').classList.remove('hidden'); if(type === 'Matured' || type === 'Both') document.getElementById('bp-mat-section').classList.remove('hidden'); document.getElementById('bp-results-area').classList.remove('hidden'); document.getElementById('bp-title-display').innerText = `PERFORMANCE SUMMARY - ${branch} (${type})`; };
+    
+    window.renderInsReport = () => { 
+        const branch = document.getElementById('ins-branch-sel').value, mo = document.getElementById('ins-month-val').value, type = document.getElementById('ins-type-sel').value, fromVal = document.getElementById('ins-from').value, toVal = document.getElementById('ins-to').value; if(!branch || !mo) return alert("Select Branch and Month!"); const eIds = window.allEmps.filter(e => e.branch === branch).map(e => e.id); let insD = {}; let isC = fromVal && toVal; let st = isC?parseInt(fromVal):1, en = isC?parseInt(toVal):9; if(isC) { for(let i=st; i<=en; i++) insD[i.toString()] = { tA: 0, tAm: 0, pC:0, pA:0, lC:0, lA:0, qC:0, qA:0, oC:0, oA:0, sC:0, sA:0, colAmt:0 }; } else { for(let i=1; i<=9; i++) insD[i.toString()] = { tA: 0, tAm: 0, pC:0, pA:0, lC:0, lA:0, qC:0, qA:0, oC:0, oA:0, sC:0, sA:0, colAmt:0 }; insD["10+"] = { tA: 0, tAm: 0, pC:0, pA:0, lC:0, lA:0, qC:0, qA:0, oC:0, oA:0, sC:0, sA:0, colAmt:0 }; } 
+        eIds.forEach(id => { const ass = window.getEmpAssignments(id, mo); let hps = type==='Both'?[...ass.r,...ass.m]:(type==='Regular'?[...ass.r]:[...ass.m]); hps.forEach(hp => { let d = ass.details[hp]||{}; let iv = parseInt(d.ins)||1; let k = isC?(iv>=st&&iv<=en?iv.toString():""):(iv>=10?"10+":iv.toString()); if(k&&insD[k]) { insD[k].tA++; insD[k].tAm+=parseFloat(d.amt)||0; } }); }); 
+        window.allVisits.filter(v => eIds.includes(v.eid) && v.date.startsWith(mo)).forEach(v => { const ass = window.getEmpAssignments(v.eid, mo); let isR = ass.r.includes(v.hp), isM = ass.m.includes(v.hp); if(!isR&&!isM){isR=v.accType==='Regular';isM=v.accType==='Matured';} let valid=(type==='Both'&&(isR||isM))||(type==='Regular'&&isR)||(type==='Matured'&&isM); if(valid) { let iv = parseInt((ass.details[v.hp]||{}).ins)||1; let k = isC?(iv>=st&&iv<=en?iv.toString():""):(iv>=10?"10+":iv.toString()); if(k&&insD[k]) { if(v.stat==='Paid'){ let vA=parseFloat(v.amt||0); insD[k].colAmt+=vA; if(v.type==='PCR'){insD[k].pC++; insD[k].pA+=vA;} else if(v.type==='Lock Amount'){insD[k].lC++; insD[k].lA+=vA;} else if(v.type==='Office QR'){insD[k].qC++; insD[k].qA+=vA;} else if(v.type&&v.type.startsWith('OP')){insD[k].oC++; insD[k].oA+=vA;} } else if(v.stat==='Seized'){ let sA=parseFloat((ass.details[v.hp]||{}).amt||0); insD[k].sC++; insD[k].sA+=sA; } } } }); 
+        let h='', sn=1, ttA=0, ttAm=0, tpC=0, tpA=0, tlC=0, tlA=0, tqC=0, tqA=0, toC=0, toA=0, tsC=0, tsA=0, tcAm=0, tRem=0; 
+        Object.keys(insD).forEach(k => { let d=insD[k]; let rem=Math.max(0, d.tAm-d.colAmt-d.sA); let pct=d.tAm>0?(((d.colAmt+d.sA)/d.tAm)*100).toFixed(1):0; let pc=pct>=100?'var(--secondary)':'var(--danger)'; ttA+=d.tA; ttAm+=d.tAm; tpC+=d.pC; tpA+=d.pA; tlC+=d.lC; tlA+=d.lA; tqC+=d.qC; tqA+=d.qA; toC+=d.oC; toA+=d.oA; tsC+=d.sC; tsA+=d.sA; tcAm+=d.colAmt; tRem+=rem; h+=`<tr><td><b>${k}</b></td><td>${d.tA} <small>(₹${d.tAm})</small></td><td>${d.pC} <small>(₹${d.pA})</small></td><td>${d.lC} <small>(₹${d.lA})</small></td><td>${d.qC} <small>(₹${d.qA})</small></td><td>${d.oC} <small>(₹${d.oA})</small></td><td><b style="color:var(--seized)">${d.sC}</b> <small>(₹${d.sA})</small></td><td><b style="color:var(--primary)">₹${d.colAmt}</b></td><td><b style="color:var(--danger)">₹${rem}</b></td><td><b style="color:${pc}">${pct}%</b></td></tr>`; }); 
+        if(h==='') h='<tr><td colspan="10" align="center">No Data</td></tr>'; document.getElementById('ins-table-body').innerHTML=h; 
+        document.getElementById('ins-table-foot').innerHTML = `<tr><td>TOTAL</td><td>${ttA} (₹${ttAm})</td><td>${tpC} (₹${tpA})</td><td>${tlC} (₹${tlA})</td><td>${tqC} (₹${tqA})</td><td>${toC} (₹${toA})</td><td>${tsC} (₹${tsA})</td><td>₹${tcAm}</td><td>₹${tRem}</td><td>-</td></tr>`;
+        document.getElementById('ins-summary').innerHTML=`Assigned: ${ttA} (₹${ttAm}) | Total Col Amt: ₹${tcAm} | Remaining Amt: ₹${tRem}`; document.getElementById('ins-summary').classList.remove('hidden'); 
+    };
+
+    window.renderReminders = () => { let d=document.getElementById('rem-date').value; if(!d) { d=window.getLocalDate(); document.getElementById('rem-date').value=d; } const r=window.allVisits.filter(v=>v.eid===window.current.id&&v.stat==='Not Paid'&&v.next===d); let h=''; r.forEach(v => h+=`<tr><td>${v.hp}</td><td>${v.cname}</td><td>${v.custMobile}</td><td>${v.unr}</td></tr>`); document.getElementById('rem-table-body').innerHTML = h||`<tr><td colspan="4" align="center">No Reminders</td></tr>`; };
+    window.renderAttendance = () => { const b=document.getElementById('att-branch-sel').value, mo=document.getElementById('att-month').value; if(!b||!mo) return; let h=''; window.allEmps.filter(e=>e.branch===b).forEach(e => { const d = [...new Set(window.allVisits.filter(v=>v.eid===e.id&&v.date.startsWith(mo)).map(v=>v.date))].length; h+=`<tr><td>${e.name}</td><td>${e.id}</td><td>${e.branch}</td><td><b style="color:var(--secondary);">${d} Days</b></td></tr>`; }); document.getElementById('att-body').innerHTML=h; };
+    
+    window.showSub = (id, element = null) => { const secured = ['a-branch-mgmt', 'a-reg', 'a-settings']; if (window.current && window.current.id === 'admin' && secured.includes(id) && !window.isSecuredUnlocked) { window.pendingTargetId = id; window.pendingTargetNav = element; document.querySelectorAll('.sub-section').forEach(s => s.classList.add('hidden')); document.getElementById('a-lock-screen').classList.remove('hidden'); if(element) { document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); element.classList.add('active'); } return; } document.querySelectorAll('.sub-section').forEach(s => s.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); if(element) { document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); element.classList.add('active'); } if(id === 'e-target') { if(!document.getElementById('targ-month').value) document.getElementById('targ-month').value = document.getElementById('emp-dash-month-global').value; window.renderTarget(); } if(id === 'e-visit') window.updateDynamicImages(); if(id === 'e-idcard') window.renderIDCard(); if(id === 'e-reminders') { if(!document.getElementById('rem-date').value) document.getElementById('rem-date').value = window.getLocalDate(); window.renderReminders(); } if(id === 'e-visit-stat') { if(!document.getElementById('e-vstat-month').value) document.getElementById('e-vstat-month').value = window.getLocalDate().slice(0, 7); window.renderEmpVisitStatus(); } if(id === 'a-ins-rep') { if(!document.getElementById('ins-month-val').value) document.getElementById('ins-month-val').value = window.getLocalDate().slice(0, 7); } };
+    window.unlockSecurity = () => { const pwd = document.getElementById('sec-lock-input').value; if(pwd === window.adminSettings.lockPass) { window.isSecuredUnlocked = true; document.getElementById('sec-lock-input').value = ""; window.showSub(window.pendingTargetId, window.pendingTargetNav); } else { alert("Incorrect Security Password!"); } };
+    window.updateLockPass = () => { const oldL = document.getElementById('sec-old-lock').value; const newL = document.getElementById('sec-new-lock').value.trim(); if(!oldL || !newL) return alert("Please fill all fields!"); if(oldL !== window.adminSettings.lockPass) return alert("Old Lock Password is wrong!"); set(ref(db, 'adminSettings/lockPass'), newL); alert("Security Lock Password Updated!"); ['sec-old-lock','sec-new-lock'].forEach(i => document.getElementById(i).value=''); };
+    window.uploadAdminLogo = async () => { const file = document.getElementById('admin-logo-upload').files[0]; if(!file) return alert("Select Logo First!"); try { const base64Logo = await window.compressImage(file); await set(ref(db, 'settings/logo'), base64Logo); alert("App Logo Updated!"); } catch(e) { alert("Error: " + e.message); } };
+</script>
+</body>
+</html>
