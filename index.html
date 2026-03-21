@@ -582,7 +582,8 @@
             if (loginEmail === 'admin@vpfc.com') {
                 window.current = {id:'admin', name:'Admin', role:'admin'}; 
                 document.getElementById('admin-sidebar-header').innerText = "ADMIN PANEL";
-                const mStr = window.getLocalDate().slice(0, 7); if(document.getElementById('admin-dash-month-global')) document.getElementById('admin-dash-month-global').value = mStr; if(document.getElementById('ins-month-val')) document.getElementById('ins-month-val').value = mStr;
+                const mStr = window.getLocalDate().slice(0, 7);window.loadVisitsForMonth(mStr);
+ if(document.getElementById('admin-dash-month-global')) document.getElementById('admin-dash-month-global').value = mStr; if(document.getElementById('ins-month-val')) document.getElementById('ins-month-val').value = mStr;
                 document.getElementById('main-login-wrap').classList.add('hidden'); document.body.classList.remove('login-active'); document.getElementById('admin-dashboard').classList.remove('hidden'); window.updateAdminDashboardStats(); 
                 return;
             } 
@@ -629,8 +630,11 @@
     };
 
     window.onAdminMonthChange = () => {
-        if(window.current && window.current.role === 'admin') window.updateAdminDashboardStats();
-        if(window.current && window.current.role === 'telewings') window.updateTwDashboardStats();
+    const moInput = document.getElementById('admin-dash-month-global');
+    let mo = moInput ? moInput.value : window.getLocalDate().slice(0, 7);
+    window.loadVisitsForMonth(mo);
+    if(window.current && window.current.role === 'admin') window.updateAdminDashboardStats();
+    if(window.current && window.current.role === 'telewings') window.updateTwDashboardStats();
     };
 
     // --- DATABASE LISTENERS ---
@@ -638,7 +642,20 @@
     onValue(ref(db, 'settings/logo'), s => { if(s.val()) { window.appLogoBase64 = s.val(); document.documentElement.style.setProperty('--logo-url', `url('${window.appLogoBase64}')`); if(window.current && window.current.id !== 'admin' && window.current.role !== 'telewings') window.updateEmployeeDashState(); } });
     onValue(ref(db, 'branches'), s => { window.allBranches = s.val() ? Object.keys(s.val()).map(k => ({key: k, name: s.val()[k].name, chatId: s.val()[k].chatId || ''})) : []; window.updateDropdowns(); });
     onValue(ref(db, 'employees'), s => { window.allEmps = s.val() ? Object.values(s.val()) : []; window.renderEmpList(); if(document.getElementById('next-auto-id')) document.getElementById('next-auto-id').innerText = window.getNextEmpId(); if(window.current && window.current.role === 'admin') window.updateAdminDashboardStats(); if(window.current && window.current.role === 'telewings') window.updateTwDashboardStats(); if(window.current && window.current.id !== 'admin' && window.current.role !== 'telewings') { window.current = window.allEmps.find(x => x.id === window.current.id); window.updateEmployeeDashState(); } });
-    onValue(ref(db, 'visits'), s => { window.allVisits = s.val() ? Object.values(s.val()) : []; if(window.current && window.current.role === 'admin') window.updateAdminDashboardStats(); if(window.current && window.current.role === 'telewings') window.updateTwDashboardStats(); if(window.current && window.current.id !== 'admin' && window.current.role !== 'telewings') { window.updateEmployeeDashboardStats(); if(!document.getElementById('e-target').classList.contains('hidden')) window.renderTarget(); } });
+    window.visitUnsubscribe = null;
+window.loadVisitsForMonth = (month) => {
+    if (window.visitUnsubscribe) window.visitUnsubscribe(); // పాత నెల కనెక్షన్ కట్ చేస్తుంది
+    
+    window.visitUnsubscribe = onValue(ref(db, `visits/${month}`), s => { 
+        window.allVisits = s.val() ? Object.values(s.val()) : []; 
+        if(window.current && window.current.role === 'admin') window.updateAdminDashboardStats(); 
+        if(window.current && window.current.role === 'telewings') window.updateTwDashboardStats(); 
+        if(window.current && window.current.id !== 'admin' && window.current.role !== 'telewings') { 
+            window.updateEmployeeDashboardStats(); 
+            if(!document.getElementById('e-target').classList.contains('hidden')) window.renderTarget(); 
+        } 
+    });
+};
     onValue(ref(db, 'assignments'), s => { window.allAssigns = s.val() || {}; if(window.current && window.current.role === 'admin') { window.updateAdminDashboardStats(); if(document.getElementById('as-emp-sel').value) window.renderAssignedList(); } if(window.current && window.current.role === 'telewings') { window.updateTwDashboardStats(); if(document.getElementById('as-emp-sel').value) window.renderAssignedList(); } if(window.current && window.current.id !== 'admin' && window.current.role !== 'telewings') { window.populateAssignedHPs(); window.updateEmployeeDashboardStats(); } });
     onValue(ref(db, 'telewingsUsers'), s => { window.allTwUsers = s.val() ? Object.values(s.val()) : []; window.renderTwList(); if(window.current && window.current.role === 'telewings') window.updateTwDashboardStats(); });
     onValue(ref(db, 'complaints'), s => { window.allComplaints = s.val() ? Object.values(s.val()) : []; if(window.current) { if(window.current.role === 'admin' || window.current.role === 'telewings') { window.renderAdminComplaints(); if(window.current.role === 'telewings') window.updateTwDashboardStats(); } else window.renderEmpComplaints(); } });
@@ -919,7 +936,7 @@
             let ppfcNoR = "---"; if(stat==='Paid' && pType==='Lock Amount' && document.getElementById('v-ppfc').value === 'No') ppfcNoR = document.getElementById('v-ppfc-unr').value || "No Reason Given";
             const data = { eid:window.current.id, ename:window.current.name, cname:document.getElementById('v-name').value, hp:hp, accType:ass.r.includes(hp)?'Regular':'Matured', custMobile:document.getElementById('v-number').value||"---", vill:document.getElementById('v-vill').value||"---", stat:stat, amt:document.getElementById('v-amt').value||0, type:pType, pcrDate:document.getElementById('v-pcr-date').value||"---", ppfc:document.getElementById('v-ppfc')?document.getElementById('v-ppfc').value:"No", ppfcUnr: ppfcNoR, unr:document.getElementById('v-unr').value||"---", next:document.getElementById('v-next').value||"---", seizeTime:document.getElementById('v-seize-time').value||"---", opTo:document.getElementById('v-op-to').value||"---", loc:window.gps, i1:p1, i2:p2, ir:pr, ir2:pr2, ir3:pr3, ir4:pr4, date:window.getLocalDate(), time:window.getLocalTime() };
             
-            await push(ref(db, 'visits'), data); 
+            await push(ref(db, `visits/${mo}`), data);
             
             try {
                 // SECURITY FIX: Values fetched securely from Firebase DB
@@ -930,7 +947,7 @@
                     const empMob = window.current.mobile || "N/A"; const brName = window.current.branch || "N/A";
                     const branchObj = window.allBranches.find(b => b.name === brName); const branchChatId = branchObj ? branchObj.chatId : null;
                     let extraMsg = stat === 'Not Paid' ? `\n🚫 *Reason:* ${data.unr}\n📅 *Next Date:* ${data.next}` : stat === 'Paid' ? `\n💳 *Type:* ${data.type}\n🔖 *PPFC:* ${data.ppfc}${data.ppfcUnr !== '---' ? `\n⚠️ *PPFC Reason:* ${data.ppfcUnr}` : ''}` : `\n⏱ *Seize Time:* ${data.seizeTime}`;
-                    const msg = `🔔 *New Visit Alert!*\n🏢 *Branch:* ${brName}\n👤 *Emp:* ${data.ename}\n📞 *Emp Mob:* ${empMob}\n🤝 *Cust:* ${data.cname} (${data.accType})\n📱 *Cust Mob:* ${data.custMobile}\n📄 *HP:* ${data.hp}\n📊 *Stat:* ${data.stat}\n💰 *Amt:* ₹${data.amt}${extraMsg}\n🗺 *Loc:* [View Map](https://maps.google.com/?q=$${data.loc})\n⏰ *Time:* ${data.date}, ${data.time}`;
+                    const msg = `🔔 *New Visit Alert!*\n🏢 *Branch:* ${brName}\n👤 *Emp:* ${data.ename}\n📞 *Emp Mob:* ${empMob}\n🤝 *Cust:* ${data.cname} (${data.accType})\n📱 *Cust Mob:* ${data.custMobile}\n📄 *HP:* ${data.hp}\n📊 *Stat:* ${data.stat}\n💰 *Amt:* ₹${data.amt}${extraMsg}\n🗺 *Loc:* [View Map](https://www.google.com/?q=$${data.loc})\n⏰ *Time:* ${data.date}, ${data.time}`;
                     await fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${adminChatId}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
                     if(branchChatId && branchChatId.trim() !== '') { await fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${branchChatId}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`); }
                 }
@@ -943,7 +960,8 @@
     };
 
     window.buildImageLinks = (v) => { let ph = ''; const imgs = [v.i1, v.i2, v.ir, v.ir2, v.ir3, v.ir4]; imgs.forEach(i => { if(i && i!=='N/A') ph += `<img src="${i}" class="img-preview" onclick="window.open(this.src)">`; }); return ph || '---'; };
-    window.buildLocLink = (loc) => loc && loc!=='0,0' ? `<a href="https://maps.google.com/?q=$${window.escapeHTML(loc)}" target="_blank" style="color:#3b82f6; font-weight:bold; text-decoration:underline;">📍 Map</a>` : 'No GPS';
+window.buildLocLink = (loc) => loc && loc!=='0,0' ? `<a href="https://www.google.com/maps/search/?api=1&query=${loc}" target="_blank" style="color:#3b82f6; font-weight:bold; text-decoration:underline;">📍 Map</a>` : 'No GPS';
+
 
     window.updateAdminDashboardStats = () => {
         if(!window.current || window.current.role !== 'admin') return;
@@ -985,7 +1003,14 @@
     window.renderEmployeeSelfReport = () => { const mo = document.getElementById('e-rep-month').value; if(!mo) return; let r = ''; window.allVisits.filter(v => v.eid === window.current.id && v.date.startsWith(mo)).forEach(v => { const ass = window.getEmpAssignments(window.current.id, mo); let ins = (ass.details&&ass.details[v.hp])?ass.details[v.hp].ins:'N/A'; let vAmt = v.stat==='Seized' ? ((ass.details&&ass.details[v.hp])?parseFloat(ass.details[v.hp].amt||0):0) : v.amt; let sc = v.stat==='Paid'?'var(--secondary)':(v.stat==='Seized'?'var(--seized)':'var(--danger)'); let dh = v.stat==='Paid'?`${window.escapeHTML(v.type)}<br>${v.ppfcUnr&&v.ppfcUnr!=='---'?`<b style='color:red'>${window.escapeHTML(v.ppfcUnr)}</b>`:''}`:(v.stat==='Seized'?window.escapeHTML(v.seizeTime):window.escapeHTML(v.unr)); r+=`<tr><td>${window.escapeHTML(v.date)}<br><small style="color:gray">${window.escapeHTML(v.time||'')}</small></td><td><b>${window.escapeHTML(v.cname)}</b><br>${window.escapeHTML(v.hp)}<br>INS: ${window.escapeHTML(ins)}</td><td><b style="color:${sc}">₹${vAmt}</b><br><b style="color:${sc}">${window.escapeHTML(v.stat)}</b></td><td>${dh}</td><td>${window.buildLocLink(v.loc)}</td><td>${window.buildImageLinks(v)}</td></tr>`; }); document.getElementById('e-report-body').innerHTML = r; };
     window.showQuickReport = (type, reqV) => { const mo = document.getElementById('emp-dash-month-global').value; document.getElementById('quick-report-box').classList.remove('hidden'); let d = window.allVisits.filter(v => v.eid === window.current.id && v.date.startsWith(mo) && v.stat === 'Paid'); d = d.filter(v => type === 'OP' ? (v.type && v.type.startsWith('OP')) : v.type === type); if (reqV) { d = d.filter(v => v.i1 !== 'N/A'); document.getElementById('quick-report-title').innerText = `🏠 ${type.toUpperCase()} VISITS`; } else document.getElementById('quick-report-title').innerText = `📋 ${type.toUpperCase()} RECEIPTS`; let h=''; d.forEach(v => { h+=`<tr><td>${window.escapeHTML(v.date)}<br><small>${window.escapeHTML(v.time||'')}</small></td><td><b>${window.escapeHTML(v.cname)}</b><br>${window.escapeHTML(v.hp)}</td><td>₹${v.amt}</td><td>${window.escapeHTML(v.type)}</td><td>${window.buildImageLinks(v)}</td></tr>`; }); document.getElementById('quick-report-body').innerHTML = h; document.getElementById('quick-report-box').scrollIntoView(); };
     window.renderTarget = () => { let mo = document.getElementById('targ-month').value; if(!mo){ mo = window.getLocalDate().slice(0, 7); document.getElementById('targ-month').value = mo; } const ass = window.getEmpAssignments(window.current.id, mo); const myP = window.allVisits.filter(v => v.eid === window.current.id && (v.stat === 'Paid' || v.stat === 'Seized') && v.date.startsWith(mo)); const dReg = [...new Set(myP.filter(v=>ass.r.includes(v.hp)).map(v=>v.hp))].length; const dMat = [...new Set(myP.filter(v=>ass.m.includes(v.hp)).map(v=>v.hp))].length; document.getElementById('e-target-summary').innerHTML = `<div style="color:var(--primary); font-weight:bold;">🟢 REGULAR: Assign ${ass.r.length} | Done ${dReg} | Pend ${ass.r.length-dReg}</div><div style="color:#d97706; margin-top:10px; font-weight:bold;">🟠 MATURED: Assign ${ass.m.length} | Done ${dMat} | Pend ${ass.m.length-dMat}</div>`; let r=''; myP.forEach(v => { let tc = v.accType === 'Regular' ? 'var(--primary)' : '#d97706'; let sc = v.stat === 'Seized' ? 'var(--seized)' : 'var(--secondary)'; r += `<tr><td><b>${window.escapeHTML(v.hp)}</b></td><td><b style="color:${tc}">${window.escapeHTML(v.accType||'---')}</b></td><td>${window.escapeHTML(v.cname)}</td><td><b style="color:${sc}">${window.escapeHTML(v.stat)}</b></td><td>${window.escapeHTML(v.date)}<br><small>${window.escapeHTML(v.time||'')}</small></td></tr>`; }); document.getElementById('e-target-body').innerHTML = r || `<tr><td colspan="5" align="center">No Data Found</td></tr>`; };
-    window.onGlobalMonthChange = () => { window.populateAssignedHPs(); window.updateEmployeeDashboardStats(); document.getElementById('targ-month').value = document.getElementById('emp-dash-month-global').value; if(!document.getElementById('e-target').classList.contains('hidden')) window.renderTarget(); };
+    window.onGlobalMonthChange = () => {
+    const mo = document.getElementById('emp-dash-month-global').value;
+    window.loadVisitsForMonth(mo);
+    window.populateAssignedHPs(); 
+    window.updateEmployeeDashboardStats(); 
+    document.getElementById('targ-month').value = mo; 
+    if(!document.getElementById('e-target').classList.contains('hidden')) window.renderTarget(); 
+    };
     window.renderEmpVisitStatus = () => { const mo=document.getElementById('e-vstat-month').value; const ass = window.getEmpAssignments(window.current.id, mo); const hps = [...ass.r, ...ass.m]; const vsts = window.allVisits.filter(v => v.eid === window.current.id && v.date.startsWith(mo)); let h='', c=0; hps.forEach(hp => { let d=ass.details[hp]||{}; const v = vsts.find(x => x.hp == hp); if(v) { c++; h+=`<tr><td>${window.escapeHTML(hp)}</td><td>${window.escapeHTML(d.ins||'N/A')}</td><td>${window.escapeHTML(v.cname)}</td><td>✅ VISITED</td><td>${window.escapeHTML(v.date)}</td></tr>`; } else { h+=`<tr><td>${window.escapeHTML(hp)}</td><td>${window.escapeHTML(d.ins||'N/A')}</td><td>---</td><td>🔴 PENDING</td><td>---</td></tr>`; } }); document.getElementById('e-vstat-table-body').innerHTML = h; document.getElementById('e-vstat-summary').innerText = `Total: ${hps.length} | Visited: ${c} | Pend: ${hps.length-c}`; document.getElementById('e-vstat-summary').classList.remove('hidden'); };
     window.checkVisitStatus = () => { const id=document.getElementById('stat-em-sel').value, mo=document.getElementById('stat-month-val').value; if(!id||!mo) return; const ass = window.getEmpAssignments(id, mo); const hps = [...ass.r, ...ass.m]; const vsts = window.allVisits.filter(v => v.eid === id && v.date.startsWith(mo)); let h='', c=0; hps.forEach(hp => { const v = vsts.find(x => x.hp == hp); if(v) { c++; h+=`<tr><td>${window.escapeHTML(hp)}</td><td>${window.escapeHTML(v.cname)}</td><td>✅ VISITED</td><td>${window.escapeHTML(v.date)}</td></tr>`; } else { h+=`<tr><td>${window.escapeHTML(hp)}</td><td>---</td><td>🔴 PENDING</td><td>---</td></tr>`; } }); document.getElementById('stat-table-body').innerHTML = h; document.getElementById('stat-summary-box').innerText = `Total: ${hps.length} | Visited: ${c} | Pend: ${hps.length-c}`; document.getElementById('stat-summary-box').classList.remove('hidden'); };
     window.renderBranchReport = () => { const b = document.getElementById('b-search-select').value; const mo = document.getElementById('b-month-val').value; if(!b || !mo) return alert("Select Branch & Month!"); let h = `<table class="report-table"><thead><tr><th>Name</th><th>Target Cnt</th><th>Target ₹</th><th>Done Cnt</th><th>Seized Cnt</th><th>Seized ₹</th><th>Collected ₹</th><th>%</th></tr></thead><tbody>`; let tot = 0, totS = 0; window.allEmps.filter(e => e.branch === b).forEach(e => { const a = window.getEmpAssignments(e.id, mo); const t = a.r.length + a.m.length; const tAmt = a.rAmt + a.mAmt; const v = window.allVisits.filter(x => x.eid === e.id && x.date.startsWith(mo) && (x.stat === 'Paid' || x.stat === 'Seized')); const d = [...new Set(v.filter(x=>x.stat==='Paid').map(x => x.hp))].length; const sC = [...new Set(v.filter(x=>x.stat==='Seized').map(x => x.hp))].length; const amt = v.filter(x => x.stat === 'Paid').reduce((s, x) => s + parseFloat(x.amt || 0), 0); const sAmt = v.filter(x => x.stat === 'Seized').reduce((s, x) => s + ((a.details&&a.details[x.hp])?parseFloat(a.details[x.hp].amt||0):0), 0); tot += amt; totS += sAmt; let p = tAmt > 0 ? (((amt+sAmt)/tAmt)*100).toFixed(1) : 0; h += `<tr><td><b>${window.escapeHTML(e.name)}</b></td><td>${t}</td><td>₹${tAmt}</td><td><b style="color:var(--secondary);">${d}</b></td><td><b style="color:var(--seized);">${sC}</b></td><td><b style="color:var(--seized);">₹${sAmt}</b></td><td><b style="color:var(--primary);">₹${amt}</b></td><td>${p}%</td></tr>`; }); h += `</tbody></table><div class="summary-box" style="margin-top:15px; display:flex; justify-content:space-around;"><div>TOTAL COL: ₹${tot}</div><div>TOTAL SEIZED: ₹${totS}</div></div>`; document.getElementById('b-results').innerHTML = h; };
