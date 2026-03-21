@@ -513,7 +513,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getStorage, ref as sRef, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+    import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
     const firebaseConfig = { 
         apiKey: "AIzaSyC9PnjAdBeOEy0TLQvUBJUznlZFKSS82uI", 
@@ -553,14 +553,38 @@
 
     window.getLocalDate = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
     window.getLocalTime = () => new Date().toLocaleTimeString('en-US', { hour12: true, hour: 'numeric', minute: '2-digit' });
-    window.compressImage = (file) => new Promise((resolve) => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = e => { const img = new Image(); img.src = e.target.result; img.onload = () => { const canvas = document.createElement('canvas'); const MAX = 400; let w = img.width, h = img.height; if (w > h) { if (w > MAX) { h *= MAX / w; w = MAX; } } else { if (h > MAX) { w *= MAX / h; h = MAX; } } canvas.width = w; canvas.height = h; canvas.getContext('2d').drawImage(img, 0, 0, w, h); resolve(canvas.toDataURL('image/jpeg', 0.4)); }; }; });
+    window.compressImage = (file) => new Promise((resolve) => { 
+    const reader = new FileReader(); 
+    reader.readAsDataURL(file); 
+    reader.onload = e => { 
+        const img = new Image(); 
+        img.src = e.target.result; 
+        img.onload = () => { 
+            const canvas = document.createElement('canvas'); 
+            const MAX = 800; // Increased resolution slightly for better clarity
+            let w = img.width, h = img.height; 
+            if (w > h) { if (w > MAX) { h *= MAX / w; w = MAX; } } 
+            else { if (h > MAX) { w *= MAX / h; h = MAX; } } 
+            canvas.width = w; canvas.height = h; 
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h); 
+            
+            // Return as Blob instead of Base64 for faster upload
+            canvas.toBlob((blob) => {
+                resolve(blob);
+            }, 'image/jpeg', 0.4); 
+        }; 
+    }; 
+});
 
-    window.uploadImageToStorage = async (base64Data, path) => {
-        if (!base64Data || base64Data === "N/A" || base64Data.startsWith('http')) return base64Data;
-        const imageRef = sRef(storage, path);
-        await uploadString(imageRef, base64Data, 'data_url');
-        return await getDownloadURL(imageRef);
-    };
+
+    window.uploadImageToStorage = async (fileBlob, path) => {
+    if (!fileBlob || fileBlob === "N/A" || typeof fileBlob === 'string') return fileBlob;
+    const imageRef = sRef(storage, path);
+    // Use uploadBytes for faster blob upload
+    await uploadBytes(imageRef, fileBlob);
+    return await getDownloadURL(imageRef);
+};
+
 
     // PERFORMANCE FIX: Load Data Month-wise
     window.visitUnsubscribe = null;
@@ -936,6 +960,7 @@
     window.updateDynamicImages = () => { const s=document.getElementById('v-stat').value; const p=document.getElementById('v-pay-type').value; const qrV = document.getElementById('v-visited-home').value; const ppfc = document.getElementById('v-ppfc') ? document.getElementById('v-ppfc').value : 'No'; ['img-receipt-div','extra-qr-images','img-cust-div','img-house-div','qr-visit-div','v-op-to-div', 'ppfc-no-reason'].forEach(i=> { if(document.getElementById(i)) document.getElementById(i).classList.add('hidden'); }); if(s==='Not Paid'){ document.getElementById('img-cust-div').classList.remove('hidden'); document.getElementById('img-house-div').classList.remove('hidden'); document.getElementById('lbl-cust-img').innerText="Customer Photo (Mandatory)"; document.getElementById('lbl-house-img').innerText="House/Vehicle Photo (Mandatory)"; } else if(s==='Seized'){ document.getElementById('img-cust-div').classList.remove('hidden'); document.getElementById('img-house-div').classList.remove('hidden'); document.getElementById('lbl-cust-img').innerText="Seized Bike Photo 1 (Mandatory)"; document.getElementById('lbl-house-img').innerText="Seized Bike Photo 2 (Mandatory)"; } else if(s==='Paid'){ document.getElementById('lbl-cust-img').innerText="Customer Photo"; document.getElementById('lbl-house-img').innerText="House/Vehicle Photo"; if(p==='PCR'){ document.getElementById('lbl-receipt').innerText="PCR Receipt Image"; document.getElementById('img-cust-div').classList.remove('hidden'); document.getElementById('img-receipt-div').classList.remove('hidden'); document.getElementById('img-house-div').classList.remove('hidden'); } else if(p==='Lock Amount'){ document.getElementById('img-cust-div').classList.remove('hidden'); document.getElementById('img-house-div').classList.remove('hidden'); if(ppfc==='Yes'){ document.getElementById('lbl-receipt').innerText="PPFC Receipt"; document.getElementById('img-receipt-div').classList.remove('hidden');} else { document.getElementById('ppfc-no-reason').classList.remove('hidden'); } } else if(p==='Office QR'){ document.getElementById('lbl-receipt').innerText="Payment Proof/Screenshot"; document.getElementById('img-receipt-div').classList.remove('hidden'); document.getElementById('extra-qr-images').classList.remove('hidden'); document.getElementById('qr-visit-div').classList.remove('hidden'); if(qrV==='Yes'){ document.getElementById('img-cust-div').classList.remove('hidden'); document.getElementById('img-house-div').classList.remove('hidden'); } } else if(p==='OP'){ document.getElementById('v-op-to-div').classList.remove('hidden'); document.getElementById('qr-visit-div').classList.remove('hidden'); if(qrV==='Yes'){ document.getElementById('lbl-receipt').innerText="OP Receipt Image"; document.getElementById('img-receipt-div').classList.remove('hidden'); document.getElementById('img-cust-div').classList.remove('hidden'); document.getElementById('img-house-div').classList.remove('hidden'); } } } };
 
     // FIXED: submitVisit Month Path and Maps Link
+        // FIXED: submitVisit with Parallel Promise.all Image Uploading
     window.submitVisit = async () => {
         if(!window.current || window.current.role==='admin' || window.current.role==='telewings' || window.current.status === 'Inactive') return alert("Cannot submit!");
         const hp = document.getElementById('v-hp').value.trim(); const mo = document.getElementById('emp-dash-month-global').value;
@@ -944,18 +969,39 @@
         const btn = document.getElementById('v-submit-btn'); btn.innerText = "Submitting securely..."; btn.disabled = true;
         
         try {
-            let p1="N/A", p2="N/A", pr="N/A", pr2="N/A", pr3="N/A", pr4="N/A"; 
             const tStamp = Date.now();
-            
-            if(document.getElementById('img-cust').files[0]) { let b64 = await window.compressImage(document.getElementById('img-cust').files[0]); p1 = await window.uploadImageToStorage(b64, `visits/${hp}/${tStamp}_cust.jpg`); } 
-            if(document.getElementById('img-house').files[0]) { let b64 = await window.compressImage(document.getElementById('img-house').files[0]); p2 = await window.uploadImageToStorage(b64, `visits/${hp}/${tStamp}_house.jpg`); } 
-            if(document.getElementById('img-receipt').files[0]) { let b64 = await window.compressImage(document.getElementById('img-receipt').files[0]); pr = await window.uploadImageToStorage(b64, `visits/${hp}/${tStamp}_rec1.jpg`); }
-            if(document.getElementById('img-receipt-2') && document.getElementById('img-receipt-2').files[0]) { let b64 = await window.compressImage(document.getElementById('img-receipt-2').files[0]); pr2 = await window.uploadImageToStorage(b64, `visits/${hp}/${tStamp}_rec2.jpg`); }
-            if(document.getElementById('img-receipt-3') && document.getElementById('img-receipt-3').files[0]) { let b64 = await window.compressImage(document.getElementById('img-receipt-3').files[0]); pr3 = await window.uploadImageToStorage(b64, `visits/${hp}/${tStamp}_rec3.jpg`); }
-            if(document.getElementById('img-receipt-4') && document.getElementById('img-receipt-4').files[0]) { let b64 = await window.compressImage(document.getElementById('img-receipt-4').files[0]); pr4 = await window.uploadImageToStorage(b64, `visits/${hp}/${tStamp}_rec4.jpg`); }
+            let uploadPromises = [];
+            let imgUrls = { p1: "N/A", p2: "N/A", pr: "N/A", pr2: "N/A", pr3: "N/A", pr4: "N/A" };
+
+            // Start compressing and uploading all images concurrently
+            if(document.getElementById('img-cust').files[0]) { 
+                uploadPromises.push(window.compressImage(document.getElementById('img-cust').files[0]).then(blob => window.uploadImageToStorage(blob, `visits/${hp}/${tStamp}_cust.jpg`)).then(url => imgUrls.p1 = url)); 
+            } 
+            if(document.getElementById('img-house').files[0]) { 
+                uploadPromises.push(window.compressImage(document.getElementById('img-house').files[0]).then(blob => window.uploadImageToStorage(blob, `visits/${hp}/${tStamp}_house.jpg`)).then(url => imgUrls.p2 = url)); 
+            } 
+            if(document.getElementById('img-receipt').files[0]) { 
+                uploadPromises.push(window.compressImage(document.getElementById('img-receipt').files[0]).then(blob => window.uploadImageToStorage(blob, `visits/${hp}/${tStamp}_rec1.jpg`)).then(url => imgUrls.pr = url)); 
+            }
+            if(document.getElementById('img-receipt-2') && document.getElementById('img-receipt-2').files[0]) { 
+                uploadPromises.push(window.compressImage(document.getElementById('img-receipt-2').files[0]).then(blob => window.uploadImageToStorage(blob, `visits/${hp}/${tStamp}_rec2.jpg`)).then(url => imgUrls.pr2 = url)); 
+            }
+            if(document.getElementById('img-receipt-3') && document.getElementById('img-receipt-3').files[0]) { 
+                uploadPromises.push(window.compressImage(document.getElementById('img-receipt-3').files[0]).then(blob => window.uploadImageToStorage(blob, `visits/${hp}/${tStamp}_rec3.jpg`)).then(url => imgUrls.pr3 = url)); 
+            }
+            if(document.getElementById('img-receipt-4') && document.getElementById('img-receipt-4').files[0]) { 
+                uploadPromises.push(window.compressImage(document.getElementById('img-receipt-4').files[0]).then(blob => window.uploadImageToStorage(blob, `visits/${hp}/${tStamp}_rec4.jpg`)).then(url => imgUrls.pr4 = url)); 
+            }
+
+            // WAIT FOR ALL IMAGES TO UPLOAD AT ONCE
+            await Promise.all(uploadPromises);
+
+            // Assign resolved URLs to database variables
+            let p1 = imgUrls.p1, p2 = imgUrls.p2, pr = imgUrls.pr, pr2 = imgUrls.pr2, pr3 = imgUrls.pr3, pr4 = imgUrls.pr4;
             
             let pType = document.getElementById('v-pay-type').value; let stat = document.getElementById('v-stat').value;
             let ppfcNoR = "---"; if(stat==='Paid' && pType==='Lock Amount' && document.getElementById('v-ppfc').value === 'No') ppfcNoR = document.getElementById('v-ppfc-unr').value || "No Reason Given";
+            
             const data = { eid:window.current.id, ename:window.current.name, cname:document.getElementById('v-name').value, hp:hp, accType:ass.r.includes(hp)?'Regular':'Matured', custMobile:document.getElementById('v-number').value||"---", vill:document.getElementById('v-vill').value||"---", stat:stat, amt:document.getElementById('v-amt').value||0, type:pType, pcrDate:document.getElementById('v-pcr-date').value||"---", ppfc:document.getElementById('v-ppfc')?document.getElementById('v-ppfc').value:"No", ppfcUnr: ppfcNoR, unr:document.getElementById('v-unr').value||"---", next:document.getElementById('v-next').value||"---", seizeTime:document.getElementById('v-seize-time').value||"---", opTo:document.getElementById('v-op-to').value||"---", loc:window.gps, i1:p1, i2:p2, ir:pr, ir2:pr2, ir3:pr3, ir4:pr4, date:window.getLocalDate(), time:window.getLocalTime() };
             
             await push(ref(db, `visits/${mo}`), data);
@@ -968,7 +1014,7 @@
                     const empMob = window.current.mobile || "N/A"; const brName = window.current.branch || "N/A";
                     const branchObj = window.allBranches.find(b => b.name === brName); const branchChatId = branchObj ? branchObj.chatId : null;
                     let extraMsg = stat === 'Not Paid' ? `\n🚫 *Reason:* ${data.unr}\n📅 *Next Date:* ${data.next}` : stat === 'Paid' ? `\n💳 *Type:* ${data.type}\n🔖 *PPFC:* ${data.ppfc}${data.ppfcUnr !== '---' ? `\n⚠️ *PPFC Reason:* ${data.ppfcUnr}` : ''}` : `\n⏱ *Seize Time:* ${data.seizeTime}`;
-                    const msg = `🔔 *New Visit Alert!*\n🏢 *Branch:* ${brName}\n👤 *Emp:* ${data.ename}\n📞 *Emp Mob:* ${empMob}\n🤝 *Cust:* ${data.cname} (${data.accType})\n📱 *Cust Mob:* ${data.custMobile}\n📄 *HP:* ${data.hp}\n📊 *Stat:* ${data.stat}\n💰 *Amt:* ₹${data.amt}${extraMsg}\n🗺 *Loc:* [View Map](https://maps.google.com/maps?q=$${data.loc})\n⏰ *Time:* ${data.date}, ${data.time}`;
+                    const msg = `🔔 *New Visit Alert!*\n🏢 *Branch:* ${brName}\n👤 *Emp:* ${data.ename}\n📞 *Emp Mob:* ${empMob}\n🤝 *Cust:* ${data.cname} (${data.accType})\n📱 *Cust Mob:* ${data.custMobile}\n📄 *HP:* ${data.hp}\n📊 *Stat:* ${data.stat}\n💰 *Amt:* ₹${data.amt}${extraMsg}\n🗺 *Loc:* [View Map](https://maps.google.com/maps?q=${data.loc})\n⏰ *Time:* ${data.date}, ${data.time}`;
                     await fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${adminChatId}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
                     if(branchChatId && branchChatId.trim() !== '') { await fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${branchChatId}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`); }
                 }
@@ -983,7 +1029,7 @@
     window.buildImageLinks = (v) => { let ph = ''; const imgs = [v.i1, v.i2, v.ir, v.ir2, v.ir3, v.ir4]; imgs.forEach(i => { if(i && i!=='N/A') ph += `<img src="${i}" class="img-preview" onclick="window.open(this.src)">`; }); return ph || '---'; };
     
     // FIXED: Maps link URL structure
-    window.buildLocLink = (loc) => loc && loc!=='0,0' ? `<a href="https://maps.google.com/maps?q=$${window.escapeHTML(loc)}" target="_blank" style="color:#3b82f6; font-weight:bold; text-decoration:underline;">📍 Map</a>` : 'No GPS';
+    window.buildLocLink = (loc) => loc && loc!=='0,0' ? `<a href="https://maps.google.com/maps?q=${window.escapeHTML(loc)}" target="_blank" style="color:#3b82f6; font-weight:bold; text-decoration:underline;">📍 Map</a>` : 'No GPS';
 
     window.updateAdminDashboardStats = () => {
         if(!window.current || window.current.role !== 'admin') return;
