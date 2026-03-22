@@ -755,8 +755,7 @@
             if(window.current && window.current.role === 'telewings' && u.id.toUpperCase() === window.current.id.toUpperCase()) {
                 actions = `<b style="color:var(--secondary)">🔒 MY ACCOUNT (Locked)</b>`;
             } else {
-                actions = `<button class="btn-blue" style="padding:5px 10px; width:auto; margin-right:5px;" onclick="window.editTwUser('${u.id}')">Edit</button>
-                           <button class="btn-red" style="padding:5px 10px; width:auto;" onclick="window.deleteTwUser('${u.id}')">Delete</button>`;
+                actions = `<button class="btn-blue" style="padding:5px 10px; width:auto; margin-right:5px;" onclick="window.editTwUser('${u.id}')">Edit</button>`;
             }
             h += `<tr><td><b>${window.escapeHTML(u.id)}</b></td><td>${window.escapeHTML(u.name)}</td><td>${actions}</td></tr>`; 
         });
@@ -865,7 +864,7 @@
         const selects = ['imp-br-sel', 'as-branch-sel', 'stat-br-sel', 'a-rep-branch-sel', 'r-branch-select', 'ins-branch-sel', 'b-search-select', 'b-perf-branch', 'att-branch-sel', 'bio-br-sel', 'comp-br-sel']; 
         let options = '<option value="">Select Branch</option>'; window.allBranches.forEach(b => { options += `<option value="${window.escapeHTML(b.name)}">${window.escapeHTML(b.name)}</option>`; }); 
         selects.forEach(id => { let el = document.getElementById(id); if(el) el.innerHTML = options; }); 
-        let listHTML = ''; window.allBranches.forEach(b => { let cIdTxt = b.chatId ? `(ID: ${window.escapeHTML(b.chatId)})` : `<span style="color:#e53e3e">(No Chat ID)</span>`; listHTML += `<div style="background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #cbd5e1; font-weight:bold; color:var(--primary); display:flex; justify-content:space-between; align-items:center;"><span>${window.escapeHTML(b.name)} <br><small style="color:gray">${cIdTxt}</small></span> <div><button onclick="window.editBranch('${b.key}')" class="btn-blue" style="padding:5px 10px; width:auto; margin-right:5px;">Edit</button><button onclick="window.deleteBranch('${b.key}')" class="btn-red" style="padding:5px 10px; width:auto;">Delete</button></div></div>`; }); 
+        let listHTML = ''; window.allBranches.forEach(b => { let cIdTxt = b.chatId ? `(ID: ${window.escapeHTML(b.chatId)})` : `<span style="color:#e53e3e">(No Chat ID)</span>`; listHTML += `<div style="background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #cbd5e1; font-weight:bold; color:var(--primary); display:flex; justify-content:space-between; align-items:center;"><span>${window.escapeHTML(b.name)} <br><small style="color:gray">${cIdTxt}</small></span> <div><button onclick="window.editBranch('${b.key}')" class="btn-blue" style="padding:5px 10px; width:auto; margin-right:5px;">Edit</button></div></div>`; }); 
         const listEl = document.getElementById('branch-display-list'); if(listEl) listEl.innerHTML = listHTML; 
     };
     
