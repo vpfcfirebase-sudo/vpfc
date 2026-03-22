@@ -737,7 +737,7 @@
         if(perms.length === 0) return alert("Select at least one permission!");
         if(pass) {
             try { const newEmail = id.toLowerCase() + "@vpfc.com"; await createUserWithEmailAndPassword(secondaryAuth, newEmail, pass); await signOut(secondaryAuth); alert("Password recreated successfully!");
-            } catch(e) { if(e.code === 'auth/email-already-in-use') return alert("⚠️ Please delete old account in Firebase Auth console first!"); else return alert(e.message); }
+            } catch(e) { if(e.code === 'auth/email-already-in-use') return alert("⚠️ Please <button class="btn-red" style="padding:5px 10px; width:auto;" onclick="window.deleteTwUser('${u.id}')">Delete</button>te old account in Firebase Auth console first!"); else return alert(e.message); }
         }
         await set(ref(db, 'telewingsUsers/' + id), { id, name, perms }); alert("User Updated!"); window.cancelTwEdit();
     };
@@ -755,14 +755,13 @@
             if(window.current && window.current.role === 'telewings' && u.id.toUpperCase() === window.current.id.toUpperCase()) {
                 actions = `<b style="color:var(--secondary)">🔒 MY ACCOUNT (Locked)</b>`;
             } else {
-                actions = `<button class="btn-blue" style="padding:5px 10px; width:auto; margin-right:5px;" onclick="window.editTwUser('${u.id}')">Edit</button>
-                           <button class="btn-red" style="padding:5px 10px; width:auto;" onclick="window.deleteTwUser('${u.id}')">Delete</button>`;
+                actions = `<button class="btn-blue" style="padding:5px 10px; width:auto; margin-right:5px;" onclick="window.editTwUser('${u.id}')">Edit</button>`;
             }
             h += `<tr><td><b>${window.escapeHTML(u.id)}</b></td><td>${window.escapeHTML(u.name)}</td><td>${actions}</td></tr>`; 
         });
         tbody.innerHTML = h;
     };
-    window.deleteTwUser = async (id) => { if(confirm(`Delete User: ${id}? \n\nNote: Please also delete them from Firebase Auth console.`)) { await remove(ref(db, 'telewingsUsers/' + id)); } };
+    
 
     // --- EMPLOYEE BIO ---
     window.viewEmpBio = () => {
@@ -873,7 +872,7 @@
     window.editBranch = (key) => { const b = window.allBranches.find(x => x.key === key); if(!b) return; document.getElementById('edit-branch-key').value = b.key; document.getElementById('new-branch-name').value = b.name; document.getElementById('new-branch-chat-id').value = b.chatId || ''; document.getElementById('branch-edit-msg').classList.remove('hidden'); document.getElementById('add-branch-btn').classList.add('hidden'); document.getElementById('update-branch-btn').classList.remove('hidden'); document.getElementById('cancel-branch-btn').classList.remove('hidden'); window.scrollTo(0,0); };
     window.updateBranch = async () => { const key = document.getElementById('edit-branch-key').value; const bName = document.getElementById('new-branch-name').value.trim(); const bChat = document.getElementById('new-branch-chat-id').value.trim(); if(!bName) return alert("Enter Branch Name!"); await set(ref(db, 'branches/'+key), { name: bName, chatId: bChat }); alert("Branch Updated!"); window.cancelBranchEdit(); };
     window.cancelBranchEdit = () => { document.getElementById('edit-branch-key').value = ''; document.getElementById('new-branch-name').value = ''; document.getElementById('new-branch-chat-id').value = ''; document.getElementById('branch-edit-msg').classList.add('hidden'); document.getElementById('add-branch-btn').classList.remove('hidden'); document.getElementById('update-branch-btn').classList.add('hidden'); document.getElementById('cancel-branch-btn').classList.add('hidden'); };
-    window.deleteBranch = async (key) => { if(confirm("Delete this branch?")) await remove(ref(db, 'branches/'+key)); };
+    
 
     window.populateEmpsByBranch = (brSel, empSel, defText) => { const b = document.getElementById(brSel).value; let opts = `<option value="">${defText}</option>`; window.allEmps.filter(e => e.branch === b).forEach(e => { opts += `<option value="${window.escapeHTML(e.id)}">${window.escapeHTML(e.name)} (${window.escapeHTML(e.id)})</option>`; }); document.getElementById(empSel).innerHTML = opts; };
     window.loadAssignEmps = () => window.populateEmpsByBranch('as-branch-sel', 'as-emp-sel', 'Select Employee');
