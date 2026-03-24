@@ -594,10 +594,8 @@
 <div id="employee-dashboard" class="hidden dashboard-layout">
     <div class="sidebar no-print">
         <div style="padding:15px; text-align:center; border-bottom:1px solid #334155; margin-bottom:10px;">
-            <h3 id="e-name-tag" style="margin:0; color:var(--secondary); font-size:16px;"></h3>
-            <div id="emp-status-warning" style="font-size:12px; margin-top:5px; font-weight:bold;"></div>
+            <h3 id="e-name-tag" style="margin:0; color:var(--secondary); font-size:18px;"></h3><div id="emp-status-warning" style="font-size:12px; margin-top:5px; font-weight:bold;"></div>
         </div>
-        <div class="sidebar-category">Menu</div>
         <div class="nav-item active" onclick="window.showSub('e-home', this)">📊 My Dashboard</div>
         <div class="nav-item" onclick="window.showSub('e-idcard', this)">🪪 Digital ID Card</div>
         <div class="nav-item" id="nav-e-visit" onclick="window.showSub('e-visit', this)">🤝 Customer Visit</div>
@@ -606,32 +604,20 @@
         <div class="nav-item" onclick="window.showSub('e-target', this)">🎯 Target Summary</div>
         <div class="nav-item" onclick="window.showSub('e-report', this)">📋 My History</div>
         <div class="nav-item" onclick="window.showSub('e-complaints', this)">⚠️ My Complaints</div>
-        <div class="nav-item" style="color:#fca5a5; margin-top:20px;" onclick="location.reload()">🚪 Logout</div>
+        <div class="nav-item" style="color:#ff6b6b; margin-top:auto;" onclick="location.reload()">🚪 Logout</div>
     </div>
+
     <div class="main-content">
-        <div class="global-month-bar no-print"><label style="margin:0;">📅 SELECTION MONTH:</label><input type="month" id="emp-dash-month-global" onchange="window.onGlobalMonthChange()"></div>
+        <div class="global-month-bar no-print"><label>SELECTION MONTH:</label><input type="month" id="emp-dash-month-global" onchange="window.onGlobalMonthChange()"></div>
+        
         <div id="e-home" class="sub-section">
-            <h4 style="font-size:16px;">🟢 REGULAR ACCOUNTS SUMMARY</h4>
-            <div class="stats-grid">
-                <div class="stat-card solid-dark"><h3 id="e-reg-t-amt">0</h3><p>Target Amount</p></div>
-                <div class="stat-card solid-green"><h3 id="e-reg-c-amt">0</h3><p>Collected</p></div>
-                <div class="stat-card solid-red"><h3 id="e-reg-seized-amt">0</h3><p>Seized Amt</p></div>
-                <div class="stat-card"><h3><span id="e-reg-assign">0</span></h3><p>Assigned</p></div>
-                <div class="stat-card"><h3><span id="e-reg-comp" style="color:var(--secondary);">0</span></h3><p>Completed</p></div>
-                <div class="stat-card"><h3><span id="e-reg-seized-c" style="color:var(--seized);">0</span></h3><p>Seized</p></div>
-            </div>
+            <h4 style="color:var(--primary); font-size:18px;">🟢 REGULAR ACCOUNTS</h4>
+            <div class="stats-grid"><div class="stat-card"><h3><span id="e-reg-assign">0</span></h3><p>Assigned</p></div><div class="stat-card"><h3><span id="e-reg-comp" style="color:var(--secondary);">0</span></h3><p>Completed</p></div><div class="stat-card" style="border-bottom-color:var(--seized);"><h3><span id="e-reg-seized-c" style="color:var(--seized);">0</span></h3><p>Seized Count</p></div><div class="stat-card"><h3 style="color:#0284c7;">₹<span id="e-reg-t-amt">0</span></h3><p>Target Amt</p></div><div class="stat-card"><h3 style="color:var(--secondary);">₹<span id="e-reg-c-amt">0</span></h3><p>Collected</p></div><div class="stat-card" style="border-bottom-color:var(--seized);"><h3 style="color:var(--seized);">₹<span id="e-reg-seized-amt">0</span></h3><p>Seized Amt</p></div></div>
             
-            <h4 style="font-size:16px;">🟠 MATURED ACCOUNTS SUMMARY</h4>
-            <div class="stats-grid">
-                <div class="stat-card solid-dark"><h3 id="e-mat-t-amt">0</h3><p>Target Amount</p></div>
-                <div class="stat-card solid-green"><h3 id="e-mat-c-amt">0</h3><p>Collected</p></div>
-                <div class="stat-card solid-red"><h3 id="e-mat-seized-amt">0</h3><p>Seized Amt</p></div>
-                <div class="stat-card"><h3><span id="e-mat-assign">0</span></h3><p>Assigned</p></div>
-                <div class="stat-card"><h3><span id="e-mat-comp" style="color:var(--secondary);">0</span></h3><p>Completed</p></div>
-                <div class="stat-card"><h3><span id="e-mat-seized-c" style="color:var(--seized);">0</span></h3><p>Seized</p></div>
-            </div>
+            <h4 style="color:#d97706; font-size:18px;">🟠 MATURED ACCOUNTS</h4>
+            <div class="stats-grid"><div class="stat-card"><h3><span id="e-mat-assign">0</span></h3><p>Assigned</p></div><div class="stat-card"><h3><span id="e-mat-comp" style="color:var(--secondary);">0</span></h3><p>Completed</p></div><div class="stat-card" style="border-bottom-color:var(--seized);"><h3><span id="e-mat-seized-c" style="color:var(--seized);">0</span></h3><p>Seized Count</p></div><div class="stat-card"><h3 style="color:#d97706;">₹<span id="e-mat-t-amt">0</span></h3><p>Target Amt</p></div><div class="stat-card"><h3 style="color:var(--secondary);">₹<span id="e-mat-c-amt">0</span></h3><p>Collected</p></div><div class="stat-card" style="border-bottom-color:var(--seized);"><h3 style="color:var(--seized);">₹<span id="e-mat-seized-amt">0</span></h3><p>Seized Amt</p></div></div>
             
-            <h4 style="font-size:16px;">💰 RECEIPTS OVERVIEW</h4>
+            <h4 style="font-size:18px;">💰 RECEIPTS OVERVIEW</h4>
             <div class="stats-grid">
                 <div class="stat-card clickable" onclick="window.showQuickReport('PCR', false)"><h3 style="color:#3b82f6;">₹<span id="e-stat-pcr-amt">0</span></h3><p>PCR (<span id="e-stat-pcr-rec">0</span>)</p></div>
                 <div class="stat-card clickable" onclick="window.showQuickReport('Lock Amount', false)"><h3 style="color:#8b5cf6;">₹<span id="e-stat-lock-amt">0</span></h3><p>Lock (<span id="e-stat-lock-rec">0</span>)</p></div>
@@ -639,20 +625,31 @@
                 <div class="stat-card clickable" onclick="window.showQuickReport('OP', false)"><h3 style="color:#f59e0b;">₹<span id="e-stat-op-amt">0</span></h3><p>OP (<span id="e-stat-op-rec">0</span>)</p></div>
             </div>
 
-            <div id="quick-report-box" class="hidden card" style="border-top:4px solid var(--secondary);"><h4 id="quick-report-title">REPORT</h4><div class="table-container"><table class="report-table"><thead><tr><th style="text-align:left;">Date & Time</th><th style="text-align:left;">Customer/HP</th><th>Amt</th><th>Type</th><th>Images</th></tr></thead><tbody id="quick-report-body"></tbody></table></div><button class="btn-red" onclick="document.getElementById('quick-report-box').classList.add('hidden')" style="max-width:200px;">Close Report</button></div>
+            <h4 style="font-size:18px;">🏠 HOME VISITS OVERVIEW</h4>
+            <div class="stats-grid">
+                <div class="stat-card clickable" onclick="window.showQuickReport('PCR', true)"><h3 style="color:#3b82f6;"><span id="e-stat-pcr-vis">0</span></h3><p>PCR Visits</p></div>
+                <div class="stat-card clickable" onclick="window.showQuickReport('Lock Amount', true)"><h3 style="color:#8b5cf6;"><span id="e-stat-lock-vis">0</span></h3><p>Lock Visits</p></div>
+                <div class="stat-card clickable" onclick="window.showQuickReport('Office QR', true)"><h3 style="color:#10b981;"><span id="e-stat-qr-vis">0</span></h3><p>QR Visits</p></div>
+                <div class="stat-card clickable" onclick="window.showQuickReport('OP', true)"><h3 style="color:#f59e0b;"><span id="e-stat-op-vis">0</span></h3><p>OP Visits</p></div>
+            </div>
+
+            <div id="quick-report-box" class="hidden card" style="border-top:4px solid var(--primary);"><h4 id="quick-report-title">REPORT</h4><div class="table-container"><table class="report-table"><thead><tr><th>Date & Time</th><th>Customer/HP</th><th>Amt</th><th>Type</th><th>Images</th></tr></thead><tbody id="quick-report-body"></tbody></table></div><button class="btn-red" onclick="document.getElementById('quick-report-box').classList.add('hidden')">Close Report</button></div>
         </div>
         
         <div id="e-complaints" class="sub-section card hidden">
             <h4>⚠️ MY COMPLAINTS</h4>
-            <div style="background:#fff7ed; padding:15px; border-left:4px solid #f97316; margin-bottom:15px; font-size:13px; color:#9a3412;">ఇక్కడ టెలికాలింగ్ టీమ్ వారు మీ మీద పెట్టిన కంప్లైంట్స్ కనిపిస్తాయి.</div>
+            <div class="summary-box" style="background:#fff3cd; color:#856404; border-color:#ffeeba; text-align:left;">ఇక్కడ టెలికాలింగ్ టీమ్ వారు మీ మీద పెట్టిన కంప్లైంట్స్ కనిపిస్తాయి.</div>
             <div class="table-container">
                 <table class="report-table">
-                    <thead><tr><th style="text-align:left;">Date & Raised By</th><th style="text-align:left;">HP No</th><th>Status</th><th style="text-align:left;">Complaint Details</th></tr></thead>
+                    <thead><tr><th>Date & Time</th><th>Raised By</th><th>HP No</th><th>Complaint Details</th></tr></thead>
                     <tbody id="e-complaints-body"></tbody>
                 </table>
             </div>
         </div>
 
+        <div id="e-idcard" class="sub-section card hidden"><h4>🪪 DIGITAL ID CARD</h4><div id="my-digital-id-area"></div><button onclick="window.print()" class="btn-print no-print" style="margin:20px auto; display:block;">PRINT ID CARD</button></div>
+        <div id="e-reminders" class="sub-section card hidden"><h4>📅 MY REMINDERS</h4><div class="no-print" style="display:flex; gap:10px;"><div style="flex:1;"><label class="form-label">Select Date</label><input type="date" id="rem-date" style="margin-top:0;"></div><button class="btn-green" onclick="window.renderReminders()" style="margin-top:15px; width:auto; padding:0 25px;">GET</button></div><button onclick="window.print()" class="btn-print no-print" style="margin-top:15px;">PRINT REPORT</button><div class="table-container"><table class="report-table"><thead><tr><th>HP Number</th><th>Customer</th><th>Mobile</th><th>Reason</th></tr></thead><tbody id="rem-table-body"></tbody></table></div></div>
+        <div id="e-visit-stat" class="sub-section card hidden"><h4>📍 MY VISIT STATUS</h4><div class="no-print" style="display:flex; gap:10px;"><div style="flex:1;"><label class="form-label">Select Month</label><input type="month" id="e-vstat-month" style="margin-top:0;"></div><button class="btn-green" onclick="window.renderEmpVisitStatus()" style="margin-top:15px; width:auto; padding:0 25px;">SEARCH</button></div><button onclick="window.print()" class="btn-print no-print" style="margin-top:15px;">PRINT REPORT</button><div id="e-vstat-summary" class="summary-box hidden"></div><div class="table-container"><table class="report-table"><thead><tr><th>HP Number</th><th>INS</th><th>Customer</th><th>Status</th><th>Date & Time</th></tr></thead><tbody id="e-vstat-table-body"></tbody></table></div></div>
         <div id="e-visit" class="sub-section card hidden no-print">
             <h4>🤝 CUSTOMER VISIT FORM</h4>
             <div id="gps-status" style="background:#fef2f2; color:var(--danger); padding:10px; border-radius:5px; font-weight:bold; margin-bottom:15px; border:1px solid #fca5a5;">CHECKING GPS...</div>
@@ -704,11 +701,21 @@
             </div>
             <button class="btn-green" id="v-submit-btn" onclick="window.submitVisit()" style="height:55px;">✅ SUBMIT VISIT DATA</button>
         </div>
-        <div id="e-idcard" class="sub-section card hidden"><h4>🪪 DIGITAL ID CARD</h4><div id="my-digital-id-area"></div><button onclick="window.print()" class="btn-print no-print" style="margin:20px auto; display:block;">PRINT ID CARD</button></div>
-        <div id="e-reminders" class="sub-section card hidden"><h4>📅 MY REMINDERS</h4><div class="filter-bar no-print"><div><label class="form-label">Select Date</label><input type="date" id="rem-date"></div><div><button class="btn-green" onclick="window.renderReminders()" style="margin-top:20px;">GET</button></div></div><div class="table-container"><table class="report-table"><thead><tr><th style="text-align:left;">HP Number</th><th style="text-align:left;">Customer</th><th>Mobile</th><th style="text-align:left;">Reason</th></tr></thead><tbody id="rem-table-body"></tbody></table></div></div>
-        <div id="e-visit-stat" class="sub-section card hidden"><h4>📍 MY VISIT STATUS</h4><div class="filter-bar no-print"><div><label class="form-label">Select Month</label><input type="month" id="e-vstat-month"></div><div><button class="btn-green" onclick="window.renderEmpVisitStatus()" style="margin-top:20px;">SEARCH</button></div></div><div id="e-vstat-summary" class="summary-box hidden"></div><div class="table-container"><table class="report-table"><thead><tr><th style="text-align:left;">HP Number</th><th>INS</th><th style="text-align:left;">Customer</th><th>Status</th><th>Date</th></tr></thead><tbody id="e-vstat-table-body"></tbody></table></div></div>
-        <div id="e-target" class="sub-section card hidden"><h4>🎯 MY TARGET SUMMARY</h4><div class="filter-bar no-print"><div><label class="form-label">Select Month</label><input type="month" id="targ-month" onchange="window.renderTarget()"></div></div><div id="e-target-summary" style="margin-bottom:15px; padding:15px; background:#f0f9ff; border-radius:10px; border:1px solid #bae6fd;"></div><div class="table-container"><table class="report-table"><thead><tr><th style="text-align:left;">HP Number</th><th>Type</th><th style="text-align:left;">Customer</th><th>Status</th><th>Date</th></tr></thead><tbody id="e-target-body"></tbody></table></div></div>
-        <div id="e-report" class="sub-section card hidden"><h4>📋 MY DETAILED HISTORY</h4><div class="filter-bar no-print"><div><label class="form-label">Select Month</label><input type="month" id="e-rep-month"></div><div><button class="btn-green" onclick="window.renderEmployeeSelfReport()" style="margin-top:20px;">SEARCH</button></div></div><div class="table-container"><table class="report-table"><thead><tr><th style="text-align:left;">Date</th><th style="text-align:left;">Customer/HP/INS</th><th>Amt/Stat</th><th style="text-align:left;">Reason/Details</th><th>Location</th><th>Images</th></tr></thead><tbody id="e-report-body"></tbody></table></div></div>
+
+        <div id="e-target" class="sub-section card hidden">
+            <h4>🎯 MY TARGET SUMMARY</h4>
+            <div class="no-print" style="display:flex; gap:10px; margin-bottom:15px;"><div style="flex:1;"><label class="form-label">Select Month</label><input type="month" id="targ-month" style="margin-top:0;" onchange="window.renderTarget()"></div></div>
+            <div id="e-target-summary" style="margin-bottom:15px; padding:15px; background:#f0f9ff; border-radius:10px; border:2px solid #bae6fd;"></div>
+            <button onclick="window.print()" class="btn-print no-print" style="margin-bottom:15px;">PRINT REPORT</button>
+            <div class="table-container"><table class="report-table"><thead><tr><th>HP Number</th><th>Type</th><th>Customer</th><th>Status</th><th>Date & Time</th></tr></thead><tbody id="e-target-body"></tbody></table></div>
+        </div>
+
+        <div id="e-report" class="sub-section card hidden">
+            <h4>📋 MY DETAILED HISTORY</h4>
+            <div class="no-print" style="display:flex; gap:10px;"><div style="flex:1;"><label class="form-label">Select Month</label><input type="month" id="e-rep-month" style="margin-top:0;"></div><button class="btn-green" onclick="window.renderEmployeeSelfReport()" style="margin-top:15px; width:auto; padding:0 25px;">SEARCH</button></div>
+            <button onclick="window.print()" class="btn-print no-print" style="margin-top:15px;">PRINT REPORT</button>
+            <div class="table-container"><table class="report-table"><thead><tr><th>Date & Time</th><th>Customer/HP/INS</th><th>Stat/Amt</th><th>Reason/Details</th><th>Location</th><th>Images</th></tr></thead><tbody id="e-report-body"></tbody></table></div>
+        </div>
     </div>
 </div>
 <script type="module">
@@ -745,27 +752,22 @@
     window.pendingTargetId = ''; window.pendingTargetNav = null;
     window.updateEmployeeDashState = window.updateEmployeeDashState || (() => {});
 
-    // --- NEW: MISSING SHOWSUB FUNCTION ---
     window.showSub = (targetId, navElement) => {
         const lockedSections = ['a-branch-mgmt', 'a-reg', 'a-settings', 'a-telewings'];
         
-        // Security Check for Admin
         if (lockedSections.includes(targetId) && !window.isSecuredUnlocked && window.current && window.current.id === 'admin') {
             window.pendingTargetId = targetId;
             window.pendingTargetNav = navElement;
             targetId = 'a-lock-screen';
         }
 
-        // Hide all sub-sections
         document.querySelectorAll('.sub-section').forEach(sec => {
             sec.classList.add('hidden');
         });
 
-        // Show target section
         const targetElement = document.getElementById(targetId);
         if(targetElement) targetElement.classList.remove('hidden');
 
-        // Update Active state on sidebar
         if (navElement) {
             document.querySelectorAll('.nav-item').forEach(nav => {
                 nav.classList.remove('active');
@@ -773,13 +775,11 @@
             navElement.classList.add('active');
         }
 
-        // Close sidebar on mobile after clicking
         if (window.innerWidth <= 768) {
             document.querySelector('.sidebar').classList.remove('active');
         }
     };
 
-    // --- NEW: ADMIN SECURITY FUNCTIONS ---
     window.unlockSecurity = () => {
         const pwd = document.getElementById('sec-lock-input').value;
         if (pwd === window.adminSettings.lockPass) {
@@ -807,7 +807,6 @@
         window.adminSettings.lockPass = newP;
     };
 
-    // --- NEW: UPLOAD ADMIN LOGO FUNCTION ---
     window.uploadAdminLogo = async () => {
         const file = document.getElementById('admin-logo-upload').files[0];
         if (!file) return alert("Please select an image first!");
@@ -827,7 +826,6 @@
         }
     };
 
-    // --- NEW: ATTENDANCE LOG FUNCTION ---
     window.renderAttendance = () => {
         const branch = document.getElementById('att-branch-sel').value;
         const month = document.getElementById('att-month').value;
@@ -838,10 +836,7 @@
         let html = '';
 
         branchEmps.forEach(emp => {
-            // Find all visits by this employee for the selected month
             const empVisits = window.allVisits.filter(v => v.eid === emp.id && v.date.startsWith(month));
-            
-            // Get unique days present based on visit dates
             const uniqueDays = new Set(empVisits.map(v => v.date)).size;
 
             html += `<tr>
@@ -855,8 +850,6 @@
         document.getElementById('att-body').innerHTML = html || '<tr><td colspan="4" align="center">No Attendance Records Found</td></tr>';
     };
 
-
-    // --- EXISTING UTILITY FUNCTIONS ---
     window.escapeHTML = function(str) {
         if (str === null || str === undefined) return '';
         return String(str).replace(/[&<>'"]/g, function(match) {
@@ -915,7 +908,6 @@
         });
     };
 
-    // --- LOGIN SYSTEM ---
     window.handleLogin = async () => {
         const idStr = document.getElementById('l-id').value.trim(); 
         const ps = document.getElementById('l-pass').value.trim();
@@ -931,7 +923,6 @@
 
             await signInWithEmailAndPassword(auth, loginEmail, ps);
             
-            // ADMIN LOGIN
             if (loginEmail === 'admin@vpfc.com') {
                 window.current = {id:'admin', name:'Admin', role:'admin'}; 
                 document.getElementById('admin-sidebar-header').innerText = "ADMIN PANEL";
@@ -952,7 +943,6 @@
                 return;
             } 
             
-            // TELEWINGS LOGIN
             const twUser = window.allTwUsers.find(x => x.id.toLowerCase() === idStr.toLowerCase());
             if(twUser) {
                 window.current = { id: twUser.id, name: twUser.name, role: 'telewings', perms: twUser.perms || [], twRole: twUser.role || 'telecaller' };
@@ -992,7 +982,6 @@
                 return;
             }
 
-            // EMPLOYEE LOGIN
             const e = window.allEmps.find(x => x.id.toLowerCase() === idStr.toLowerCase());
             if(!e) { alert("Employee record not found in database!"); btn.innerText = "LOGIN"; btn.disabled = false; return; }
             if(e.status === 'Inactive') { alert("❌ మీ అకౌంట్ డియాక్టివేట్ చేయబడింది. మీరు లాగిన్ అవ్వలేరు!"); btn.innerText = "LOGIN"; btn.disabled = false; return; }
@@ -1030,7 +1019,6 @@
         window.loadVisitsForMonth(mo); 
     };
 
-    // --- FIREBASE REALTIME LISTENERS ---
     onValue(ref(db, 'adminSettings'), s => { 
         if(s.val()) window.adminSettings = { ...window.adminSettings, ...s.val() }; 
     });
@@ -1094,7 +1082,6 @@
         } 
     });
 
-    // --- TELEWINGS MANAGEMENT ---
     window.saveTwUser = async () => {
         const id = document.getElementById('tw-id').value.trim().toUpperCase(); 
         const name = document.getElementById('tw-name').value.trim(); 
@@ -1202,7 +1189,6 @@
         tbody.innerHTML = h;
     };
 
-    // --- EMPLOYEE BIO & DETAILS ---
     window.viewEmpBio = () => {
         const eid = document.getElementById('bio-em-sel').value; 
         if(!eid) return alert("Select Employee!");
@@ -1224,7 +1210,6 @@
         document.getElementById('bio-result-area').classList.remove('hidden');
     };
 
-    // --- TELEWINGS DASHBOARD STATS ---
     window.updateTwDashboardStats = () => {
         if(!window.current || window.current.role !== 'telewings') return;
         const moInput = document.getElementById('admin-dash-month-global'); 
@@ -1317,7 +1302,6 @@
         document.getElementById('tw01-team-body').innerHTML = html || `<tr><td colspan="10" align="center">No Telecallers Found</td></tr>`;
     };
 
-    // --- COMPLAINTS SYSTEM ---
     window.submitComplaint = async () => {
         const eid = document.getElementById('comp-em-sel').value; 
         const hp = document.getElementById('comp-hp').value.trim() || '---'; 
@@ -1409,11 +1393,12 @@
         document.getElementById('resolve-complaint-box').classList.add('hidden');
     };
 
+    // FIX: Employee Complaints display update
     window.renderEmpComplaints = () => { 
         let h = ''; 
-        window.allComplaints.filter(c => c.empId === window.current.id).sort((a,b) => (b.timestamp||0) - (a.timestamp||0)).forEach(c => { 
+        window.allComplaints.filter(c => c.empId && c.empId.toLowerCase() === window.current.id.toLowerCase()).sort((a,b) => (b.timestamp||0) - (a.timestamp||0)).forEach(c => { 
             let badge = c.status === 'Resolved' ? `<span class="badge b-green">Resolved</span>` : `<span class="badge b-red">Pending</span>`;
-            let replyHtml = c.reply ? `<br><div style="margin-top:8px; padding:8px; background:#f0fdf4; border-left:3px solid #166534; font-size:12px; color:#166534; border-radius:4px;"><b>Admin/HQ:</b> ${window.escapeHTML(c.reply)}</div>` : '';
+            let replyHtml = c.reply ? `<div style="margin-top:8px; padding:8px; background:#f0fdf4; border-left:3px solid #166534; font-size:12px; color:#166534; border-radius:4px;"><b>Admin/HQ Reply:</b> ${window.escapeHTML(c.reply)}</div>` : '';
             
             let imgHtml = '';
             if(c.img1 && c.img1 !== 'N/A') imgHtml += `<img src="${c.img1}" class="img-preview" onclick="window.open(this.src)">`;
@@ -1421,16 +1406,21 @@
             if(imgHtml) imgHtml = `<div style="margin-top:8px;">${imgHtml}</div>`;
 
             h += `<tr>
-                <td style="text-align:left;">${c.date}<br><small>${c.time}</small><br><b style="color:var(--danger); font-size:11px;">HQ / Admin Team</b></td>
-                <td style="text-align:left;"><b>${window.escapeHTML(c.hp)}</b></td>
-                <td>${badge}</td>
-                <td style="white-space: normal; min-width:250px; text-align:left; color:var(--danger); font-weight:bold;">${window.escapeHTML(c.details)}${imgHtml}${replyHtml}</td>
+                <td style="text-align:left;">${c.date}<br><small>${c.time}</small></td>
+                <td style="text-align:left;"><b style="color:var(--danger); font-size:11px;">${window.escapeHTML(c.raisedBy || 'Admin Team')}</b></td>
+                <td style="text-align:left;"><b>${window.escapeHTML(c.hp || '---')}</b></td>
+                <td style="white-space: normal; min-width:250px; text-align:left;">
+                    <span style="color:var(--danger); font-weight:bold;">${window.escapeHTML(c.details)}</span>
+                    ${imgHtml}
+                    ${replyHtml}
+                    <div style="margin-top:5px;">${badge}</div>
+                </td>
             </tr>`; 
         }); 
-        const tbody = document.getElementById('e-complaints-body'); if(tbody) tbody.innerHTML = h || '<tr><td colspan="4" align="center">No Complaints found</td></tr>'; 
+        const tbody = document.getElementById('e-complaints-body'); 
+        if(tbody) tbody.innerHTML = h || '<tr><td colspan="4" align="center">No Complaints found</td></tr>'; 
     };
 
-    // --- DROPDOWNS & BRANCH MANAGEMENT ---
     window.updateDropdowns = () => { 
         const selects = ['imp-br-sel', 'as-branch-sel', 'stat-br-sel', 'a-rep-branch-sel', 'r-branch-select', 'ins-branch-sel', 'b-search-select', 'b-perf-branch', 'att-branch-sel', 'bio-br-sel', 'comp-br-sel']; 
         let options = '<option value="">Select Branch</option>'; window.allBranches.forEach(b => { options += `<option value="${window.escapeHTML(b.name)}">${window.escapeHTML(b.name)}</option>`; }); 
@@ -1457,7 +1447,6 @@
     window.loadSearchEmps = () => window.populateEmpsByBranch('a-rep-branch-sel', 'a-rep-emp-sel', 'All Employees');
     window.loadImpEmps = () => window.populateEmpsByBranch('imp-br-sel', 'imp-em-sel', 'Select Employee');
     
-    // --- EMPLOYEE REGISTRATION ---
     window.getNextEmpId = () => { if(window.allEmps.length === 0) return "001"; const ids = window.allEmps.map(e => parseInt(e.id)||0); const max = Math.max(...ids); return String(max + 1).padStart(3, '0'); };
     
     window.saveEmployee = async () => { 
@@ -1557,7 +1546,6 @@
         const tbody=document.getElementById('a-reg-list'); if(tbody) tbody.innerHTML=h; 
     };
 
-    // --- ID CARD LOGIC ---
     window.generateIDCardHTML = (emp) => { 
         let statClass = emp.status === 'Inactive' ? 'inactive' : ''; 
         return `<div class="id-card-wrapper">
@@ -1580,7 +1568,6 @@
     window.updateEmpStatus = () => { const id = document.getElementById('i-emp-id').value; const s = document.getElementById('i-emp-status').value; const emp = window.allEmps.find(x => x.id === id); if(emp) { emp.status = s; set(ref(db, 'employees/'+id), emp).then(() => { alert("Status Updated!"); window.searchIdentity(); }); } };
     window.renderIDCard = () => { if(window.current && window.current.id !== 'admin' && window.current.role !== 'telewings') document.getElementById('my-digital-id-area').innerHTML = window.generateIDCardHTML(window.current); };
 
-    // --- ASSIGNMENTS LOGIC ---
     window.getEmpAssignments = (empId, month) => { 
         let a = window.allAssigns[empId]; 
         if(!a || !a[month]) return { r:[], m:[], rAmt:0, mAmt:0, details:{} }; 
@@ -1626,7 +1613,6 @@
     
     window.deleteAssignedHP = async (eid, mo, hp, type) => { if(!confirm(`Delete ${hp}?`)) return; const ex = window.getEmpAssignments(eid, mo); let rHPs = [...ex.r], mHPs = [...ex.m], rAmt = ex.rAmt, mAmt = ex.mAmt, det = {...ex.details}; let delAmt = det[hp] ? (parseFloat(det[hp].amt) || 0) : 0; if(type === 'Regular') { rHPs = rHPs.filter(x => x !== hp); rAmt -= delAmt; } if(type === 'Matured') { mHPs = mHPs.filter(x => x !== hp); mAmt -= delAmt; } delete det[hp]; await set(ref(db, `assignments/${eid}/${mo}`), { regularHPs: rHPs, maturedHPs: mHPs, regularTargetAmt: Math.max(0, rAmt), maturedTargetAmt: Math.max(0, mAmt), details: det }); window.renderAssignedList(); };
 
-    // --- VISITS & EMPLOYEE DASHBOARD ---
     window.startGPS = () => { if(navigator.geolocation) { navigator.geolocation.getCurrentPosition(p => { window.gps = p.coords.latitude.toFixed(5)+","+p.coords.longitude.toFixed(5); document.getElementById('gps-status').innerHTML = "✅ GPS CONNECTED"; document.getElementById('gps-status').style.background = "#dcfce7"; document.getElementById('gps-status').style.color = "green"; document.getElementById('gps-status').style.borderColor = "#10b981"; }, e => { document.getElementById('gps-status').innerHTML = "❌ GPS FAILED. Please enable Location."; }); } };
     window.populateAssignedHPs = () => { if(!window.current||window.current.role==='admin'||window.current.role==='telewings') return; const mo=document.getElementById('emp-dash-month-global').value; const a=window.getEmpAssignments(window.current.id,mo); let o=''; [...a.r,...a.m].forEach(h=>o+=`<option value="${window.escapeHTML(h)}">`); document.getElementById('hp-list').innerHTML=o; };
     window.checkHpType = () => { const hp=document.getElementById('v-hp').value.trim(); const mo=document.getElementById('emp-dash-month-global').value; const a=window.getEmpAssignments(window.current.id,mo); if(a.r.includes(hp)) document.getElementById('v-hp-type-display').innerHTML="<span style='color:var(--primary);'>🟢 REGULAR ACCOUNT</span>"; else if(a.m.includes(hp)) document.getElementById('v-hp-type-display').innerHTML="<span style='color:#d97706;'>🟠 MATURED ACCOUNT</span>"; else document.getElementById('v-hp-type-display').innerHTML=""; };
@@ -1778,7 +1764,6 @@
     
     window.buildLocLink = (loc) => loc && loc!=='0,0' ? `<a href="http://googleusercontent.com/maps.google.com/?q=${window.escapeHTML(loc)}" target="_blank" style="color:#3b82f6; font-weight:bold; text-decoration:underline;">📍 Map</a>` : '<span class="badge b-gray">No GPS</span>';
 
-    // --- DASHBOARD UPDATES ---
     window.updateAdminDashboardStats = () => {
         if(!window.current || window.current.role !== 'admin') return;
         const moInput = document.getElementById('admin-dash-month-global'); let mo = moInput ? moInput.value : window.getLocalDate().slice(0, 7); if(moInput) moInput.value = mo;
@@ -1842,7 +1827,6 @@
         document.getElementById('quick-report-box').scrollIntoView(); 
     };
 
-    // --- REPORT GENERATION ---
     window.renderAdminEmpReport = () => { 
         const b=document.getElementById('a-rep-branch-sel').value, eid=document.getElementById('a-rep-emp-sel').value, mo=document.getElementById('a-rep-month').value; 
         let data = window.allVisits; 
@@ -1870,6 +1854,7 @@
         r += '</tbody></table>'; document.getElementById('a-emp-rep-body').innerHTML = r; 
     };
 
+    // FIX: Detailed History for Employees Updated 
     window.renderEmployeeSelfReport = () => { 
         const mo = document.getElementById('e-rep-month').value; if(!mo) return; 
         let r = ''; 
@@ -1878,29 +1863,62 @@
             let ins = (ass.details&&ass.details[v.hp])?ass.details[v.hp].ins:'N/A'; 
             let vAmt = v.stat==='Seized' ? ((ass.details&&ass.details[v.hp])?parseFloat(ass.details[v.hp].amt||0):0) : v.amt; 
             let sc = v.stat==='Paid'?'b-green':(v.stat==='Seized'?'b-gray':'b-red'); 
-            let dh = v.stat==='Paid'?`${window.escapeHTML(v.type)}<br>${v.ppfcUnr&&v.ppfcUnr!=='---'?`<b style='color:red'>${window.escapeHTML(v.ppfcUnr)}</b>`:''}`:(v.stat==='Seized'?window.escapeHTML(v.seizeTime):window.escapeHTML(v.unr)); 
+            
+            let dh = '';
+            if(v.stat === 'Paid') {
+                dh = `Type: <b>${window.escapeHTML(v.type)}</b>`;
+                if(v.type === 'PCR' && v.pcrDate && v.pcrDate !== '---') dh += `<br>Later Date: ${window.escapeHTML(v.pcrDate)}`;
+                if(v.type === 'Lock Amount') dh += `<br>PPFC: ${window.escapeHTML(v.ppfc)}${v.ppfcUnr && v.ppfcUnr !== '---' ? `<br>Reason: <b style='color:red'>${window.escapeHTML(v.ppfcUnr)}</b>` : ''}`;
+                if(v.type === 'OP' && v.opTo && v.opTo !== '---') dh += `<br>Given to: ${window.escapeHTML(v.opTo)}`;
+            } else if(v.stat === 'Seized') {
+                dh = `Seize Time: <b>${window.escapeHTML(v.seizeTime)}</b>`;
+            } else {
+                dh = `Reason: <b style='color:var(--danger)'>${window.escapeHTML(v.unr)}</b><br>Next Date: <b>${window.escapeHTML(v.next)}</b>`;
+            }
             
             r+=`<tr>
                 <td style="text-align:left;">${window.escapeHTML(v.date)}<br><small style="color:gray">${window.escapeHTML(v.time||'')}</small></td>
                 <td style="text-align:left;"><b>${window.escapeHTML(v.cname)}</b><br>${window.escapeHTML(v.hp)}<br>INS: ${window.escapeHTML(ins)}</td>
                 <td><b>₹${vAmt}</b><br><span class="badge ${sc}">${window.escapeHTML(v.stat)}</span></td>
-                <td style="text-align:left;">${dh}</td>
+                <td style="text-align:left; font-size:12px;">${dh}</td>
                 <td>${window.buildLocLink(v.loc)}</td>
                 <td>${window.buildImageLinks(v)}</td>
             </tr>`; 
         }); 
-        document.getElementById('e-report-body').innerHTML = r; 
+        document.getElementById('e-report-body').innerHTML = r || '<tr><td colspan="6" align="center">No History Found</td></tr>'; 
     };
 
+    // FIX: Render Reminders Added
+    window.renderReminders = () => {
+        const rDate = document.getElementById('rem-date').value;
+        if(!rDate) return alert("Please select a date!");
+        
+        let h = '';
+        window.allVisits.filter(v => v.eid === window.current.id && v.next === rDate).forEach(v => {
+            h += `<tr>
+                <td style="text-align:left;"><b>${window.escapeHTML(v.hp)}</b></td>
+                <td style="text-align:left;">${window.escapeHTML(v.cname)}</td>
+                <td>${window.escapeHTML(v.custMobile || '---')}</td>
+                <td style="text-align:left; color:var(--danger); font-weight:bold;">${window.escapeHTML(v.unr)}</td>
+            </tr>`;
+        });
+        
+        document.getElementById('rem-table-body').innerHTML = h || '<tr><td colspan="4" align="center">No Reminders Found for this Date</td></tr>';
+    };
+
+    // FIX: Target Summary with Month Filter Updated
     window.renderTarget = () => { 
         let mo = document.getElementById('targ-month').value; 
         if(!mo){ mo = window.getLocalDate().slice(0, 7); document.getElementById('targ-month').value = mo; } 
         const ass = window.getEmpAssignments(window.current.id, mo); 
-        const myP = window.allVisits.filter(v => v.eid === window.current.id && (v.stat === 'Paid' || v.stat === 'Seized')); 
+        
+        const myP = window.allVisits.filter(v => v.eid === window.current.id && v.date.startsWith(mo) && (v.stat === 'Paid' || v.stat === 'Seized')); 
+        
         const dReg = [...new Set(myP.filter(v=>ass.r.includes(v.hp)).map(v=>v.hp))].length; 
         const dMat = [...new Set(myP.filter(v=>ass.m.includes(v.hp)).map(v=>v.hp))].length; 
         
         document.getElementById('e-target-summary').innerHTML = `<div style="color:var(--primary); font-weight:bold;">🟢 REGULAR: Assign ${ass.r.length} | Done ${dReg} | Pend ${ass.r.length-dReg}</div><div style="color:#d97706; margin-top:10px; font-weight:bold;">🟠 MATURED: Assign ${ass.m.length} | Done ${dMat} | Pend ${ass.m.length-dMat}</div>`; 
+        
         let r=''; 
         myP.forEach(v => { 
             let tc = v.accType === 'Regular' ? 'b-blue' : 'b-orange'; 
@@ -1913,7 +1931,7 @@
                 <td>${window.escapeHTML(v.date)}<br><small>${window.escapeHTML(v.time||'')}</small></td>
             </tr>`; 
         }); 
-        document.getElementById('e-target-body').innerHTML = r || `<tr><td colspan="5" align="center">No Data Found</td></tr>`; 
+        document.getElementById('e-target-body').innerHTML = r || `<tr><td colspan="5" align="center">No Data Found for Selection Month</td></tr>`; 
     };
 
     window.renderEmpVisitStatus = () => { 
