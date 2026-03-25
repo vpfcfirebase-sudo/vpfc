@@ -908,7 +908,7 @@
         });
     };
 
-    window.handleLogin = async () => {
+        window.handleLogin = async () => {
         const idStr = document.getElementById('l-id').value.trim(); 
         const ps = document.getElementById('l-pass').value.trim();
         if(!idStr || !ps) return alert("Please enter Login ID and Password!");
@@ -923,6 +923,7 @@
 
             await signInWithEmailAndPassword(auth, loginEmail, ps);
             
+            // ADMIN LOGIN BLOCK
             if (loginEmail === 'admin@vpfc.com') {
                 window.current = {id:'admin', name:'Admin', role:'admin'}; 
                 document.getElementById('admin-sidebar-header').innerText = "ADMIN PANEL";
@@ -939,10 +940,13 @@
                 document.getElementById('main-login-wrap').classList.add('hidden'); 
                 document.body.classList.remove('login-active'); 
                 document.getElementById('admin-dashboard').classList.remove('hidden'); 
+                
                 window.updateAdminDashboardStats(); 
+                window.renderAdminComplaints(); // FIX: Admin login avvagane complaints render avthayi
                 return;
             } 
             
+            // TELEWINGS LOGIN BLOCK
             const twUser = window.allTwUsers.find(x => x.id.toLowerCase() === idStr.toLowerCase());
             if(twUser) {
                 window.current = { id: twUser.id, name: twUser.name, role: 'telewings', perms: twUser.perms || [], twRole: twUser.role || 'telecaller' };
@@ -979,9 +983,12 @@
                     document.getElementById('tw-home').classList.remove('hidden');
                     window.updateTwDashboardStats();
                 }
+                
+                window.renderAdminComplaints(); // FIX: Telecaller login avvagane complaints render avthayi
                 return;
             }
 
+            // EMPLOYEE LOGIN BLOCK
             const e = window.allEmps.find(x => x.id.toLowerCase() === idStr.toLowerCase());
             if(!e) { alert("Employee record not found in database!"); btn.innerText = "LOGIN"; btn.disabled = false; return; }
             if(e.status === 'Inactive') { alert("❌ మీ అకౌంట్ డియాక్టివేట్ చేయబడింది. మీరు లాగిన్ అవ్వలేరు!"); btn.innerText = "LOGIN"; btn.disabled = false; return; }
@@ -1006,6 +1013,7 @@
             alert("Login Failed! Please check your ID and Password."); console.error(error);
         } finally { btn.innerText = "LOGIN"; btn.disabled = false; }
     };
+
 
     window.onAdminMonthChange = () => {
         const moInput = document.getElementById('admin-dash-month-global');
