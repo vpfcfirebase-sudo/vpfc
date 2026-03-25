@@ -1751,7 +1751,7 @@
                     const empMob = window.current.mobile || "N/A"; const brName = window.current.branch || "N/A";
                     const branchObj = window.allBranches.find(b => b.name === brName); const branchChatId = branchObj ? branchObj.chatId : null;
                     let extraMsg = stat === 'Not Paid' ? `\n🚫 *Reason:* ${data.unr}\n📅 *Next Date:* ${data.next}` : stat === 'Paid' ? `\n💳 *Type:* ${data.type}\n🔖 *PPFC:* ${data.ppfc}${data.ppfcUnr !== '---' ? `\n⚠️ *PPFC Reason:* ${data.ppfcUnr}` : ''}` : `\n⏱ *Seize Time:* ${data.seizeTime}`;
-                    const msg = `🔔 *New Visit Alert!*\n🏢 *Branch:* ${brName}\n👤 *Emp:* ${data.ename}\n📞 *Emp Mob:* ${empMob}\n🤝 *Cust:* ${data.cname} (${data.accType})\n📱 *Cust Mob:* ${data.custMobile}\n📄 *HP:* ${data.hp}\n📊 *Stat:* ${data.stat}\n💰 *Amt:* ₹${data.amt}${extraMsg}\n🗺 *Loc:* [View Map](http://googleusercontent.com/maps.google.com/?q=${data.loc})\n⏰ *Time:* ${data.date}, ${data.time}`;
+                    const msg = `🔔 *New Visit Alert!*\n🏢 *Branch:* ${brName}\n👤 *Emp:* ${data.ename}\n📞 *Emp Mob:* ${empMob}\n🤝 *Cust:* ${data.cname} (${data.accType})\n📱 *Cust Mob:* ${data.custMobile}\n📄 *HP:* ${data.hp}\n📊 *Stat:* ${data.stat}\n💰 *Amt:* ₹${data.amt}${extraMsg}\n🗺 *Loc:* [View Map](https://www.google.com/maps?q=${data.loc})\n⏰ *Time:* ${data.date}, ${data.time}`;
                     await fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${adminChatId}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
                     if(branchChatId && branchChatId.trim() !== '') { await fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${branchChatId}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`); }
                 }
@@ -1770,7 +1770,9 @@
         return ph || '---'; 
     };
     
-    window.buildLocLink = (loc) => loc && loc!=='0,0' ? `<a href="http://googleusercontent.com/maps.google.com/?q=${window.escapeHTML(loc)}" target="_blank" style="color:#3b82f6; font-weight:bold; text-decoration:underline;">📍 Map</a>` : '<span class="badge b-gray">No GPS</span>';
+    window.buildLocLink = (loc) => loc && loc!=='0,0' ? `<a href="https://www.google.com/maps?q=
+    
+    ${window.escapeHTML(loc)}" target="_blank" style="color:#3b82f6; font-weight:bold; text-decoration:underline;">📍 Map</a>` : '<span class="badge b-gray">No GPS</span>';
 
     window.updateAdminDashboardStats = () => {
         if(!window.current || window.current.role !== 'admin') return;
