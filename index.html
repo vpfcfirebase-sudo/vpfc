@@ -319,7 +319,11 @@
                 <input type="hidden" id="res-comp-id">
                 <label class="form-label">Action Taken / Reply Details</label>
                 <textarea id="res-comp-reply" rows="2" placeholder="Write exactly what action was taken..."></textarea>
-                <div style="display:flex; gap:10px; max-width: 400px;">
+                
+                <label class="form-label">Upload Proof Image (Optional)</label>
+                <input type="file" id="res-comp-img" accept="image/*" style="background:white;">
+                
+                <div style="display:flex; gap:10px; max-width: 400px; margin-top:10px;">
                     <button class="btn-green" onclick="window.markComplaintResolved()">MARK RESOLVED</button>
                     <button class="btn-red" onclick="document.getElementById('resolve-complaint-box').classList.add('hidden')">CANCEL</button>
                 </div>
@@ -648,7 +652,19 @@
         </div>
 
         <div id="e-idcard" class="sub-section card hidden"><h4>🪪 DIGITAL ID CARD</h4><div id="my-digital-id-area"></div><button onclick="window.print()" class="btn-print no-print" style="margin:20px auto; display:block;">PRINT ID CARD</button></div>
-        <div id="e-reminders" class="sub-section card hidden"><h4>📅 MY REMINDERS</h4><div class="no-print" style="display:flex; gap:10px;"><div style="flex:1;"><label class="form-label">Select Date</label><input type="date" id="rem-date" style="margin-top:0;"></div><button class="btn-green" onclick="window.renderReminders()" style="margin-top:15px; width:auto; padding:0 25px;">GET</button></div><button onclick="window.print()" class="btn-print no-print" style="margin-top:15px;">PRINT REPORT</button><div class="table-container"><table class="report-table"><thead><tr><th>HP Number</th><th>Customer</th><th>Mobile</th><th>Reason</th></tr></thead><tbody id="rem-table-body"></tbody></table></div></div>
+        
+        <div id="e-reminders" class="sub-section card hidden">
+            <h4>📅 MY REMINDERS</h4>
+            <div class="no-print" style="display:flex; gap:10px;"><div style="flex:1;"><label class="form-label">Select Date</label><input type="date" id="rem-date" style="margin-top:0;"></div><button class="btn-green" onclick="window.renderReminders()" style="margin-top:15px; width:auto; padding:0 25px;">GET</button></div>
+            <button onclick="window.print()" class="btn-print no-print" style="margin-top:15px;">PRINT REPORT</button>
+            <div class="table-container">
+                <table class="report-table">
+                    <thead><tr><th>HP Number</th><th>Customer</th><th>Latest Status</th><th>Reason & History</th></tr></thead>
+                    <tbody id="rem-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+        
         <div id="e-visit-stat" class="sub-section card hidden"><h4>📍 MY VISIT STATUS</h4><div class="no-print" style="display:flex; gap:10px;"><div style="flex:1;"><label class="form-label">Select Month</label><input type="month" id="e-vstat-month" style="margin-top:0;"></div><button class="btn-green" onclick="window.renderEmpVisitStatus()" style="margin-top:15px; width:auto; padding:0 25px;">SEARCH</button></div><button onclick="window.print()" class="btn-print no-print" style="margin-top:15px;">PRINT REPORT</button><div id="e-vstat-summary" class="summary-box hidden"></div><div class="table-container"><table class="report-table"><thead><tr><th>HP Number</th><th>INS</th><th>Customer</th><th>Status</th><th>Date & Time</th></tr></thead><tbody id="e-vstat-table-body"></tbody></table></div></div>
         <div id="e-visit" class="sub-section card hidden no-print">
             <h4>🤝 CUSTOMER VISIT FORM</h4>
@@ -853,7 +869,7 @@
     window.escapeHTML = function(str) {
         if (str === null || str === undefined) return '';
         return String(str).replace(/[&<>'"]/g, function(match) {
-            const escape = { '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' };
+            const escape = { '&': '&', '<': '<', '>': '>', "'": '\'', '"': '"' };
             return escape[match];
         });
     };
@@ -908,7 +924,7 @@
         });
     };
 
-        window.handleLogin = async () => {
+    window.handleLogin = async () => {
         const idStr = document.getElementById('l-id').value.trim(); 
         const ps = document.getElementById('l-pass').value.trim();
         if(!idStr || !ps) return alert("Please enter Login ID and Password!");
@@ -923,7 +939,6 @@
 
             await signInWithEmailAndPassword(auth, loginEmail, ps);
             
-            // ADMIN LOGIN BLOCK
             if (loginEmail === 'admin@vpfc.com') {
                 window.current = {id:'admin', name:'Admin', role:'admin'}; 
                 document.getElementById('admin-sidebar-header').innerText = "ADMIN PANEL";
@@ -942,11 +957,10 @@
                 document.getElementById('admin-dashboard').classList.remove('hidden'); 
                 
                 window.updateAdminDashboardStats(); 
-                window.renderAdminComplaints(); // FIX: Admin login avvagane complaints render avthayi
+                window.renderAdminComplaints();
                 return;
             } 
             
-            // TELEWINGS LOGIN BLOCK
             const twUser = window.allTwUsers.find(x => x.id.toLowerCase() === idStr.toLowerCase());
             if(twUser) {
                 window.current = { id: twUser.id, name: twUser.name, role: 'telewings', perms: twUser.perms || [], twRole: twUser.role || 'telecaller' };
@@ -984,11 +998,10 @@
                     window.updateTwDashboardStats();
                 }
                 
-                window.renderAdminComplaints(); // FIX: Telecaller login avvagane complaints render avthayi
+                window.renderAdminComplaints();
                 return;
             }
 
-            // EMPLOYEE LOGIN BLOCK
             const e = window.allEmps.find(x => x.id.toLowerCase() === idStr.toLowerCase());
             if(!e) { alert("Employee record not found in database!"); btn.innerText = "LOGIN"; btn.disabled = false; return; }
             if(e.status === 'Inactive') { alert("❌ మీ అకౌంట్ డియాక్టివేట్ చేయబడింది. మీరు లాగిన్ అవ్వలేరు!"); btn.innerText = "LOGIN"; btn.disabled = false; return; }
@@ -1013,7 +1026,6 @@
             alert("Login Failed! Please check your ID and Password."); console.error(error);
         } finally { btn.innerText = "LOGIN"; btn.disabled = false; }
     };
-
 
     window.onAdminMonthChange = () => {
         const moInput = document.getElementById('admin-dash-month-global');
@@ -1362,6 +1374,10 @@
             let badge = c.status === 'Resolved' ? `<span class="badge b-green">✅ Resolved</span>` : `<span class="badge b-red">⏳ Pending</span>`;
             let replyHtml = c.reply ? `<br><div style="margin-top:8px; padding:8px; background:#f0fdf4; border-left:3px solid #166534; font-size:12px; color:#166534; border-radius:4px;"><b>Reply:</b> ${window.escapeHTML(c.reply)}</div>` : '';
             
+            if(c.solvedImg && c.solvedImg !== 'N/A') {
+                replyHtml += `<div style="margin-top:5px;"><img src="${c.solvedImg}" class="img-preview" onclick="window.open(this.src)" style="border-color:#166534; width:50px; height:50px;"></div>`;
+            }
+
             let imgHtml = '';
             if(c.img1 && c.img1 !== 'N/A') imgHtml += `<img src="${c.img1}" class="img-preview" onclick="window.open(this.src)">`;
             if(c.img2 && c.img2 !== 'N/A') imgHtml += `<img src="${c.img2}" class="img-preview" onclick="window.open(this.src)">`;
@@ -1387,6 +1403,7 @@
     window.openResolveBox = (id) => {
         document.getElementById('res-comp-id').value = id;
         document.getElementById('res-comp-reply').value = '';
+        if(document.getElementById('res-comp-img')) document.getElementById('res-comp-img').value = '';
         document.getElementById('resolve-complaint-box').classList.remove('hidden');
         document.getElementById('resolve-complaint-box').scrollIntoView();
     };
@@ -1396,18 +1413,37 @@
         const reply = document.getElementById('res-comp-reply').value.trim();
         if(!reply) return alert("Please enter a reply or action taken!");
         
-        await update(ref(db, `complaints/${id}`), { status: 'Resolved', reply: reply });
-        alert("Complaint Marked as Resolved!");
-        document.getElementById('resolve-complaint-box').classList.add('hidden');
+        const btn = document.querySelector('#resolve-complaint-box .btn-green');
+        btn.innerText = "Resolving..."; btn.disabled = true;
+        
+        try {
+            let sImg = "N/A";
+            const f = document.getElementById('res-comp-img').files[0];
+            if(f) {
+                let b64 = await window.compressImage(f);
+                sImg = await window.uploadImageToStorage(b64, `complaints/solved_${Date.now()}.jpg`);
+            }
+            
+            await update(ref(db, `complaints/${id}`), { status: 'Resolved', reply: reply, solvedImg: sImg });
+            alert("Complaint Marked as Resolved!");
+            document.getElementById('resolve-complaint-box').classList.add('hidden');
+        } catch(e) {
+            alert("Error: " + e.message);
+        } finally {
+            btn.innerText = "MARK RESOLVED"; btn.disabled = false;
+        }
     };
 
-    // FIX: Employee Complaints display update
     window.renderEmpComplaints = () => { 
         let h = ''; 
         window.allComplaints.filter(c => c.empId && c.empId.toLowerCase() === window.current.id.toLowerCase()).sort((a,b) => (b.timestamp||0) - (a.timestamp||0)).forEach(c => { 
             let badge = c.status === 'Resolved' ? `<span class="badge b-green">Resolved</span>` : `<span class="badge b-red">Pending</span>`;
             let replyHtml = c.reply ? `<div style="margin-top:8px; padding:8px; background:#f0fdf4; border-left:3px solid #166534; font-size:12px; color:#166534; border-radius:4px;"><b>Admin/HQ Reply:</b> ${window.escapeHTML(c.reply)}</div>` : '';
             
+            if(c.solvedImg && c.solvedImg !== 'N/A') {
+                replyHtml += `<div style="margin-top:5px;"><img src="${c.solvedImg}" class="img-preview" onclick="window.open(this.src)" style="border-color:#166534; width:50px; height:50px;"></div>`;
+            }
+
             let imgHtml = '';
             if(c.img1 && c.img1 !== 'N/A') imgHtml += `<img src="${c.img1}" class="img-preview" onclick="window.open(this.src)">`;
             if(c.img2 && c.img2 !== 'N/A') imgHtml += `<img src="${c.img2}" class="img-preview" onclick="window.open(this.src)">`;
@@ -1493,6 +1529,16 @@
             await set(ref(db, 'employees/'+id), updatedData); alert("Details Updated!"); window.cancelEdit(); 
         } catch (err) { alert("Error: " + err.message); } finally { btn.innerText = "UPDATE DETAILS"; btn.disabled = false; }
     };
+
+    window.deleteEmp = async (id) => {
+        if(!confirm(`Are you sure you want to completely DELETE employee ${id}? This cannot be undone!`)) return;
+        try {
+            await remove(ref(db, `employees/${id}`));
+            alert("Employee deleted successfully!");
+        } catch(e) {
+            alert("Error deleting employee: " + e.message);
+        }
+    };
     
     window.editEmp = (id) => { 
         const e = window.allEmps.find(x => x.id === id); 
@@ -1548,7 +1594,10 @@
                 <td>${window.escapeHTML(e.mobile)||'-'}</td>
                 <td>${window.escapeHTML(e.joinDate)||'-'}</td>
                 <td>${statBadge}</td>
-                <td><button class="btn-blue" style="padding:5px 10px; width:auto; margin-top:0;" onclick="window.editEmp('${window.escapeHTML(e.id)}')">Edit</button></td>
+                <td style="display:flex; gap:5px; justify-content:center;">
+                    <button class="btn-blue" style="padding:5px 10px; width:auto; margin-top:0;" onclick="window.editEmp('${window.escapeHTML(e.id)}')">Edit</button>
+                    <button class="btn-red" style="padding:5px 10px; width:auto; margin-top:0;" onclick="window.deleteEmp('${window.escapeHTML(e.id)}')">Del</button>
+                </td>
             </tr>`; 
         }); 
         const tbody=document.getElementById('a-reg-list'); if(tbody) tbody.innerHTML=h; 
@@ -1692,9 +1741,12 @@
             } else if(p==='OP'){ 
                 document.getElementById('v-op-to-div').classList.remove('hidden'); 
                 document.getElementById('qr-visit-div').classList.remove('hidden'); 
+                
+                // OP receipt is mandatory
+                document.getElementById('lbl-receipt').innerText="OP Receipt Image"; 
+                document.getElementById('img-receipt-div').classList.remove('hidden'); 
+                
                 if(qrV==='Yes'){ 
-                    document.getElementById('lbl-receipt').innerText="OP Receipt Image"; 
-                    document.getElementById('img-receipt-div').classList.remove('hidden'); 
                     document.getElementById('img-cust-div').classList.remove('hidden'); 
                     document.getElementById('img-house-div').classList.remove('hidden'); 
                 } 
@@ -1707,7 +1759,10 @@
         const hp = document.getElementById('v-hp').value.trim(); const mo = document.getElementById('emp-dash-month-global').value;
         if(!hp || !document.getElementById('v-name').value) return alert("Customer Name & HP are mandatory!");
         const ass = window.getEmpAssignments(window.current.id, mo); if(!ass.r.includes(hp) && !ass.m.includes(hp)) return alert("HP Not assigned for this month!");
-        const btn = document.getElementById('v-submit-btn'); btn.innerText = "Submitting securely..."; btn.disabled = true;
+        
+        const btn = document.getElementById('v-submit-btn'); 
+        btn.innerText = "⏳ Uploading Images... Please wait"; 
+        btn.disabled = true;
         
         try {
             const tStamp = Date.now();
@@ -1751,9 +1806,14 @@
                     const empMob = window.current.mobile || "N/A"; const brName = window.current.branch || "N/A";
                     const branchObj = window.allBranches.find(b => b.name === brName); const branchChatId = branchObj ? branchObj.chatId : null;
                     let extraMsg = stat === 'Not Paid' ? `\n🚫 *Reason:* ${data.unr}\n📅 *Next Date:* ${data.next}` : stat === 'Paid' ? `\n💳 *Type:* ${data.type}\n🔖 *PPFC:* ${data.ppfc}${data.ppfcUnr !== '---' ? `\n⚠️ *PPFC Reason:* ${data.ppfcUnr}` : ''}` : `\n⏱ *Seize Time:* ${data.seizeTime}`;
-                    const msg = `🔔 *New Visit Alert!*\n🏢 *Branch:* ${brName}\n👤 *Emp:* ${data.ename}\n📞 *Emp Mob:* ${empMob}\n🤝 *Cust:* ${data.cname} (${data.accType})\n📱 *Cust Mob:* ${data.custMobile}\n📄 *HP:* ${data.hp}\n📊 *Stat:* ${data.stat}\n💰 *Amt:* ₹${data.amt}${extraMsg}\n🗺 *Loc:* [View Map](https://www.google.com/maps?q=${data.loc})\n⏰ *Time:* ${data.date}, ${data.time}`;
-                    await fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${adminChatId}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
-                    if(branchChatId && branchChatId.trim() !== '') { await fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${branchChatId}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`); }
+                    
+                    const msg = `🔔 *New Visit Alert!*\n🏢 *Branch:* ${brName}\n👤 *Emp:* ${data.ename}\n📞 *Emp Mob:* ${empMob}\n🤝 *Cust:* ${data.cname} (${data.accType})\n📱 *Cust Mob:* ${data.custMobile}\n📄 *HP:* ${data.hp}\n📊 *Stat:* ${data.stat}\n💰 *Amt:* ₹${data.amt}${extraMsg}\n🗺 *Loc:* [View Map](https://maps.google.com/?q=$${data.loc})\n⏰ *Time:* ${data.date}, ${data.time}`;
+                    
+                    fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${adminChatId}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`).catch(e => console.log("TG Error:", e));
+                    
+                    if(branchChatId && branchChatId.trim() !== '') { 
+                        fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${branchChatId}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`).catch(e => console.log("TG Error:", e)); 
+                    }
                 }
             } catch(tgErr) { console.log("Telegram alert issue:", tgErr); }
 
@@ -1770,9 +1830,7 @@
         return ph || '---'; 
     };
     
-    window.buildLocLink = (loc) => loc && loc!=='0,0' ? `<a href="https://www.google.com/maps?q=
-    
-    ${window.escapeHTML(loc)}" target="_blank" style="color:#3b82f6; font-weight:bold; text-decoration:underline;">📍 Map</a>` : '<span class="badge b-gray">No GPS</span>';
+    window.buildLocLink = (loc) => loc && loc!=='0,0' ? `<a href="https://maps.google.com/?q=$${window.escapeHTML(loc)}" target="_blank" style="color:#3b82f6; font-weight:bold; text-decoration:underline;">📍 Map</a>` : '<span class="badge b-gray">No GPS</span>';
 
     window.updateAdminDashboardStats = () => {
         if(!window.current || window.current.role !== 'admin') return;
@@ -1794,9 +1852,30 @@
         myV.forEach(v => { let isR = ass.r.includes(v.hp), isM = ass.m.includes(v.hp); if(!isR&&!isM){isR=v.accType==='Regular';isM=v.accType==='Matured';} if (v.stat === 'Paid') { if(isR) { rc+=parseFloat(v.amt||0); rComp.add(v.hp); } if(isM) { mc+=parseFloat(v.amt||0); mComp.add(v.hp); } } else if (v.stat === 'Seized') { let sa = (ass.details&&ass.details[v.hp])?parseFloat(ass.details[v.hp].amt||0):0; if(isR) { if(!rSeiz.has(v.hp)) { rsa+=sa; rSeiz.add(v.hp); } } if(isM) { if(!mSeiz.has(v.hp)) { msa+=sa; mSeiz.add(v.hp); } } } });
         document.getElementById('e-reg-assign').innerText = ass.r.length; document.getElementById('e-reg-comp').innerText = rComp.size; document.getElementById('e-reg-seized-c').innerText = rSeiz.size; document.getElementById('e-reg-t-amt').innerText = "₹" + (ass.rAmt || 0); document.getElementById('e-reg-c-amt').innerText = "₹" + rc; document.getElementById('e-reg-seized-amt').innerText = "₹" + rsa;
         document.getElementById('e-mat-assign').innerText = ass.m.length; document.getElementById('e-mat-comp').innerText = mComp.size; document.getElementById('e-mat-seized-c').innerText = mSeiz.size; document.getElementById('e-mat-t-amt').innerText = "₹" + (ass.mAmt || 0); document.getElementById('e-mat-c-amt').innerText = "₹" + mc; document.getElementById('e-mat-seized-amt').innerText = "₹" + msa;
-        const paid = myV.filter(v => v.stat === 'Paid'); let pa=0, la=0, qa=0, oa=0, pc=0, lc=0, qc=0, oc=0;
-        paid.forEach(v => { let a = parseFloat(v.amt||0); if(v.type === 'PCR') { pc++; pa+=a; } else if(v.type === 'Lock Amount') { lc++; la+=a; } else if(v.type === 'Office QR') { qc++; qa+=a; } else if(v.type&&v.type.startsWith('OP')) { oc++; oa+=a; } });
-        document.getElementById('e-stat-pcr-amt').innerText=pa; document.getElementById('e-stat-pcr-rec').innerText=pc; document.getElementById('e-stat-lock-amt').innerText=la; document.getElementById('e-stat-lock-rec').innerText=lc; document.getElementById('e-stat-qr-amt').innerText=qa; document.getElementById('e-stat-qr-rec').innerText=qc; document.getElementById('e-stat-op-amt').innerText=oa; document.getElementById('e-stat-op-rec').innerText=oc;
+        
+        const paid = myV.filter(v => v.stat === 'Paid'); 
+        let pa=0, la=0, qa=0, oa=0, pc=0, lc=0, qc=0, oc=0;
+        let pcrVis=0, lockVis=0, qrVis=0, opVis=0; 
+        
+        paid.forEach(v => { 
+            let a = parseFloat(v.amt||0); 
+            let hasImg = v.i1 && v.i1 !== 'N/A'; 
+            
+            if(v.type === 'PCR') { pc++; pa+=a; if(hasImg) pcrVis++; } 
+            else if(v.type === 'Lock Amount') { lc++; la+=a; if(hasImg) lockVis++; } 
+            else if(v.type === 'Office QR') { qc++; qa+=a; if(hasImg) qrVis++; } 
+            else if(v.type && v.type.startsWith('OP')) { oc++; oa+=a; if(hasImg) opVis++; } 
+        });
+        
+        document.getElementById('e-stat-pcr-amt').innerText=pa; document.getElementById('e-stat-pcr-rec').innerText=pc; 
+        document.getElementById('e-stat-lock-amt').innerText=la; document.getElementById('e-stat-lock-rec').innerText=lc; 
+        document.getElementById('e-stat-qr-amt').innerText=qa; document.getElementById('e-stat-qr-rec').innerText=qc; 
+        document.getElementById('e-stat-op-amt').innerText=oa; document.getElementById('e-stat-op-rec').innerText=oc;
+        
+        if(document.getElementById('e-stat-pcr-vis')) document.getElementById('e-stat-pcr-vis').innerText=pcrVis;
+        if(document.getElementById('e-stat-lock-vis')) document.getElementById('e-stat-lock-vis').innerText=lockVis;
+        if(document.getElementById('e-stat-qr-vis')) document.getElementById('e-stat-qr-vis').innerText=qrVis;
+        if(document.getElementById('e-stat-op-vis')) document.getElementById('e-stat-op-vis').innerText=opVis;
     };
 
     window.viewAdminEmpDash = () => {
@@ -1804,10 +1883,33 @@
         const impEmp = window.allEmps.find(e => e.id === eid); const ass = window.getEmpAssignments(eid, mo); const myV = window.allVisits.filter(v => v.eid === eid && v.date.startsWith(mo));
         let rc=0, mc=0, rsa=0, msa=0; let rComp=new Set(), mComp=new Set(), rSeiz=new Set(), mSeiz=new Set();
         myV.forEach(v => { let isR = ass.r.includes(v.hp), isM = ass.m.includes(v.hp); if(!isR&&!isM){isR=v.accType==='Regular';isM=v.accType==='Matured';} if (v.stat === 'Paid') { if(isR) { rc+=parseFloat(v.amt||0); rComp.add(v.hp); } if(isM) { mc+=parseFloat(v.amt||0); mComp.add(v.hp); } } else if (v.stat === 'Seized') { let sa = (ass.details&&ass.details[v.hp])?parseFloat(ass.details[v.hp].amt||0):0; if(isR) { rSeiz.add(v.hp); rsa+=sa; } if(isM) { mSeiz.add(v.hp); msa+=sa; } } });
-        const paid = myV.filter(v => v.stat === 'Paid'); let pa=0, la=0, qa=0, oa=0, pc=0, lc=0, qc=0, oc=0;
-        paid.forEach(v => { let a = parseFloat(v.amt||0); if(v.type === 'PCR') { pc++; pa+=a; } else if(v.type === 'Lock Amount') { lc++; la+=a; } else if(v.type === 'Office QR') { qc++; qa+=a; } else if(v.type&&v.type.startsWith('OP')) { oc++; oa+=a; } });
-        let html = `<h4 style="color:var(--primary); text-align:center; text-transform:uppercase;">${window.escapeHTML(impEmp.name)} OVERVIEW (${mo})</h4><h4 style="color:var(--primary); font-size:14px;">🟢 REGULAR</h4><div class="stats-grid"><div class="stat-card"><h3>${ass.r.length}</h3><p>Assign</p></div><div class="stat-card"><h3>${rComp.size}</h3><p>Done</p></div><div class="stat-card"><h3>${rSeiz.size}</h3><p>Seized</p></div><div class="stat-card solid-dark"><h3>₹${ass.rAmt}</h3><p>Target</p></div><div class="stat-card solid-green"><h3>₹${rc}</h3><p>Collected</p></div><div class="stat-card solid-red"><h3>₹${rsa}</h3><p>Seized Amt</p></div></div><h4 style="color:#d97706; font-size:14px; margin-top:20px;">🟠 MATURED</h4><div class="stats-grid"><div class="stat-card"><h3>${ass.m.length}</h3><p>Assign</p></div><div class="stat-card"><h3>${mComp.size}</h3><p>Done</p></div><div class="stat-card"><h3>${mSeiz.size}</h3><p>Seized</p></div><div class="stat-card solid-dark"><h3>₹${ass.mAmt}</h3><p>Target</p></div><div class="stat-card solid-green"><h3>₹${mc}</h3><p>Collected</p></div><div class="stat-card solid-red"><h3>₹${msa}</h3><p>Seized Amt</p></div></div><h4 style="font-size:14px; margin-top:20px;">💰 RECEIPTS</h4><div class="stats-grid"><div class="stat-card"><h3>₹${pa}</h3><p>PCR (${pc})</p></div><div class="stat-card"><h3>₹${la}</h3><p>Lock (${lc})</p></div><div class="stat-card"><h3>₹${qa}</h3><p>QR (${qc})</p></div><div class="stat-card"><h3>₹${oa}</h3><p>OP (${oc})</p></div></div>`;
-        document.getElementById('admin-emp-dash-view-content').innerHTML = html; document.getElementById('admin-emp-dash-view-content').classList.remove('hidden');
+        
+        const paid = myV.filter(v => v.stat === 'Paid'); 
+        let pa=0, la=0, qa=0, oa=0, pc=0, lc=0, qc=0, oc=0;
+        let pcrVis=0, lockVis=0, qrVis=0, opVis=0;
+
+        paid.forEach(v => { 
+            let a = parseFloat(v.amt||0); 
+            let hasImg = v.i1 && v.i1 !== 'N/A';
+            
+            if(v.type === 'PCR') { pc++; pa+=a; if(hasImg) pcrVis++; } 
+            else if(v.type === 'Lock Amount') { lc++; la+=a; if(hasImg) lockVis++; } 
+            else if(v.type === 'Office QR') { qc++; qa+=a; if(hasImg) qrVis++; } 
+            else if(v.type && v.type.startsWith('OP')) { oc++; oa+=a; if(hasImg) opVis++; } 
+        });
+
+        let html = `<h4 style="color:var(--primary); text-align:center; text-transform:uppercase;">${window.escapeHTML(impEmp.name)} OVERVIEW (${mo})</h4>
+        <h4 style="color:var(--primary); font-size:14px;">🟢 REGULAR</h4>
+        <div class="stats-grid"><div class="stat-card"><h3>${ass.r.length}</h3><p>Assign</p></div><div class="stat-card"><h3>${rComp.size}</h3><p>Done</p></div><div class="stat-card"><h3>${rSeiz.size}</h3><p>Seized</p></div><div class="stat-card solid-dark"><h3>₹${ass.rAmt}</h3><p>Target</p></div><div class="stat-card solid-green"><h3>₹${rc}</h3><p>Collected</p></div><div class="stat-card solid-red"><h3>₹${rsa}</h3><p>Seized Amt</p></div></div>
+        <h4 style="color:#d97706; font-size:14px; margin-top:20px;">🟠 MATURED</h4>
+        <div class="stats-grid"><div class="stat-card"><h3>${ass.m.length}</h3><p>Assign</p></div><div class="stat-card"><h3>${mComp.size}</h3><p>Done</p></div><div class="stat-card"><h3>${mSeiz.size}</h3><p>Seized</p></div><div class="stat-card solid-dark"><h3>₹${ass.mAmt}</h3><p>Target</p></div><div class="stat-card solid-green"><h3>₹${mc}</h3><p>Collected</p></div><div class="stat-card solid-red"><h3>₹${msa}</h3><p>Seized Amt</p></div></div>
+        <h4 style="font-size:14px; margin-top:20px;">💰 RECEIPTS</h4>
+        <div class="stats-grid"><div class="stat-card"><h3>₹${pa}</h3><p>PCR (${pc})</p></div><div class="stat-card"><h3>₹${la}</h3><p>Lock (${lc})</p></div><div class="stat-card"><h3>₹${qa}</h3><p>QR (${qc})</p></div><div class="stat-card"><h3>₹${oa}</h3><p>OP (${oc})</p></div></div>
+        <h4 style="font-size:14px; margin-top:20px;">🏠 HOME VISITS</h4>
+        <div class="stats-grid"><div class="stat-card"><h3>${pcrVis}</h3><p>PCR Visits</p></div><div class="stat-card"><h3>${lockVis}</h3><p>Lock Visits</p></div><div class="stat-card"><h3>${qrVis}</h3><p>QR Visits</p></div><div class="stat-card"><h3>${opVis}</h3><p>OP Visits</p></div></div>`;
+        
+        document.getElementById('admin-emp-dash-view-content').innerHTML = html; 
+        document.getElementById('admin-emp-dash-view-content').classList.remove('hidden');
     };
 
     window.showQuickReport = (type, reqV) => { 
@@ -1864,7 +1966,6 @@
         r += '</tbody></table>'; document.getElementById('a-emp-rep-body').innerHTML = r; 
     };
 
-    // FIX: Detailed History for Employees Updated 
     window.renderEmployeeSelfReport = () => { 
         const mo = document.getElementById('e-rep-month').value; if(!mo) return; 
         let r = ''; 
@@ -1898,25 +1999,55 @@
         document.getElementById('e-report-body').innerHTML = r || '<tr><td colspan="6" align="center">No History Found</td></tr>'; 
     };
 
-    // FIX: Render Reminders Added
     window.renderReminders = () => {
         const rDate = document.getElementById('rem-date').value;
         if(!rDate) return alert("Please select a date!");
         
         let h = '';
-        window.allVisits.filter(v => v.eid === window.current.id && v.next === rDate).forEach(v => {
+        let reminderHPs = new Set();
+        
+        window.allVisits.forEach(v => {
+            if(v.eid === window.current.id && v.next === rDate) reminderHPs.add(v.hp);
+        });
+
+        Array.from(reminderHPs).forEach(hp => {
+            let hpVisits = window.allVisits.filter(v => v.eid === window.current.id && v.hp === hp);
+            
+            let timeGivenVisits = hpVisits.filter(v => v.stat === 'Not Paid' && v.next && v.next !== '---');
+            let historyDates = timeGivenVisits.map(v => `<b style="color:var(--primary)">${v.date}</b> నాడు <b>${v.next}</b> కి టైమ్ ఇచ్చారు`).join('<br>');
+            let historyCount = timeGivenVisits.length;
+            
+            let latest = hpVisits[hpVisits.length - 1]; 
+            let statBadge = '';
+            
+            if(latest.stat === 'Paid') {
+                statBadge = `<span class="badge b-green">✅ PAID - ${window.escapeHTML(latest.type)}</span>`;
+            } else if(latest.stat === 'Seized') {
+                statBadge = `<span class="badge b-gray">⚫ SEIZED</span>`;
+            } else {
+                statBadge = `<span class="badge b-red">⏳ PENDING</span>`;
+            }
+
+            let currentReminderVisit = hpVisits.find(v => v.next === rDate);
+            let reasonText = currentReminderVisit ? currentReminderVisit.unr : '---';
+
             h += `<tr>
-                <td style="text-align:left;"><b>${window.escapeHTML(v.hp)}</b></td>
-                <td style="text-align:left;">${window.escapeHTML(v.cname)}</td>
-                <td>${window.escapeHTML(v.custMobile || '---')}</td>
-                <td style="text-align:left; color:var(--danger); font-weight:bold;">${window.escapeHTML(v.unr)}</td>
+                <td style="text-align:left;"><b>${window.escapeHTML(hp)}</b></td>
+                <td style="text-align:left;">${window.escapeHTML(latest.cname)}<br><small>${window.escapeHTML(latest.custMobile || '---')}</small></td>
+                <td>${statBadge}</td>
+                <td style="text-align:left; font-size:12px;">
+                    <div style="color:var(--danger); font-weight:bold; margin-bottom:5px;">Reason: ${window.escapeHTML(reasonText)}</div>
+                    <div style="background:#f1f5f9; padding:5px; border-radius:4px; font-size:11px;">
+                        <u style="color:#475569; font-weight:bold;">Time Given History (${historyCount} Times):</u><br>
+                        ${historyDates}
+                    </div>
+                </td>
             </tr>`;
         });
         
         document.getElementById('rem-table-body').innerHTML = h || '<tr><td colspan="4" align="center">No Reminders Found for this Date</td></tr>';
     };
 
-    // FIX: Target Summary with Month Filter Updated
     window.renderTarget = () => { 
         let mo = document.getElementById('targ-month').value; 
         if(!mo){ mo = window.getLocalDate().slice(0, 7); document.getElementById('targ-month').value = mo; } 
