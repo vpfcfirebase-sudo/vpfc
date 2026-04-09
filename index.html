@@ -47,6 +47,20 @@
         .nav-item { padding: 12px 20px; margin: 4px 10px; cursor: pointer; border-radius: 8px; font-size: 14px; font-weight: 500; transition: 0.3s; display: flex; align-items: center; gap: 12px; border-left: 3px solid transparent;}
         .nav-item.active, .nav-item:hover { background: var(--sidebar-hover); color: white; border-left-color: var(--secondary); }
         
+        /* COLLAPSIBLE SIDEBAR STYLES */
+        .sidebar { transition: width 0.3s ease-in-out; overflow-x: hidden; }
+        .sidebar.collapsed { width: 75px; }
+        .sidebar.collapsed .sidebar-category { display: none; }
+        .sidebar.collapsed .nav-text { display: none; }
+        .sidebar.collapsed .nav-item { justify-content: center; padding: 12px 0; gap: 0;}
+        .sidebar.collapsed .nav-icon { font-size: 20px; }
+        .sidebar.collapsed #admin-sidebar-header, .sidebar.collapsed #e-name-tag, .sidebar.collapsed #emp-status-warning { display: none; }
+        .sidebar.collapsed .sidebar-header-icon { font-size: 28px !important; margin-bottom: 0 !important; }
+        .desktop-toggle-btn { background: var(--primary); color: #cbd5e1; text-align: center; padding: 12px; cursor: pointer; font-size: 16px; border-bottom: 1px solid #334155; transition: 0.3s; }
+        .desktop-toggle-btn:hover { background: var(--sidebar-hover); color: white; }
+        .main-content { transition: width 0.3s ease-in-out; }
+        .dashboard-layout.collapsed-layout .main-content { width: calc(100% - 75px); }
+
         /* MAIN CONTENT */
         .main-content { flex-grow: 1; padding: 25px; width: calc(100% - 260px); box-sizing: border-box; overflow-y: auto; background: var(--bg); }
         .card { background: white; padding: 25px; border-radius: 12px; box-shadow: var(--card-shadow); margin-bottom: 25px; border: 1px solid #e2e8f0; }
@@ -122,8 +136,10 @@
             .filter-bar { flex-direction: column; gap: 10px; }
             .filter-bar > div { width: 100%; }
             .bio-grid { grid-template-columns: 1fr; padding: 15px;}
+            .desktop-toggle-btn { display: none !important; }
+            .dashboard-layout.collapsed-layout .main-content { width: 100%; }
         }
-        @media print { .no-print, .sidebar, header, button, .menu-toggle { display: none !important; } .main-content, .card { width: 100%; padding: 0; box-shadow: none; border:none; background:white;} .table-container { max-height: none; overflow: visible; border: none; box-shadow: none;} .report-table th { color: black; background: #f1f5f9; border: 1px solid #ccc; } .report-table td { border: 1px solid #ccc; } }
+        @media print { .no-print, .sidebar, header, button, .menu-toggle, .desktop-toggle-btn { display: none !important; } .main-content, .card { width: 100%; padding: 0; box-shadow: none; border:none; background:white;} .table-container { max-height: none; overflow: visible; border: none; box-shadow: none;} .report-table th { color: black; background: #f1f5f9; border: 1px solid #ccc; } .report-table td { border: 1px solid #ccc; } }
     </style>
 </head>
 <body class="login-active">
@@ -146,40 +162,41 @@
 
 <div id="admin-dashboard" class="hidden dashboard-layout">
     <div class="sidebar no-print">
+        <div class="desktop-toggle-btn no-print" onclick="window.toggleDesktopSidebar()"><span class="nav-icon">🔛</span> <span class="nav-text">TOGGLE MENU</span></div>
         <div style="padding:15px; text-align:center; color:white; font-size:16px; font-weight:800; border-bottom:1px solid #334155; margin-bottom:10px;">
-            <div style="font-size: 24px; margin-bottom: 5px;">👨‍💻</div>
+            <div class="sidebar-header-icon" style="font-size: 24px; margin-bottom: 5px;">👨‍💻</div>
             <span id="admin-sidebar-header">ADMIN PANEL</span>
         </div>
         
         <div class="sidebar-category">Main Menu</div>
-        <div class="nav-item active" onclick="window.showSub('a-home', this)">📊 Dashboard Home</div>
-        <div class="nav-item" onclick="window.showSub('a-view-emp', this)">👁️ View Emp Dash</div>
+        <div class="nav-item active" onclick="window.showSub('a-home', this)"><span class="nav-icon">📊</span> <span class="nav-text">Dashboard Home</span></div>
+        <div class="nav-item" onclick="window.showSub('a-view-emp', this)"><span class="nav-icon">👁️</span> <span class="nav-text">View Emp Dash</span></div>
         
         <div class="sidebar-category">Operations</div>
-        <div class="nav-item" onclick="window.showSub('a-assign', this)">📋 Assign Accounts</div>
-        <div class="nav-item" onclick="window.showSub('a-complaints', this)">⚠️ Complaints Box</div>
+        <div class="nav-item" onclick="window.showSub('a-assign', this)"><span class="nav-icon">📋</span> <span class="nav-text">Assign Accounts</span></div>
+        <div class="nav-item" onclick="window.showSub('a-complaints', this)"><span class="nav-icon">⚠️</span> <span class="nav-text">Complaints Box</span></div>
         
         <div class="sidebar-category">Reports</div>
-        <div class="nav-item" onclick="window.showSub('a-visit-stat', this)">📍 Visit Status</div>
-        <div class="nav-item" onclick="window.showSub('a-emp-rep', this)">🔍 Visit Search (Emp)</div>
-        <div class="nav-item" onclick="window.showSub('a-ins-rep', this)">📑 INS Collection Rep</div>
-        <div class="nav-item" onclick="window.showSub('a-branch', this)">📈 Branch Emp Rep</div>
-        <div class="nav-item" onclick="window.showSub('a-overall-branch', this)">📊 Overall Branch Rep</div>
-        <div class="nav-item" onclick="window.showSub('a-att', this)">⏱️ Attendance Log</div>
+        <div class="nav-item" onclick="window.showSub('a-visit-stat', this)"><span class="nav-icon">📍</span> <span class="nav-text">Visit Status</span></div>
+        <div class="nav-item" onclick="window.showSub('a-emp-rep', this)"><span class="nav-icon">🔍</span> <span class="nav-text">Visit Search (Emp)</span></div>
+        <div class="nav-item" onclick="window.showSub('a-ins-rep', this)"><span class="nav-icon">📑</span> <span class="nav-text">INS Collection Rep</span></div>
+        <div class="nav-item" onclick="window.showSub('a-branch', this)"><span class="nav-icon">📈</span> <span class="nav-text">Branch Emp Rep</span></div>
+        <div class="nav-item" onclick="window.showSub('a-overall-branch', this)"><span class="nav-icon">📊</span> <span class="nav-text">Overall Branch Rep</span></div>
+        <div class="nav-item" onclick="window.showSub('a-att', this)"><span class="nav-icon">⏱️</span> <span class="nav-text">Attendance Log</span></div>
         
         <div class="sidebar-category">Management</div>
-        <div class="nav-item" onclick="window.showSub('a-branch-mgmt', this)">🏢 Branch Mgmt 🔒</div>
-        <div class="nav-item" onclick="window.showSub('a-reg', this)">👥 Emp Register 🔒</div>
-        <div class="nav-item" onclick="window.showSub('a-emp-bio', this)">👨‍💼 Employee Bio</div>
-        <div class="nav-item" onclick="window.showSub('a-identity', this)">🪪 Emp Identity</div>
-        <div class="nav-item" onclick="window.showSub('a-telewings', this)">📞 Telewings Mgmt 🔒</div>
+        <div class="nav-item" onclick="window.showSub('a-branch-mgmt', this)"><span class="nav-icon">🏢</span> <span class="nav-text">Branch Mgmt 🔒</span></div>
+        <div class="nav-item" onclick="window.showSub('a-reg', this)"><span class="nav-icon">👥</span> <span class="nav-text">Emp Register 🔒</span></div>
+        <div class="nav-item" onclick="window.showSub('a-emp-bio', this)"><span class="nav-icon">👨‍💼</span> <span class="nav-text">Employee Bio</span></div>
+        <div class="nav-item" onclick="window.showSub('a-identity', this)"><span class="nav-icon">🪪</span> <span class="nav-text">Emp Identity</span></div>
+        <div class="nav-item" onclick="window.showSub('a-telewings', this)"><span class="nav-icon">📞</span> <span class="nav-text">Telewings Mgmt 🔒</span></div>
         
         <div class="sidebar-category">System</div>
-        <div class="nav-item hidden" id="nav-tw-profile" onclick="window.showSub('a-tw-profile', this)">🔑 Change Password</div>
-        <div class="nav-item" onclick="window.showSub('a-settings', this)">⚙️ App Settings 🔒</div>
-        <div class="nav-item" onclick="window.showSub('a-security', this)">🔐 Admin Security</div>
+        <div class="nav-item hidden" id="nav-tw-profile" onclick="window.showSub('a-tw-profile', this)"><span class="nav-icon">🔑</span> <span class="nav-text">Change Password</span></div>
+        <div class="nav-item" onclick="window.showSub('a-settings', this)"><span class="nav-icon">⚙️</span> <span class="nav-text">App Settings 🔒</span></div>
+        <div class="nav-item" onclick="window.showSub('a-security', this)"><span class="nav-icon">🔐</span> <span class="nav-text">Admin Security</span></div>
         
-        <div class="nav-item" style="color:#fca5a5; margin-top:20px;" onclick="location.reload()">🚪 Logout</div>
+        <div class="nav-item" style="color:#fca5a5; margin-top:20px;" onclick="location.reload()"><span class="nav-icon">🚪</span> <span class="nav-text">Logout</span></div>
     </div>
     
     <div class="main-content">
@@ -597,18 +614,21 @@
 
 <div id="employee-dashboard" class="hidden dashboard-layout">
     <div class="sidebar no-print">
+        <div class="desktop-toggle-btn no-print" onclick="window.toggleDesktopSidebar()"><span class="nav-icon">🔛</span> <span class="nav-text">TOGGLE MENU</span></div>
         <div style="padding:15px; text-align:center; border-bottom:1px solid #334155; margin-bottom:10px;">
-            <h3 id="e-name-tag" style="margin:0; color:var(--secondary); font-size:18px;"></h3><div id="emp-status-warning" style="font-size:12px; margin-top:5px; font-weight:bold;"></div>
+            <div class="sidebar-header-icon" style="font-size: 24px; margin-bottom: 5px;">👨‍💼</div>
+            <h3 id="e-name-tag" style="margin:0; color:var(--secondary); font-size:18px;"></h3>
+            <div id="emp-status-warning" style="font-size:12px; margin-top:5px; font-weight:bold;"></div>
         </div>
-        <div class="nav-item active" onclick="window.showSub('e-home', this)">📊 My Dashboard</div>
-        <div class="nav-item" onclick="window.showSub('e-idcard', this)">🪪 Digital ID Card</div>
-        <div class="nav-item" id="nav-e-visit" onclick="window.showSub('e-visit', this)">🤝 Customer Visit</div>
-        <div class="nav-item" onclick="window.showSub('e-visit-stat', this)">📍 Visit Status</div>
-        <div class="nav-item" onclick="window.showSub('e-reminders', this)">📅 My Reminders</div>
-        <div class="nav-item" onclick="window.showSub('e-target', this)">🎯 Target Summary</div>
-        <div class="nav-item" onclick="window.showSub('e-report', this)">📋 My History</div>
-        <div class="nav-item" onclick="window.showSub('e-complaints', this)">⚠️ My Complaints</div>
-        <div class="nav-item" style="color:#ff6b6b; margin-top:auto;" onclick="location.reload()">🚪 Logout</div>
+        <div class="nav-item active" onclick="window.showSub('e-home', this)"><span class="nav-icon">📊</span> <span class="nav-text">My Dashboard</span></div>
+        <div class="nav-item" onclick="window.showSub('e-idcard', this)"><span class="nav-icon">🪪</span> <span class="nav-text">Digital ID Card</span></div>
+        <div class="nav-item" id="nav-e-visit" onclick="window.showSub('e-visit', this)"><span class="nav-icon">🤝</span> <span class="nav-text">Customer Visit</span></div>
+        <div class="nav-item" onclick="window.showSub('e-visit-stat', this)"><span class="nav-icon">📍</span> <span class="nav-text">Visit Status</span></div>
+        <div class="nav-item" onclick="window.showSub('e-reminders', this)"><span class="nav-icon">📅</span> <span class="nav-text">My Reminders</span></div>
+        <div class="nav-item" onclick="window.showSub('e-target', this)"><span class="nav-icon">🎯</span> <span class="nav-text">Target Summary</span></div>
+        <div class="nav-item" onclick="window.showSub('e-report', this)"><span class="nav-icon">📋</span> <span class="nav-text">My History</span></div>
+        <div class="nav-item" onclick="window.showSub('e-complaints', this)"><span class="nav-icon">⚠️</span> <span class="nav-text">My Complaints</span></div>
+        <div class="nav-item" style="color:#ff6b6b; margin-top:auto;" onclick="location.reload()"><span class="nav-icon">🚪</span> <span class="nav-text">Logout</span></div>
     </div>
 
     <div class="main-content">
@@ -767,6 +787,16 @@
     window.isSecuredUnlocked = false; 
     window.pendingTargetId = ''; window.pendingTargetNav = null;
     window.updateEmployeeDashState = window.updateEmployeeDashState || (() => {});
+
+    // Toggle Desktop Sidebar Function
+    window.toggleDesktopSidebar = () => {
+        const sidebar = document.querySelector('.dashboard-layout:not(.hidden) .sidebar');
+        const layout = document.querySelector('.dashboard-layout:not(.hidden)');
+        if(sidebar && layout) {
+            sidebar.classList.toggle('collapsed');
+            layout.classList.toggle('collapsed-layout');
+        }
+    };
 
     window.showSub = (targetId, navElement) => {
         const lockedSections = ['a-branch-mgmt', 'a-reg', 'a-settings', 'a-telewings'];
@@ -1021,6 +1051,13 @@
             window.renderIDCard(); 
             window.renderEmpComplaints();
             window.loadVisitsForMonth(mStr); 
+            
+            // Fix: Show default image fields for 'Not Paid' correctly upon login
+            setTimeout(() => {
+                if(document.getElementById('v-stat').value === 'Not Paid') {
+                    window.toggleV();
+                }
+            }, 500);
             
         } catch (error) { 
             alert("Login Failed! Please check your ID and Password."); console.error(error);
