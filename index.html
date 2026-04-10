@@ -756,7 +756,7 @@
 </div>
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, set, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getDatabase, ref, set, push, onValue, remove, update, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
@@ -954,6 +954,7 @@
         });
     };
 
+    // LOGIN FIX - GET DATA IMMEDIATELY
     window.handleLogin = async () => {
         const idStr = document.getElementById('l-id').value.trim(); 
         const ps = document.getElementById('l-pass').value.trim();
@@ -991,7 +992,11 @@
                 return;
             } 
             
-            const twUser = window.allTwUsers.find(x => x.id.toLowerCase() === idStr.toLowerCase());
+            // Telewings Logic Fix
+            let twSnap = await get(ref(db, 'telewingsUsers'));
+            let currentTwUsers = twSnap.exists() ? Object.values(twSnap.val()) : [];
+            const twUser = currentTwUsers.find(x => x.id.toLowerCase() === idStr.toLowerCase());
+            
             if(twUser) {
                 window.current = { id: twUser.id, name: twUser.name, role: 'telewings', perms: twUser.perms || [], twRole: twUser.role || 'telecaller' };
                 let headTitle = (twUser.role === 'head' || twUser.id.toUpperCase() === 'TW01') ? "👑 HEAD: " : "📞 TW: ";
@@ -1032,7 +1037,11 @@
                 return;
             }
 
-            const e = window.allEmps.find(x => x.id.toLowerCase() === idStr.toLowerCase());
+            // Employee Logic Fix
+            let empSnap = await get(ref(db, 'employees'));
+            let currentEmps = empSnap.exists() ? Object.values(empSnap.val()) : [];
+            const e = currentEmps.find(x => x.id.toLowerCase() === idStr.toLowerCase());
+            
             if(!e) { alert("Employee record not found in database!"); btn.innerText = "LOGIN"; btn.disabled = false; return; }
             if(e.status === 'Inactive') { alert("❌ మీ అకౌంట్ డియాక్టివేట్ చేయబడింది. మీరు లాగిన్ అవ్వలేరు!"); btn.innerText = "LOGIN"; btn.disabled = false; return; }
             
@@ -1052,7 +1061,6 @@
             window.renderEmpComplaints();
             window.loadVisitsForMonth(mStr); 
             
-            // Fix: Show default image fields for 'Not Paid' correctly upon login
             setTimeout(() => {
                 if(document.getElementById('v-stat').value === 'Not Paid') {
                     window.toggleV();
@@ -1728,11 +1736,13 @@
     
     window.togglePCRDate = () => { document.getElementById('v-pcr-date').classList.toggle('hidden', document.getElementById('v-pcr-later').value !== 'Yes'); };
     
+    // LIVE CAMERA / GALLERY FIX
     window.updateDynamicImages = () => { 
         const s=document.getElementById('v-stat').value; 
         const p=document.getElementById('v-pay-type').value; 
         const qrV = document.getElementById('v-visited-home').value; 
         const ppfc = document.getElementById('v-ppfc') ? document.getElementById('v-ppfc').value : 'No'; 
+        const imgReceipt = document.getElementById('img-receipt');
         
         ['img-receipt-div','extra-qr-images','img-cust-div','img-house-div','qr-visit-div','v-op-to-div', 'ppfc-no-reason'].forEach(i=> { 
             if(document.getElementById(i)) document.getElementById(i).classList.add('hidden'); 
@@ -1753,7 +1763,8 @@
             document.getElementById('lbl-house-img').innerText="House/Vehicle Photo"; 
             
             if(p==='PCR'){ 
-                document.getElementById('lbl-receipt').innerText="PCR Receipt Image"; 
+                document.getElementById('lbl-receipt').innerText="PCR Receipt Image (Live Photo)"; 
+                imgReceipt.setAttribute('capture', 'environment'); // Live Camera
                 document.getElementById('img-cust-div').classList.remove('hidden'); 
                 document.getElementById('img-receipt-div').classList.remove('hidden'); 
                 document.getElementById('img-house-div').classList.remove('hidden'); 
@@ -1761,13 +1772,15 @@
                 document.getElementById('img-cust-div').classList.remove('hidden'); 
                 document.getElementById('img-house-div').classList.remove('hidden'); 
                 if(ppfc==='Yes'){ 
-                    document.getElementById('lbl-receipt').innerText="PPFC Receipt"; 
+                    document.getElementById('lbl-receipt').innerText="PPFC Receipt (Live Photo)"; 
+                    imgReceipt.setAttribute('capture', 'environment'); // Live Camera
                     document.getElementById('img-receipt-div').classList.remove('hidden');
                 } else { 
                     document.getElementById('ppfc-no-reason').classList.remove('hidden'); 
                 } 
             } else if(p==='Office QR'){ 
-                document.getElementById('lbl-receipt').innerText="Payment Proof/Screenshot"; 
+                document.getElementById('lbl-receipt').innerText="Payment Proof/Screenshot (Gallery allowed)"; 
+                imgReceipt.removeAttribute('capture'); // Allows Gallery & Camera
                 document.getElementById('img-receipt-div').classList.remove('hidden'); 
                 document.getElementById('extra-qr-images').classList.remove('hidden'); 
                 document.getElementById('qr-visit-div').classList.remove('hidden'); 
@@ -1779,8 +1792,8 @@
                 document.getElementById('v-op-to-div').classList.remove('hidden'); 
                 document.getElementById('qr-visit-div').classList.remove('hidden'); 
                 
-                // OP receipt is mandatory
-                document.getElementById('lbl-receipt').innerText="OP Receipt Image"; 
+                document.getElementById('lbl-receipt').innerText="OP Receipt Image (Live Photo)"; 
+                imgReceipt.setAttribute('capture', 'environment'); // Live Camera
                 document.getElementById('img-receipt-div').classList.remove('hidden'); 
                 
                 if(qrV==='Yes'){ 
