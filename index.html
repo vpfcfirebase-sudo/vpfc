@@ -13,28 +13,34 @@
         --border: #e2e8f0; --success: #10b981; --danger: #ef4444; --warning: #f59e0b;
     }
     * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-    body { margin: 0; padding: 0; background: var(--bg-main); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; font-size: 13px; }
+    
+    /* SCROLL FIX: Make body rigid, only content scrolls */
+    body { margin: 0; padding: 0; background: var(--bg-main); color: var(--text-main); display: flex; flex-direction: column; height: 100vh; overflow: hidden; font-size: 13px; }
+    
+    /* GLOBAL HEADER */
+    #globalHeader { width: 100%; height: 65px; background: #0f172a; color: #fff; display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.15); display: none; }
+    #globalHeader h1 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: 2px; color: #10b981; }
+    #menuBtn { position: absolute; left: 15px; background: transparent; border: none; color: #10b981; font-size: 28px; cursor: pointer; display: none; padding: 5px; }
+    .user-badge { position: absolute; right: 20px; font-size: 11px; font-weight: 700; color: #94a3b8; background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);}
+    
+    #appWrapper { display: flex; flex: 1; overflow: hidden; display: none; }
     
     #loginScreen { position: fixed; width: 100%; height: 100%; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); display: flex; align-items: center; justify-content: center; z-index: 2000; }
     .login-box { background: var(--bg-card); padding: 40px; border-radius: 20px; box-shadow: 0 25px 50px rgba(0,0,0,0.3); width: 100%; max-width: 420px; text-align: center; border-top: 6px solid var(--primary); }
     .login-box h2 { color: var(--secondary); margin-bottom: 30px; font-size: 26px; font-weight: 800; letter-spacing: -0.5px;}
     
-    #sidebar { width: 280px; background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%); color: #fff; display: none; flex-direction: column; transition: 0.3s; box-shadow: 4px 0 24px rgba(0,0,0,0.1); z-index: 50; }
-    .brand { padding: 25px 20px; font-size: 18px; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.05); color: #fff; text-align: center; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; gap: 10px;}
-    .nav-links { list-style: none; padding: 15px 0; margin: 0; overflow-y: auto; flex: 1; }
-    .nav-links li { padding: 14px 20px; margin: 4px 15px; cursor: pointer; border-radius: 10px; font-size: 13px; font-weight: 600; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); color: #94a3b8; display:flex; align-items:center; gap:12px;}
-    .nav-links li:hover { background: rgba(255,255,255,0.05); color: #fff; transform: translateX(4px); }
-    .nav-links li.active { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
+    #sidebar { width: 260px; background: #ffffff; border-right: 1px solid var(--border); display: flex; flex-direction: column; transition: 0.3s; z-index: 50; flex-shrink: 0; overflow-y: auto; }
+    .nav-links { list-style: none; padding: 15px 0; margin: 0; flex: 1; }
+    .nav-links li { padding: 14px 20px; margin: 4px 15px; cursor: pointer; border-radius: 10px; font-size: 13px; font-weight: 700; transition: all 0.2s; color: var(--text-muted); display:flex; align-items:center; gap:12px;}
+    .nav-links li:hover { background: #f8fafc; color: var(--primary); }
+    .nav-links li.active { background: #eff6ff; color: var(--primary); border: 1px solid #bfdbfe; }
     
-    #mainContent { flex: 1; display: none; flex-direction: column; height: 100vh; overflow-y: auto; position: relative;}
-    .topbar { background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); padding: 20px 35px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; }
-    .topbar h3 { margin: 0; color: var(--secondary); font-size: 18px; font-weight: 800;}
-    .user-badge { background: #f1f5f9; padding: 8px 15px; border-radius: 20px; font-weight: 700; color: var(--primary); font-size: 12px; border: 1px solid #e2e8f0;}
+    #mainContent { flex: 1; display: flex; flex-direction: column; overflow-y: auto; position: relative; background: var(--bg-main); padding-bottom: 50px;}
     
     .page-container { padding: 30px 35px; max-width: 1600px; margin: 0 auto; width: 100%; display: none; animation: fadeIn 0.4s ease; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     
-    .card { background: var(--bg-card); border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 20px rgba(0,0,0,0.03); padding: 25px; margin-bottom: 25px; transition: transform 0.2s; }
+    .card { background: var(--bg-card); border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 20px rgba(0,0,0,0.03); padding: 25px; margin-bottom: 25px; }
     .card-title { margin-top: 0; color: var(--secondary); border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 25px; font-weight: 800; font-size: 16px;}
     .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
     .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
@@ -45,16 +51,15 @@
     input, select { padding: 12px 15px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--secondary); background: #f8fafc; transition: all 0.2s; outline: none; }
     input:focus, select:focus { background: #fff; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
     
-    .btn { padding: 12px 24px; background: var(--primary); color: #fff; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; font-size: 13px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
-    .btn:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3); }
+    .btn { padding: 12px 24px; background: var(--primary); color: #fff; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; font-size: 13px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
+    .btn:hover { background: var(--primary-dark); transform: translateY(-2px); }
     .btn-green { background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
     .btn-green:hover { background: #059669; }
     .btn-red { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2); }
-    .btn-red:hover { background: #dc2626; }
     
-    .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; margin-top: 15px; max-height: 550px; background: #fff;}
+    .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; margin-top: 15px; background: #fff;}
     table { width: 100%; border-collapse: collapse; text-align: left; }
-    th { background: #f8fafc; color: var(--text-muted); padding: 14px 16px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid var(--border); position: sticky; top:0; z-index: 2;}
+    th { background: #f8fafc; color: var(--text-muted); padding: 14px 16px; font-size: 11px; font-weight: 800; text-transform: uppercase; border-bottom: 2px solid var(--border); position: sticky; top:0; z-index: 2;}
     td { padding: 14px 16px; border-bottom: 1px solid #f1f5f9; font-size: 13px; font-weight: 500; vertical-align: top; line-height: 1.6; }
     tr:hover td { background: #f8fafc; }
     
@@ -76,7 +81,7 @@
     .dash-card.c-yellow::before { background: var(--warning); }
     .dash-card.c-red::before { background: var(--danger); }
     .dash-card.c-dark::before { background: var(--secondary); }
-    .dash-card h3 { font-size: 12px; color: var(--text-muted); margin: 0 0 10px 0; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;}
+    .dash-card h3 { font-size: 12px; color: var(--text-muted); margin: 0 0 10px 0; text-transform: uppercase; font-weight: 700;}
     .dash-card h1 { font-size: 32px; color: var(--secondary); margin: 0; font-weight: 800;}
     
     .bulb { width: 12px; height: 12px; border-radius: 50%; display: inline-block; box-shadow: 0 0 0 3px rgba(0,0,0,0.05); margin-right: 8px; vertical-align: middle;}
@@ -92,21 +97,32 @@
     .od-grid-top { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 25px; font-size: 11px; margin-bottom: 25px; color: var(--secondary); }
     .od-row { display: flex; margin-bottom: 8px; } .od-lbl { width: 120px; font-weight: 800; color: var(--text-muted);} .od-val { flex: 1; font-weight: 600; }
     .od-bottom { display: flex; gap: 25px; align-items: flex-start; }
-    .od-bot-left { flex: 2.5; } .od-bot-right { flex: 1; font-size: 11px; background: #fff; padding: 20px; border: 2px dashed #cbd5e1; border-radius: 12px;}
+    .od-bot-left { flex: 2.5; overflow-x:auto; } .od-bot-right { flex: 1; font-size: 11px; background: #fff; padding: 20px; border: 2px dashed #cbd5e1; border-radius: 12px;}
     .od-table th { background: #0f766e; color: white; padding: 8px; font-size: 10px; font-weight:700;} .od-table td { padding: 6px 8px; font-size: 11px; border-bottom:1px solid #e2e8f0;}
     
-    /* CSS Media Queries for Responsive Design */
+    /* CSS Media Queries for Responsive & Sidebar Toggle */
     @media (max-width: 1200px) { .dash-grid { grid-template-columns: repeat(3, 1fr); } }
     @media (max-width: 992px) { .grid-4 { grid-template-columns: repeat(2, 1fr); } .od-grid-top { grid-template-columns: 1fr 1fr; } .od-bottom { flex-direction: column; } }
-    @media (max-width: 768px) { .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; } .dash-grid { grid-template-columns: repeat(2, 1fr); } #sidebar { width: 220px; } .page-container { padding: 20px; } .od-grid-top { grid-template-columns: 1fr; } }
+    @media (max-width: 768px) { 
+        #globalHeader h1 { font-size: 18px; }
+        #menuBtn { display: block; }
+        .user-badge { display: none; }
+        #sidebar { position: fixed; left: -300px; height: calc(100vh - 65px); top: 65px; z-index: 1000; box-shadow: 4px 0 20px rgba(0,0,0,0.2); }
+        #sidebar.open { left: 0; }
+        .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; } 
+        .dash-grid { grid-template-columns: repeat(2, 1fr); } 
+        .page-container { padding: 15px; } 
+        .od-grid-top { grid-template-columns: 1fr; } 
+    }
     @media (max-width: 480px) { .dash-grid { grid-template-columns: 1fr; } }
     
     /* Print Styles */
     @media print { 
-        #sidebar, .topbar, .btn, .no-print, .brand { display: none !important; } 
-        #mainContent { height: auto; overflow: visible; padding:0; background:#fff;} 
+        #sidebar, #globalHeader, .btn, .no-print, .brand { display: none !important; } 
+        body { display:block; height: auto; overflow: visible; background:#fff; color:#000;}
+        #appWrapper { display:block; overflow:visible; }
+        #mainContent { overflow: visible; padding:0;} 
         .card, .page-container { box-shadow: none; border: none; padding: 0; margin: 0; background:#fff;} 
-        body {background:#fff; color:#000;}
         #rcPreviewBox { border: none !important; box-shadow: none !important; margin: 0 !important; max-width: 100% !important; padding: 0 !important; }
     }
 </style>
@@ -128,476 +144,479 @@
     </div>
 </div>
 
-<div id="sidebar">
-    <div class="brand">🏛️ SVP FINANCE</div>
-    <ul class="nav-links">
-        <li onclick="nav('pDash')" class="active" id="nl_pDash">📊 Dashboard (హోమ్)</li>
-        <li onclick="nav('pFinRep')" id="nl_pFinRep">📈 Finance Report (రిపోర్ట్)</li>
-        <li onclick="nav('pEntry')" id="nl_pEntry">📝 New Agreement</li>
-        <li onclick="nav('pSearch')" id="nl_pSearch">🔍 Search Account</li>
-        <li onclick="nav('pReg')" id="nl_pReg">📂 All HP Accounts</li>
-        <li onclick="nav('pDues')" id="nl_pDues">📉 Pending Dues List</li>
-        <li onclick="nav('pCalc')" id="nl_pCalc">🧮 OD Calculator</li>
-        <li onclick="nav('pSeize')" id="nl_pSeize">🛑 Vehicle Seize / Release</li>
-        <li onclick="nav('pSzRep')" id="nl_pSzRep">📋 Seized Vehicles List</li>
-        <li onclick="nav('pRcpt')" id="nl_pRcpt">💵 Payment Receipt</li>
-        <li onclick="nav('pClose')" id="nl_pClose" style="color: #fca5a5; margin-top:20px;">🔒 Account Settlement</li>
-        <li onclick="doLogout()" style="margin-top: 10px; color: #f87171;">🚪 Logout (లాగౌట్)</li>
-    </ul>
+<!-- TOP GLOBAL HEADER (Full Width) -->
+<div id="globalHeader" class="no-print">
+    <button id="menuBtn" onclick="toggleSidebar()">☰</button>
+    <h1>SRI VISHNU PRIYA FINANCE</h1>
+    <span class="user-badge" id="cloudStatus">🟢 Sync Active</span>
 </div>
 
-<div id="mainContent">
-    <div class="topbar">
-        <h3 id="pageTitle">Dashboard</h3>
-        <div><span class="user-badge" id="cloudStatus">🟢 Cloud Sync: Active | User: Auth</span></div>
+<!-- MAIN APP WRAPPER (Fixed height, isolated scrolling) -->
+<div id="appWrapper">
+    <div id="sidebar">
+        <ul class="nav-links">
+            <li onclick="nav('pDash')" class="active" id="nl_pDash">📊 Dashboard (హోమ్)</li>
+            <li onclick="nav('pFinRep')" id="nl_pFinRep">📈 Finance Report (రిపోర్ట్)</li>
+            <li onclick="nav('pEntry')" id="nl_pEntry">📝 New Agreement</li>
+            <li onclick="nav('pSearch')" id="nl_pSearch">🔍 Search Account</li>
+            <li onclick="nav('pReg')" id="nl_pReg">📂 All HP Accounts</li>
+            <li onclick="nav('pDues')" id="nl_pDues">📉 Pending Dues List</li>
+            <li onclick="nav('pCalc')" id="nl_pCalc">🧮 Calculations</li>
+            <li onclick="nav('pSeize')" id="nl_pSeize">🛑 Vehicle Seize / Release</li>
+            <li onclick="nav('pSzRep')" id="nl_pSzRep">📋 Seized Vehicles List</li>
+            <li onclick="nav('pRcpt')" id="nl_pRcpt">💵 Payment Receipt</li>
+            <li onclick="nav('pClose')" id="nl_pClose" style="color: #fca5a5; margin-top:20px;">🔒 Account Settlement</li>
+            <li onclick="doLogout()" style="margin-top: 10px; color: #f87171;">🚪 Logout (లాగౌట్)</li>
+        </ul>
     </div>
 
-    <!-- DASHBOARD -->
-    <div id="pDash" class="page-container" style="display:block;">
-        <div class="dash-grid">
-            <div class="dash-card c-blue"><h3>Total Accounts</h3><h1 id="db_tot">0</h1></div>
-            <div class="dash-card c-green"><h3>Running Accounts</h3><h1 id="db_act">0</h1></div>
-            <div class="dash-card c-yellow"><h3>Overdue Accounts</h3><h1 id="db_due">0</h1></div>
-            <div class="dash-card c-red"><h3>Seized Vehicles</h3><h1 id="db_sz">0</h1></div>
-            <div class="dash-card c-dark"><h3>Closed Accounts</h3><h1 id="db_closed">0</h1></div>
-        </div>
-        <div class="card">
-            <h2 class="card-title">Firebase Cloud Notice</h2>
-            <p style="color:var(--text-muted); font-size:14px; font-weight:500; line-height:1.6;">This system is securely connected to the Sri Vishnu Priya Finance Firebase Database. Real-time updates, image uploads, and dynamic date processing are now active.</p>
-        </div>
-    </div>
-
-    <!-- FINANCE REPORT PAGE -->
-    <div id="pFinRep" class="page-container">
-        <div class="card no-print">
-            <h2 class="card-title">Finance Collection Report (ఆదాయం రిపోర్ట్)</h2>
-            <div style="display:flex; gap:15px; align-items:end;">
-                <div class="form-group"><label>From Date (నుండి)</label><input type="date" id="finFDate"></div>
-                <div class="form-group"><label>To Date (వరకు)</label><input type="date" id="finTDate"></div>
-                <button class="btn btn-green" onclick="generateFinanceReport()">Generate Report</button>
-                <button class="btn" onclick="window.print()">🖨️ Print Report</button>
+    <div id="mainContent">
+        <!-- DASHBOARD -->
+        <div id="pDash" class="page-container" style="display:block;">
+            <div class="dash-grid">
+                <div class="dash-card c-blue"><h3>Total Accounts</h3><h1 id="db_tot">0</h1></div>
+                <div class="dash-card c-green"><h3>Running Accounts</h3><h1 id="db_act">0</h1></div>
+                <div class="dash-card c-yellow"><h3>Overdue Accounts</h3><h1 id="db_due">0</h1></div>
+                <div class="dash-card c-red"><h3>Seized Vehicles</h3><h1 id="db_sz">0</h1></div>
+                <div class="dash-card c-dark"><h3>Closed Accounts</h3><h1 id="db_closed">0</h1></div>
             </div>
-            <p style="color:var(--text-muted); font-size:11px; margin-top:15px; margin-bottom:0;">* కింద ఉన్న బాక్స్ లపై నొక్కితే (Click), దానికి సంబంధించిన డేటా మాత్రమే టేబుల్ లో వస్తుంది.</p>
+            <div class="card">
+                <h2 class="card-title">Firebase Cloud Notice</h2>
+                <p style="color:var(--text-muted); font-size:14px; font-weight:500; line-height:1.6;">This system is securely connected to the Sri Vishnu Priya Finance Firebase Database. Real-time updates, auto image compression, and fast data processing are active.</p>
+            </div>
         </div>
-        
-        <div class="dash-grid" id="finRepResults" style="display:none;">
-            <div class="dash-card c-blue" style="cursor:pointer;" onclick="filterFinReport('DOC')"><h3>Doc Charges (డాక్యుమెంట్)</h3><h1 id="rep_doc">₹0</h1></div>
-            <div class="dash-card c-green" style="cursor:pointer;" onclick="filterFinReport('EMI')"><h3>EMI Collected (ఈఎంఐ)</h3><h1 id="rep_emi">₹0</h1></div>
-            <div class="dash-card c-yellow" style="cursor:pointer;" onclick="filterFinReport('OD')"><h3>OD Collected (వడ్డీ)</h3><h1 id="rep_od">₹0</h1></div>
-            <div class="dash-card c-red" style="cursor:pointer;" onclick="filterFinReport('SEIZING')"><h3>Seizing Recovered (సీజ్)</h3><h1 id="rep_sz">₹0</h1></div>
-            <div class="dash-card c-dark" style="cursor:pointer;" onclick="filterFinReport('ALL')"><h3>Total Amount (మొత్తం)</h3><h1 id="rep_tot">₹0</h1></div>
-        </div>
-        
-        <div class="card table-wrap" id="finRepTableBox" style="display:none; margin-top:20px;">
-            <table>
-                <thead><tr><th>Date</th><th>HP No</th><th>Customer Name</th><th>Collection Type</th><th>Amount (₹)</th></tr></thead>
-                <tbody id="finRepTb"></tbody>
-            </table>
-        </div>
-    </div>
 
-    <!-- NEW ENTRY -->
-    <div id="pEntry" class="page-container">
-        <div class="card">
-            <h2 class="card-title">New Agreement Entry (కొత్త ఫైల్ ఎంట్రీ)</h2>
-            <form id="hpMainInputForm">
-                <div class="info-box"><h4 style="margin:0 0 15px 0; color:var(--secondary); font-size:14px;">1. Customer Details (కస్టమర్ వివరాలు)</h4>
-                    <div class="grid-4">
-                        <div class="form-group"><label>Surname (ఇంటి పేరు)</label><input type="text" id="in_csur" oninput="this.value = this.value.toUpperCase();"></div>
-                        <div class="form-group"><label>Customer Name (పేరు)</label><input type="text" id="in_cnm" oninput="this.value = this.value.toUpperCase();"></div>
-                        <div class="form-group"><label>Father/Husband Name</label><input type="text" id="in_cfnm" oninput="this.value = this.value.toUpperCase();"></div>
-                        <div class="form-group"><label>Village/Town (ఊరు)</label><input type="text" id="in_cvl" oninput="this.value = this.value.toUpperCase();"></div>
-                        <div class="form-group"><label>Mandal/Dist (మండలం/జిల్లా)</label><input type="text" id="in_cmd" oninput="this.value = this.value.toUpperCase();"></div>
-                        <div class="form-group"><label>Work/Business (పని)</label><input type="text" id="in_cocc" oninput="this.value = this.value.toUpperCase();"></div>
-                        <div class="form-group"><label>Aadhar No (12 Digits)</label><input type="number" id="in_caad" oninput="if(this.value.length > 12) this.value = this.value.slice(0, 12);"></div>
-                        <div class="form-group"><label>Mobile No (10 Digits)</label><input type="number" id="in_cmob" oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);"></div>
-                        <div class="form-group" style="grid-column: span 2;"><label>Full Address (అడ్రస్)</label><input type="text" id="in_cadr" oninput="this.value = this.value.toUpperCase();"></div>
-                        <div class="form-group"><label>Pincode</label><input type="number" id="in_cpin" oninput="if(this.value.length > 6) this.value = this.value.slice(0, 6);"></div>
-                        <div class="form-group"><label>Customer Photo</label><input type="file" id="in_cimg" accept="image/*" style="padding:9px;"></div>
+        <!-- FINANCE REPORT PAGE -->
+        <div id="pFinRep" class="page-container">
+            <div class="card no-print">
+                <h2 class="card-title">Finance Collection Report (ఆదాయం రిపోర్ట్)</h2>
+                <div style="display:flex; gap:15px; align-items:end; flex-wrap:wrap;">
+                    <div class="form-group"><label>From Date (నుండి)</label><input type="date" id="finFDate"></div>
+                    <div class="form-group"><label>To Date (వరకు)</label><input type="date" id="finTDate"></div>
+                    <button class="btn btn-green" onclick="generateFinanceReport()">Generate Report</button>
+                    <button class="btn" onclick="window.print()">🖨️ Print Report</button>
+                </div>
+                <p style="color:var(--text-muted); font-size:11px; margin-top:15px; margin-bottom:0;">* కింద ఉన్న బాక్స్ లపై నొక్కితే (Click), దానికి సంబంధించిన డేటా మాత్రమే టేబుల్ లో వస్తుంది.</p>
+            </div>
+            
+            <div class="dash-grid" id="finRepResults" style="display:none;">
+                <div class="dash-card c-blue" style="cursor:pointer;" onclick="filterFinReport('DOC')"><h3>Net Office Doc (డాక్యుమెంట్)</h3><h1 id="rep_doc">₹0</h1></div>
+                <div class="dash-card c-green" style="cursor:pointer;" onclick="filterFinReport('EMI')"><h3>EMI Collected (ఈఎంఐ)</h3><h1 id="rep_emi">₹0</h1></div>
+                <div class="dash-card c-yellow" style="cursor:pointer;" onclick="filterFinReport('OD')"><h3>OD Collected (వడ్డీ)</h3><h1 id="rep_od">₹0</h1></div>
+                <div class="dash-card c-red" style="cursor:pointer;" onclick="filterFinReport('SEIZING')"><h3>Seizing Recovered (సీజ్)</h3><h1 id="rep_sz">₹0</h1></div>
+                <div class="dash-card c-dark" style="cursor:pointer;" onclick="filterFinReport('ALL')"><h3>Total Amount (మొత్తం)</h3><h1 id="rep_tot">₹0</h1></div>
+            </div>
+            
+            <div class="card table-wrap" id="finRepTableBox" style="display:none; margin-top:20px;">
+                <table>
+                    <thead><tr><th>Date</th><th>HP No</th><th>Customer Name</th><th>Collection Type</th><th>Amount (₹)</th></tr></thead>
+                    <tbody id="finRepTb"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- NEW ENTRY -->
+        <div id="pEntry" class="page-container">
+            <div class="card">
+                <h2 class="card-title">New Agreement Entry (కొత్త ఫైల్ ఎంట్రీ)</h2>
+                <form id="hpMainInputForm">
+                    <div class="info-box"><h4 style="margin:0 0 15px 0; color:var(--secondary); font-size:14px;">1. Customer Details (కస్టమర్ వివరాలు)</h4>
+                        <div class="grid-4">
+                            <div class="form-group"><label>Surname (ఇంటి పేరు)</label><input type="text" id="in_csur" oninput="this.value = this.value.toUpperCase();"></div>
+                            <div class="form-group"><label>Customer Name (పేరు)</label><input type="text" id="in_cnm" oninput="this.value = this.value.toUpperCase();"></div>
+                            <div class="form-group"><label>Father/Husband Name</label><input type="text" id="in_cfnm" oninput="this.value = this.value.toUpperCase();"></div>
+                            <div class="form-group"><label>Village/Town (ఊరు)</label><input type="text" id="in_cvl" oninput="this.value = this.value.toUpperCase();"></div>
+                            <div class="form-group"><label>Mandal/Dist (మండలం/జిల్లా)</label><input type="text" id="in_cmd" oninput="this.value = this.value.toUpperCase();"></div>
+                            <div class="form-group"><label>Work/Business (పని)</label><input type="text" id="in_cocc" oninput="this.value = this.value.toUpperCase();"></div>
+                            <div class="form-group"><label>Aadhar No (12 Digits)</label><input type="number" id="in_caad" oninput="if(this.value.length > 12) this.value = this.value.slice(0, 12);"></div>
+                            <div class="form-group"><label>Mobile No (10 Digits)</label><input type="number" id="in_cmob" oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);"></div>
+                            <div class="form-group" style="grid-column: span 2;"><label>Full Address (అడ్రస్)</label><input type="text" id="in_cadr" oninput="this.value = this.value.toUpperCase();"></div>
+                            <div class="form-group"><label>Pincode</label><input type="number" id="in_cpin" oninput="if(this.value.length > 6) this.value = this.value.slice(0, 6);"></div>
+                            <div class="form-group"><label>Customer Photo</label><input type="file" id="in_cimg" accept="image/*" style="padding:9px;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-box"><h4 style="margin:0 0 15px 0; color:var(--secondary); font-size:14px;">2. Guarantor Details (గ్యారెంటర్ వివరాలు)</h4>
+                        <div class="grid-4">
+                            <div class="form-group"><label>Surname (ఇంటి పేరు)</label><input type="text" id="in_gsur" oninput="this.value = this.value.toUpperCase();"></div>
+                            <div class="form-group"><label>Guarantor Name (పేరు)</label><input type="text" id="in_gnm" oninput="this.value = this.value.toUpperCase();"></div>
+                            <div class="form-group"><label>Father/Husband Name</label><input type="text" id="in_gfnm" oninput="this.value = this.value.toUpperCase();"></div>
+                            <div class="form-group"><label>Mobile No (10 Digits)</label><input type="number" id="in_gmob" oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);"></div>
+                            <div class="form-group"><label>Village/Town (ఊరు)</label><input type="text" id="in_gvl" oninput="this.value = this.value.toUpperCase();"></div>
+                            <div class="form-group"><label>Mandal/Dist (మండలం/జిల్లా)</label><input type="text" id="in_gmd" oninput="this.value = this.value.toUpperCase();"></div>
+                            <div class="form-group" style="grid-column: span 2;"><label>Full Address (అడ్రస్)</label><input type="text" id="in_gadr" oninput="this.value = this.value.toUpperCase();"></div>
+                            <div class="form-group"><label>Work/Business (పని)</label><input type="text" id="in_gocc" oninput="this.value = this.value.toUpperCase();"></div>
+                            <div class="form-group"><label>Aadhar No (12 Digits)</label><input type="number" id="in_gaad" oninput="if(this.value.length > 12) this.value = this.value.slice(0, 12);"></div>
+                            <div class="form-group" style="grid-column: span 2;"><label>Guarantor Photo</label><input type="file" id="in_gimg" accept="image/*" style="padding:9px;"></div>
+                        </div>
+                    </div>
+
+                    <div class="info-box"><h4 style="margin:0 0 15px 0; color:var(--secondary); font-size:14px;">3. Vehicle Details (బండి వివరాలు)</h4>
+                        <div class="grid-4">
+                            <div class="form-group"><label>Vehicle No (బండి నంబర్)</label><input type="text" id="in_vreg" oninput="this.value = this.value.toUpperCase();"></div>
+                            <div class="form-group"><label>Vehicle Name & Model</label><input type="text" id="in_vnm" oninput="this.value = this.value.toUpperCase();"></div>
+                            <div class="form-group"><label>Year (సంవత్సరం)</label><input type="text" id="in_vyr" oninput="this.value = this.value.toUpperCase();"></div>
+                            <div class="form-group"><label>Chassis No</label><input type="text" id="in_vcn" oninput="this.value = this.value.toUpperCase();"></div>
+                            <div class="form-group"><label>Engine No</label><input type="text" id="in_ven" oninput="this.value = this.value.toUpperCase();"></div>
+                            <div class="form-group"><label>Color (రంగు)</label><input type="text" id="in_vcol" oninput="this.value = this.value.toUpperCase();"></div>
+                        </div>
+                    </div>
+
+                    <div class="info-box"><h4 style="margin:0 0 15px 0; color:var(--secondary); font-size:14px;">4. Finance Details (లోన్ వివరాలు)</h4>
+                        <div class="grid-4">
+                            <div class="form-group"><label>Original RC Book?</label><select id="in_cb" onchange="toggleDocReason('cb')"><option value="Yes">Yes, Received</option><option value="No">No, Missing</option></select></div>
+                            <div class="form-group" id="cb_r_box" style="display:none;"><label style="color:var(--danger);">Why RC Missing?</label><input type="text" id="in_cb_r" oninput="this.value = this.value.toUpperCase();" placeholder="Reason..."></div>
+                            <div class="form-group"><label>NOC Document?</label><select id="in_noc" onchange="toggleDocReason('noc')"><option value="Yes">Yes, Received</option><option value="No">No, Missing</option></select></div>
+                            <div class="form-group" id="noc_r_box" style="display:none;"><label style="color:var(--danger);">Why NOC Missing?</label><input type="text" id="in_noc_r" oninput="this.value = this.value.toUpperCase();" placeholder="Reason..."></div>
+                            
+                            <div class="form-group">
+                                <label>HP Account No (కొత్త నంబర్) <span id="lastHpHint" style="color:var(--danger); font-size:11px; font-weight:800; margin-left:5px;"></span></label>
+                                <input type="text" id="in_hp" style="border-color:var(--primary); background:#eff6ff; font-weight:800;" oninput="this.value = this.value.toUpperCase();">
+                            </div>
+                            <div class="form-group"><label>Loan Amount (₹)</label><input type="number" id="in_famt"></div>
+                            <div class="form-group"><label>Office Doc Charges (₹)</label><input type="number" id="in_doc" value="0"></div>
+                            <div class="form-group"><label>Broker Doc Charges (₹)</label><input type="number" id="in_bdoc" value="0"></div>
+                            <div class="form-group"><label>Total HP Interest (₹)</label><input type="number" id="in_hpc"></div>
+                            <div class="form-group"><label>Months (ఎన్ని నెలలు)</label><input type="number" id="in_ten"></div>
+                            <div class="form-group"><label>Agreement Date</label><input type="date" id="in_fdt"></div>
+                            <div class="form-group"><label>Dealer/Broker Name</label><input type="text" id="in_cons" oninput="this.value = this.value.toUpperCase();"></div>
+                            <div class="form-group"><label>Officer Name</label><input type="text" id="in_ver" oninput="this.value = this.value.toUpperCase();"></div>
+                        </div>
+                    </div>
+                    <button type="button" id="saveBtn" class="btn" style="width:100%; padding:16px; font-size:15px; margin-top:10px;" onclick="executeHPSave()">💾 Save Account in Database</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- SEARCH -->
+        <div id="pSearch" class="page-container">
+            <div class="card no-print">
+                <h2 class="card-title">Search Account (ఖాతా వెతకండి)</h2>
+                <div class="grid-3" style="align-items: end;">
+                    <div class="form-group"><label>Search By (దేనితో వెతకాలి?)</label>
+                        <select id="vsType">
+                            <option value="vno">Vehicle No (బండి నంబర్)</option>
+                            <option value="hp">HP Account No</option>
+                            <option value="nm">Customer Name</option>
+                            <option value="vl">Village / Town</option>
+                            <option value="ad">Aadhar No</option>
+                            <option value="mo">Mobile No</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Enter Details</label><input type="text" id="vsVal" placeholder="Type here..."></div>
+                    <button class="btn" onclick="executeSearchQuery()">Search</button>
+                </div>
+            </div>
+            <div class="card table-wrap">
+                <table>
+                    <thead><tr><th>HP No</th><th>Agr Date</th><th>Customer Name</th><th>Mobile No</th><th>Vehicle No</th><th>Model</th><th>Year</th><th>Village</th><th>Mandal</th><th>Address</th></tr></thead>
+                    <tbody id="vsTb"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- MASTER REGISTRY -->
+        <div id="pReg" class="page-container">
+            <div class="card no-print">
+                <h2 class="card-title">All Accounts List (మొత్తం ఖాతాలు)</h2>
+                <div class="grid-3" style="align-items: end;">
+                    <div class="form-group"><label>Enter HP Number</label><input type="text" id="regHp" placeholder="Scan HP Number..." oninput="this.value = this.value.toUpperCase();"></div>
+                    <button class="btn" onclick="ldReg()">Get Details</button>
+                </div>
+            </div>
+            <div class="card table-wrap">
+                <table>
+                    <thead><tr><th>HP No</th><th>Agr Date</th><th>Customer Name</th><th>Vehicle No</th><th>Loan Amount</th><th>Status</th><th>Action</th></tr></thead>
+                    <tbody id="regTb"></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div id="regModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header"><h3 style="margin:0; font-weight:800;" id="modTitle">Account Details</h3><button style="background:transparent; color:#fff; border:none; font-size:26px; cursor:pointer;" onclick="document.getElementById('regModal').style.display='none'">&times;</button></div>
+                <div class="modal-body" id="modBody"></div>
+            </div>
+        </div>
+
+        <!-- OVERDUE ACCOUNTS -->
+        <div id="pDues" class="page-container">
+            <div class="card no-print">
+                <h2 class="card-title">Pending Dues List (బకాయిల లిస్ట్)</h2>
+                <div style="display:flex; gap:15px; align-items:end; flex-wrap:wrap;">
+                    <div class="form-group"><label>Account Type</label><select id="dType" onchange="chgDueUI()"><option value="Regular">Running Accounts</option><option value="Matured">Matured Accounts</option></select></div>
+                    <div class="form-group"><label id="dLblDt">Date</label><input type="date" id="dueFilterDt1"></div>
+                    <div class="form-group" id="dToDt" style="display:none;"><label>To Date</label><input type="date" id="dueFilterDt2"></div>
+                    <div class="form-group"><label>Filter Options</label>
+                        <select id="dOp" onchange="chgDueOp()">
+                            <option value="All">All Dues (అన్నీ)</option><option value="=">Exactly (=)</option><option value=">">More Than (>)</option><option value="<">Less Than (<)</option><option value="Between">Between (Range)</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>No of EMIs</label><input type="number" id="dVl" value="0" style="width:90px;"></div>
+                    <div class="form-group" id="dVl2Box" style="display:none;"><label>To EMIs</label><input type="number" id="dVl2" value="0" style="width:90px;"></div>
+                    <button class="btn" onclick="genDues()">Get List</button>
+                    <button class="btn btn-green" onclick="window.print()">🖨️ Print List</button>
+                </div>
+            </div>
+            <div class="card table-wrap">
+                <table>
+                    <thead><tr><th>No.</th><th>HP No</th><th>Customer Details</th><th>Guarantor Details</th><th>Vehicle Name</th><th>Vehicle No</th><th id="dThDt">Agr Date</th><th>Last Paid</th><th>Pending EMIs</th><th>EMI Amount</th><th>Total Due</th><th>Status</th></tr></thead>
+                    <tbody id="duesTb"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- CALCULATIONS (OD & STATEMENT) -->
+        <div id="pCalc" class="page-container">
+            <div class="card no-print" style="margin-bottom:15px;">
+                <div style="display:flex; gap:15px; align-items:end;">
+                    <div class="form-group"><label>Enter HP No</label><div><input type="text" id="odAcc" style="width:150px; font-weight:700;" oninput="this.value = this.value.toUpperCase();"></div></div>
+                    <div class="form-group"><label>OD Interest (%)</label><input type="text" id="odPer" value="014" style="width:90px; font-weight:700;"></div>
+                    <button class="btn" onclick="genOD()">Calculate OD</button>
+                    <button class="btn btn-green" onclick="window.print()">🖨️ Print Statement</button>
+                </div>
+            </div>
+            
+            <div class="card" id="odReportArea" style="display:none; padding:35px; border-radius:0; border: 1px solid #ccc; box-shadow:none;">
+                <h2 style="text-align:left; font-size:22px; font-weight:800; margin-top:0; color:#0f172a;">Calculation Statement</h2><hr style="border:1px solid #e2e8f0; margin-bottom:25px;">
+                <div class="od-grid-top">
+                    <div>
+                        <div class="od-row"><div class="od-lbl">COMPANY</div><div class="od-val">: SRI VISHNU PRIYA FINANCE</div></div>
+                        <div class="od-row"><div class="od-lbl">AREA</div><div class="od-val">: <span id="od_area"></span></div></div>
+                        <div class="od-row"><div class="od-lbl">TOWN</div><div class="od-val">: <span id="od_town"></span></div></div>
+                        <div class="od-row"><div class="od-lbl">A/C NO</div><div class="od-val">: <span id="od_ac" style="font-weight:800; color:#0f172a;"></span></div></div><br>
+                        <div class="od-row"><div class="od-lbl">VERIFIED BY</div><div class="od-val">: <span id="od_verBy">NONE</span></div></div><br>
+                        <div class="od-row"><div class="od-lbl">SEIZING STAT</div><div class="od-val">: <div class="bulb" id="od_szBulb"></div></div></div><br>
+                        <div class="od-row"><div class="od-lbl">DESCRIPTION</div><div class="od-val">: TOTAL RC OK</div></div>
+                        <div class="od-row"><div class="od-lbl">INST PEND</div><div class="od-val">: <span id="od_pend"></span></div></div>
+                    </div>
+                    <div>
+                        <div style="font-weight:800; margin-bottom:12px; color:#0f172a;">Calculation Details</div>
+                        <div class="od-row"><div class="od-lbl">NAME</div><div class="od-val">: <span id="od_nm"></span></div></div>
+                        <div class="od-row"><div class="od-lbl">VEHICLE NO</div><div class="od-val">: <span id="od_vno"></span></div></div>
+                        <div class="od-row"><div class="od-lbl">VEH MAKE</div><div class="od-val">: <span id="od_mk"></span></div></div>
+                        <div class="od-row"><div class="od-lbl">VEH MODEL</div><div class="od-val">: <span id="od_mdl"></span></div></div>
+                        <div class="od-row"><div class="od-lbl">MATURED</div><div class="od-val">: <div class="bulb" id="od_matBulb"></div> <b id="od_matTxt">M</b></div></div><br>
+                        <div class="od-row"><div class="od-lbl">C BOOK</div><div class="od-val">: <div class="bulb" id="od_cbBulb"></div></div></div><br>
+                        <div class="od-row"><div class="od-lbl">RECEIPT DUE AMNT</div><div class="od-val">: <span id="od_rdue"></span></div></div>
+                    </div>
+                    <div>
+                        <div style="text-align:right; font-weight:800; margin-bottom:12px; color:#0f172a;" id="od_currentDt"></div>
+                        <div class="od-row"><div class="od-lbl">E NO</div><div class="od-val">: <span id="od_en"></span></div></div>
+                        <div class="od-row"><div class="od-lbl">C NO</div><div class="od-val">: <span id="od_cn"></span></div></div>
+                        <div class="od-row"><div class="od-lbl">AGR DONE BY</div><div class="od-val">: WARANGAL OFFICE</div></div>
+                        <div class="od-row"><div class="od-lbl">CONSULTANT</div><div class="od-val">: <span id="od_consName"></span></div></div>
+                        <div class="od-row"><div class="od-lbl">ACCOUNT</div><div class="od-val">: <span id="od_acStat" style="font-weight:800;">NOT CLOSED</span></div></div>
                     </div>
                 </div>
                 
-                <div class="info-box"><h4 style="margin:0 0 15px 0; color:var(--secondary); font-size:14px;">2. Guarantor Details (గ్యారెంటర్ వివరాలు)</h4>
-                    <div class="grid-4">
-                        <div class="form-group"><label>Surname (ఇంటి పేరు)</label><input type="text" id="in_gsur" oninput="this.value = this.value.toUpperCase();"></div>
-                        <div class="form-group"><label>Guarantor Name (పేరు)</label><input type="text" id="in_gnm" oninput="this.value = this.value.toUpperCase();"></div>
-                        <div class="form-group"><label>Father/Husband Name</label><input type="text" id="in_gfnm" oninput="this.value = this.value.toUpperCase();"></div>
-                        <div class="form-group"><label>Mobile No (10 Digits)</label><input type="number" id="in_gmob" oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);"></div>
-                        <div class="form-group"><label>Village/Town (ఊరు)</label><input type="text" id="in_gvl" oninput="this.value = this.value.toUpperCase();"></div>
-                        <div class="form-group"><label>Mandal/Dist (మండలం/జిల్లా)</label><input type="text" id="in_gmd" oninput="this.value = this.value.toUpperCase();"></div>
-                        <div class="form-group" style="grid-column: span 2;"><label>Full Address (అడ్రస్)</label><input type="text" id="in_gadr" oninput="this.value = this.value.toUpperCase();"></div>
-                        <div class="form-group"><label>Work/Business (పని)</label><input type="text" id="in_gocc" oninput="this.value = this.value.toUpperCase();"></div>
-                        <div class="form-group"><label>Aadhar No (12 Digits)</label><input type="number" id="in_gaad" oninput="if(this.value.length > 12) this.value = this.value.slice(0, 12);"></div>
-                        <div class="form-group" style="grid-column: span 2;"><label>Guarantor Photo</label><input type="file" id="in_gimg" accept="image/*" style="padding:9px;"></div>
+                <div class="od-bottom">
+                    <div class="od-bot-left">
+                        <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:700; margin-bottom:4px;"><span>0.00</span><span id="od_prcTxt">014</span></div>
+                        <table class="od-table">
+                            <thead><tr><th>NO</th><th>Due Date</th><th>Paid Date</th><th>Inst Amount</th><th>TR Number</th><th>Paid Amount</th><th>Receipt Amount</th><th>OD Days</th><th>OD Interest</th></tr></thead>
+                            <tbody id="odTb"></tbody>
+                            <tfoot><tr style="font-weight:800; border-top:2px solid #cbd5e1; background:#f8fafc;"><td colspan="3"></td><td id="od_tf"></td><td></td><td>0</td><td>0</td><td id="od_td"></td><td id="od_ti" style="color:#0f172a;"></td></tr></tfoot>
+                        </table>
                     </div>
-                </div>
-
-                <div class="info-box"><h4 style="margin:0 0 15px 0; color:var(--secondary); font-size:14px;">3. Vehicle Details (బండి వివరాలు)</h4>
-                    <div class="grid-4">
-                        <div class="form-group"><label>Vehicle No (బండి నంబర్)</label><input type="text" id="in_vreg" oninput="this.value = this.value.toUpperCase();"></div>
-                        <div class="form-group"><label>Vehicle Name & Model</label><input type="text" id="in_vnm" oninput="this.value = this.value.toUpperCase();"></div>
-                        <div class="form-group"><label>Year (సంవత్సరం)</label><input type="text" id="in_vyr" oninput="this.value = this.value.toUpperCase();"></div>
-                        <div class="form-group"><label>Chassis No</label><input type="text" id="in_vcn" oninput="this.value = this.value.toUpperCase();"></div>
-                        <div class="form-group"><label>Engine No</label><input type="text" id="in_ven" oninput="this.value = this.value.toUpperCase();"></div>
-                        <div class="form-group"><label>Color (రంగు)</label><input type="text" id="in_vcol" oninput="this.value = this.value.toUpperCase();"></div>
-                    </div>
-                </div>
-
-                <div class="info-box"><h4 style="margin:0 0 15px 0; color:var(--secondary); font-size:14px;">4. Finance Details (లోన్ వివరాలు)</h4>
-                    <div class="grid-4">
-                        <div class="form-group"><label>Original RC Book?</label><select id="in_cb" onchange="toggleDocReason('cb')"><option value="Yes">Yes, Received</option><option value="No">No, Missing</option></select></div>
-                        <div class="form-group" id="cb_r_box" style="display:none;"><label style="color:var(--danger);">Why RC Missing?</label><input type="text" id="in_cb_r" oninput="this.value = this.value.toUpperCase();" placeholder="Reason..."></div>
-                        <div class="form-group"><label>NOC Document?</label><select id="in_noc" onchange="toggleDocReason('noc')"><option value="Yes">Yes, Received</option><option value="No">No, Missing</option></select></div>
-                        <div class="form-group" id="noc_r_box" style="display:none;"><label style="color:var(--danger);">Why NOC Missing?</label><input type="text" id="in_noc_r" oninput="this.value = this.value.toUpperCase();" placeholder="Reason..."></div>
+                    <div class="od-bot-right">
+                        <div class="od-row"><div class="od-lbl">FINANCE AMOUNT</div><div class="od-val">: <span id="sum_fin"></span></div></div>
+                        <div class="od-row"><div class="od-lbl">HP CHARGES</div><div class="od-val">: <span id="sum_hp"></span></div></div>
+                        <div class="od-row" id="sum_szc_row"><div class="od-lbl">SEIZING CHARGES</div><div class="od-val">: <span id="sum_szc">0.00</span></div></div>
+                        <hr style="border:1px dashed #cbd5e1; margin:8px 0;">
+                        <div class="od-row"><div class="od-lbl"></div><div class="od-val" style="font-weight:800; font-size:13px; color:#0f172a;"><span id="sum_tot1"></span></div></div><br>
                         
-                        <div class="form-group">
-                            <label>HP Account No (కొత్త నంబర్) <span id="lastHpHint" style="color:var(--danger); font-size:10px; margin-left:5px;"></span></label>
-                            <input type="text" id="in_hp" style="border-color:var(--primary); background:#eff6ff; font-weight:800;" oninput="this.value = this.value.toUpperCase();">
-                        </div>
-                        <div class="form-group"><label>Loan Amount (₹)</label><input type="number" id="in_famt"></div>
-                        <div class="form-group"><label>Document Charges (₹)</label><input type="number" id="in_doc"></div>
-                        <div class="form-group"><label>Total Interest (₹)</label><input type="number" id="in_hpc"></div>
-                        <div class="form-group"><label>Months (ఎన్ని నెలలు)</label><input type="number" id="in_ten"></div>
-                        <div class="form-group"><label>Agreement Date</label><input type="date" id="in_fdt"></div>
-                        <div class="form-group"><label>Dealer/Broker Name</label><input type="text" id="in_cons" oninput="this.value = this.value.toUpperCase();"></div>
-                        <div class="form-group"><label>Officer Name</label><input type="text" id="in_ver" oninput="this.value = this.value.toUpperCase();"></div>
+                        <div class="od-row"><div class="od-lbl">TOTAL LIABILITY</div><div class="od-val">: <span id="sum_fin2"></span></div></div>
+                        <div class="od-row"><div class="od-lbl">TOTAL INTEREST</div><div class="od-val">: <span id="sum_hp2"></span></div></div>
+                        <hr style="border:1px dashed #cbd5e1; margin:8px 0;">
+                        
+                        <div class="od-row"><div class="od-lbl">BALANCE</div><div class="od-val">: <span id="sum_bal"></span></div></div>
+                        <div class="od-row"><div class="od-lbl">COLLECTED AMNT</div><div class="od-val">: <span id="sum_col">0.00</span></div></div>
+                        <hr style="border:1px dashed #cbd5e1; margin:8px 0;">
+                        
+                        <div class="od-row"><div class="od-lbl">TOTAL DUE</div><div class="od-val">: <span id="sum_tdue"></span></div></div>
+                        <div class="od-row"><div class="od-lbl">OD DUE</div><div class="od-val">: <span id="sum_odue"></span></div></div>
+                        <div class="od-row" style="font-weight:800; font-size:13px; color:#0f172a; margin-top:5px;"><div class="od-lbl">BALANCE</div><div class="od-val">: <span id="sum_fbal"></span></div></div>
                     </div>
                 </div>
-                <button type="button" id="saveBtn" class="btn" style="width:100%; padding:16px; font-size:15px; margin-top:10px;" onclick="executeHPSave()">💾 Save Account in Database</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- SEARCH -->
-    <div id="pSearch" class="page-container">
-        <div class="card no-print">
-            <h2 class="card-title">Search Account (ఖాతా వెతకండి)</h2>
-            <div class="grid-3" style="align-items: end;">
-                <div class="form-group"><label>Search By (దేనితో వెతకాలి?)</label>
-                    <select id="vsType">
-                        <option value="vno">Vehicle No (బండి నంబర్)</option>
-                        <option value="hp">HP Account No</option>
-                        <option value="nm">Customer Name</option>
-                        <option value="vl">Village / Town</option>
-                        <option value="ad">Aadhar No</option>
-                        <option value="mo">Mobile No</option>
-                    </select>
-                </div>
-                <div class="form-group"><label>Enter Details</label><input type="text" id="vsVal" placeholder="Type here..."></div>
-                <button class="btn" onclick="executeSearchQuery()">Search</button>
             </div>
         </div>
-        <div class="card table-wrap">
-            <table>
-                <thead><tr><th>HP No</th><th>Agr Date</th><th>Customer Name</th><th>Mobile No</th><th>Vehicle No</th><th>Model</th><th>Year</th><th>Village</th><th>Mandal</th><th>Address</th></tr></thead>
-                <tbody id="vsTb"></tbody>
-            </table>
-        </div>
-    </div>
 
-    <!-- MASTER REGISTRY -->
-    <div id="pReg" class="page-container">
-        <div class="card no-print">
-            <h2 class="card-title">All Accounts List (మొత్తం ఖాతాలు)</h2>
-            <div class="grid-3" style="align-items: end;">
-                <div class="form-group"><label>Enter HP Number</label><input type="text" id="regHp" placeholder="Scan HP Number..." oninput="this.value = this.value.toUpperCase();"></div>
-                <button class="btn" onclick="ldReg()">Get Details</button>
+        <!-- SEIZE / RELEASE -->
+        <div id="pSeize" class="page-container">
+            <div class="card no-print">
+                <h2 class="card-title">Vehicle Seizing Entry (బండి సీజ్/రిలీజ్)</h2>
+                <div class="grid-3" style="align-items:end;">
+                    <div class="form-group"><label>Enter HP No</label><input type="text" id="szHp" placeholder="Scan HP Number..." oninput="this.value = this.value.toUpperCase();"></div>
+                    <button class="btn" onclick="fetchSeizeProfile()">Get Details</button>
+                </div>
+            </div>
+            <div class="card" id="szData" style="display:none; border-left:4px solid var(--warning);">
+                <div class="info-box" style="font-size:14px; background: #fffbeb; border-color: #fcd34d;">
+                    <b>Customer Name:</b> <span id="szN" style="color:var(--secondary); font-weight:800;"></span> <br>
+                    <b>Vehicle Name:</b> <span id="szVnm" style="font-weight:700;"></span> | <b>Vehicle No:</b> <b style="color:var(--primary);" id="szV"></b><br>
+                    <b>Pending EMIs:</b> <b style="color:var(--danger); font-size:16px;" id="szPIns"></b> Months | <b>EMI Due Amount: ₹<span id="szD" style="color:var(--danger); font-weight:800; font-size:16px;"></span></b>
+                </div>
+                <div class="grid-4">
+                    <div class="form-group">
+                        <label>Action (ఏం చేయాలి?)</label>
+                        <div style="display:flex;gap:10px;align-items:center;">
+                            <select id="szSt" onchange="executeSeizeToggleLogic()"><option value="">-- Select --</option><option value="Seized">Seized (సీజ్ చేసాం)</option><option value="Returned">Released (విడిపించాం)</option></select>
+                            <div id="szBulb" class="bulb bulb-gy"></div>
+                        </div>
+                    </div>
+                    <div class="form-group" id="szAgentInputBox"><label id="szPerLbl">Agent Name (ఎవరు తెచ్చారు?)</label><input type="text" id="szPerName" placeholder="Name..." oninput="this.value = this.value.toUpperCase();"></div>
+                    <div class="form-group" id="szYardBox"><label>Yard Location (ఎక్కడ పెట్టారు)</label><input type="text" id="szYard" placeholder="Location..." oninput="this.value = this.value.toUpperCase();"></div>
+                    <div class="form-group" id="szChargesBox"><label>Seizing Charges (₹)</label><input type="number" id="szChrg" placeholder="Amount..."></div>
+                </div>
+                <button class="btn btn-green" style="margin-top:20px; width:100%; font-size:15px; padding:15px;" onclick="commitSeizeLedgerUpdate()">💾 Save Details</button>
             </div>
         </div>
-        <div class="card table-wrap">
-            <table>
-                <thead><tr><th>HP No</th><th>Agr Date</th><th>Customer Name</th><th>Vehicle No</th><th>Loan Amount</th><th>Status</th><th>Action</th></tr></thead>
-                <tbody id="regTb"></tbody>
-            </table>
-        </div>
-    </div>
-    
-    <div id="regModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header"><h3 style="margin:0; font-weight:800;" id="modTitle">Account Details</h3><button style="background:transparent; color:#fff; border:none; font-size:26px; cursor:pointer;" onclick="document.getElementById('regModal').style.display='none'">&times;</button></div>
-            <div class="modal-body" id="modBody"></div>
-        </div>
-    </div>
 
-    <!-- OVERDUE ACCOUNTS -->
-    <div id="pDues" class="page-container">
-        <div class="card no-print">
-            <h2 class="card-title">Pending Dues List (బకాయిల లిస్ట్)</h2>
-            <div style="display:flex; gap:15px; align-items:end; flex-wrap:wrap;">
-                <div class="form-group"><label>Account Type</label><select id="dType" onchange="chgDueUI()"><option value="Regular">Running Accounts</option><option value="Matured">Matured Accounts</option></select></div>
-                <div class="form-group"><label id="dLblDt">Date</label><input type="date" id="dueFilterDt1"></div>
-                <div class="form-group" id="dToDt" style="display:none;"><label>To Date</label><input type="date" id="dueFilterDt2"></div>
-                <div class="form-group"><label>Filter Options</label>
-                    <select id="dOp" onchange="chgDueOp()">
-                        <option value="All">All Dues (అన్నీ)</option><option value="=">Exactly (=)</option><option value=">">More Than (>)</option><option value="<">Less Than (<)</option><option value="Between">Between (Range)</option>
-                    </select>
+        <div id="pSzRep" class="page-container">
+            <div class="card no-print">
+                <h2 class="card-title">Seized Vehicles List (సీజ్ చేసిన బండ్ల లిస్ట్)</h2>
+                <div style="display:flex; gap:15px; align-items:end;">
+                    <div class="form-group"><label>From Date</label><input type="date" id="szFDate"></div>
+                    <div class="form-group"><label>To Date</label><input type="date" id="szTDate"></div>
+                    <button class="btn" onclick="generateSeizeHistoryReport()">Search</button>
+                    <button class="btn btn-green" onclick="window.print()">🖨️ Print List</button>
                 </div>
-                <div class="form-group"><label>No of EMIs</label><input type="number" id="dVl" value="0" style="width:90px;"></div>
-                <div class="form-group" id="dVl2Box" style="display:none;"><label>To EMIs</label><input type="number" id="dVl2" value="0" style="width:90px;"></div>
-                <button class="btn" onclick="genDues()">Get List</button>
-                <button class="btn btn-green" onclick="window.print()">🖨️ Print List</button>
+            </div>
+            <div class="card table-wrap">
+                <table>
+                    <thead><tr><th>Date</th><th>HP No</th><th>Customer Name</th><th>Vehicle No</th><th>Yard Name</th><th>Charges</th><th>Agent Name</th><th>Status</th></tr></thead>
+                    <tbody id="szrTb"></tbody>
+                </table>
             </div>
         </div>
-        <div class="card table-wrap">
-            <table>
-                <thead><tr><th>No.</th><th>HP No</th><th>Customer Details</th><th>Guarantor Details</th><th>Vehicle Name</th><th>Vehicle No</th><th id="dThDt">Agr Date</th><th>Last Paid</th><th>Pending EMIs</th><th>EMI Amount</th><th>Total Due</th><th>Status</th></tr></thead>
-                <tbody id="duesTb"></tbody>
-            </table>
-        </div>
-    </div>
 
-    <!-- OD CALCULATOR -->
-    <div id="pCalc" class="page-container">
-        <div class="card no-print" style="margin-bottom:15px;">
-            <div style="display:flex; gap:15px; align-items:end;">
-                <div class="form-group"><label>Today Date</label><div style="display:flex;gap:5px;"><select><option>25</option></select><select><option>Jun</option></select><select><option>2026</option></select></div></div>
-                <div class="form-group"><label>Enter HP No</label><div><input type="text" id="odAcc" style="width:130px; font-weight:700;" oninput="this.value = this.value.toUpperCase();"></div></div>
-                <div class="form-group"><label>OD Interest (%)</label><input type="text" id="odPer" value="014" style="width:90px; font-weight:700;"></div>
-                <button class="btn" onclick="genOD()">Calculate OD</button>
-                <button class="btn btn-green" onclick="window.print()">🖨️ Print Statement</button>
+        <!-- RECEIPTS WITH PREVIEW & PRINT -->
+        <div id="pRcpt" class="page-container">
+            
+            <div id="rcPreviewBox" style="display:none; background:#fff; border:2px dashed #0f172a; padding:30px; border-radius:12px; margin-bottom:25px; width:100%; max-width:450px; margin-left:auto; margin-right:auto; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+                <div style="text-align:center; border-bottom:2px solid #0f172a; padding-bottom:15px; margin-bottom:15px;">
+                    <h2 style="margin:0; font-weight:800; color:#0f172a;">SRI VISHNU PRIYA FINANCE</h2>
+                    <p style="margin:5px 0 0 0; font-size:12px; color:#64748b; font-weight:700;">Warangal, Telangana</p>
+                    <h3 style="margin:15px 0 0 0; background:#10b981; color:#fff; display:inline-block; padding:6px 20px; border-radius:20px; font-size:12px; letter-spacing:1px;">OFFICIAL RECEIPT</h3>
+                </div>
+                <div style="font-size:14px; line-height:1.8; color:#0f172a; font-weight:600;">
+                    <div style="display:flex; justify-content:space-between; color:#64748b;"><span>Receipt No:</span> <b style="color:#0f172a;" id="pr_tr"></b></div>
+                    <div style="display:flex; justify-content:space-between; color:#64748b;"><span>Date:</span> <b style="color:#0f172a;" id="pr_dt"></b></div>
+                    <hr style="border-top:1px dashed #cbd5e1; margin:12px 0;">
+                    <div style="display:flex; justify-content:space-between;"><span>HP Account:</span> <b style="color:var(--primary); font-size:15px;" id="pr_hp"></b></div>
+                    <div style="display:flex; justify-content:space-between;"><span>Customer:</span> <span id="pr_nm"></span></div>
+                    <div style="display:flex; justify-content:space-between;"><span>Vehicle No:</span> <span id="pr_vno"></span></div>
+                    <hr style="border-top:1px dashed #cbd5e1; margin:12px 0;">
+                    <div style="display:flex; justify-content:space-between; color:#64748b;"><span>Payment Mode:</span> <b style="color:#0f172a;" id="pr_mode"></b></div>
+                    <div style="display:flex; justify-content:space-between; color:#64748b;"><span>Payment Type:</span> <b style="color:#0f172a;" id="pr_type"></b></div>
+                    <hr style="border-top:1px dashed #cbd5e1; margin:12px 0;">
+                    <div style="display:flex; justify-content:space-between; font-size:18px; font-weight:800; background:#f8fafc; padding:10px; border-radius:8px;"><span>Amount Paid:</span> <span style="color:var(--success);" id="pr_amt"></span></div>
+                </div>
+                <button class="btn btn-green no-print" style="width:100%; margin-top:25px; padding:16px; font-size:16px; font-weight:800;" onclick="printOnlyReceipt()">🖨️ Print Receipt (ప్రింట్ చేయండి)</button>
+                <button class="btn no-print" style="width:100%; margin-top:10px; background:#f1f5f9; color:#ef4444; border:1px solid #fca5a5;" onclick="closePreview()">✖ Close Preview (క్లోజ్ చేయండి)</button>
+            </div>
+
+            <div class="grid-2">
+                <div class="card" id="rcptCard1" style="border-top: 4px solid var(--success);">
+                    <h2 class="card-title">Payment Receipt Entry (రసీదు కొట్టండి)</h2>
+                    <div style="display:flex; gap:10px; margin-bottom:20px;"><input type="text" id="rcHp" placeholder="Enter HP No..." oninput="this.value = this.value.toUpperCase();"><button class="btn btn-green" onclick="getRc()">Get Account</button></div>
+                    <div id="rcData" style="display:none; border:1px solid var(--border); padding:25px; border-radius:12px; background:#fff;">
+                        <div class="info-box" style="background:#f8fafc; border-color:#cbd5e1;"><b>Customer Name:</b> <span id="rcN" style="font-weight:800;"></span><br><b>Vehicle No:</b> <span id="rcV" style="font-weight:800;"></span><br><br><b style="color:var(--success); font-size:15px;">Monthly EMI: ₹<span id="rcI"></span></b> | <b style="color:var(--danger); font-size:15px;">Total Arrears: ₹<span id="rcP"></span></b></div>
+                        <div class="grid-2" style="margin-bottom:20px;">
+                            <div class="form-group"><label>Collected By</label><select id="rcCol"><option value="Executive">Field Agent (కలెక్షన్ బాయ్)</option><option value="Office">Office Counter</option></select></div>
+                            <div class="form-group"><label>Payment Type (దేనికోసం)</label>
+                                <select id="rcTyp">
+                                    <option value="Installment">EMI Amount (ఈఎంఐ)</option>
+                                    <option value="OD">OD Penalty (వడ్డీ)</option>
+                                    <option value="Seizing">Seizing Charge (సీజింగ్ చార్జి)</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label>Payment Mode</label><select id="rcMode"><option value="Cash">Cash (క్యాష్)</option><option value="Online">PhonePe / Online</option></select></div>
+                            <div class="form-group"><label>Amount Paid (₹)</label><input type="number" id="rcAmt" style="border-color:var(--success); font-weight:800; font-size:16px;"></div>
+                            <div class="form-group" style="grid-column: span 2;"><label>Receipt Number</label><input type="text" id="rcTr" readonly style="background:#f1f5f9; font-weight:800; font-size:16px; color:var(--primary-dark); letter-spacing:1px;"></div>
+                        </div>
+                        <button class="btn btn-green" style="width:100%; padding:15px; font-size:15px;" onclick="genRc()">🖨️ Save & Preview Receipt</button>
+                    </div>
+                </div>
+                <div class="card" id="rcptCard2">
+                    <h2 class="card-title">Receipts History / Reprint</h2>
+                    <div class="grid-2" style="margin-bottom:20px;">
+                        <div class="form-group" style="grid-column: span 2;"><label>Filter By</label><select id="repFilter" onchange="adjustReceiptSearchUI()"><option value="hp">Specific HP Number</option><option value="dt">Single Date</option><option value="rng">Date Range (From-To)</option></select></div>
+                        <div class="form-group"><label id="repVal1Lbl">Enter HP Number</label><input type="text" id="repVal1" placeholder="Type here..." oninput="this.value = this.value.toUpperCase();"></div>
+                        <div class="form-group" id="repVal2Box" style="display:none;"><label>To Date</label><input type="date" id="repVal2"></div>
+                        <div class="form-group" style="grid-column: span 2;"><label>Payment Type</label>
+                            <select id="repTyp">
+                                <option value="All">All Transactions (అన్నీ)</option>
+                                <option value="Installment">EMI Only</option>
+                                <option value="OD">OD Only</option>
+                                <option value="Seizing">Seizing Charge</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn" style="width:100%; padding:14px; font-size:14px;" onclick="executeReceiptLogSearch()">Search</button>
+                    <div class="table-wrap" id="rpTb" style="display:none; margin-top:25px;">
+                        <table>
+                            <thead><tr><th>Receipt No</th><th>Date</th><th>HP No</th><th>Amount Paid</th><th>Type</th><th>Action</th></tr></thead>
+                            <tbody id="reprintRowsBody"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
-        
-        <div class="card" id="odReportArea" style="display:none; padding:35px; border-radius:0; border: 1px solid #ccc; box-shadow:none;">
-            <h2 style="text-align:left; font-size:22px; font-weight:800; margin-top:0; color:#0f172a;">Calculation Statement</h2><hr style="border:1px solid #e2e8f0; margin-bottom:25px;">
-            <div class="od-grid-top">
-                <div>
-                    <div class="od-row"><div class="od-lbl">COMPANY</div><div class="od-val">: SRI VISHNU PRIYA FINANCE</div></div>
-                    <div class="od-row"><div class="od-lbl">AREA</div><div class="od-val">: <span id="od_area"></span></div></div>
-                    <div class="od-row"><div class="od-lbl">TOWN</div><div class="od-val">: <span id="od_town"></span></div></div>
-                    <div class="od-row"><div class="od-lbl">A/C NO</div><div class="od-val">: <span id="od_ac" style="font-weight:800; color:#0f172a;"></span></div></div><br>
-                    <div class="od-row"><div class="od-lbl">VERIFIED BY</div><div class="od-val">: <span id="od_verBy">NONE</span></div></div><br>
-                    <div class="od-row"><div class="od-lbl">SEIZING STAT</div><div class="od-val">: <div class="bulb" id="od_szBulb"></div></div></div><br>
-                    <div class="od-row"><div class="od-lbl">DESCRIPTION</div><div class="od-val">: TOTAL RC OK</div></div>
-                    <div class="od-row"><div class="od-lbl">INST PEND</div><div class="od-val">: <span id="od_pend"></span></div></div>
-                </div>
-                <div>
-                    <div style="font-weight:800; margin-bottom:12px; color:#0f172a;">OD Calculation Details</div>
-                    <div class="od-row"><div class="od-lbl">NAME</div><div class="od-val">: <span id="od_nm"></span></div></div>
-                    <div class="od-row"><div class="od-lbl">VEHICLE NO</div><div class="od-val">: <span id="od_vno"></span></div></div>
-                    <div class="od-row"><div class="od-lbl">VEH MAKE</div><div class="od-val">: <span id="od_mk"></span></div></div>
-                    <div class="od-row"><div class="od-lbl">VEH MODEL</div><div class="od-val">: <span id="od_mdl"></span></div></div>
-                    <div class="od-row"><div class="od-lbl">MATURED</div><div class="od-val">: <div class="bulb" id="od_matBulb"></div> <b id="od_matTxt">M</b></div></div><br>
-                    <div class="od-row"><div class="od-lbl">C BOOK</div><div class="od-val">: <div class="bulb" id="od_cbBulb"></div></div></div><br>
-                    <div class="od-row"><div class="od-lbl">RECEIPT DUE AMNT</div><div class="od-val">: <span id="od_rdue"></span></div></div>
-                </div>
-                <div>
-                    <div style="text-align:right; font-weight:800; margin-bottom:12px; color:#0f172a;" id="od_currentDt"></div>
-                    <div class="od-row"><div class="od-lbl">E NO</div><div class="od-val">: <span id="od_en"></span></div></div>
-                    <div class="od-row"><div class="od-lbl">C NO</div><div class="od-val">: <span id="od_cn"></span></div></div>
-                    <div class="od-row"><div class="od-lbl">AGR DONE BY</div><div class="od-val">: WARANGAL OFFICE</div></div>
-                    <div class="od-row"><div class="od-lbl">CONSULTANT</div><div class="od-val">: <span id="od_consName"></span></div></div>
-                    <div class="od-row"><div class="od-lbl">ACCOUNT</div><div class="od-val">: <span id="od_acStat" style="font-weight:800;">NOT CLOSED</span></div></div>
+
+        <!-- CLOSURE -->
+        <div id="pClose" class="page-container">
+            <div class="card no-print" style="border-top: 4px solid var(--danger);">
+                <h2 class="card-title" style="color:var(--danger); display:flex; align-items:center; gap:10px;">🔒 Account Closing / Settlement (అకౌంట్ క్లోజింగ్)</h2>
+                <div style="display:flex; gap:15px; align-items:end;">
+                    <div class="form-group"><label>Enter HP No</label><input type="text" id="clHp" placeholder="Scan HP ID..." style="font-weight:800; font-size:16px;" oninput="this.value = this.value.toUpperCase();"></div>
+                    <div class="form-group"><label>OD Interest (%)</label><input type="text" id="clPer" value="014" style="width:90px; font-weight:800;"></div>
+                    <button class="btn btn-red" onclick="searchClosingAccount()">Check Details</button>
                 </div>
             </div>
             
-            <div class="od-bottom">
-                <div class="od-bot-left">
-                    <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:700; margin-bottom:4px;"><span>0.00</span><span id="od_prcTxt">014</span></div>
-                    <table class="od-table">
-                        <thead><tr><th>NO</th><th>Due Date</th><th>Paid Date</th><th>Inst Amount</th><th>TR Number</th><th>Paid Amount</th><th>Receipt Amount</th><th>OD Days</th><th>OD Interest</th></tr></thead>
-                        <tbody id="odTb"></tbody>
-                        <tfoot><tr style="font-weight:800; border-top:2px solid #cbd5e1; background:#f8fafc;"><td colspan="3"></td><td id="od_tf"></td><td></td><td>0</td><td>0</td><td id="od_td"></td><td id="od_ti" style="color:#0f172a;"></td></tr></tfoot>
-                    </table>
-                </div>
-                <div class="od-bot-right">
-                    <div class="od-row"><div class="od-lbl">TOTAL FIN AMNT</div><div class="od-val">: <span id="sum_fin"></span></div></div>
-                    <div class="od-row"><div class="od-lbl">HP CHARGES</div><div class="od-val">: <span id="sum_hp"></span></div></div>
-                    <div class="od-row" id="sum_szc_row"><div class="od-lbl">SEIZING CHARGES</div><div class="od-val">: <span id="sum_szc">0.00</span></div></div>
-                    <hr style="border:1px dashed #cbd5e1; margin:8px 0;">
-                    <div class="od-row"><div class="od-lbl"></div><div class="od-val" style="font-weight:800; font-size:13px; color:#0f172a;"><span id="sum_tot1"></span></div></div><br>
-                    
-                    <div class="od-row"><div class="od-lbl">TOTAL FIN AMOUNT</div><div class="od-val">: <span id="sum_fin2"></span></div></div>
-                    <div class="od-row"><div class="od-lbl">TOTAL INTEREST</div><div class="od-val">: <span id="sum_hp2"></span></div></div>
-                    <hr style="border:1px dashed #cbd5e1; margin:8px 0;">
-                    
-                    <div class="od-row"><div class="od-lbl">BALANCE</div><div class="od-val">: <span id="sum_bal"></span></div></div>
-                    <div class="od-row"><div class="od-lbl">COLLECTED AMNT</div><div class="od-val">: <span id="sum_col">0.00</span></div></div>
-                    <hr style="border:1px dashed #cbd5e1; margin:8px 0;">
-                    
-                    <div class="od-row"><div class="od-lbl">TOTAL DUE</div><div class="od-val">: <span id="sum_tdue"></span></div></div>
-                    <div class="od-row"><div class="od-lbl">OD DUE</div><div class="od-val">: <span id="sum_odue"></span></div></div>
-                    <div class="od-row" style="font-weight:800; font-size:13px; color:#0f172a; margin-top:5px;"><div class="od-lbl">BALANCE</div><div class="od-val">: <span id="sum_fbal"></span></div></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- SEIZE / RELEASE -->
-    <div id="pSeize" class="page-container">
-        <div class="card no-print">
-            <h2 class="card-title">Vehicle Seizing Entry (బండి సీజ్/రిలీజ్)</h2>
-            <div class="grid-3" style="align-items:end;">
-                <div class="form-group"><label>Enter HP No</label><input type="text" id="szHp" placeholder="Scan HP Number..." oninput="this.value = this.value.toUpperCase();"></div>
-                <button class="btn" onclick="fetchSeizeProfile()">Get Details</button>
-            </div>
-        </div>
-        <div class="card" id="szData" style="display:none; border-left:4px solid var(--warning);">
-            <div class="info-box" style="font-size:14px; background: #fffbeb; border-color: #fcd34d;">
-                <b>Customer Name:</b> <span id="szN" style="color:var(--secondary); font-weight:800;"></span> <br>
-                <b>Vehicle Name:</b> <span id="szVnm" style="font-weight:700;"></span> | <b>Vehicle No:</b> <b style="color:var(--primary);" id="szV"></b><br>
-                <b>Pending EMIs:</b> <b style="color:var(--danger); font-size:16px;" id="szPIns"></b> Months | <b>EMI Due Amount: ₹<span id="szD" style="color:var(--danger); font-weight:800; font-size:16px;"></span></b>
-            </div>
-            <div class="grid-4">
-                <div class="form-group">
-                    <label>Action (ఏం చేయాలి?)</label>
-                    <div style="display:flex;gap:10px;align-items:center;">
-                        <select id="szSt" onchange="executeSeizeToggleLogic()"><option value="">-- Select --</option><option value="Seized">Seized (సీజ్ చేసాం)</option><option value="Returned">Released (విడిపించాం)</option></select>
-                        <div id="szBulb" class="bulb bulb-gy"></div>
+            <div class="card" id="clArea" style="display:none; background:#fef2f2; border:1px solid #fca5a5;">
+                <h3 class="card-title" style="color:#991b1b;">Account Closing Summary</h3>
+                <div class="grid-2">
+                    <div class="info-box" style="background:#fff; border-color:#fca5a5;">
+                        <b style="color:var(--secondary);">👤 Customer Details</b><br><br>
+                        <b>Name:</b> <span id="clLNm"></span><br>
+                        <b>Mobile No:</b> <span id="clLMob"></span><br>
+                        <b>Vehicle No:</b> <b style="color:var(--primary);" id="clLVno"></b><br>
+                        <b>Vehicle Name:</b> <span id="clLVnm"></span>
+                    </div>
+                    <div class="info-box" style="background:#fff; border-color:#fca5a5;">
+                        <b style="color:var(--danger);">💰 Pending Balance To Pay</b><br><br>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>EMI Pending Amount:</span> <b>₹<span id="clLMain" style="font-size:15px;">0.00</span></b></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>OD Penalty Amount:</span> <b>₹<span id="clLOd" style="font-size:15px;">0.00</span></b></div>
+                        <hr style="border-top:1px dashed #fca5a5; margin:10px 0;">
+                        <div style="display:flex; justify-content:space-between; font-size:16px; font-weight:800; color:#991b1b;"><span>Total Settlement Amount:</span> <span>₹<span id="clLTotal">0.00</span></span></div>
                     </div>
                 </div>
-                <div class="form-group" id="szAgentInputBox"><label id="szPerLbl">Agent Name (ఎవరు తెచ్చారు?)</label><input type="text" id="szPerName" placeholder="Name..." oninput="this.value = this.value.toUpperCase();"></div>
-                <div class="form-group" id="szYardBox"><label>Yard Location (ఎక్కడ పెట్టారు)</label><input type="text" id="szYard" placeholder="Location..." oninput="this.value = this.value.toUpperCase();"></div>
-                <div class="form-group" id="szChargesBox"><label>Seizing Charges (₹)</label><input type="number" id="szChrg" placeholder="Amount..."></div>
-            </div>
-            <button class="btn btn-green" style="margin-top:20px; width:100%; font-size:15px; padding:15px;" onclick="commitSeizeLedgerUpdate()">💾 Save Details</button>
-        </div>
-    </div>
-
-    <div id="pSzRep" class="page-container">
-        <div class="card no-print">
-            <h2 class="card-title">Seized Vehicles List (సీజ్ చేసిన బండ్ల లిస్ట్)</h2>
-            <div style="display:flex; gap:15px; align-items:end;">
-                <div class="form-group"><label>From Date</label><input type="date" id="szFDate"></div>
-                <div class="form-group"><label>To Date</label><input type="date" id="szTDate"></div>
-                <button class="btn" onclick="generateSeizeHistoryReport()">Search</button>
-                <button class="btn btn-green" onclick="window.print()">🖨️ Print List</button>
-            </div>
-        </div>
-        <div class="card table-wrap">
-            <table>
-                <thead><tr><th>Date</th><th>HP No</th><th>Customer Name</th><th>Vehicle No</th><th>Yard Name</th><th>Charges</th><th>Agent Name</th><th>Status</th></tr></thead>
-                <tbody id="szrTb"></tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- RECEIPTS WITH PREVIEW & PRINT -->
-    <div id="pRcpt" class="page-container">
-        
-        <!-- RECEIPT PREVIEW BOX -->
-        <div id="rcPreviewBox" style="display:none; background:#fff; border:2px dashed #0f172a; padding:30px; border-radius:12px; margin-bottom:25px; width:100%; max-width:450px; margin-left:auto; margin-right:auto; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
-            <div style="text-align:center; border-bottom:2px solid #0f172a; padding-bottom:15px; margin-bottom:15px;">
-                <h2 style="margin:0; font-weight:800; color:#0f172a;">SRI VISHNU PRIYA FINANCE</h2>
-                <p style="margin:5px 0 0 0; font-size:12px; color:#64748b; font-weight:700;">Warangal, Telangana</p>
-                <h3 style="margin:15px 0 0 0; background:#10b981; color:#fff; display:inline-block; padding:6px 20px; border-radius:20px; font-size:12px; letter-spacing:1px;">OFFICIAL RECEIPT</h3>
-            </div>
-            <div style="font-size:14px; line-height:1.8; color:#0f172a; font-weight:600;">
-                <div style="display:flex; justify-content:space-between; color:#64748b;"><span>Receipt No:</span> <b style="color:#0f172a;" id="pr_tr"></b></div>
-                <div style="display:flex; justify-content:space-between; color:#64748b;"><span>Date:</span> <b style="color:#0f172a;" id="pr_dt"></b></div>
-                <hr style="border-top:1px dashed #cbd5e1; margin:12px 0;">
-                <div style="display:flex; justify-content:space-between;"><span>HP Account:</span> <b style="color:var(--primary); font-size:15px;" id="pr_hp"></b></div>
-                <div style="display:flex; justify-content:space-between;"><span>Customer:</span> <span id="pr_nm"></span></div>
-                <div style="display:flex; justify-content:space-between;"><span>Vehicle No:</span> <span id="pr_vno"></span></div>
-                <hr style="border-top:1px dashed #cbd5e1; margin:12px 0;">
-                <div style="display:flex; justify-content:space-between; color:#64748b;"><span>Payment Mode:</span> <b style="color:#0f172a;" id="pr_mode"></b></div>
-                <div style="display:flex; justify-content:space-between; color:#64748b;"><span>Payment Type:</span> <b style="color:#0f172a;" id="pr_type"></b></div>
-                <hr style="border-top:1px dashed #cbd5e1; margin:12px 0;">
-                <div style="display:flex; justify-content:space-between; font-size:18px; font-weight:800; background:#f8fafc; padding:10px; border-radius:8px;"><span>Amount Paid:</span> <span style="color:var(--success);" id="pr_amt"></span></div>
-            </div>
-            <button class="btn btn-green no-print" style="width:100%; margin-top:25px; padding:16px; font-size:16px; font-weight:800;" onclick="printOnlyReceipt()">🖨️ Print Receipt (ప్రింట్ చేయండి)</button>
-            <button class="btn no-print" style="width:100%; margin-top:10px; background:#f1f5f9; color:#ef4444; border:1px solid #fca5a5;" onclick="closePreview()">✖ Close Preview (క్లోజ్ చేయండి)</button>
-        </div>
-
-        <div class="grid-2">
-            <div class="card" id="rcptCard1" style="border-top: 4px solid var(--success);">
-                <h2 class="card-title">Payment Receipt Entry (రసీదు కొట్టండి)</h2>
-                <div style="display:flex; gap:10px; margin-bottom:20px;"><input type="text" id="rcHp" placeholder="Enter HP No..." oninput="this.value = this.value.toUpperCase();"><button class="btn btn-green" onclick="getRc()">Get Account</button></div>
-                <div id="rcData" style="display:none; border:1px solid var(--border); padding:25px; border-radius:12px; background:#fff;">
-                    <div class="info-box" style="background:#f8fafc; border-color:#cbd5e1;"><b>Customer Name:</b> <span id="rcN" style="font-weight:800;"></span><br><b>Vehicle No:</b> <span id="rcV" style="font-weight:800;"></span><br><br><b style="color:var(--success); font-size:15px;">Monthly EMI: ₹<span id="rcI"></span></b> | <b style="color:var(--danger); font-size:15px;">Total Arrears: ₹<span id="rcP"></span></b></div>
-                    <div class="grid-2" style="margin-bottom:20px;">
-                        <div class="form-group"><label>Collected By</label><select id="rcCol"><option value="Executive">Field Agent (కలెక్షన్ బాయ్)</option><option value="Office">Office Counter</option></select></div>
-                        <div class="form-group"><label>Payment Type (దేనికోసం)</label>
-                            <select id="rcTyp">
-                                <option value="Installment">EMI Amount (ఈఎంఐ)</option>
-                                <option value="OD">OD Penalty (వడ్డీ)</option>
-                                <option value="Seizing">Seizing Charge (సీజింగ్ చార్జి)</option>
-                            </select>
-                        </div>
-                        <div class="form-group"><label>Payment Mode</label><select id="rcMode"><option value="Cash">Cash (క్యాష్)</option><option value="Online">PhonePe / Online</option></select></div>
-                        <div class="form-group"><label>Amount Paid (₹)</label><input type="number" id="rcAmt" style="border-color:var(--success); font-weight:800; font-size:16px;"></div>
-                        <div class="form-group" style="grid-column: span 2;"><label>Receipt Number</label><input type="text" id="rcTr" readonly style="background:#f1f5f9; font-weight:800; font-size:16px; color:var(--primary-dark); letter-spacing:1px;"></div>
-                    </div>
-                    <button class="btn btn-green" style="width:100%; padding:15px; font-size:15px;" onclick="genRc()">🖨️ Save & Preview Receipt</button>
-                </div>
-            </div>
-            <div class="card" id="rcptCard2">
-                <h2 class="card-title">Receipts History / Reprint</h2>
-                <div class="grid-2" style="margin-bottom:20px;">
-                    <div class="form-group" style="grid-column: span 2;"><label>Filter By</label><select id="repFilter" onchange="adjustReceiptSearchUI()"><option value="hp">Specific HP Number</option><option value="dt">Single Date</option><option value="rng">Date Range (From-To)</option></select></div>
-                    <div class="form-group"><label id="repVal1Lbl">Enter HP Number</label><input type="text" id="repVal1" placeholder="Type here..." oninput="this.value = this.value.toUpperCase();"></div>
-                    <div class="form-group" id="repVal2Box" style="display:none;"><label>To Date</label><input type="date" id="repVal2"></div>
-                    <div class="form-group" style="grid-column: span 2;"><label>Payment Type</label>
-                        <select id="repTyp">
-                            <option value="All">All Transactions (అన్నీ)</option>
-                            <option value="Installment">EMI Only</option>
-                            <option value="OD">OD Only</option>
-                            <option value="Seizing">Seizing Charge</option>
+                
+                <h3 class="card-title" style="font-size:14px; color:#991b1b; margin-top:10px;">Discount & Settlement Details</h3>
+                <div class="grid-4">
+                    <div class="form-group"><label>OD Discount % (వడ్డీ మాఫీ)</label><input type="number" id="clSetPer" value="0" oninput="calcOdSettlementAmt()" placeholder="Ex: 40"></div>
+                    <div class="form-group"><label>Final OD to Pay</label><input type="text" id="clLOdCalcVal" readonly style="background:#f1f5f9; font-weight:800; color:var(--success);"></div>
+                    <div class="form-group"><label>Final Settlement Amount (₹)</label><input type="number" id="clSettledAmt" style="border-color:var(--danger); font-weight:800; font-size:16px;"></div>
+                    <div class="form-group"><label>Amount Paying Now (₹)</label><input type="number" id="clRcptAmt" style="border-color:var(--success); font-weight:800; font-size:16px;"></div>
+                    <div class="form-group" style="grid-column: span 2;"><label>Closed By (ఎవరు క్లోజ్ చేసారు?)</label>
+                        <select id="clClosedBy" style="font-weight:700;">
+                            <option value="B. Rajesh (Proprietor)">B. Rajesh (Proprietor)</option>
+                            <option value="Pandu (Collection Manager)">Pandu (Collection Manager)</option>
                         </select>
                     </div>
                 </div>
-                <button class="btn" style="width:100%; padding:14px; font-size:14px;" onclick="executeReceiptLogSearch()">Search</button>
-                <div class="table-wrap" id="rpTb" style="display:none; margin-top:25px;">
-                    <table>
-                        <thead><tr><th>Receipt No</th><th>Date</th><th>HP No</th><th>Amount Paid</th><th>Type</th><th>Action</th></tr></thead>
-                        <tbody id="reprintRowsBody"></tbody>
-                    </table>
-                </div>
+                <button class="btn btn-red" style="width:100%; font-size:16px; padding:18px; margin-top:20px; font-weight:800; text-transform:uppercase; letter-spacing:1px;" onclick="submitAccountClose()">🔒 Confirm Account Closing</button>
             </div>
-        </div>
-    </div>
-
-    <!-- CLOSURE -->
-    <div id="pClose" class="page-container">
-        <div class="card no-print" style="border-top: 4px solid var(--danger);">
-            <h2 class="card-title" style="color:var(--danger); display:flex; align-items:center; gap:10px;">🔒 Account Closing / Settlement (అకౌంట్ క్లోజింగ్)</h2>
-            <div style="display:flex; gap:15px; align-items:end;">
-                <div class="form-group"><label>Enter HP No</label><input type="text" id="clHp" placeholder="Scan HP ID..." style="font-weight:800; font-size:16px;" oninput="this.value = this.value.toUpperCase();"></div>
-                <div class="form-group"><label>OD Interest (%)</label><input type="text" id="clPer" value="014" style="width:90px; font-weight:800;"></div>
-                <button class="btn btn-red" onclick="searchClosingAccount()">Check Details</button>
-            </div>
-        </div>
-        
-        <div class="card" id="clArea" style="display:none; background:#fef2f2; border:1px solid #fca5a5;">
-            <h3 class="card-title" style="color:#991b1b;">Account Closing Summary</h3>
-            <div class="grid-2">
-                <div class="info-box" style="background:#fff; border-color:#fca5a5;">
-                    <b style="color:var(--secondary);">👤 Customer Details</b><br><br>
-                    <b>Name:</b> <span id="clLNm"></span><br>
-                    <b>Mobile No:</b> <span id="clLMob"></span><br>
-                    <b>Vehicle No:</b> <b style="color:var(--primary);" id="clLVno"></b><br>
-                    <b>Vehicle Name:</b> <span id="clLVnm"></span>
-                </div>
-                <div class="info-box" style="background:#fff; border-color:#fca5a5;">
-                    <b style="color:var(--danger);">💰 Pending Balance To Pay</b><br><br>
-                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>EMI Pending Amount:</span> <b>₹<span id="clLMain" style="font-size:15px;">0.00</span></b></div>
-                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>OD Penalty Amount:</span> <b>₹<span id="clLOd" style="font-size:15px;">0.00</span></b></div>
-                    <hr style="border-top:1px dashed #fca5a5; margin:10px 0;">
-                    <div style="display:flex; justify-content:space-between; font-size:16px; font-weight:800; color:#991b1b;"><span>Total Settlement Amount:</span> <span>₹<span id="clLTotal">0.00</span></span></div>
-                </div>
-            </div>
-            
-            <h3 class="card-title" style="font-size:14px; color:#991b1b; margin-top:10px;">Discount & Settlement Details</h3>
-            <div class="grid-4">
-                <div class="form-group"><label>OD Discount % (వడ్డీ మాఫీ)</label><input type="number" id="clSetPer" value="0" oninput="calcOdSettlementAmt()" placeholder="Ex: 40"></div>
-                <div class="form-group"><label>Final OD to Pay</label><input type="text" id="clLOdCalcVal" readonly style="background:#f1f5f9; font-weight:800; color:var(--success);"></div>
-                <div class="form-group"><label>Final Settlement Amount (₹)</label><input type="number" id="clSettledAmt" style="border-color:var(--danger); font-weight:800; font-size:16px;"></div>
-                <div class="form-group"><label>Amount Paying Now (₹)</label><input type="number" id="clRcptAmt" style="border-color:var(--success); font-weight:800; font-size:16px;"></div>
-                <div class="form-group" style="grid-column: span 2;"><label>Closed By (ఎవరు క్లోజ్ చేసారు?)</label>
-                    <select id="clClosedBy" style="font-weight:700;">
-                        <option value="B. Rajesh (Proprietor)">B. Rajesh (Proprietor)</option>
-                        <option value="Pandu (Collection Manager)">Pandu (Collection Manager)</option>
-                    </select>
-                </div>
-            </div>
-            <button class="btn btn-red" style="width:100%; font-size:16px; padding:18px; margin-top:20px; font-weight:800; text-transform:uppercase; letter-spacing:1px;" onclick="submitAccountClose()">🔒 Confirm Account Closing</button>
         </div>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getDatabase, ref, set, update, onValue, push } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+    import { getDatabase, ref, set, update, get, onValue, push } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
     import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
     import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
 
@@ -620,7 +639,7 @@
     window.receiptHistory = [];
     window.currentClosingODDues = 0;
     window.currentClosingMainDues = 0;
-    window.finReportData = []; // To store report data for filtering
+    window.finReportData = []; 
     
     const getTodayDate = () => {
         let d = new Date();
@@ -630,47 +649,71 @@
         return `${year}-${month}-${day}`;
     };
 
-    const accountsRef = ref(database, 'accounts');
-    onValue(accountsRef, (snapshot) => {
-        window.db = [];
-        let tot=0, act=0, due=0, sz=0, cls=0;
-        snapshot.forEach((child) => {
-            let data = child.val();
-            window.db.push(data);
-            tot++;
-            if(data.acStatus === "OPEN") { act++; if(data.pIns > 0) due++; }
-            if(data.acStatus === "CLOSED") { cls++; }
-            if(data.sz) { sz++; }
-        });
-        
-        if(document.getElementById("db_tot")) document.getElementById("db_tot").innerText = tot;
-        if(document.getElementById("db_act")) document.getElementById("db_act").innerText = act;
-        if(document.getElementById("db_due")) document.getElementById("db_due").innerText = due;
-        if(document.getElementById("db_sz")) document.getElementById("db_sz").innerText = sz;
-        if(document.getElementById("db_closed")) document.getElementById("db_closed").innerText = cls;
+    // --- SIDEBAR TOGGLE FOR MOBILE ---
+    window.toggleSidebar = function() {
+        let sb = document.getElementById("sidebar");
+        if(sb.classList.contains("open")) { sb.classList.remove("open"); } 
+        else { sb.classList.add("open"); }
+    }
 
-        // Show Last Used HP Number in New Entry Form
-        if(window.db.length > 0) {
-            let sortedByDate = [...window.db].sort((a,b) => new Date(b.fdt) - new Date(a.fdt));
-            let latest = sortedByDate[0].hp;
-            if(document.getElementById("lastHpHint")) {
-                document.getElementById("lastHpHint").innerText = `(Last Used: ${latest})`;
+    // --- AUTO IMAGE COMPRESSION FUNCTION (100KB in seconds) ---
+    async function compressImage(file, maxWidth = 800, maxHeight = 800, quality = 0.6) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader(); reader.readAsDataURL(file);
+            reader.onload = event => {
+                const img = new Image(); img.src = event.target.result;
+                img.onload = () => {
+                    let width = img.width; let height = img.height;
+                    if (width > height) { if (width > maxWidth) { height = Math.round(height *= maxWidth / width); width = maxWidth; } } 
+                    else { if (height > maxHeight) { width = Math.round(width *= maxHeight / height); height = maxHeight; } }
+                    const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = height;
+                    const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
+                    canvas.toBlob(blob => { resolve(blob); }, 'image/jpeg', quality);
+                };
+                img.onerror = error => reject(error);
+            };
+            reader.onerror = error => reject(error);
+        });
+    }
+
+    // --- LIVE DATA SYNC (పేజీ రీఫ్రెష్ లేకుండా ఆటో అప్డేట్) ---
+    function refreshGlobalDataList() {
+        get(ref(database, 'accounts')).then((snapshot) => {
+            window.db = [];
+            let tot=0, act=0, due=0, sz=0, cls=0;
+            if (snapshot.exists()) {
+                snapshot.forEach((child) => {
+                    let data = child.val(); window.db.push(data); tot++;
+                    if(data.acStatus === "OPEN") { act++; if(data.pIns > 0) due++; }
+                    if(data.acStatus === "CLOSED") { cls++; } if(data.sz) { sz++; }
+                });
             }
-        }
-    });
+            if(document.getElementById("db_tot")) document.getElementById("db_tot").innerText = tot;
+            if(document.getElementById("db_act")) document.getElementById("db_act").innerText = act;
+            if(document.getElementById("db_due")) document.getElementById("db_due").innerText = due;
+            if(document.getElementById("db_sz")) document.getElementById("db_sz").innerText = sz;
+            if(document.getElementById("db_closed")) document.getElementById("db_closed").innerText = cls;
+
+            // "లాస్ట్ వాడిన HP నంబర్"
+            if(window.db.length > 0 && document.getElementById("lastHpHint")) {
+                let sortedByHp = [...window.db].sort((a,b) => b.hp.localeCompare(a.hp, undefined, {numeric: true}));
+                document.getElementById("lastHpHint").innerText = `(Last Used: ${sortedByHp[0].hp})`;
+            }
+            if(document.getElementById('pReg') && document.getElementById('pReg').style.display === 'block') { if(window.ldReg) window.ldReg(); }
+        });
+    }
+
+    const accountsRef = ref(database, 'accounts');
+    onValue(accountsRef, (snapshot) => { refreshGlobalDataList(); });
 
     const receiptsRef = ref(database, 'receipts');
     onValue(receiptsRef, (snapshot) => {
         window.receiptHistory = [];
-        snapshot.forEach((child) => {
-            window.receiptHistory.push(child.val());
-        });
+        if(snapshot.exists()){ snapshot.forEach((child) => { window.receiptHistory.push(child.val()); }); }
     });
 
     window.doLogin = function(){ 
-        let uid = document.getElementById("uid").value.trim();
-        let pwd = document.getElementById("pwd").value.trim();
-        
+        let uid = document.getElementById("uid").value.trim(); let pwd = document.getElementById("pwd").value.trim();
         if(!uid || !pwd) { alert("Please enter both ID and Password"); return; }
         let email = uid.includes("@") ? uid : uid + "@svpfinance.com";
 
@@ -678,146 +721,88 @@
             .then(() => { return signInWithEmailAndPassword(auth, email, pwd); })
             .then((userCredential) => {
                 document.getElementById("loginScreen").style.display="none"; 
-                document.getElementById("sidebar").style.display="flex"; 
-                document.getElementById("mainContent").style.display="flex"; 
-                document.getElementById("cloudStatus").innerText = `🟢 Cloud Sync: Active | User: ${uid.toUpperCase()}`;
-                window.nav("pDash"); 
-            }).catch((error) => {
-                alert("Authentication Failed. Please check your ID and Password."); 
-            });
+                document.getElementById("globalHeader").style.display="flex"; 
+                document.getElementById("appWrapper").style.display="flex"; 
+                document.getElementById("cloudStatus").innerText = `🟢 User: ${uid.toUpperCase()}`; window.nav("pDash"); 
+            }).catch((error) => { alert("Authentication Failed. Please check your ID and Password."); });
     }
     
-    window.doLogout = function() {
-        signOut(auth).then(() => { window.location.reload(); });
-    }
+    window.doLogout = function() { signOut(auth).then(() => { window.location.reload(); }); }
 
     onAuthStateChanged(auth, (user) => {
         if (user) {
             document.getElementById("loginScreen").style.display="none"; 
-            document.getElementById("sidebar").style.display="flex"; 
-            document.getElementById("mainContent").style.display="flex"; 
-            let displayEmail = user.email ? user.email.split('@')[0].toUpperCase() : "AUTH";
-            document.getElementById("cloudStatus").innerText = `🟢 Cloud Sync: Active | User: ${displayEmail}`;
-            window.nav("pDash");
+            document.getElementById("globalHeader").style.display="flex"; 
+            document.getElementById("appWrapper").style.display="flex"; 
+            let displayEmail = user.email ? user.email.split('@')[0].toUpperCase() : "AUTH"; 
+            document.getElementById("cloudStatus").innerText = `🟢 User: ${displayEmail}`; window.nav("pDash");
         }
     });
 
     window.nav = function(id){ 
-        document.querySelectorAll(".page-container").forEach(e=>e.style.display="none"); 
-        document.querySelectorAll(".nav-links li").forEach(e=>e.classList.remove("active")); 
-        document.getElementById(id).style.display="block"; 
-        let navLink = document.getElementById("nl_"+id);
-        if(navLink) navLink.classList.add("active"); 
-        if(id==='pReg') { if(window.ldReg) window.ldReg(); }
-        if(id==='pDues') { if(window.genDues) window.genDues(); }
+        document.querySelectorAll(".page-container").forEach(e=>e.style.display="none"); document.querySelectorAll(".nav-links li").forEach(e=>e.classList.remove("active")); 
+        document.getElementById(id).style.display="block"; let navLink = document.getElementById("nl_"+id); if(navLink) navLink.classList.add("active"); 
+        document.getElementById("sidebar").classList.remove("open");
+        if(id==='pReg') { if(window.ldReg) window.ldReg(); } if(id==='pDues') { if(window.genDues) window.genDues(); }
     }
 
     window.toggleDocReason = function(type) {
-        if(type === 'cb') {
-            let val = document.getElementById("in_cb").value;
-            document.getElementById("cb_r_box").style.display = (val === 'No') ? 'flex' : 'none';
-        } else if(type === 'noc') {
-            let val = document.getElementById("in_noc").value;
-            document.getElementById("noc_r_box").style.display = (val === 'No') ? 'flex' : 'none';
-        }
+        if(type === 'cb') { let val = document.getElementById("in_cb").value; document.getElementById("cb_r_box").style.display = (val === 'No') ? 'flex' : 'none'; } 
+        else if(type === 'noc') { let val = document.getElementById("in_noc").value; document.getElementById("noc_r_box").style.display = (val === 'No') ? 'flex' : 'none'; }
     }
 
-    // --- FINANCE REPORT (Click to Filter Feature) ---
+    // --- FINANCE REPORT ---
     window.generateFinanceReport = function() {
-        let fDate = document.getElementById("finFDate").value;
-        let tDate = document.getElementById("finTDate").value;
-        
+        let fDate = document.getElementById("finFDate").value; let tDate = document.getElementById("finTDate").value;
         if(!fDate || !tDate) { alert("Please select both From Date and To Date (తేదీలు ఎంచుకోండి)"); return; }
 
-        let docTotal = 0, emiTotal = 0, odTotal = 0, szTotal = 0;
-        window.finReportData = []; // Clear old data
+        let docTotal = 0, emiTotal = 0, odTotal = 0, szTotal = 0; window.finReportData = []; 
         
         window.db.forEach(a => {
-            if(a.fdt >= fDate && a.fdt <= tDate && a.doc > 0) {
-                docTotal += a.doc;
-                window.finReportData.push({ date: a.fdt, hp: a.hp, name: a.srn + " " + a.nm, type: 'DOC', typeLabel: '<span class="tag tag-pending">Doc Charges</span>', amount: a.doc, color: 'var(--primary)' });
+            if(a.fdt >= fDate && a.fdt <= tDate && (a.doc > 0 || a.bdoc > 0)) {
+                let netDoc = (a.doc || 0) - (a.bdoc || 0); // Office Doc - Broker Doc
+                if(netDoc > 0) {
+                    docTotal += netDoc; 
+                    window.finReportData.push({ date: a.fdt, hp: a.hp, name: a.srn + " " + a.nm, type: 'DOC', typeLabel: '<span class="tag tag-pending">Office Doc Charges</span>', amount: netDoc, color: 'var(--primary)' });
+                }
             }
         });
         
         window.receiptHistory.forEach(r => {
             if(r.dt >= fDate && r.dt <= tDate) {
-                let rData = window.db.find(x => x.hp === r.hp);
-                let cName = rData ? (rData.srn + " " + rData.nm) : "Unknown";
-                
-                if(r.type === "Installment") {
-                    emiTotal += r.amt;
-                    window.finReportData.push({ date: r.dt, hp: r.hp, name: cName, type: 'EMI', typeLabel: '<span class="tag tag-paid">EMI Amount</span>', amount: r.amt, color: 'var(--success)' });
-                } 
-                else if(r.type === "OD") {
-                    odTotal += r.amt;
-                    window.finReportData.push({ date: r.dt, hp: r.hp, name: cName, type: 'OD', typeLabel: '<span class="tag tag-pending" style="background:#fef08a;">OD Penalty</span>', amount: r.amt, color: 'var(--warning)' });
-                }
-                else if(r.type === "Seizing") {
-                    szTotal += r.amt;
-                    window.finReportData.push({ date: r.dt, hp: r.hp, name: cName, type: 'SEIZING', typeLabel: '<span class="tag tag-seized">Seizing Charge</span>', amount: r.amt, color: 'var(--danger)' });
-                }
+                let rData = window.db.find(x => x.hp === r.hp); let cName = rData ? (rData.srn + " " + rData.nm) : "Unknown";
+                if(r.type === "Installment") { emiTotal += r.amt; window.finReportData.push({ date: r.dt, hp: r.hp, name: cName, type: 'EMI', typeLabel: '<span class="tag tag-paid">EMI Amount</span>', amount: r.amt, color: 'var(--success)' }); } 
+                else if(r.type === "OD") { odTotal += r.amt; window.finReportData.push({ date: r.dt, hp: r.hp, name: cName, type: 'OD', typeLabel: '<span class="tag tag-pending" style="background:#fef08a;">OD Penalty</span>', amount: r.amt, color: 'var(--warning)' }); }
+                else if(r.type === "Seizing") { szTotal += r.amt; window.finReportData.push({ date: r.dt, hp: r.hp, name: cName, type: 'SEIZING', typeLabel: '<span class="tag tag-seized">Seizing Charge</span>', amount: r.amt, color: 'var(--danger)' }); }
                 else if(r.type === "Account Closed" || r.type === "Official Closure Protocol") {
-                    let odPart = rData ? (rData.settledOd || 0) : 0;
-                    let emiPart = r.amt - odPart;
-                    if(emiPart < 0) emiPart = 0;
-                    
-                    if(odPart > 0) {
-                        odTotal += odPart;
-                        window.finReportData.push({ date: r.dt, hp: r.hp, name: cName, type: 'OD', typeLabel: '<span class="tag tag-pending" style="background:#fef08a;">A/C Close OD</span>', amount: odPart, color: 'var(--warning)' });
-                    }
-                    if(emiPart > 0) {
-                        emiTotal += emiPart;
-                        window.finReportData.push({ date: r.dt, hp: r.hp, name: cName, type: 'EMI', typeLabel: '<span class="tag tag-paid">A/C Close EMI</span>', amount: emiPart, color: 'var(--primary-dark)' });
-                    }
+                    let odPart = rData ? (rData.settledOd || 0) : 0; let emiPart = r.amt - odPart; if(emiPart < 0) emiPart = 0;
+                    if(odPart > 0) { odTotal += odPart; window.finReportData.push({ date: r.dt, hp: r.hp, name: cName, type: 'OD', typeLabel: '<span class="tag tag-pending" style="background:#fef08a;">A/C Close OD</span>', amount: odPart, color: 'var(--warning)' }); }
+                    if(emiPart > 0) { emiTotal += emiPart; window.finReportData.push({ date: r.dt, hp: r.hp, name: cName, type: 'EMI', typeLabel: '<span class="tag tag-paid">A/C Close EMI</span>', amount: emiPart, color: 'var(--primary-dark)' }); }
                 }
             }
         });
         
         let grandTotal = docTotal + emiTotal + odTotal + szTotal;
-        document.getElementById("rep_doc").innerText = "₹" + docTotal;
-        document.getElementById("rep_emi").innerText = "₹" + emiTotal;
-        document.getElementById("rep_od").innerText = "₹" + odTotal;
-        document.getElementById("rep_sz").innerText = "₹" + szTotal;
-        document.getElementById("rep_tot").innerText = "₹" + grandTotal;
-        
-        document.getElementById("finRepResults").style.display = "grid";
-        document.getElementById("finRepTableBox").style.display = "block";
-        
-        // Show all by default
+        document.getElementById("rep_doc").innerText = "₹" + docTotal; document.getElementById("rep_emi").innerText = "₹" + emiTotal; document.getElementById("rep_od").innerText = "₹" + odTotal; document.getElementById("rep_sz").innerText = "₹" + szTotal; document.getElementById("rep_tot").innerText = "₹" + grandTotal;
+        document.getElementById("finRepResults").style.display = "grid"; document.getElementById("finRepTableBox").style.display = "block";
         window.filterFinReport('ALL');
     }
 
-    // Function to filter the report table based on the clicked card
     window.filterFinReport = function(filterType) {
-        let tb = document.getElementById("finRepTb");
-        tb.innerHTML = "";
-        let filtered = window.finReportData;
-        
-        if(filterType !== 'ALL') {
-            filtered = window.finReportData.filter(x => x.type === filterType);
-        }
-        
-        if(filtered.length === 0) {
-            tb.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px; color:var(--danger); font-weight:bold;">No matching records. (ఈ డేటా లేదు)</td></tr>`;
-            return;
-        }
-        
-        // Sort by date descending
+        let tb = document.getElementById("finRepTb"); tb.innerHTML = ""; let filtered = window.finReportData;
+        if(filterType !== 'ALL') { filtered = window.finReportData.filter(x => x.type === filterType); }
+        if(filtered.length === 0) { tb.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px; color:var(--danger); font-weight:bold;">No matching records. (ఈ డేటా లేదు)</td></tr>`; return; }
         filtered.sort((a,b) => new Date(b.date) - new Date(a.date));
-        
-        filtered.forEach(item => {
-            tb.innerHTML += `<tr><td>${item.date}</td><td><b style="color:var(--primary);">${item.hp}</b></td><td>${item.name}</td><td>${item.typeLabel}</td><td style="font-weight:bold; color:${item.color};">₹${item.amount}</td></tr>`;
-        });
+        filtered.forEach(item => { tb.innerHTML += `<tr><td>${item.date}</td><td><b style="color:var(--primary);">${item.hp}</b></td><td>${item.name}</td><td>${item.typeLabel}</td><td style="font-weight:bold; color:${item.color};">₹${item.amount}</td></tr>`; });
     }
 
-    // --- NEW ENTRY ---
+    // --- NEW ENTRY (With Auto EMI Calculation) ---
     window.executeHPSave = async function() {
         let targetHP = document.getElementById("in_hp").value.toUpperCase().trim();
         if(!targetHP) { alert("Error: Please enter HP Number (కొత్త నంబర్ వేయండి)"); return; }
         
-        // Check for duplicate HP Number
         let existing = window.db.find(x => x.hp === targetHP);
-        if(existing) { alert(`Error: The HP Number "${targetHP}" is already used! Please enter a different number.\n(ఈ నంబర్ ముందే వాడారు. దయచేసి కొత్తది ఇవ్వండి)`); return; }
+        if(existing) { alert(`Error: The HP Number "${targetHP}" is already used!\n(ఈ నంబర్ ముందే వాడారు. దయచేసి కొత్తది ఇవ్వండి)`); return; }
 
         let cMob = document.getElementById("in_cmob").value; let cAad = document.getElementById("in_caad").value;
         if(cMob.length !== 10) { alert("Error: Please enter a valid 10-digit Mobile Number for Customer."); return; }
@@ -829,20 +814,34 @@
             let cImgFile = document.getElementById("in_cimg").files[0]; let gImgFile = document.getElementById("in_gimg").files[0];
             let cImgUrl = "https://ui-avatars.com/api/?name=User&background=random"; let gImgUrl = "https://ui-avatars.com/api/?name=Guarantor&background=random";
             
-            if(cImgFile) { let imgRef = sRef(storage, `kyc/${targetHP}_customer`); await uploadBytes(imgRef, cImgFile); cImgUrl = await getDownloadURL(imgRef); }
-            if(gImgFile) { let imgRef = sRef(storage, `kyc/${targetHP}_guarantor`); await uploadBytes(imgRef, gImgFile); gImgUrl = await getDownloadURL(imgRef); }
+            if(cImgFile) { try { let compressedCImg = await compressImage(cImgFile); let imgRef = sRef(storage, `kyc/${targetHP}_customer.jpg`); await uploadBytes(imgRef, compressedCImg); cImgUrl = await getDownloadURL(imgRef); } catch(e){console.log(e)} }
+            if(gImgFile) { try { let compressedGImg = await compressImage(gImgFile); let imgRef = sRef(storage, `kyc/${targetHP}_guarantor.jpg`); await uploadBytes(imgRef, compressedGImg); gImgUrl = await getDownloadURL(imgRef); } catch(e){console.log(e)} }
+            
             let agreeDate = document.getElementById("in_fdt").value || getTodayDate();
+            
+            // AUTO EMI CALCULATION
+            let amt = parseFloat(document.getElementById("in_famt").value) || 0;
+            let doc = parseFloat(document.getElementById("in_doc").value) || 0;
+            let bdoc = parseFloat(document.getElementById("in_bdoc").value) || 0;
+            let hpc = parseFloat(document.getElementById("in_hpc").value) || 0;
+            let ten = parseInt(document.getElementById("in_ten").value) || 24;
+            
+            let totalLiability = amt + doc + bdoc + hpc;
+            let emiAmount = Math.round(totalLiability / ten);
 
             let newAccount = {
                 hp: targetHP, nm: document.getElementById("in_cnm").value, fnm: document.getElementById("in_cfnm").value, srn: document.getElementById("in_csur").value, mob: cMob, occ: document.getElementById("in_cocc").value,
                 vno: document.getElementById("in_vreg").value.toUpperCase(), vnm: document.getElementById("in_vnm").value, yr: document.getElementById("in_vyr").value, vl: document.getElementById("in_cvl").value, md: document.getElementById("in_cmd").value, adr: document.getElementById("in_cadr").value, aadh: cAad, pin: document.getElementById("in_cpin").value,
                 gnm: document.getElementById("in_gnm").value, gsrn: document.getElementById("in_gsur").value, gmob: document.getElementById("in_gmob").value, gocc: document.getElementById("in_gocc").value, gadr: document.getElementById("in_gadr").value, gfnm: document.getElementById("in_gfnm").value, gaad: document.getElementById("in_gaad").value, gvl: document.getElementById("in_gvl").value, gmd: document.getElementById("in_gmd").value,
-                fdt: agreeDate, exp: "2028-06-25", amt: parseFloat(document.getElementById("in_famt").value) || 0, doc: parseFloat(document.getElementById("in_doc").value) || 0, hpc: parseFloat(document.getElementById("in_hpc").value) || 0, ten: parseInt(document.getElementById("in_ten").value) || 24, consultancy: document.getElementById("in_cons").value, verifiedBy: document.getElementById("in_ver").value, vcn: document.getElementById("in_vcn").value, ven: document.getElementById("in_ven").value, vcol: document.getElementById("in_vcol").value,
+                fdt: agreeDate, exp: "2028-06-25", amt: amt, doc: doc, bdoc: bdoc, hpc: hpc, ten: ten, consultancy: document.getElementById("in_cons").value, verifiedBy: document.getElementById("in_ver").value, vcn: document.getElementById("in_vcn").value, ven: document.getElementById("in_ven").value, vcol: document.getElementById("in_vcol").value,
                 cb: document.getElementById("in_cb").value, cbReason: document.getElementById("in_cb").value === "No" ? document.getElementById("in_cb_r").value : "", noc: document.getElementById("in_noc").value, nocReason: document.getElementById("in_noc").value === "No" ? document.getElementById("in_noc_r").value : "", vYear: document.getElementById("in_vyr").value,
-                pIns: 1, iAmt: 3000, pInsDone: 0, lastRecDt: "", matured: false, sz: false, sBy: "", yard: "", szC: 0, szDt: "", cImg: cImgUrl, gImg: gImgUrl, acStatus: "OPEN", closedDt: "", closedBy: "", settledAmt: 0, settledOd: 0
+                pIns: ten, iAmt: emiAmount, pInsDone: 0, lastRecDt: "", matured: false, sz: false, sBy: "", yard: "", szC: 0, szDt: "", cImg: cImgUrl, gImg: gImgUrl, acStatus: "OPEN", closedDt: "", closedBy: "", settledAmt: 0, settledOd: 0
             };
+            
             await set(ref(database, 'accounts/' + targetHP), newAccount);
-            alert(`Success: Account ${targetHP} Saved Successfully!`); document.getElementById("hpMainInputForm").reset();
+            refreshGlobalDataList(); // Force Instant Load
+            alert(`Success: Account ${targetHP} Saved Successfully!`); 
+            document.getElementById("hpMainInputForm").reset();
         } catch (err) { alert("Error saving data: " + err); } finally { saveBtn.innerText = "💾 Save Account in Database"; saveBtn.disabled = false; }
     }
 
@@ -879,11 +878,11 @@
             <div class="info-box" style="display:flex;gap:20px; align-items:flex-start;"><img src="${d.gImg}" class="profile-img">
             <div><b style="color:var(--primary); font-size:14px;">🤝 Guarantor Details</b><br><br><div class="grid-2" style="gap:5px;"><span><b>Name:</b></span><span>${d.gsrn} ${d.gnm}</span><span><b>Mobile:</b></span><span>${d.gmob}</span><span><b>Aadhar:</b></span><span>${d.gaad}</span><span><b>Work:</b></span><span>${d.gocc}</span><span style="grid-column:span 2;"><b>Address:</b> ${d.gadr}, ${d.gvl}, ${d.gmd}</span></div></div></div></div>
             <div class="info-box" style="background:#fff;"><b style="color:var(--secondary); font-size:14px;">⚙️ Vehicle Details:</b> <br>Vehicle No: <b>${d.vno}</b> | Name & Model: ${d.vnm} | Year: ${d.vYear} | Chassis No: ${d.vcn} | Engine No: ${d.ven} | Color: ${d.vcol}<br><br>
-            <b style="color:var(--secondary); font-size:14px;">📊 Finance Details:</b> <br>Loan Amount: <b>₹${d.amt}</b> | Doc Charges: ₹${d.doc} | Total Interest: ₹${d.hpc} | Months: ${d.ten} Mos <br> RC Book: ${d.cb} (${d.cbReason || 'Okay'}) | NOC: ${d.noc} (${d.nocReason || 'Okay'}) | Officer: ${d.verifiedBy} | Status: <b style="color:${d.acStatus==='CLOSED'?'var(--danger)':'var(--success)'};">${d.acStatus}</b></div>`; 
+            <b style="color:var(--secondary); font-size:14px;">📊 Finance Details:</b> <br>Loan Amount: <b>₹${d.amt}</b> | Office Doc: ₹${d.doc} | Broker Doc: ₹${d.bdoc || 0} | Total Interest: ₹${d.hpc} | Months: ${d.ten} Mos <br> RC Book: ${d.cb} (${d.cbReason || 'Okay'}) | NOC: ${d.noc} (${d.nocReason || 'Okay'}) | Officer: ${d.verifiedBy} | Status: <b style="color:${d.acStatus==='CLOSED'?'var(--danger)':'var(--success)'};">${d.acStatus}</b></div>`; 
         document.getElementById("regModal").style.display="flex"; 
     }
 
-    // --- DUES ---
+    // --- DUES (Village & Mandal Added) ---
     window.chgDueUI = function(){ let m=document.getElementById("dType").value==="Matured"; document.getElementById("dToDt").style.display=m?'block':'none'; document.getElementById("dLblDt").innerText=m?'Date':'Today Date'; document.getElementById("dThDt").innerText=m?'End Date':'Agr Date'; }
     window.chgDueOp = function(){ document.getElementById("dVl2Box").style.display = document.getElementById("dOp").value === "Between" ? "block" : "none"; }
     window.genDues = function(){ 
@@ -894,14 +893,14 @@
             let mtc = false; 
             if(op==="All") mtc=true; else if(op==="=") mtc=(d.pIns===v1); else if(op===">") mtc=(d.pIns>v1); else if(op==="<") mtc=(d.pIns<v1); else if(op==="Between") mtc=(d.pIns >= v1 && d.pIns <= v2);
             if(mtc) {
-                let customerLabelStacked = `<b>${d.srn} ${d.nm}</b><br><span>Ph:</span> ${d.mob} | <span>Work:</span> ${d.occ}<br><span>Add:</span> ${d.adr}, ${d.vl}`;
-                let guarantorLabelStacked = `<b>${d.gsrn} ${d.gnm}</b><br><span>Ph:</span> ${d.gmob} | <span>Work:</span> ${d.gocc}<br><span>Add:</span> ${d.gadr}`;
+                let customerLabelStacked = `<b>${d.srn} ${d.nm}</b><br><span>Ph:</span> ${d.mob} | <span>Work:</span> ${d.occ}<br><span>Add:</span> ${d.vl}, ${d.md}`; // ADDED MANDAL & VILLAGE
+                let guarantorLabelStacked = `<b>${d.gsrn} ${d.gnm}</b><br><span>Ph:</span> ${d.gmob} | <span>Work:</span> ${d.gocc}<br><span>Add:</span> ${d.gvl}, ${d.gmd}`;
                 tb.innerHTML+=`<tr><td>${sno++}</td><td><b style="color:var(--primary); font-size:14px;">${d.hp}</b></td><td><div class="profile-summary">${customerLabelStacked}</div></td><td><div class="profile-summary">${guarantorLabelStacked}</div></td><td>${d.vnm}</td><td><span class="tag tag-pending" style="font-size:12px;">${d.vno}</span></td><td>${m?d.exp:d.fdt}</td><td style="font-weight:800; color:var(--text-muted); text-align:center;">${d.lastRecDt || '-'}</td><td style="color:var(--danger);font-weight:800;font-size:16px;text-align:center;">${d.pIns}</td><td style="font-weight:600;">₹${d.iAmt}</td><td style="color:var(--danger);font-weight:800; font-size:14px;">₹${d.pIns*d.iAmt}</td><td style="text-align:center;"><span class="tag tag-paid">Active: ${d.pInsDone} / ${d.ten}</span></td></tr>`;
             }
         });
     }
 
-    // --- OD CALCULATOR ---
+    // --- CALCULATIONS (Fixed Headers, Logic, and Table Size) ---
     window.genOD = function(){ 
         let hp=document.getElementById("odAcc").value.toUpperCase(); let pc=document.getElementById("odPer").value; let d=window.db.find(x=>x.hp===hp); 
         if(!d){alert("Account not found. (ఈ నంబర్ లేదు!)"); return;}
@@ -909,50 +908,70 @@
         let rdue = d.acStatus === "CLOSED" ? 0 : (d.pIns*d.iAmt); document.getElementById("od_rdue").innerText=rdue.toFixed(2);
         let pendingCount = d.acStatus === "CLOSED" ? 0 : d.pIns; document.getElementById("od_pend").innerText=pendingCount;
         document.getElementById("od_vno").innerText=d.vno.replace(/\s/g,''); document.getElementById("od_mk").innerText=d.yr; document.getElementById("od_mdl").innerText=d.vnm.toUpperCase(); document.getElementById("od_en").innerText=d.ven || ""; document.getElementById("od_cn").innerText=d.vcn || ""; document.getElementById("od_currentDt").innerText = getTodayDate();
-        let statusEl = document.getElementById("od_acStat"); if(d.acStatus === "CLOSED") { statusEl.innerHTML = `<span style="color:var(--danger);">A/C CLOSED<br>(Date: ${d.closedDt})<br>(By: ${d.closedBy})</span>`; } else { statusEl.innerText = "NOT CLOSED"; statusEl.style.color = "var(--success)"; }
+        let statusEl = document.getElementById("od_acStat"); if(d.acStatus === "CLOSED") { statusEl.innerHTML = `<span style="color:var(--danger);">A/C CLOSED<br>(Date: ${d.closedDt})</span>`; } else { statusEl.innerText = "NOT CLOSED"; statusEl.style.color = "var(--success)"; }
         document.getElementById("od_szBulb").className = d.sz ? "bulb bulb-r" : "bulb bulb-g"; document.getElementById("od_matBulb").className = d.mat ? "bulb bulb-r" : "bulb bulb-g"; document.getElementById("od_cbBulb").className = d.cb === "Yes" ? "bulb bulb-g" : "bulb bulb-r"; document.getElementById("od_matTxt").innerText = d.mat ? "M" : "R"; document.getElementById("od_prcTxt").innerText = pc;
+        
         let tb=document.getElementById("odTb"); tb.innerHTML=""; let tf=0, td=0, ti=0; 
-        let mthParts = d.fdt.split('-'); let mth = new Date(mthParts[0], mthParts[1] - 1, mthParts[2]); let matchedSlips = window.receiptHistory.filter(h=>h.hp===d.hp);
-        for(let i=1; i<=d.pIns; i++){ 
-            let dd=new Date(mth); dd.setMonth(dd.getMonth()+(i-1)); let odD=595-(i*30); if(odD<0)odD=0; let odI=(d.iAmt*odD*(parseInt(pc)/100))/26.5; tf+=d.iAmt; td+=odD; ti+=odI;
-            if (d.acStatus === "CLOSED") { let lastTrNumCode = matchedSlips.length > 0 ? matchedSlips[matchedSlips.length-1].tr : "TR-CLS-AUTO"; tb.innerHTML+=`<tr><td>${i}</td><td>${dd.toLocaleDateString('en-GB')}</td><td>${d.closedDt}</td><td>${d.iAmt.toFixed(2)}</td><td><b>${lastTrNumCode}</b></td><td>${d.iAmt.toFixed(2)}</td><td>0.00</td><td>${odD}</td><td>${odI.toFixed(2)}</td></tr>`; } else { tb.innerHTML+=`<tr><td>${i}</td><td>${dd.toLocaleDateString('en-GB')}</td><td></td><td>${d.iAmt.toFixed(2)}</td><td></td><td></td><td></td><td>${odD}</td><td>${odI.toFixed(2)}</td></tr>`; }
+        let mthParts = d.fdt.split('-'); let mth = new Date(mthParts[0], mthParts[1] - 1, mthParts[2]); 
+        let matchedSlips = window.receiptHistory.filter(h=>h.hp===d.hp && h.type==="Installment");
+        matchedSlips.sort((a,b) => new Date(a.dt) - new Date(b.dt));
+
+        // SHOWS ALL TENURE MONTHS EXACTLY
+        for(let i=1; i<=d.ten; i++){ 
+            let dd=new Date(mth); dd.setMonth(dd.getMonth()+(i-1)); 
+            let paidDate = ""; let paidAmt = ""; let trNum = ""; let odDays = 0; let odInt = 0;
+            
+            if(matchedSlips[i-1]) {
+                let slip = matchedSlips[i-1]; paidDate = slip.dt; paidAmt = slip.amt.toFixed(2); trNum = slip.tr;
+                let d1 = new Date(dd); let d2 = new Date(paidDate); let diffTime = d2 - d1; let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                if(diffDays > 0) { odDays = diffDays; odInt = (d.iAmt * odDays * (parseInt(pc)/100)) / 26.5; }
+            } else {
+                let d1 = new Date(dd); let d2 = new Date(); let diffTime = d2 - d1; let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                if(diffDays > 0 && d.acStatus !== "CLOSED") { odDays = diffDays; odInt = (d.iAmt * odDays * (parseInt(pc)/100)) / 26.5; }
+            }
+            
+            tf+=d.iAmt; td+=odDays; ti+=odInt;
+            
+            if (d.acStatus === "CLOSED" && !matchedSlips[i-1]) { let lastTrNumCode = window.receiptHistory.filter(h=>h.hp===d.hp).pop()?.tr || "CLS"; tb.innerHTML+=`<tr><td>${i}</td><td>${dd.toLocaleDateString('en-GB')}</td><td>${d.closedDt}</td><td>${d.iAmt.toFixed(2)}</td><td><b>${lastTrNumCode}</b></td><td>${d.iAmt.toFixed(2)}</td><td>0.00</td><td>${odDays}</td><td>${odInt.toFixed(2)}</td></tr>`; } 
+            else { tb.innerHTML+=`<tr><td>${i}</td><td>${dd.toLocaleDateString('en-GB')}</td><td>${paidDate}</td><td>${d.iAmt.toFixed(2)}</td><td><b>${trNum}</b></td><td>${paidAmt}</td><td>0.00</td><td>${odDays}</td><td>${odInt.toFixed(2)}</td></tr>`; }
         }
+        
         document.getElementById("od_tf").innerText=tf.toFixed(2); document.getElementById("od_td").innerText=td; 
         if(d.acStatus === "CLOSED") { let displayODVal = `${ti.toFixed(2)} - <span style="color:var(--danger); font-weight:800;">${(d.settledOd || 0).toFixed(2)}</span>`; document.getElementById("od_ti").innerHTML = displayODVal; document.getElementById("sum_odue").innerHTML = displayODVal; } else { document.getElementById("od_ti").innerText=ti.toFixed(2); document.getElementById("sum_odue").innerText=ti.toFixed(2); }
-        let tfa = d.amt + (d.doc || 0); document.getElementById("sum_fin").innerText=d.amt.toFixed(2); document.getElementById("sum_hp").innerText=d.hpc.toFixed(2); document.getElementById("sum_szc").innerText = (d.szC || 0).toFixed(2);
-        document.getElementById("sum_tot1").innerText=(d.amt + d.hpc + (d.szC||0)).toFixed(2); document.getElementById("sum_fin2").innerText=tfa.toFixed(2); document.getElementById("sum_hp2").innerText=d.hpc.toFixed(2); document.getElementById("sum_bal").innerText=d.acStatus === "CLOSED" ? "0.00" : (d.amt + d.hpc + (d.szC||0)).toFixed(2); document.getElementById("sum_tdue").innerText=d.acStatus === "CLOSED" ? "0.00" : (d.amt + d.hpc + (d.szC||0)).toFixed(2); 
-        let primaryCollectedDisplayAmt = d.acStatus === "CLOSED" ? d.amt : 0.00; document.getElementById("sum_col").innerText = primaryCollectedDisplayAmt.toFixed(2); let fBal = d.acStatus === "CLOSED" ? 0.00 : (d.amt + d.hpc + (d.szC||0) + ti); document.getElementById("sum_fbal").innerText = fBal.toFixed(2); document.getElementById("odReportArea").style.display="block";
+        
+        let baseFin = (d.amt||0) + (d.doc||0) + (d.bdoc||0);
+        let tfa = baseFin + (d.hpc||0); 
+        document.getElementById("sum_fin").innerText=baseFin.toFixed(2); document.getElementById("sum_hp").innerText=(d.hpc||0).toFixed(2); document.getElementById("sum_szc").innerText = (d.szC || 0).toFixed(2);
+        document.getElementById("sum_tot1").innerText=(baseFin + (d.szC||0)).toFixed(2); document.getElementById("sum_fin2").innerText=tfa.toFixed(2); document.getElementById("sum_hp2").innerText=(d.hpc||0).toFixed(2); document.getElementById("sum_bal").innerText=d.acStatus === "CLOSED" ? "0.00" : (baseFin + (d.hpc||0) + (d.szC||0)).toFixed(2); document.getElementById("sum_tdue").innerText=d.acStatus === "CLOSED" ? "0.00" : (baseFin + (d.hpc||0) + (d.szC||0)).toFixed(2); 
+        let primaryCollectedDisplayAmt = d.acStatus === "CLOSED" ? baseFin : 0.00; document.getElementById("sum_col").innerText = primaryCollectedDisplayAmt.toFixed(2); let fBal = d.acStatus === "CLOSED" ? 0.00 : (baseFin + (d.hpc||0) + (d.szC||0) + ti); document.getElementById("sum_fbal").innerText = fBal.toFixed(2); document.getElementById("odReportArea").style.display="block";
     }
 
     // --- SEIZURE ---
     window.fetchSeizeProfile = function(){ 
         let d=window.db.find(x=>x.hp===document.getElementById("szHp").value.toUpperCase().trim()); 
         if(d){ 
-            if(d.acStatus === "CLOSED") { alert("Account is Closed. (ఈ అకౌంట్ క్లోజ్ అయిపోయింది)"); return; }
+            if(d.acStatus === "CLOSED") { alert("Account is Closed."); return; }
             document.getElementById("szN").innerText=(d.srn+" "+d.nm).toUpperCase(); document.getElementById("szV").innerText=d.vno; document.getElementById("szVnm").innerText=d.vnm.toUpperCase(); document.getElementById("szPIns").innerText=d.pIns; document.getElementById("szD").innerText=(d.pIns*d.iAmt); document.getElementById("szData").style.display="block"; 
             if(d.sz) { document.getElementById("szSt").value = "Seized"; document.getElementById("szYard").value = d.yard; document.getElementById("szChrg").value = d.szC; } else { document.getElementById("szSt").value = ""; document.getElementById("szYard").value = ""; document.getElementById("szChrg").value = ""; }
             window.executeSeizeToggleLogic();
-        } else alert("Invalid HP Number. (అకౌంట్ లేదు)");
+        } else alert("Invalid HP Number.");
     }
     window.executeSeizeToggleLogic = function(){ 
         let v=document.getElementById("szSt").value; let d=window.db.find(x=>x.hp===document.getElementById("szHp").value.toUpperCase().trim()); let b=document.getElementById("szBulb");
-        if(v==="Seized"){ b.className="bulb bulb-r"; document.getElementById("szYardBox").style.display="flex"; document.getElementById("szChargesBox").style.display="flex"; document.getElementById("szChrg").readOnly = false; document.getElementById("szPerLbl").innerText = "Agent Name (ఎవరు తెచ్చారు?)"; } else if(v==="Returned"){ b.className="bulb bulb-g"; document.getElementById("szYardBox").style.display="none"; document.getElementById("szChargesBox").style.display="flex"; document.getElementById("szChrg").value = d.szC; document.getElementById("szChrg").readOnly = true; document.getElementById("szPerLbl").innerText = "Manager Name"; if(d.szC > 0) alert(`⚠️ Please collect Seizing Charges ₹${d.szC} before releasing.`); } else { b.className="bulb bulb-gy"; }
+        if(v==="Seized"){ b.className="bulb bulb-r"; document.getElementById("szYardBox").style.display="flex"; document.getElementById("szChargesBox").style.display="flex"; document.getElementById("szChrg").readOnly = false; document.getElementById("szPerLbl").innerText = "Agent Name (ఎవరు తెచ్చారు?)"; } else if(v==="Returned"){ b.className="bulb bulb-g"; document.getElementById("szYardBox").style.display="none"; document.getElementById("szChargesBox").style.display="flex"; document.getElementById("szChrg").value = d.szC; document.getElementById("szChrg").readOnly = true; document.getElementById("szPerLbl").innerText = "Manager Name"; } else { b.className="bulb bulb-gy"; }
     }
     window.commitSeizeLedgerUpdate = function(){
         let hp=document.getElementById("szHp").value.toUpperCase().trim(); let d=window.db.find(x=>x.hp===hp); let st=document.getElementById("szSt").value; let pName = document.getElementById("szPerName").value;
-        if(!st || !pName) { alert("Please enter Name and Action (పేరు, యాక్షన్ ఎంటర్ చేయండి)"); return; }
+        if(!st || !pName) { alert("Please complete form."); return; }
         if(d){
             let updates = {};
             if(st === "Seized") { updates = { sz: true, szC: parseInt(document.getElementById("szChrg").value)||0, yard: document.getElementById("szYard").value, sBy: pName, szDt: getTodayDate() }; } 
             else if(st === "Returned") { 
                 updates = { sz: false, szC: 0, yard: "", sBy: pName, szDt: getTodayDate() };
                 let collectedSz = parseInt(document.getElementById("szChrg").value) || 0;
-                if(collectedSz > 0) {
-                    let szTrCode = "SZ-" + Math.floor(Math.random()*900000+100000);
-                    push(ref(database, 'receipts'), { tr: szTrCode, hp: hp, amt: collectedSz, type: "Seizing", dt: getTodayDate() });
-                }
+                if(collectedSz > 0) { let szTrCode = "SZ-" + Math.floor(Math.random()*900000+100000); push(ref(database, 'receipts'), { tr: szTrCode, hp: hp, amt: collectedSz, type: "Seizing", dt: getTodayDate() }); }
             }
-            update(ref(database, 'accounts/' + hp), updates).then(() => { alert(`Details Saved for ${hp}.`); document.getElementById("szData").style.display="none"; document.getElementById("szHp").value = ""; }).catch(e => alert("Error: " + e));
+            update(ref(database, 'accounts/' + hp), updates).then(() => { alert("Saved!"); document.getElementById("szData").style.display="none"; document.getElementById("szHp").value = ""; refreshGlobalDataList(); }).catch(e => alert("Error: " + e));
         }
     }
     window.generateSeizeHistoryReport = function(){ 
@@ -964,67 +983,31 @@
     window.adjustReceiptSearchUI = function(){ let filter = document.getElementById("repFilter").value; document.getElementById("repVal2Box").style.display = filter === "rng" ? "flex" : "none"; document.getElementById("repVal1Lbl").innerText = filter === "hp" ? "Enter HP Number" : "Select Date"; document.getElementById("repVal1").type = filter === "hp" ? "text" : "date"; }
     
     window.getRc = function(){ 
-        let hpInput = document.getElementById("rcHp").value.toUpperCase().trim(); 
-        if(!hpInput) { alert("Please enter HP Number."); return; } 
-        let d=window.db.find(x=>x.hp===hpInput); 
+        let hpInput = document.getElementById("rcHp").value.toUpperCase().trim(); if(!hpInput) { alert("Enter HP Number."); return; } let d=window.db.find(x=>x.hp===hpInput); 
         if(d){
-            if(d.acStatus === "CLOSED") { alert("Account is Closed. (ఈ అకౌంట్ క్లోజ్ అయిపోయింది)"); return; }
+            if(d.acStatus === "CLOSED") { alert("Account is Closed."); return; }
             document.getElementById("rcPreviewBox").style.display="none"; 
             document.getElementById("rcN").innerText=(d.srn+" "+d.nm).toUpperCase(); document.getElementById("rcV").innerText=d.vno; document.getElementById("rcI").innerText=d.iAmt; document.getElementById("rcP").innerText=(d.pIns*d.iAmt); document.getElementById("rcTr").value="TR-"+Math.floor(Math.random()*900000+100000); document.getElementById("rcData").style.display="block";
-        } else alert("HP Number not found. (అకౌంట్ లేదు)");
+        } else alert("HP Number not found.");
     }
-    
     window.genRc = function(){ 
-        let hp=document.getElementById("rcHp").value.toUpperCase().trim(); let d=window.db.find(x=>x.hp===hp); 
-        let amt=parseInt(document.getElementById("rcAmt").value)||0; 
-        let typeSelect = document.getElementById("rcTyp"); let typText = typeSelect.options[typeSelect.selectedIndex].text; let typValue = typeSelect.value;
-        let modeSelect = document.getElementById("rcMode"); let modeText = modeSelect.options[modeSelect.selectedIndex].text;
-        let trCode = document.getElementById("rcTr").value;
-        
-        if(!d) { alert("Please fetch account details first!"); return; } 
-        if(amt <= 0 || isNaN(amt)) { alert("⚠️ Enter proper amount (కట్టిన అమౌంట్ వేయండి)"); return; } 
-        
-        let today = getTodayDate();
-        let updates = { lastRecDt: today };
+        let hp=document.getElementById("rcHp").value.toUpperCase().trim(); let d=window.db.find(x=>x.hp===hp); let amt=parseInt(document.getElementById("rcAmt").value)||0; let typeSelect = document.getElementById("rcTyp"); let typText = typeSelect.options[typeSelect.selectedIndex].text; let typValue = typeSelect.value; let modeSelect = document.getElementById("rcMode"); let modeText = modeSelect.options[modeSelect.selectedIndex].text; let trCode = document.getElementById("rcTr").value;
+        if(!d || amt <= 0) { alert("Validation failed."); return; } 
+        let today = getTodayDate(); let updates = { lastRecDt: today };
         if(typValue==="Installment" && d.pIns > 0){ updates.pIns = d.pIns - 1; updates.pInsDone = d.pInsDone + 1; }
-        
         update(ref(database, 'accounts/' + hp), updates).then(() => {
             push(ref(database, 'receipts'), { tr: trCode, hp: hp, amt: amt, type: typValue, dt: today });
-            
-            document.getElementById("pr_tr").innerText = trCode;
-            document.getElementById("pr_dt").innerText = today.split('-').reverse().join('-'); 
-            document.getElementById("pr_hp").innerText = hp;
-            document.getElementById("pr_nm").innerText = (d.srn+" "+d.nm).toUpperCase();
-            document.getElementById("pr_vno").innerText = d.vno;
-            document.getElementById("pr_mode").innerText = modeText;
-            document.getElementById("pr_type").innerText = typText;
-            document.getElementById("pr_amt").innerText = "₹ " + amt;
-            
-            document.getElementById("rcData").style.display="none"; 
-            document.getElementById("rcPreviewBox").style.display="block";
-            document.getElementById("rcHp").value = ""; document.getElementById("rcAmt").value = "";
-        }).catch(e => alert("Error: " + e));
+            document.getElementById("pr_tr").innerText = trCode; document.getElementById("pr_dt").innerText = today.split('-').reverse().join('-'); document.getElementById("pr_hp").innerText = hp; document.getElementById("pr_nm").innerText = (d.srn+" "+d.nm).toUpperCase(); document.getElementById("pr_vno").innerText = d.vno; document.getElementById("pr_mode").innerText = modeText; document.getElementById("pr_type").innerText = typText; document.getElementById("pr_amt").innerText = "₹ " + amt;
+            document.getElementById("rcData").style.display="none"; document.getElementById("rcPreviewBox").style.display="block"; document.getElementById("rcHp").value = ""; document.getElementById("rcAmt").value = ""; refreshGlobalDataList();
+        });
     }
-    
     window.closePreview = function() { document.getElementById("rcPreviewBox").style.display = "none"; }
-    
-    window.printOnlyReceipt = function() {
-        let card1 = document.getElementById("rcptCard1"); let card2 = document.getElementById("rcptCard2");
-        card1.classList.add("no-print"); card2.classList.add("no-print");
-        window.print();
-        setTimeout(() => { card1.classList.remove("no-print"); card2.classList.remove("no-print"); }, 500);
-    }
-
+    window.printOnlyReceipt = function() { let card1 = document.getElementById("rcptCard1"); let card2 = document.getElementById("rcptCard2"); card1.classList.add("no-print"); card2.classList.add("no-print"); window.print(); setTimeout(() => { card1.classList.remove("no-print"); card2.classList.remove("no-print"); }, 500); }
     window.executeReceiptLogSearch = function() {
         let filterMode = document.getElementById("repFilter").value; let val1 = document.getElementById("repVal1").value.trim().toUpperCase(); let val2 = document.getElementById("repVal2").value; let slipType = document.getElementById("repTyp").value;
         let tbody = document.getElementById("reprintRowsBody"); tbody.innerHTML = "";
-        let matchedData = window.receiptHistory.filter(r => {
-            if(slipType !== "All" && r.type !== slipType) return false;
-            if(filterMode === "hp" && val1 && r.hp !== val1) return false;
-            if(filterMode === "dt" && val1 && r.dt !== val1) return false;
-            if(filterMode === "rng" && val1 && val2) { if(r.dt < val1 || r.dt > val2) return false; } return true;
-        });
-        if(matchedData.length === 0) tbody.innerHTML = `<tr><td colspan="6" style="color:var(--danger); font-weight:800; text-align:center; padding:30px;">No receipts found. (రసీదులు లేవు)</td></tr>`;
+        let matchedData = window.receiptHistory.filter(r => { if(slipType !== "All" && r.type !== slipType) return false; if(filterMode === "hp" && val1 && r.hp !== val1) return false; if(filterMode === "dt" && val1 && r.dt !== val1) return false; if(filterMode === "rng" && val1 && val2) { if(r.dt < val1 || r.dt > val2) return false; } return true; });
+        if(matchedData.length === 0) tbody.innerHTML = `<tr><td colspan="6" style="color:var(--danger); text-align:center; padding:30px;">No receipts found.</td></tr>`;
         matchedData.forEach(r => { let labelType = r.type === "Installment" ? "EMI" : r.type; tbody.innerHTML += `<tr><td><b style="color:var(--secondary);">${r.tr}</b></td><td>${r.dt}</td><td><b style="color:var(--primary);">${r.hp}</b></td><td style="color:var(--success); font-weight:800;">₹${r.amt}</td><td><span class="tag tag-paid">${labelType}</span></td><td><button class="btn btn-green" onclick="window.print()">🖨️ Print</button></td></tr>`; });
         document.getElementById("rpTb").style.display = "block";
     }
@@ -1032,7 +1015,7 @@
     // --- CLOSURE ---
     window.searchClosingAccount = function() {
         let hp = document.getElementById("clHp").value.toUpperCase().trim(); let pc = document.getElementById("clPer").value; let d = window.db.find(x=>x.hp === hp);
-        if(!d) { alert("Account not found. (అకౌంట్ లేదు)"); return; } if(d.acStatus === "CLOSED") { alert("This account is already closed. (ఈ అకౌంట్ ముందే క్లోజ్ అయ్యింది)"); return; }
+        if(!d || d.acStatus === "CLOSED") { alert("Failed or already closed."); return; }
         document.getElementById("clLNm").innerText = (d.srn + " " + d.nm).toUpperCase(); document.getElementById("clLMob").innerText = d.mob; document.getElementById("clLVno").innerText = d.vno.replace(/\s/g,''); document.getElementById("clLVnm").innerText = d.vnm.toUpperCase();
         window.currentClosingMainDues = d.pIns * d.iAmt; window.currentClosingODDues = 0;
         for(let i=1; i<=d.pIns; i++) { let odD = 595 - (i * 30); if(odD < 0) odD = 0; window.currentClosingODDues += (d.iAmt * odD * (parseInt(pc)/100)) / 26.5; }
@@ -1040,21 +1023,14 @@
         document.getElementById("clSetPer").value = 0; document.getElementById("clLOdCalcVal").value = "₹" + window.currentClosingODDues.toFixed(2); document.getElementById("clSettledAmt").value = Math.round(window.currentClosingMainDues + window.currentClosingODDues); document.getElementById("clRcptAmt").value = Math.round(window.currentClosingMainDues + window.currentClosingODDues); document.getElementById("clArea").style.display = "block";
     }
     window.calcOdSettlementAmt = function() {
-        let per = parseFloat(document.getElementById("clSetPer").value) || 0; let discount = (window.currentClosingODDues * per) / 100; let netOD = window.currentClosingODDues - discount;
-        document.getElementById("clLOdCalcVal").value = "₹" + netOD.toFixed(2); let grand = window.currentClosingMainDues + netOD; document.getElementById("clSettledAmt").value = Math.round(grand); document.getElementById("clRcptAmt").value = Math.round(grand);
+        let per = parseFloat(document.getElementById("clSetPer").value) || 0; let discount = (window.currentClosingODDues * per) / 100; let netOD = window.currentClosingODDues - discount; document.getElementById("clLOdCalcVal").value = "₹" + netOD.toFixed(2); let grand = window.currentClosingMainDues + netOD; document.getElementById("clSettledAmt").value = Math.round(grand); document.getElementById("clRcptAmt").value = Math.round(grand);
     }
     window.submitAccountClose = function() {
         let hp = document.getElementById("clHp").value.toUpperCase().trim(); let d = window.db.find(x=>x.hp === hp); let closingOfficer = document.getElementById("clClosedBy").value; let collectAmtValue = document.getElementById("clRcptAmt").value; let settledFinalVal = document.getElementById("clSettledAmt").value; let calculatedODPart = parseFloat(document.getElementById("clLOdCalcVal").value.replace('₹','')) || 0;
-        if(!settledFinalVal || !collectAmtValue) { alert("Please enter settlement amount."); return; }
-        if(confirm(`Are you sure you want to CLOSE Account ${hp}?\nAmount Paying: ₹${collectAmtValue}`)) {
-            if(confirm(`WARNING: Account will be permanently closed. Proceed? (నిజంగా క్లోజ్ చేయమంటారా?)`)) {
-                let closeTrCode = "CLS-" + Math.floor(Math.random()*900000+100000);
-                let updates = { acStatus: "CLOSED", closedBy: closingOfficer, closedDt: getTodayDate(), settledAmt: parseFloat(settledFinalVal), settledOd: calculatedODPart };
-                update(ref(database, 'accounts/' + hp), updates).then(() => {
-                    push(ref(database, 'receipts'), { tr: closeTrCode, hp: hp, amt: parseFloat(collectAmtValue), type: "Account Closed", dt: getTodayDate() });
-                    alert(`🎉 Account ${hp} is Closed Successfully by ${closingOfficer}.`); document.getElementById("clArea").style.display = "none"; document.getElementById("clHp").value = ""; window.nav("pDash");
-                }).catch(e => alert("Error: " + e));
-            }
+        if(confirm(`Confirm account closure for ${hp}?`)) {
+            let closeTrCode = "CLS-" + Math.floor(Math.random()*900000+100000);
+            let updates = { acStatus: "CLOSED", closedBy: closingOfficer, closedDt: getTodayDate(), settledAmt: parseFloat(settledFinalVal), settledOd: calculatedODPart };
+            update(ref(database, 'accounts/' + hp), updates).then(() => { push(ref(database, 'receipts'), { tr: closeTrCode, hp: hp, amt: parseFloat(collectAmtValue), type: "Account Closed", dt: getTodayDate() }); alert("Closed!"); document.getElementById("clArea").style.display = "none"; document.getElementById("clHp").value = ""; refreshGlobalDataList(); window.nav("pDash"); });
         }
     }
 </script>
