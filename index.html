@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=1280, initial-scale=0.3, user-scalable=yes">
 <title>SVP Finance | Enterprise Cloud System</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -30,7 +30,7 @@
     .login-box { background: var(--bg-card); padding: 40px; border-radius: 20px; box-shadow: 0 25px 50px rgba(0,0,0,0.3); width: 100%; max-width: 420px; text-align: center; border-top: 6px solid var(--primary); }
     .login-box h2 { color: var(--secondary); margin-bottom: 30px; font-size: 26px; font-weight: 800; letter-spacing: -0.5px;}
     
-    #sidebar { width: 260px; background: #ffffff; border-right: 1px solid var(--border); display: flex; flex-direction: column; transition: all 0.3s ease; z-index: 50; flex-shrink: 0; overflow-y: auto; }
+    #sidebar { width: 260px; background: #ffffff; border-right: 1px solid var(--border); display: flex; flex-direction: column; transition: margin-left 0.3s ease, width 0.3s ease; z-index: 50; flex-shrink: 0; overflow-y: auto; }
     #sidebar.collapsed { margin-left: -260px; }
     
     .nav-links { list-style: none; padding: 15px 0; margin: 0; flex: 1; white-space: nowrap;}
@@ -60,7 +60,6 @@
     .btn-green:hover { background: #059669; }
     .btn-red { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2); }
     
-    /* TABLE BORDERS UPDATE */
     .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; margin-top: 15px; background: #fff;}
     table { width: 100%; border-collapse: collapse; text-align: left; }
     th { background: #f8fafc; color: var(--text-muted); padding: 12px 15px; font-size: 11px; font-weight: 800; text-transform: uppercase; border: 1px solid var(--border); position: sticky; top:0; z-index: 2;}
@@ -110,20 +109,6 @@
     .rep-header { background: #f8fafc; padding: 12px 20px; font-weight: 800; color: var(--secondary); border-bottom: 1px solid var(--border); font-size: 14px; display:flex; justify-content: space-between;}
     .rep-sub { padding: 12px 20px; background: #f1f5f9; text-align: right; font-weight: 800; font-size: 14px; color: var(--secondary); border-top: 2px solid var(--border);}
     
-    @media (max-width: 1200px) { .dash-grid { grid-template-columns: repeat(3, 1fr); } }
-    @media (max-width: 992px) { .grid-4 { grid-template-columns: repeat(2, 1fr); } .od-grid-top { grid-template-columns: 1fr 1fr; } .od-bottom { flex-direction: column; } }
-    @media (max-width: 768px) { 
-        #globalHeader h1 { font-size: 18px; margin-left: 40px; }
-        .user-badge { display: none; }
-        #sidebar { position: fixed; left: -300px; height: calc(100vh - 80px); top: 80px; z-index: 9998; box-shadow: 4px 0 20px rgba(0,0,0,0.2); }
-        #sidebar.open { left: 0; }
-        .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; } 
-        .dash-grid { grid-template-columns: repeat(2, 1fr); } 
-        .page-container { padding: 15px; } 
-        .od-grid-top { grid-template-columns: 1fr; } 
-    }
-    @media (max-width: 480px) { .dash-grid { grid-template-columns: 1fr; } }
-    
     @media print { 
         #sidebar, #globalHeader, .btn, .no-print, .nav-links, .brand { display: none !important; } 
         body { display:block; height: auto; overflow: visible; background:#fff; color:#000;}
@@ -163,7 +148,8 @@
     <div id="sidebar">
         <ul class="nav-links">
             <li onclick="nav('pDash')" class="active" id="nl_pDash">📊 Dashboard (హోమ్)</li>
-            <li onclick="nav('pDayBook')" id="nl_pDayBook">💸 Day Book (ఖర్చులు)</li>
+            <li onclick="nav('pPendingDocs')" id="nl_pPendingDocs">📁 Pending Documents</li>
+            <li onclick="nav('pDayBook')" id="nl_pDayBook">💸 Day Book & Refunds</li>
             <li onclick="nav('pDailyRep')" id="nl_pDailyRep">📆 Daily Report (లెక్కలు)</li>
             <li onclick="nav('pFinRep')" id="nl_pFinRep">📈 Main Finance Report</li>
             <li onclick="nav('pEntry')" id="nl_pEntry">📝 New Agreement</li>
@@ -189,9 +175,24 @@
                 <div class="dash-card c-red"><h3>Seized</h3><h1 id="db_sz">0</h1></div>
                 <div class="dash-card c-dark"><h3>Closed</h3><h1 id="db_closed">0</h1></div>
             </div>
-            <div class="card">
-                <h2 class="card-title">Firebase Cloud Notice</h2>
-                <p style="color:var(--text-muted); font-size:14px; font-weight:500; line-height:1.6;">This system is securely connected to the Sri Vishnu Priya Finance Firebase Database. Real-time updates, auto image compression, and fast data processing are active.</p>
+        </div>
+
+        <div id="pPendingDocs" class="page-container">
+            <div class="card no-print">
+                <h2 class="card-title" style="color:var(--warning);">📂 Pending Documents List (ఆపిన డబ్బులు & డాక్యుమెంట్స్)</h2>
+                <div style="display:flex; gap:15px; align-items:end; flex-wrap:wrap;">
+                    <div class="form-group"><label>From Date (నుండి)</label><input type="date" id="pdFDate"></div>
+                    <div class="form-group"><label>To Date (వరకు)</label><input type="date" id="pdTDate"></div>
+                    <button class="btn btn-green" onclick="renderPendingDocsList()">Search (వెతకండి)</button>
+                    <button class="btn" onclick="window.print()">🖨️ Print List</button>
+                </div>
+            </div>
+            
+            <div class="card table-wrap">
+                <table>
+                    <thead><tr><th>Sl.No</th><th>Agr Date</th><th>HP No</th><th>Vehicle Details</th><th>Consultancy/Dealer</th><th>Pending Doc</th><th>Stopped Amt (₹)</th><th>Action</th></tr></thead>
+                    <tbody id="pagePendingDocsList"></tbody>
+                </table>
             </div>
         </div>
 
@@ -203,9 +204,10 @@
                         <h4 style="margin:0 0 15px 0; color:#b45309;">Enter Transaction Details</h4>
                         <div class="form-group" style="margin-bottom:15px;">
                             <label>Transaction Type (రకం)</label>
-                            <div style="display:flex; gap:15px; margin-top:5px;">
-                                <label style="font-size:13px; font-weight:800; cursor:pointer;"><input type="radio" name="dbType" value="Debit" checked onchange="calcDaybookBal()"> 🔴 DEBIT (ఖర్చు / పేమెంట్)</label>
-                                <label style="font-size:13px; font-weight:800; cursor:pointer;"><input type="radio" name="dbType" value="Credit" onchange="calcDaybookBal()"> 🟢 CREDIT (జమ / రిటర్న్)</label>
+                            <div style="display:flex; gap:15px; margin-top:5px; flex-wrap:wrap;">
+                                <label style="font-size:13px; font-weight:800; cursor:pointer;"><input type="radio" name="dbType" value="Debit" checked onchange="calcDaybookBal()"> 🔴 DEBIT (ఖర్చు)</label>
+                                <label style="font-size:13px; font-weight:800; cursor:pointer;"><input type="radio" name="dbType" value="Credit" onchange="calcDaybookBal()"> 🟢 CREDIT (జమ)</label>
+                                <label style="font-size:13px; font-weight:800; cursor:pointer; color:var(--primary);"><input type="radio" name="dbType" value="Refundable Debit" onchange="calcDaybookBal()"> 🔄 REFUNDABLE DEBIT (తిరిగి తీసుకోవాలి)</label>
                             </div>
                         </div>
                         <div class="form-group" style="margin-bottom:15px;"><label>Name (వ్యక్తి పేరు)</label><input type="text" id="dbName" placeholder="Ex: Ramu..." oninput="this.value = this.value.toUpperCase();"></div>
@@ -217,19 +219,20 @@
                                 <option value="Seizing Recovery">Seizing Recovery (సీజ్ చార్జీ)</option>
                                 <option value="Doc Charges">Doc Charges (డాక్యుమెంట్)</option>
                                 <option value="Office Cash">Office Cash / Bank (ఆఫీస్ క్యాష్)</option>
+                                <option value="Owner Investment">Owner Investment (పెట్టుబడి)</option>
                             </select>
                         </div>
                     </div>
                     <div class="info-box" style="background:#fff; border-color:var(--border);">
-                        <h4 style="margin:0 0 15px 0; color:var(--secondary);">Amount Details</h4>
+                        <h4 style="margin:0 0 15px 0; color:var(--secondary);">Amount Details (Live Tracking)</h4>
                         <div style="background:#f1f5f9; padding:12px; border-radius:8px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
-                            <span style="font-size:12px; font-weight:700; color:var(--text-muted);">Available in <span id="lblAvailSrc">EMI Collection</span>:</span>
+                            <span style="font-size:12px; font-weight:700; color:var(--text-muted);">Current Balance in <span id="lblAvailSrc">EMI Collection</span>:</span>
                             <span style="font-size:16px; font-weight:800; color:var(--primary-dark);">₹<span id="lblAvailAmt">0</span></span>
                         </div>
                         <div class="form-group" style="margin-bottom:15px;"><label>Issued By / Ordered By (ఎవరు ఇవ్వమన్నారు?)</label><input type="text" id="dbIssuedBy" placeholder="Name..." oninput="this.value = this.value.toUpperCase();"></div>
                         <div class="form-group" style="margin-bottom:15px;"><label>Amount (₹)</label><input type="number" id="dbAmt" oninput="calcDaybookBal()" style="font-weight:800; font-size:18px; border-color:var(--primary);"></div>
                         <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px dashed #cbd5e1; padding-top:10px; margin-bottom:15px;">
-                            <span style="font-size:13px; font-weight:700; color:var(--secondary);">Sub Total (మిగిలేది):</span>
+                            <span style="font-size:13px; font-weight:700; color:var(--secondary);">Closing Balance (మిగిలేది):</span>
                             <span style="font-size:18px; font-weight:800; color:var(--success);">₹<span id="lblSubTotal">0</span></span>
                         </div>
                         <button class="btn btn-green" style="width:100%; padding:14px; font-size:14px;" onclick="saveDaybookEntry()">💾 Save Voucher</button>
@@ -258,6 +261,28 @@
                 <button class="btn btn-green no-print" style="width:100%; margin-top:25px;" onclick="window.print()">🖨️ Print Voucher</button>
                 <button class="btn no-print" style="width:100%; margin-top:10px; background:#f1f5f9; color:#ef4444;" onclick="document.getElementById('voucherPrintArea').style.display='none'">✖ Close</button>
             </div>
+
+            <div class="card no-print" style="border-top: 4px solid var(--primary);">
+                <h2 class="card-title" style="color:var(--primary);">🔄 Refundable Debits Management (తిరిగి తీసుకోవాల్సినవి)</h2>
+                <div style="display:flex; gap:15px; align-items:end; flex-wrap:wrap;">
+                    <div class="form-group"><label>From Date</label><input type="date" id="refFDate"></div>
+                    <div class="form-group"><label>To Date</label><input type="date" id="refTDate"></div>
+                    <div class="form-group"><label>Status</label>
+                        <select id="refStatus">
+                            <option value="Pending">Pending Only</option>
+                            <option value="Refunded">Refunded Only</option>
+                            <option value="All">All Records</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-green" onclick="renderRefundableDebits()">Search List</button>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Si No</th><th>Date</th><th>Name</th><th>Purpose</th><th>Source</th><th>Issued By</th><th>Amount (₹)</th><th>Action</th></tr></thead>
+                        <tbody id="refundTbBody"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
         <div id="pDailyRep" class="page-container">
@@ -276,49 +301,7 @@
                 <p style="text-align:center; margin-top:0; color:var(--text-muted); font-weight:700;">Daily Account Report (<span id="lblDrDates"></span>)</p>
                 <hr style="margin-bottom:20px; border:1px solid var(--border);">
                 
-                <div class="rep-section">
-                    <div class="rep-header"><span>📝 New Agreements (HP Entries)</span><span>DEBIT</span></div>
-                    <div class="table-wrap" style="margin:0; border:none; border-bottom: 1px solid var(--border);">
-                        <table style="border:none;">
-                            <thead><tr><th>Sl.No</th><th>HP No</th><th>Customer Name</th><th>Vehicle No</th><th>Vehicle Name</th><th>Debit Amt</th></tr></thead>
-                            <tbody id="drHpList"></tbody>
-                        </table>
-                    </div>
-                    <div class="rep-sub">Sub Total: ₹<span id="drHpSub">0</span> (Debit)</div>
-                </div>
-
-                <div class="rep-section">
-                    <div class="rep-header"><span>💵 Collections (EMI & OD)</span><span>CREDIT</span></div>
-                    <div class="table-wrap" style="margin:0; border:none; border-bottom: 1px solid var(--border);">
-                        <table style="border:none;">
-                            <thead><tr><th>Sl.No</th><th>HP No</th><th>Customer Name</th><th>Vehicle No</th><th>Vehicle Name</th><th>TR Number</th><th>Receipt Amt</th></tr></thead>
-                            <tbody id="drRcList"></tbody>
-                        </table>
-                    </div>
-                    <div class="rep-sub">Sub Total: ₹<span id="drRcSub">0</span> (Credit)</div>
-                </div>
-
-                <div class="rep-section">
-                    <div class="rep-header"><span>🛑 Seizing Collections</span><span>CREDIT</span></div>
-                    <div class="table-wrap" style="margin:0; border:none; border-bottom: 1px solid var(--border);">
-                        <table style="border:none;">
-                            <thead><tr><th>Sl.No</th><th>HP No</th><th>Customer Name</th><th>Vehicle No</th><th>Vehicle Name</th><th>TR Number</th><th>Receipt Amt</th></tr></thead>
-                            <tbody id="drSzList"></tbody>
-                        </table>
-                    </div>
-                    <div class="rep-sub">Sub Total: ₹<span id="drSzSub">0</span> (Credit)</div>
-                </div>
-
-                <div class="rep-section">
-                    <div class="rep-header"><span>💸 Expenses & Returns (Day Book)</span><span>DEBIT / CREDIT</span></div>
-                    <div class="table-wrap" style="margin:0; border:none; border-bottom: 1px solid var(--border);">
-                        <table style="border:none;">
-                            <thead><tr><th>Sl.No</th><th>Name</th><th>Purpose</th><th>Source</th><th>Issued By</th><th style="color:var(--success);">Credit (+)</th><th style="color:var(--danger);">Debit (-)</th></tr></thead>
-                            <tbody id="drDbList"></tbody>
-                        </table>
-                    </div>
-                    <div class="rep-sub">Net Total: ₹<span id="drDbSub">0</span></div>
-                </div>
+                <div id="drRenderArea"></div>
                 
                 <div style="background:var(--secondary); color:#fff; padding:20px; border-radius:12px; display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
                     <span style="font-size:16px; font-weight:700; text-transform:uppercase; letter-spacing:1px;">Net Balance For Period:</span>
@@ -329,7 +312,7 @@
 
         <div id="pFinRep" class="page-container">
             <div class="card no-print">
-                <h2 class="card-title">Finance Collection Report (ఆదాయం రిపోర్ట్)</h2>
+                <h2 class="card-title">Finance Collection & Balance Report (ఆదాయం & నిల్వలు)</h2>
                 <div style="display:flex; gap:15px; align-items:end; flex-wrap:wrap;">
                     <div class="form-group"><label>From Date (నుండి)</label><input type="date" id="finFDate"></div>
                     <div class="form-group"><label>To Date (వరకు)</label><input type="date" id="finTDate"></div>
@@ -338,17 +321,29 @@
                 </div>
             </div>
             
-            <div class="dash-grid" id="finRepResults" style="display:none;">
-                <div class="dash-card c-blue" style="cursor:pointer;" onclick="filterFinReport('DOC')"><h3>Net Office Doc (డాక్యుమెంట్)</h3><h1 id="rep_doc">₹0</h1></div>
-                <div class="dash-card c-green" style="cursor:pointer;" onclick="filterFinReport('EMI')"><h3>EMI Collected (ఈఎంఐ)</h3><h1 id="rep_emi">₹0</h1></div>
-                <div class="dash-card c-yellow" style="cursor:pointer;" onclick="filterFinReport('OD')"><h3>OD Collected (వడ్డీ)</h3><h1 id="rep_od">₹0</h1></div>
-                <div class="dash-card c-red" style="cursor:pointer;" onclick="filterFinReport('SEIZING')"><h3>Seizing Recovered (సీజ్)</h3><h1 id="rep_sz">₹0</h1></div>
-                <div class="dash-card c-dark" style="cursor:pointer;" onclick="filterFinReport('ALL')"><h3>Total Amount (మొత్తం)</h3><h1 id="rep_tot">₹0</h1></div>
+            <div class="dash-grid" id="finRepResults" style="display:none; grid-template-columns: repeat(4, 1fr);">
+                <div class="dash-card c-blue" style="cursor:pointer;" onclick="filterFinReport('DOC')"><h3>Net Office Doc</h3><h1 id="rep_doc">₹0</h1></div>
+                <div class="dash-card c-green" style="cursor:pointer;" onclick="filterFinReport('EMI')"><h3>EMI Collected</h3><h1 id="rep_emi">₹0</h1></div>
+                <div class="dash-card c-yellow" style="cursor:pointer;" onclick="filterFinReport('OD')"><h3>OD Collected</h3><h1 id="rep_od">₹0</h1></div>
+                <div class="dash-card c-red" style="cursor:pointer;" onclick="filterFinReport('SEIZING')"><h3>Seizing Recovered</h3><h1 id="rep_sz">₹0</h1></div>
+                
+                <div class="dash-card c-orange" style="cursor:pointer;" onclick="filterFinReport('PENDING_DOCS')"><h3>Pending Docs Amt (CR)</h3><h1 id="rep_pend_doc">₹0</h1></div>
+                <div class="dash-card" style="cursor:pointer; border-left:4px solid #8b5cf6;" onclick="filterFinReport('PENDING_COMM')"><h3>Pending Commission</h3><h1 id="rep_pend_comm" style="color:#8b5cf6;">₹0</h1></div>
+                <div class="dash-card c-dark" style="cursor:pointer; grid-column: span 2;" onclick="filterFinReport('ALL')"><h3>Total Collection (మొత్తం)</h3><h1 id="rep_tot">₹0</h1></div>
+            </div>
+
+            <div class="card table-wrap" id="balanceTableBox" style="display:none; margin-top:20px; border:2px solid var(--secondary);">
+                <div style="background:var(--secondary); color:#fff; padding:15px 20px; font-weight:800; font-size:16px;">📊 Source-Wise Account Balances</div>
+                <table style="border:none;">
+                    <thead style="background:#f1f5f9;"><tr><th>Source Name (ఖాతా)</th><th>Opening Balance (From Date కి ముందు)</th><th>Credit (+) (వచ్చినవి)</th><th>Debit (-) (పోయినవి)</th><th>Closing Balance (ఉన్న నిల్వ)</th></tr></thead>
+                    <tbody id="balanceTb"></tbody>
+                </table>
             </div>
             
             <div class="card table-wrap" id="finRepTableBox" style="display:none; margin-top:20px;">
+                <h3 style="padding:15px; margin:0; border-bottom:1px solid var(--border);">Detailed Transactions</h3>
                 <table>
-                    <thead><tr><th>Date</th><th>HP No</th><th>Customer Name</th><th>Collection Type</th><th>Amount (₹)</th></tr></thead>
+                    <thead><tr><th>Date</th><th>HP No / Ref</th><th>Customer Name / Purpose</th><th>Type</th><th>Credit (+)</th><th>Debit (-)</th></tr></thead>
                     <tbody id="finRepTb"></tbody>
                 </table>
             </div>
@@ -402,10 +397,16 @@
 
                     <div class="info-box"><h4 style="margin:0 0 15px 0; color:var(--secondary); font-size:14px;">4. Finance Details (లోన్ వివరాలు)</h4>
                         <div class="grid-4">
-                            <div class="form-group"><label>Original RC Book?</label><select id="in_cb" onchange="toggleDocReason('cb')"><option value="Yes">Yes, Received</option><option value="No">No, Missing</option></select></div>
+                            <div class="form-group"><label>Original RC Book?</label><select id="in_cb" onchange="toggleDocReason()"><option value="Yes">Yes, Received</option><option value="No">No, Missing</option></select></div>
                             <div class="form-group" id="cb_r_box" style="display:none;"><label style="color:var(--danger);">Why RC Missing?</label><input type="text" id="in_cb_r" oninput="this.value = this.value.toUpperCase();" placeholder="Reason..."></div>
-                            <div class="form-group"><label>NOC Document?</label><select id="in_noc" onchange="toggleDocReason('noc')"><option value="Yes">Yes, Received</option><option value="No">No, Missing</option></select></div>
+                            
+                            <div class="form-group"><label>NOC Document?</label><select id="in_noc" onchange="toggleDocReason()"><option value="Yes">Yes, Received</option><option value="No">No, Missing</option></select></div>
                             <div class="form-group" id="noc_r_box" style="display:none;"><label style="color:var(--danger);">Why NOC Missing?</label><input type="text" id="in_noc_r" oninput="this.value = this.value.toUpperCase();" placeholder="Reason..."></div>
+                            
+                            <div class="form-group" id="doc_hold_amt_box" style="display:none; grid-column: span 2;">
+                                <label style="color:var(--danger); font-size:13px; font-weight:800;">Total Stopped Amount (For RC / NOC Missing) ₹</label>
+                                <input type="number" id="in_doc_hold_amt" value="0" style="border-color:var(--danger); font-weight:800; font-size:16px; background:#fff5f5;">
+                            </div>
                             
                             <div class="form-group">
                                 <label>HP Account No (కొత్త నంబర్) <span id="lastHpHint" style="color:var(--danger); font-size:11px; font-weight:800; margin-left:5px;"></span></label>
@@ -417,7 +418,7 @@
                             <div class="form-group"><label>Total HP Interest (₹)</label><input type="number" id="in_hpc"></div>
                             <div class="form-group"><label>Months (ఎన్ని నెలలు)</label><input type="number" id="in_ten"></div>
                             <div class="form-group"><label>Agreement Date</label><input type="date" id="in_fdt"></div>
-                            <div class="form-group"><label>Dealer/Broker Name</label><input type="text" id="in_cons" oninput="this.value = this.value.toUpperCase();"></div>
+                            <div class="form-group"><label>Consultancy / Dealer Name</label><input type="text" id="in_cons" oninput="this.value = this.value.toUpperCase();"></div>
                             <div class="form-group"><label>Officer Name</label><input type="text" id="in_ver" oninput="this.value = this.value.toUpperCase();"></div>
                         </div>
                     </div>
@@ -431,13 +432,14 @@
                 <h2 class="card-title">Search Account (ఖాతా వెతకండి)</h2>
                 <div class="grid-3" style="align-items: end;">
                     <div class="form-group"><label>Search By (దేనితో వెతకాలి?)</label>
-                        <select id="vsType">
+                        <select id="vsType" onchange="if(this.value==='R'){ this.value='vno'; nav('pFundTransfer'); }">
                             <option value="vno">Vehicle No (బండి నంబర్)</option>
                             <option value="hp">HP Account No</option>
                             <option value="nm">Customer Name</option>
                             <option value="vl">Village / Town</option>
                             <option value="ad">Aadhar No</option>
                             <option value="mo">Mobile No</option>
+                            <option value="R" style="color:transparent; background:transparent;">R</option>
                         </select>
                     </div>
                     <div class="form-group"><label>Enter Details</label><input type="text" id="vsVal" placeholder="Type here..."></div>
@@ -449,6 +451,77 @@
                     <thead><tr><th>HP No</th><th>Agr Date</th><th>Customer Name</th><th>Mobile No</th><th>Vehicle No</th><th>Model</th><th>Year</th><th>Village</th><th>Mandal</th><th>Address</th></tr></thead>
                     <tbody id="vsTb"></tbody>
                 </table>
+            </div>
+        </div>
+
+        <div id="pFundTransfer" class="page-container">
+            <div class="card no-print" style="border-top: 5px solid #7c3aed; background: #faf5ff;">
+                <h2 class="card-title" style="color: #6d28d9; font-size:22px; margin-bottom:10px;">💼 Owner Capital & Fund Transfers (Administration)</h2>
+                <p style="color:#7c3aed; font-weight:700; margin-top:0;">Manage Owner investments, withdrawals, and internal source-to-source money transfers.</p>
+                
+                <div class="grid-2" style="margin-top:25px;">
+                    <div class="info-box" style="background:#fff; border: 1px solid #c4b5fd;">
+                        <h4 style="margin:0 0 15px 0; color:#5b21b6; border-bottom:1px solid #ede9fe; padding-bottom:10px;">💵 Add Owner Investment (క్యాపిటల్ ఫండ్)</h4>
+                        <div class="form-group" style="margin-bottom:15px;">
+                            <label>Amount to Add (₹)</label>
+                            <input type="number" id="ftOwnerAmt" style="font-weight:800; font-size:18px; border-color:#8b5cf6;" placeholder="0">
+                        </div>
+                        <div class="form-group" style="margin-bottom:15px;">
+                            <label>Remarks / Date Note</label>
+                            <input type="text" id="ftOwnerRem" placeholder="Ex: Started business fund..." oninput="this.value = this.value.toUpperCase();">
+                        </div>
+                        <button class="btn" style="background:#7c3aed; width:100%; font-size:14px; padding:12px;" onclick="addOwnerInvestment()">➕ Add Investment to Business</button>
+                    </div>
+
+                    <div class="info-box" style="background:#fff; border: 1px solid #c4b5fd;">
+                        <h4 style="margin:0 0 15px 0; color:#5b21b6; border-bottom:1px solid #ede9fe; padding-bottom:10px;">🔄 Internal Fund Transfer (ఖాతాల మార్పిడి)</h4>
+                        <div class="grid-2">
+                            <div class="form-group" style="margin-bottom:15px;">
+                                <label>From Source (ఎక్కడి నుండి)</label>
+                                <select id="ftFromSrc" onchange="checkTransferBalances()">
+                                    <option value="EMI Collection">EMI Collection</option>
+                                    <option value="OD Collection">OD Collection</option>
+                                    <option value="Seizing Recovery">Seizing Recovery</option>
+                                    <option value="Doc Charges">Doc Charges</option>
+                                    <option value="Office Cash">Office Cash</option>
+                                    <option value="Owner Investment">Owner Investment</option>
+                                </select>
+                                <span style="font-size:11px; font-weight:800; color:#6d28d9; margin-top:4px;">Bal: ₹<span id="lblFtFromBal">0</span></span>
+                            </div>
+                            <div class="form-group" style="margin-bottom:15px;">
+                                <label>To Source (ఎక్కడికి)</label>
+                                <select id="ftToSrc" onchange="checkTransferBalances()">
+                                    <option value="Office Cash">Office Cash</option>
+                                    <option value="Owner Investment">Owner Investment</option>
+                                    <option value="Profit / Withdrawal">Profit / Withdrawal (ఖర్చు)</option>
+                                    <option value="EMI Collection">EMI Collection</option>
+                                    <option value="OD Collection">OD Collection</option>
+                                </select>
+                                <span style="font-size:11px; font-weight:800; color:#6d28d9; margin-top:4px;">Bal: ₹<span id="lblFtToBal">0</span></span>
+                            </div>
+                        </div>
+                        <div class="grid-2">
+                            <div class="form-group"><label>Amount (₹)</label><input type="number" id="ftTrAmt" style="font-weight:800;"></div>
+                            <div class="form-group"><label>Remarks</label><input type="text" id="ftTrRem" oninput="this.value = this.value.toUpperCase();"></div>
+                        </div>
+                        <button class="btn" style="background:#4c1d95; width:100%; font-size:14px; padding:12px; margin-top:15px;" onclick="executeFundTransfer()">⇄ Transfer Fund</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card no-print">
+                <h2 class="card-title">Transfer History (హిస్టరీ)</h2>
+                <div style="display:flex; gap:15px; align-items:end;">
+                    <div class="form-group"><label>From Date</label><input type="date" id="ftFDate"></div>
+                    <div class="form-group"><label>To Date</label><input type="date" id="ftTDate"></div>
+                    <button class="btn" onclick="renderTransfers()">Search History</button>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Si No</th><th>Date</th><th>From Source</th><th>To Source</th><th>Amount (₹)</th><th>Remarks</th></tr></thead>
+                        <tbody id="ftHistoryTb"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -525,8 +598,8 @@
                         <div class="od-row"><div class="od-lbl">TOWN</div><div class="od-val">: <span id="od_town"></span></div></div>
                         <div class="od-row"><div class="od-lbl">A/C NO</div><div class="od-val">: <span id="od_ac" style="font-weight:800; color:#0f172a;"></span></div></div><br>
                         <div class="od-row"><div class="od-lbl">VERIFIED BY</div><div class="od-val">: <span id="od_verBy">NONE</span></div></div><br>
-                        <div class="od-row"><div class="od-lbl">SEIZING STAT</div><div class="od-val">: <div class="bulb" id="od_szBulb"></div></div></div><br>
-                        <div class="od-row"><div class="od-lbl">DESCRIPTION</div><div class="od-val">: <span id="od_desc">TOTAL RC OK</span></div></div>
+                        <div class="od-row"><div class="od-lbl">SEIZING STAT</div><div class="od-val">: <div class="bulb" id="od_szBulb"></div> <span id="od_szDateTxt" style="color:var(--danger); font-weight:800; margin-left:5px; font-size:10px;"></span></div></div><br>
+                        <div class="od-row"><div class="od-lbl">DESCRIPTION</div><div class="od-val">: <span id="od_desc"></span></div></div>
                         <div class="od-row"><div class="od-lbl">INST PEND</div><div class="od-val">: <span id="od_pend"></span></div></div>
                     </div>
                     <div>
@@ -545,7 +618,7 @@
                         <div class="od-row"><div class="od-lbl">C NO</div><div class="od-val">: <span id="od_cn"></span></div></div>
                         <div class="od-row"><div class="od-lbl">AGR DONE BY</div><div class="od-val">: WARANGAL OFFICE</div></div>
                         <div class="od-row"><div class="od-lbl">CONSULTANT</div><div class="od-val">: <span id="od_consName"></span></div></div>
-                        <div class="od-row"><div class="od-lbl">ACCOUNT</div><div class="od-val">: <span id="od_acStat" style="font-weight:800;">NOT CLOSED</span></div></div>
+                        <div class="od-row"><div class="od-lbl">ACCOUNT</div><div class="od-val">: <span id="od_acStat" style="font-weight:800;"></span></div></div>
                     </div>
                 </div>
                 
@@ -629,7 +702,7 @@
             </div>
             <div class="card table-wrap">
                 <table>
-                    <thead><tr><th>Date</th><th>HP No</th><th>Customer Name</th><th>Vehicle No</th><th>Vehicle Name</th><th>Yard Name</th><th>Charges</th><th>Agent Name</th><th>Status</th></tr></thead>
+                    <thead><tr><th>Seized Date</th><th>Return Date</th><th>HP No</th><th>Customer Name</th><th>Vehicle No</th><th>Vehicle Name</th><th>Yard Name</th><th>Charges</th><th>Agent Name</th><th>Status</th></tr></thead>
                     <tbody id="szrTb"></tbody>
                 </table>
             </div>
@@ -763,7 +836,7 @@
     import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
     import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
 
-    // --- 2. YOUR ORIGINAL FIREBASE CONFIG ---
+    // --- 2. YOUR FIREBASE CONFIG ---
     const firebaseConfig = {
       apiKey: "AIzaSyAvjFcKKiu4OMmQckYXMTejdBJh9tC6TjM",
       authDomain: "sri-vishnu-priya-finance-c591f.firebaseapp.com",
@@ -784,13 +857,13 @@
     window.dbData = [];          
     window.receiptHistory = [];
     window.daybookData = []; 
+    window.transfersData = []; // NEW: For Internal Fund Transfers
     window.currentClosingODDues = 0;
     window.currentClosingMainDues = 0;
     window.finReportData = []; 
     window.isDataSyncStarted = false; 
 
     // --- 5. UTILITY FUNCTIONS ---
-    // Money Formatting Helper (For .00 paisa formatting globally where needed)
     window.fmtMoney = (amt) => Number(amt).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
     window.getTodayDate = () => {
@@ -811,9 +884,7 @@
     };
 
     window.toggleSidebar = function() {
-        let sb = document.getElementById("sidebar");
-        if (window.innerWidth <= 768) { sb.classList.toggle("open"); } 
-        else { sb.classList.toggle("collapsed"); }
+        let sb = document.getElementById("sidebar"); sb.classList.toggle("collapsed");
     };
 
     async function compressImage(file, maxWidth = 800, maxHeight = 800, quality = 0.6) {
@@ -835,336 +906,387 @@
         });
     }
 
-    // --- 6. AUTHENTICATION (LOGIN/LOGOUT) ---
+    // --- 6. AUTHENTICATION ---
     window.doLogin = function(){ 
-        let uid = document.getElementById("uid").value.trim(); 
-        let pwd = document.getElementById("pwd").value.trim();
+        let uid = document.getElementById("uid").value.trim(); let pwd = document.getElementById("pwd").value.trim();
         if(!uid || !pwd) { alert("Please enter both ID and Password"); return; }
-        
-        uid = uid.replace(/[<>]/g, ""); 
-        let email = uid.includes("@") ? uid : uid + "@svpfinance.com";
-
-        setPersistence(auth, browserSessionPersistence)
-            .then(() => signInWithEmailAndPassword(auth, email, pwd))
-            .then((userCredential) => {
-                showApp(uid);
-            }).catch((error) => { 
-                alert("Authentication Failed. Please check your ID and Password."); 
-            });
+        uid = uid.replace(/[<>]/g, ""); let email = uid.includes("@") ? uid : uid + "@svpfinance.com";
+        setPersistence(auth, browserSessionPersistence).then(() => signInWithEmailAndPassword(auth, email, pwd)).then(() => { showApp(uid); }).catch(() => { alert("Authentication Failed. Please check your ID and Password."); });
     };
 
-    window.doLogout = function() { 
-        signOut(auth).then(() => { window.location.reload(); }); 
-    };
-
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            let displayEmail = user.email ? user.email.split('@')[0].toUpperCase() : "AUTH"; 
-            showApp(displayEmail);
-        }
-    });
+    window.doLogout = function() { signOut(auth).then(() => { window.location.reload(); }); };
+    onAuthStateChanged(auth, (user) => { if (user) { let displayEmail = user.email ? user.email.split('@')[0].toUpperCase() : "AUTH"; showApp(displayEmail); } });
 
     function showApp(userId) {
-        document.getElementById("loginScreen").style.display = "none"; 
-        document.getElementById("globalHeader").style.display = "flex"; 
-        document.getElementById("appWrapper").style.display = "flex"; 
-        document.getElementById("cloudStatus").innerText = `🟢 User: ${userId.toUpperCase()}`; 
-        window.startDatabaseSync(); 
-        window.nav("pDash");
+        document.getElementById("loginScreen").style.display = "none"; document.getElementById("globalHeader").style.display = "flex"; 
+        document.getElementById("appWrapper").style.display = "flex"; document.getElementById("cloudStatus").innerText = `🟢 User: ${userId.toUpperCase()}`; 
+        window.startDatabaseSync(); window.nav("pDash");
     }
 
     window.nav = function(id){ 
-        document.querySelectorAll(".page-container").forEach(e => e.style.display="none"); 
-        document.querySelectorAll(".nav-links li").forEach(e => e.classList.remove("active")); 
+        document.querySelectorAll(".page-container").forEach(e => e.style.display="none"); document.querySelectorAll(".nav-links li").forEach(e => e.classList.remove("active")); 
+        let targetPage = document.getElementById(id); if(targetPage) targetPage.style.display="block"; 
+        let navLink = document.getElementById("nl_"+id); if(navLink) navLink.classList.add("active"); 
         
-        let targetPage = document.getElementById(id);
-        if(targetPage) targetPage.style.display="block"; 
-        
-        let navLink = document.getElementById("nl_"+id); 
-        if(navLink) navLink.classList.add("active"); 
-        
-        if(window.innerWidth <= 768) { document.getElementById("sidebar").classList.remove("open"); }
-        
-        if(id === 'pDayBook' && window.calcDaybookBal) window.calcDaybookBal(); 
-        if(id === 'pReg' && window.ldReg) window.ldReg(); 
-        if(id === 'pDues' && window.genDues) window.genDues(); 
+        if(id === 'pDayBook') { if(window.calcDaybookBal) window.calcDaybookBal(); if(window.renderRefundableDebits) window.renderRefundableDebits(); }
+        if(id === 'pReg' && window.ldReg) window.ldReg(); if(id === 'pDues' && window.genDues) window.genDues(); 
         if(id === 'pSzRep' && window.generateSeizeHistoryReport) window.generateSeizeHistoryReport(); 
+        if(id === 'pPendingDocs' && window.renderPendingDocsList) window.renderPendingDocsList();
+        if(id === 'pFundTransfer') { if(window.checkTransferBalances) window.checkTransferBalances(); if(window.renderTransfers) window.renderTransfers(); }
     };
 
-    // --- 7. FIREBASE SYNC (DATA LOADING) ---
+    // --- 7. FIREBASE SYNC & DASHBOARD ---
     window.startDatabaseSync = function() {
-        if(window.isDataSyncStarted) return;
-        window.isDataSyncStarted = true;
-
+        if(window.isDataSyncStarted) return; window.isDataSyncStarted = true;
+        
         onValue(ref(database, 'accounts'), (snapshot) => {
-            window.dbData = [];
-            if (snapshot.exists()) { snapshot.forEach((child) => { window.dbData.push(child.val()); }); }
-            updateDashboardCounts();
-            if(document.getElementById('pReg')?.style.display === 'block') window.ldReg();
+            window.dbData = []; if (snapshot.exists()) { snapshot.forEach((child) => { window.dbData.push(child.val()); }); }
+            updateDashboardCounts(); if(document.getElementById('pReg')?.style.display === 'block') window.ldReg();
         }, (error) => { console.error("Firebase Read Error:", error); window.isDataSyncStarted = false; });
 
         onValue(ref(database, 'receipts'), (snapshot) => {
-            window.receiptHistory = [];
-            if(snapshot.exists()){ snapshot.forEach((child) => { window.receiptHistory.push(child.val()); }); }
+            window.receiptHistory = []; if(snapshot.exists()){ snapshot.forEach((child) => { window.receiptHistory.push(child.val()); }); }
             updateDashboardCounts();
-            if(document.getElementById('pDayBook')?.style.display === 'block') window.calcDaybookBal();
         });
         
         onValue(ref(database, 'daybook'), (snapshot) => {
-            window.daybookData = [];
-            if(snapshot.exists()){ snapshot.forEach((child) => { window.daybookData.push(child.val()); }); }
-            if(document.getElementById('pDayBook')?.style.display === 'block') window.calcDaybookBal();
+            window.daybookData = []; if(snapshot.exists()){ snapshot.forEach((child) => { let data = child.val(); data.id = child.key; window.daybookData.push(data); }); }
+            if(document.getElementById('pDayBook')?.style.display === 'block') { window.calcDaybookBal(); window.renderRefundableDebits(); }
+        });
+
+        // NEW: Transfers Collection
+        onValue(ref(database, 'transfers'), (snapshot) => {
+            window.transfersData = []; if(snapshot.exists()){ snapshot.forEach((child) => { window.transfersData.push(child.val()); }); }
+            if(document.getElementById('pFundTransfer')?.style.display === 'block') { window.checkTransferBalances(); window.renderTransfers(); }
         });
     };
 
     function updateDashboardCounts() {
-        let tot=0, act=0, due=0, sz=0, cls=0, mat=0;
-        let today = new Date();
-        
+        let tot=0, act=0, due=0, sz=0, cls=0, mat=0; let today = new Date();
         window.dbData.forEach((d) => {
             tot++;
             if(d.acStatus === "OPEN") { 
-                act++; 
-                let passedMonths = getMonthsDiff(d.fdt, today);
-                if (passedMonths >= d.ten) { mat++; passedMonths = d.ten; }
-                
+                act++; let passedMonths = getMonthsDiff(d.fdt, today); if (passedMonths >= d.ten) { mat++; passedMonths = d.ten; }
                 let totalPaid = window.receiptHistory.filter(h => h.hp === d.hp && h.type === "Installment").reduce((sum, r) => sum + r.amt, 0);
                 if ((passedMonths * d.iAmt) - totalPaid > 0) due++;
             }
-            if(d.acStatus === "CLOSED") cls++; 
-            if(d.sz) sz++; 
+            if(d.acStatus === "CLOSED") cls++; if(d.sz) sz++; 
         });
         
         const safeSet = (id, val) => { let el = document.getElementById(id); if(el) el.innerText = val; };
-        safeSet("db_tot", tot); safeSet("db_act", act); safeSet("db_due", due);
-        safeSet("db_mat", mat); safeSet("db_sz", sz); safeSet("db_closed", cls);
-
+        safeSet("db_tot", tot); safeSet("db_act", act); safeSet("db_due", due); safeSet("db_mat", mat); safeSet("db_sz", sz); safeSet("db_closed", cls);
         if(window.dbData.length > 0 && document.getElementById("lastHpHint")) {
-            let sorted = [...window.dbData].sort((a,b) => b.hp.localeCompare(a.hp, undefined, {numeric: true}));
-            document.getElementById("lastHpHint").innerText = `(Last Used: ${esc(sorted[0].hp)})`;
+            let sorted = [...window.dbData].sort((a,b) => b.hp.localeCompare(a.hp, undefined, {numeric: true})); document.getElementById("lastHpHint").innerText = `(LAST USED: ${esc(sorted[0].hp)})`;
         }
+        if(document.getElementById('pPendingDocs')?.style.display === 'block') window.renderPendingDocsList();
     }
 
-    // --- 8. DAY BOOK ---
+    // --- 8. CORE ENGINE: SOURCE BALANCE CALCULATION ---
+    window.getSourceBalance = function(sourceName, upToDateStr = "9999-99-99") {
+        let balance = 0;
+        
+        // 1. ADD: Receipts Collection
+        if(sourceName === "EMI Collection") { balance += window.receiptHistory.filter(r => (r.type === "Installment" || r.type === "Account Closed") && r.dt <= upToDateStr).reduce((s,x)=>s+x.amt, 0); } 
+        else if(sourceName === "OD Collection") { balance += window.receiptHistory.filter(r => r.type === "OD" && r.dt <= upToDateStr).reduce((s,x)=>s+x.amt, 0); } 
+        else if(sourceName === "Seizing Recovery") { balance += window.receiptHistory.filter(r => r.type === "Seizing" && r.dt <= upToDateStr).reduce((s,x)=>s+x.amt, 0); } 
+        else if(sourceName === "Doc Charges") { window.dbData.forEach(x => { if(x.fdt <= upToDateStr) { let net = (parseFloat(x.doc)||0) - (parseFloat(x.bdoc)||0); if(net>0) balance += net; } }); }
+        
+        // 2. ADD / SUBTRACT: Daybook (Credits add to source, Debits/Refundable Debits subtract)
+        window.daybookData.filter(d => d.source === sourceName && d.dt <= upToDateStr).forEach(d => {
+            if(d.type === "Credit") balance += parseFloat(d.amt);
+            if(d.type === "Debit" || d.type === "Refundable Debit") balance -= parseFloat(d.amt);
+        });
+
+        // 3. ADD / SUBTRACT: Transfers (From source means minus, To source means plus)
+        window.transfersData.filter(t => t.dt <= upToDateStr).forEach(t => {
+            if(t.from === sourceName) balance -= parseFloat(t.amt);
+            if(t.to === sourceName) balance += parseFloat(t.amt);
+        });
+        return balance;
+    }
+
+    // --- 9. DAY BOOK & REFUNDABLE DEBIT ---
     window.calcDaybookBal = function() {
-        let source = document.getElementById("dbSource").value;
-        let dbTypeNode = document.querySelector('input[name="dbType"]:checked');
-        if(!dbTypeNode) return;
-        let type = dbTypeNode.value;
-        let amt = parseFloat(document.getElementById("dbAmt").value) || 0;
+        let source = document.getElementById("dbSource").value; let dbTypeNode = document.querySelector('input[name="dbType"]:checked'); if(!dbTypeNode) return;
+        let type = dbTypeNode.value; let amt = parseFloat(document.getElementById("dbAmt").value) || 0;
         
         document.getElementById("lblAvailSrc").innerText = esc(source);
+        let availableBalance = window.getSourceBalance(source); // Using New Engine
+        document.getElementById("lblAvailAmt").innerText = window.fmtMoney(availableBalance); 
         
-        let totalCollected = 0;
-        if(source === "EMI Collection") totalCollected = window.receiptHistory.filter(r => r.type === "Installment" || r.type === "Account Closed").reduce((s,x)=>s+x.amt, 0);
-        else if(source === "OD Collection") totalCollected = window.receiptHistory.filter(r => r.type === "OD").reduce((s,x)=>s+x.amt, 0);
-        else if(source === "Seizing Recovery") totalCollected = window.receiptHistory.filter(r => r.type === "Seizing").reduce((s,x)=>s+x.amt, 0);
-        else if(source === "Doc Charges") window.dbData.forEach(x => { let net = (parseFloat(x.doc)||0) - (parseFloat(x.bdoc)||0); if(net>0) totalCollected += net; });
-        
-        let sourceDbData = window.daybookData.filter(d => d.source === source);
-        let pastDebits = sourceDbData.filter(d => d.type === "Debit").reduce((s,x)=>s+x.amt, 0);
-        let pastCredits = sourceDbData.filter(d => d.type === "Credit").reduce((s,x)=>s+x.amt, 0);
-        
-        let availableBalance = totalCollected + pastCredits - pastDebits;
-        document.getElementById("lblAvailAmt").innerText = window.fmtMoney(availableBalance); // Formatted with .00
-        
-        let subTotal = type === "Debit" ? (availableBalance - amt) : (availableBalance + amt);
-        let subTotalEl = document.getElementById("lblSubTotal");
-        subTotalEl.innerText = window.fmtMoney(subTotal); // Formatted with .00
-        subTotalEl.style.color = subTotal < 0 ? "var(--danger)" : "var(--success)";
+        let subTotal = (type === "Debit" || type === "Refundable Debit") ? (availableBalance - amt) : (availableBalance + amt);
+        let subTotalEl = document.getElementById("lblSubTotal"); subTotalEl.innerText = window.fmtMoney(subTotal); subTotalEl.style.color = subTotal < 0 ? "var(--danger)" : "var(--success)";
     }
     
     window.saveDaybookEntry = function() {
         let type = document.querySelector('input[name="dbType"]:checked').value;
-        let name = document.getElementById("dbName").value.trim();
-        let purpose = document.getElementById("dbPurpose").value.trim();
-        let source = document.getElementById("dbSource").value;
-        let issuedBy = document.getElementById("dbIssuedBy").value.trim();
+        let name = document.getElementById("dbName").value.trim(); let purpose = document.getElementById("dbPurpose").value.trim();
+        let source = document.getElementById("dbSource").value; let issuedBy = document.getElementById("dbIssuedBy").value.trim();
         let amt = parseFloat(document.getElementById("dbAmt").value) || 0;
         
         if(!name || !purpose || amt <= 0 || !issuedBy) { alert("Please enter Name, Purpose, Issued By, and Valid Amount."); return; }
         
-        let trCode = "VB-" + Math.floor(Math.random()*900000+100000);
-        let date = window.getTodayDate();
+        let trCode = "VB-" + Math.floor(Math.random()*900000+100000); let date = window.getTodayDate();
+        let payload = { tr: trCode, dt: date, type, name, purpose, source, issuedBy, amt };
+        if(type === "Refundable Debit") payload.status = "Pending";
         
-        push(ref(database, 'daybook'), { tr: trCode, dt: date, type, name, purpose, source, issuedBy, amt }).then(() => {
+        push(ref(database, 'daybook'), payload).then(() => {
             alert("✅ Voucher Saved Successfully!");
-            document.getElementById("vp_dt").innerText = date.split('-').reverse().join('-');
-            document.getElementById("vp_no").innerText = trCode;
-            let tpEl = document.getElementById("vp_type");
-            tpEl.innerText = type.toUpperCase();
-            tpEl.style.background = type === "Debit" ? "#fee2e2" : "#dcfce7"; tpEl.style.color = type === "Debit" ? "#dc2626" : "#166534";
-            document.getElementById("vp_name").innerText = esc(name);
-            document.getElementById("vp_pur").innerText = esc(purpose);
-            document.getElementById("vp_src").innerText = esc(source);
-            document.getElementById("vp_iss").innerText = esc(issuedBy);
-            document.getElementById("vp_amt").innerText = "₹ " + window.fmtMoney(amt);
+            document.getElementById("vp_dt").innerText = date.split('-').reverse().join('-'); document.getElementById("vp_no").innerText = trCode;
+            let tpEl = document.getElementById("vp_type"); tpEl.innerText = type.toUpperCase(); tpEl.style.background = type.includes("Debit") ? "#fee2e2" : "#dcfce7"; tpEl.style.color = type.includes("Debit") ? "#dc2626" : "#166534";
+            document.getElementById("vp_name").innerText = esc(name); document.getElementById("vp_pur").innerText = esc(purpose); document.getElementById("vp_src").innerText = esc(source); document.getElementById("vp_iss").innerText = esc(issuedBy); document.getElementById("vp_amt").innerText = "₹ " + window.fmtMoney(amt);
             
             document.getElementById("dbName").value = ""; document.getElementById("dbPurpose").value = ""; document.getElementById("dbAmt").value = "";
-            document.getElementById("voucherPrintArea").style.display = "block";
-            window.calcDaybookBal();
+            document.getElementById("voucherPrintArea").style.display = "block"; window.calcDaybookBal(); window.renderRefundableDebits();
         });
     }
 
-    // --- 9. DAILY & FINANCE REPORTS (UPDATED LOGIC & TABLES) ---
-    window.generateDailyReport = function() {
-        let fDate = document.getElementById("drFDate").value; let tDate = document.getElementById("drTDate").value;
-        if(!fDate || !tDate) { alert("Please select From and To Date."); return; }
-        
-        document.getElementById("lblDrDates").innerText = `${fDate.split('-').reverse().join('-')} to ${tDate.split('-').reverse().join('-')}`;
-        
-        let hpSub = 0, rcSub = 0, szSub = 0, dbSub = 0;
-        let hpHTML = "", rcHTML = "", szHTML = "", dbHTML = "";
-        let slHp = 1, slRc = 1, slSz = 1, slDb = 1;
-
-        window.dbData.filter(d => d.fdt >= fDate && d.fdt <= tDate).forEach(d => {
-            let handLoan = (parseFloat(d.amt)||0) - (parseFloat(d.doc)||0) - (parseFloat(d.bdoc)||0);
-            hpSub += handLoan;
-            hpHTML += `<tr><td>${slHp++}</td><td><b style="color:var(--primary);">${esc(d.hp)}</b></td><td>${esc(d.srn)} ${esc(d.nm)}</td><td><span class="tag tag-pending">${esc(d.vno)}</span></td><td><b>${esc(d.vnm)}</b></td><td style="color:var(--danger); font-weight:800;">₹${window.fmtMoney(handLoan)}</td></tr>`;
+    window.renderRefundableDebits = function() {
+        let fDate = document.getElementById("refFDate").value; let tDate = document.getElementById("refTDate").value; let status = document.getElementById("refStatus").value; let html = ""; let sno = 1;
+        window.daybookData.forEach(d => {
+            if(d.type !== "Refundable Debit") return;
+            if(fDate && tDate && (d.dt < fDate || d.dt > tDate)) return; if(status !== "All" && (d.status || "Pending") !== status) return;
+            
+            let statTag = (d.status === "Refunded") ? `<span class="tag tag-paid">Refunded ✅<br><small>${d.refundDt}</small></span>` : `<span class="tag tag-pending">Pending ⏳</span>`;
+            let actionBtn = (d.status !== "Refunded") ? `<button class="btn btn-green" style="padding:6px 12px; font-size:11px;" onclick="markAsRefunded('${d.id}', '${d.source}', ${d.amt}, '${esc(d.name)}')">Mark Refunded ✅</button>` : `-`;
+            html += `<tr><td>${sno++}</td><td>${d.dt}</td><td><b>${esc(d.name)}</b></td><td>${esc(d.purpose)}</td><td><span class="tag tag-blue">${esc(d.source)}</span></td><td>${esc(d.issuedBy)}</td><td style="color:var(--danger); font-weight:800;">₹${window.fmtMoney(d.amt)}</td><td>${d.status==="Refunded" ? statTag : actionBtn}</td></tr>`;
         });
-
-        window.receiptHistory.filter(r => r.dt >= fDate && r.dt <= tDate).forEach(r => {
-            let d = window.dbData.find(x => x.hp === r.hp) || {};
-            let cName = d.hp ? `${esc(d.srn)} ${esc(d.nm)}` : "Unknown";
-            let vNo = d.hp ? esc(d.vno) : "-";
-            let vNm = d.hp ? esc(d.vnm) : "-";
-
-            if(r.type === "Seizing") {
-                szSub += r.amt;
-                szHTML += `<tr><td>${slSz++}</td><td><b style="color:var(--primary);">${esc(r.hp)}</b></td><td>${cName}</td><td><span class="tag tag-pending">${vNo}</span></td><td><b>${vNm}</b></td><td>${esc(r.tr)}</td><td style="color:var(--success); font-weight:800;">₹${window.fmtMoney(r.amt)}</td></tr>`;
-            } else {
-                rcSub += r.amt;
-                rcHTML += `<tr><td>${slRc++}</td><td><b style="color:var(--primary);">${esc(r.hp)}</b></td><td>${cName}</td><td><span class="tag tag-pending">${vNo}</span></td><td><b>${vNm}</b></td><td>${esc(r.tr)}</td><td style="color:var(--success); font-weight:800;">₹${window.fmtMoney(r.amt)}</td></tr>`;
-            }
-        });
-
-        window.daybookData.filter(v => v.dt >= fDate && v.dt <= tDate).forEach(v => {
-            let displayName = v.name ? esc(v.name) : esc(v.purpose);
-            if(v.type === "Debit") { 
-                dbSub -= v.amt; 
-                dbHTML += `<tr><td>${slDb++}</td><td><b>${displayName}</b></td><td>${esc(v.purpose)}</td><td>${esc(v.source)}</td><td>${esc(v.issuedBy)}</td><td>-</td><td style="color:var(--danger); font-weight:800;">₹${window.fmtMoney(v.amt)}</td></tr>`; 
-            } else { 
-                dbSub += v.amt; 
-                dbHTML += `<tr><td>${slDb++}</td><td><b>${displayName}</b></td><td>${esc(v.purpose)}</td><td>${esc(v.source)}</td><td>${esc(v.issuedBy)}</td><td style="color:var(--success); font-weight:800;">₹${window.fmtMoney(v.amt)}</td><td>-</td></tr>`; 
-            }
-        });
-
-        document.getElementById("drHpList").innerHTML = hpHTML || `<tr><td colspan="6" style="color:var(--text-muted); text-align:center;">No new agreements.</td></tr>`;
-        document.getElementById("drRcList").innerHTML = rcHTML || `<tr><td colspan="7" style="color:var(--text-muted); text-align:center;">No collections.</td></tr>`;
-        document.getElementById("drSzList").innerHTML = szHTML || `<tr><td colspan="7" style="color:var(--text-muted); text-align:center;">No seizing collections.</td></tr>`;
-        document.getElementById("drDbList").innerHTML = dbHTML || `<tr><td colspan="7" style="color:var(--text-muted); text-align:center;">No daybook transactions.</td></tr>`;
-        
-        document.getElementById("drHpSub").innerText = window.fmtMoney(hpSub); 
-        document.getElementById("drRcSub").innerText = window.fmtMoney(rcSub); 
-        document.getElementById("drSzSub").innerText = window.fmtMoney(szSub); 
-        document.getElementById("drDbSub").innerText = window.fmtMoney(dbSub);
-        
-        let netBal = rcSub + szSub - hpSub + dbSub; 
-        document.getElementById("drFinalBal").innerText = (netBal >= 0 ? "+" : "") + "₹" + window.fmtMoney(netBal);
-        document.getElementById("drFinalBal").style.color = netBal < 0 ? "#fca5a5" : "#fff";
-        document.getElementById("dailyReportArea").style.display = "block";
+        document.getElementById("refundTbBody").innerHTML = html || `<tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:20px;">No refundable debits found.</td></tr>`;
     }
 
+    window.markAsRefunded = function(id, source, amount, name) {
+        if(confirm(`Mark ₹${amount} as refunded from ${name}?\nThis will automatically CREDIT the amount back to [${source}].`)) {
+            let today = window.getTodayDate();
+            update(ref(database, 'daybook/' + id), { status: "Refunded", refundDt: today }).then(() => {
+                push(ref(database, 'daybook'), { tr: "RF-" + Math.floor(Math.random()*900000+100000), dt: today, type: "Credit", name: name, purpose: "Refund Received", source: source, issuedBy: "System Auto", amt: amount });
+                alert("✅ Refund Processed! Amount credited back to " + source); window.renderRefundableDebits(); window.calcDaybookBal();
+            });
+        }
+    }
+
+    // --- 10. SECRET OWNER FUND TRANSFERS ("R" TRIGGER) ---
+    window.checkTransferBalances = function() {
+        let fromSrc = document.getElementById("ftFromSrc").value; let toSrc = document.getElementById("ftToSrc").value;
+        document.getElementById("lblFtFromBal").innerText = window.fmtMoney(window.getSourceBalance(fromSrc)); document.getElementById("lblFtToBal").innerText = window.fmtMoney(window.getSourceBalance(toSrc));
+    }
+
+    window.addOwnerInvestment = function() {
+        let amt = parseFloat(document.getElementById("ftOwnerAmt").value) || 0; let rem = document.getElementById("ftOwnerRem").value.trim() || "CAPITAL ADDITION";
+        if(amt <= 0) { alert("Enter valid investment amount"); return; }
+        
+        let trCode = "CAP-" + Math.floor(Math.random()*900000+100000);
+        push(ref(database, 'transfers'), { tr: trCode, dt: window.getTodayDate(), from: "EXTERNAL", to: "Owner Investment", amt: amt, rem: rem }).then(() => {
+            alert("✅ Capital Added Successfully!"); document.getElementById("ftOwnerAmt").value = ""; window.checkTransferBalances(); window.renderTransfers();
+        });
+    }
+
+    window.executeFundTransfer = function() {
+        let fromSrc = document.getElementById("ftFromSrc").value; let toSrc = document.getElementById("ftToSrc").value; let amt = parseFloat(document.getElementById("ftTrAmt").value) || 0; let rem = document.getElementById("ftTrRem").value.trim();
+        if(fromSrc === toSrc) { alert("Cannot transfer to the same account!"); return; } if(amt <= 0 || !rem) { alert("Enter valid Amount and Remarks"); return; }
+        
+        let avail = window.getSourceBalance(fromSrc); if(amt > avail) { if(!confirm(`Warning: You are transferring MORE than available balance (₹${avail}). Continue?`)) return; }
+        let trCode = "TRF-" + Math.floor(Math.random()*900000+100000);
+        push(ref(database, 'transfers'), { tr: trCode, dt: window.getTodayDate(), from: fromSrc, to: toSrc, amt: amt, rem: rem }).then(() => {
+            alert(`✅ Transfer of ₹${amt} successful!`); document.getElementById("ftTrAmt").value = ""; document.getElementById("ftTrRem").value = ""; window.checkTransferBalances(); window.renderTransfers();
+        });
+    }
+
+    window.renderTransfers = function() {
+        let fDate = document.getElementById("ftFDate").value; let tDate = document.getElementById("ftTDate").value; let html = ""; let sno = 1;
+        window.transfersData.forEach(t => {
+            if(fDate && tDate && (t.dt < fDate || t.dt > tDate)) return;
+            let fromTag = t.from === "EXTERNAL" ? `<b style="color:var(--success);">💰 NEW ADDITION</b>` : `<span class="tag tag-pending">${t.from}</span>`;
+            let toTag = t.to === "Profit / Withdrawal" ? `<span class="tag tag-seized">${t.to}</span>` : `<span class="tag tag-paid">${t.to}</span>`;
+            html += `<tr><td>${sno++}</td><td>${t.dt}</td><td>${fromTag}</td><td>${toTag}</td><td style="font-weight:800; color:var(--primary-dark);">₹${window.fmtMoney(t.amt)}</td><td>${esc(t.rem)}</td></tr>`;
+        });
+        document.getElementById("ftHistoryTb").innerHTML = html || `<tr><td colspan="6" style="text-align:center; padding:20px;">No transfers found.</td></tr>`;
+    }
+
+    // --- 11. FINANCE REPORT (BALANCES TABLE) ---
     window.generateFinanceReport = function() {
         let fDate = document.getElementById("finFDate").value; let tDate = document.getElementById("finTDate").value;
         if(!fDate || !tDate) { alert("Please select both dates"); return; }
-
-        let docTotal = 0, emiTotal = 0, odTotal = 0, szTotal = 0; window.finReportData = []; 
+        let docTotal = 0, emiTotal = 0, odTotal = 0, szTotal = 0, pendDocTotal = 0, pendCommTotal = 0; window.finReportData = []; 
         
         window.dbData.forEach(a => {
-            if(a.fdt >= fDate && a.fdt <= tDate && (a.doc > 0)) {
-                docTotal += parseFloat(a.doc); 
-                window.finReportData.push({ date: a.fdt, hp: a.hp, name: a.srn + " " + a.nm, type: 'DOC', typeLabel: '<span class="tag tag-pending">Office Doc Charges</span>', amount: parseFloat(a.doc), color: 'var(--primary)' }); 
+            if(a.bdoc > 0 && a.docPaid === false) { pendCommTotal += parseFloat(a.bdoc); window.finReportData.push({ date: a.fdt, hp: a.hp, name: a.srn + " " + a.nm, type: 'PENDING_COMM', typeLabel: '<span class="tag tag-pending" style="background:#ede9fe;color:#7c3aed;">Dealer Pending Comm</span>', cr: 0, dr: parseFloat(a.bdoc) }); }
+            if(a.fdt >= fDate && a.fdt <= tDate) {
+                if(a.doc > 0) { docTotal += parseFloat(a.doc); window.finReportData.push({ date: a.fdt, hp: a.hp, name: a.srn + " " + a.nm, type: 'DOC', typeLabel: '<span class="tag tag-pending">Office Doc Charges</span>', cr: parseFloat(a.doc), dr: 0 }); }
             }
         });
         
         window.receiptHistory.forEach(r => {
             if(r.dt >= fDate && r.dt <= tDate) {
                 let rData = window.dbData.find(x => x.hp === r.hp); let cName = rData ? (rData.srn + " " + rData.nm) : "Unknown";
-                if(r.type === "Installment") { emiTotal += r.amt; window.finReportData.push({ date: r.dt, hp: r.hp, name: cName, type: 'EMI', typeLabel: '<span class="tag tag-paid">EMI Amount</span>', amount: r.amt, color: 'var(--success)' }); } 
-                else if(r.type === "OD") { odTotal += r.amt; window.finReportData.push({ date: r.dt, hp: r.hp, name: cName, type: 'OD', typeLabel: '<span class="tag tag-pending" style="background:#fef08a;">OD Penalty</span>', amount: r.amt, color: 'var(--warning)' }); }
-                else if(r.type === "Seizing") { szTotal += r.amt; window.finReportData.push({ date: r.dt, hp: r.hp, name: cName, type: 'SEIZING', typeLabel: '<span class="tag tag-seized">Seizing Charge</span>', amount: r.amt, color: 'var(--danger)' }); }
-                else if(r.type === "Account Closed" || r.type === "Official Closure Protocol") {
-                    let odPart = rData ? (rData.settledOd || 0) : 0; let emiPart = r.amt - odPart; if(emiPart < 0) emiPart = 0;
-                    if(odPart > 0) { odTotal += odPart; window.finReportData.push({ date: r.dt, hp: r.hp, name: cName, type: 'OD', typeLabel: '<span class="tag tag-pending" style="background:#fef08a;">A/C Close OD</span>', amount: odPart, color: 'var(--warning)' }); }
-                    if(emiPart > 0) { emiTotal += emiPart; window.finReportData.push({ date: r.dt, hp: r.hp, name: cName, type: 'EMI', typeLabel: '<span class="tag tag-paid">A/C Close EMI</span>', amount: emiPart, color: 'var(--primary-dark)' }); }
-                }
+                if(r.type === "Installment") { emiTotal += r.amt; window.finReportData.push({ date: r.dt, hp: r.hp, name: cName, type: 'EMI', typeLabel: '<span class="tag tag-paid">EMI Amount</span>', cr: r.amt, dr: 0 }); } 
+                else if(r.type === "OD") { odTotal += r.amt; window.finReportData.push({ date: r.dt, hp: r.hp, name: cName, type: 'OD', typeLabel: '<span class="tag tag-pending" style="background:#fef08a;">OD Penalty</span>', cr: r.amt, dr: 0 }); }
+                else if(r.type === "Seizing") { szTotal += r.amt; window.finReportData.push({ date: r.dt, hp: r.hp, name: cName, type: 'SEIZING', typeLabel: '<span class="tag tag-seized">Seizing Charge</span>', cr: r.amt, dr: 0 }); }
             }
         });
+
+        // Balances Logic
+        let prevDay = new Date(fDate); prevDay.setDate(prevDay.getDate() - 1); let prevDateStr = prevDay.toISOString().split('T')[0]; 
+        const sourcesToTrack = ["Owner Investment", "EMI Collection", "OD Collection", "Seizing Recovery", "Doc Charges", "Office Cash"]; let balHtml = "";
         
-        document.getElementById("rep_doc").innerText = "₹" + window.fmtMoney(docTotal); document.getElementById("rep_emi").innerText = "₹" + window.fmtMoney(emiTotal); 
-        document.getElementById("rep_od").innerText = "₹" + window.fmtMoney(odTotal); document.getElementById("rep_sz").innerText = "₹" + window.fmtMoney(szTotal); 
-        document.getElementById("rep_tot").innerText = "₹" + window.fmtMoney(docTotal + emiTotal + odTotal + szTotal);
+        sourcesToTrack.forEach(src => {
+            let opBal = window.getSourceBalance(src, prevDateStr); let cr = 0, dr = 0;
+            
+            if(src === "EMI Collection") cr += window.receiptHistory.filter(r => (r.type === "Installment" || r.type === "Account Closed") && r.dt >= fDate && r.dt <= tDate).reduce((s,x)=>s+x.amt, 0);
+            if(src === "OD Collection") cr += window.receiptHistory.filter(r => r.type === "OD" && r.dt >= fDate && r.dt <= tDate).reduce((s,x)=>s+x.amt, 0);
+            if(src === "Seizing Recovery") cr += window.receiptHistory.filter(r => r.type === "Seizing" && r.dt >= fDate && r.dt <= tDate).reduce((s,x)=>s+x.amt, 0);
+            if(src === "Doc Charges") window.dbData.forEach(x => { if(x.fdt >= fDate && x.fdt <= tDate) { let net = (parseFloat(x.doc)||0) - (parseFloat(x.bdoc)||0); if(net>0) cr += net; } });
+            
+            window.daybookData.filter(d => d.source === src && d.dt >= fDate && d.dt <= tDate).forEach(d => { if(d.type === "Credit") cr += parseFloat(d.amt); if(d.type === "Debit" || d.type === "Refundable Debit") dr += parseFloat(d.amt); });
+            window.transfersData.filter(t => t.dt >= fDate && t.dt <= tDate).forEach(t => { if(t.from === src) dr += parseFloat(t.amt); if(t.to === src) cr += parseFloat(t.amt); });
+            
+            let clBal = opBal + cr - dr; let srcColor = (src === "Owner Investment") ? "var(--primary-dark)" : "var(--secondary)";
+            balHtml += `<tr><td><b style="color:${srcColor}; font-size:14px;">${src}</b></td><td style="font-weight:700;">₹${window.fmtMoney(opBal)}</td><td style="color:var(--success); font-weight:800;">+ ₹${window.fmtMoney(cr)}</td><td style="color:var(--danger); font-weight:800;">- ₹${window.fmtMoney(dr)}</td><td style="font-size:15px; font-weight:800; color:${clBal < 0 ? 'var(--danger)' : 'var(--success)'};">₹${window.fmtMoney(clBal)}</td></tr>`;
+        });
         
-        document.getElementById("finRepResults").style.display = "grid"; document.getElementById("finRepTableBox").style.display = "block";
-        window.filterFinReport('ALL');
+        document.getElementById("balanceTb").innerHTML = balHtml; document.getElementById("balanceTableBox").style.display = "block";
+        document.getElementById("rep_doc").innerText = "₹" + window.fmtMoney(docTotal); document.getElementById("rep_emi").innerText = "₹" + window.fmtMoney(emiTotal); document.getElementById("rep_od").innerText = "₹" + window.fmtMoney(odTotal); document.getElementById("rep_sz").innerText = "₹" + window.fmtMoney(szTotal); document.getElementById("rep_tot").innerText = "₹" + window.fmtMoney(docTotal + emiTotal + odTotal + szTotal);
+        document.getElementById("finRepResults").style.display = "grid"; document.getElementById("finRepTableBox").style.display = "block"; window.filterFinReport('ALL');
     }
 
     window.filterFinReport = function(filterType) {
-        let filtered = filterType !== 'ALL' ? window.finReportData.filter(x => x.type === filterType) : window.finReportData;
-        let html = "";
+        let filtered = filterType !== 'ALL' ? window.finReportData.filter(x => x.type === filterType) : window.finReportData; let html = "";
         filtered.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(item => { 
-            html += `<tr><td>${item.date}</td><td><b style="color:var(--primary);">${esc(item.hp)}</b></td><td>${esc(item.name)}</td><td>${item.typeLabel}</td><td style="font-weight:bold; color:${item.color};">₹${window.fmtMoney(item.amount)}</td></tr>`; 
+            let crStr = item.cr > 0 ? `₹${window.fmtMoney(item.cr)}` : "-"; let drStr = item.dr > 0 ? `₹${window.fmtMoney(item.dr)}` : "-";
+            html += `<tr><td>${item.date}</td><td><b style="color:var(--primary);">${esc(item.hp)}</b></td><td>${esc(item.name)}</td><td>${item.typeLabel}</td><td style="color:var(--success); font-weight:bold;">${crStr}</td><td style="color:var(--danger); font-weight:bold;">${drStr}</td></tr>`; 
         });
-        document.getElementById("finRepTb").innerHTML = html || `<tr><td colspan="5" style="text-align:center; padding:20px; color:var(--danger); font-weight:bold;">No matching records.</td></tr>`;
+        document.getElementById("finRepTb").innerHTML = html || `<tr><td colspan="6" style="text-align:center; padding:20px; color:var(--danger); font-weight:bold;">No matching records.</td></tr>`;
     }
 
-    // --- 10. NEW AGREEMENT ENTRY (HP SAVE) ---
-    window.toggleDocReason = (type) => {
-        if(type === 'cb') document.getElementById("cb_r_box").style.display = (document.getElementById("in_cb").value === 'No') ? 'flex' : 'none';
-        if(type === 'noc') document.getElementById("noc_r_box").style.display = (document.getElementById("in_noc").value === 'No') ? 'flex' : 'none';
+    // --- 12. DAILY REPORT (Original Layout logic integrated with Refundable Debit) ---
+    window.generateDailyReport = function() {
+        let fDate = document.getElementById("drFDate").value; let tDate = document.getElementById("drTDate").value;
+        if(!fDate || !tDate) { alert("Please select From and To Date."); return; }
+        
+        document.getElementById("lblDrDates").innerText = `${fDate.split('-').reverse().join('-')} to ${tDate.split('-').reverse().join('-')}`;
+        
+        let hpSub = 0, rcSub = 0, szSub = 0, dbSub = 0, consSub = 0, docPaySub = 0;
+        let hpHTML = "", rcHTML = "", szHTML = "", dbHTML = "", consHTML = "", docPayHTML = "";
+        let slHp = 1, slRc = 1, slSz = 1, slDb = 1, slCons = 1, slDocPay = 1;
+
+        window.dbData.forEach(d => {
+            if(d.fdt >= fDate && d.fdt <= tDate) {
+                let handLoan = (parseFloat(d.amt)||0) - (parseFloat(d.doc)||0) - (parseFloat(d.bdoc)||0); hpSub += handLoan;
+                hpHTML += `<tr><td>${slHp++}</td><td>${d.fdt}</td><td><b style="color:var(--primary);">${esc(d.hp)}</b></td><td>${esc(d.srn)} ${esc(d.nm)}</td><td><span class="tag tag-pending">${esc(d.vno)}</span></td><td><b>${esc(d.vnm)}</b></td><td style="color:var(--danger); font-weight:800;">₹${window.fmtMoney(handLoan)}</td></tr>`;
+            }
+            let bdocAmt = parseFloat(d.bdoc) || 0;
+            if(bdocAmt > 0) {
+                if(d.docPaid && d.consPaidDt >= fDate && d.consPaidDt <= tDate) {
+                    consSub += bdocAmt; consHTML += `<tr><td>${slCons++}</td><td>${d.consPaidDt}</td><td><b style="color:var(--secondary);">${d.consultancy||'-'}</b></td><td>${d.vno}</td><td>${d.vnm}</td><td style="color:var(--danger);font-weight:800;">₹${window.fmtMoney(bdocAmt)}</td><td><span style="color:var(--success);font-weight:800;">✅ Paid</span></td></tr>`;
+                } else if(!d.docPaid && d.fdt >= fDate && d.fdt <= tDate) {
+                    consHTML += `<tr><td>${slCons++}</td><td>${d.fdt}</td><td><b style="color:var(--secondary);">${d.consultancy||'-'}</b></td><td>${d.vno}</td><td>${d.vnm}</td><td style="color:var(--danger);font-weight:800;">₹${window.fmtMoney(bdocAmt)}</td><td><button class="btn" style="padding:6px 12px; font-size:11px;" onclick="payConsDoc('${d.hp}')">Pay Now</button></td></tr>`;
+                }
+            }
+            let holdAmt = (parseFloat(d.cbHoldAmt)||0) + (parseFloat(d.nocHoldAmt)||0);
+            if(holdAmt > 0) {
+                let givenDt = d.cbGivenDt || d.nocGivenDt; 
+                if(givenDt >= fDate && givenDt <= tDate) {
+                    docPaySub += holdAmt; docPayHTML += `<tr><td>${slDocPay++}</td><td>${givenDt}</td><td><b style="color:var(--primary);">${d.hp}</b></td><td>${d.vno} - ${d.vnm}</td><td><span class="tag tag-paid">✅ Given</span></td><td style="color:var(--danger);font-weight:800;">₹${window.fmtMoney(holdAmt)}</td></tr>`;
+                }
+            }
+        });
+
+        window.receiptHistory.filter(r => r.dt >= fDate && r.dt <= tDate).forEach(r => {
+            let d = window.dbData.find(x => x.hp === r.hp) || {}; let cName = d.hp ? `${esc(d.srn)} ${esc(d.nm)}` : "Unknown"; let vNo = d.hp ? esc(d.vno) : "-"; let vNm = d.hp ? esc(d.vnm) : "-";
+            if(r.type === "Seizing") {
+                szSub += r.amt; szHTML += `<tr><td>${slSz++}</td><td>${r.dt}</td><td><b style="color:var(--primary);">${esc(r.hp)}</b></td><td>${cName}</td><td><span class="tag tag-pending">${vNo}</span></td><td><b>${vNm}</b></td><td>${esc(r.tr)}</td><td style="color:var(--success); font-weight:800;">₹${window.fmtMoney(r.amt)}</td></tr>`;
+            } else {
+                rcSub += r.amt; rcHTML += `<tr><td>${slRc++}</td><td>${r.dt}</td><td><b style="color:var(--primary);">${esc(r.hp)}</b></td><td>${cName}</td><td><span class="tag tag-pending">${vNo}</span></td><td><b>${vNm}</b></td><td>${esc(r.tr)}</td><td style="color:var(--success); font-weight:800;">₹${window.fmtMoney(r.amt)}</td></tr>`;
+            }
+        });
+
+        window.daybookData.filter(v => v.dt >= fDate && v.dt <= tDate).forEach(v => {
+            let displayName = v.name ? esc(v.name) : esc(v.purpose);
+            if(v.type === "Debit" || v.type === "Refundable Debit") { dbSub -= v.amt; dbHTML += `<tr><td>${slDb++}</td><td>${v.dt}</td><td><b>${displayName}</b></td><td>${esc(v.purpose)}</td><td>${esc(v.source)}</td><td>${esc(v.issuedBy)}</td><td>-</td><td style="color:var(--danger); font-weight:800;">₹${window.fmtMoney(v.amt)}</td></tr>`; } 
+            else { dbSub += v.amt; dbHTML += `<tr><td>${slDb++}</td><td>${v.dt}</td><td><b>${displayName}</b></td><td>${esc(v.purpose)}</td><td>${esc(v.source)}</td><td>${esc(v.issuedBy)}</td><td style="color:var(--success); font-weight:800;">₹${window.fmtMoney(v.amt)}</td><td>-</td></tr>`; }
+        });
+
+        let renderAreaHtml = `
+            <div class="rep-section"><div class="rep-header"><span>📝 New Agreements (HP Entries)</span><span>DEBIT</span></div><div class="table-wrap" style="margin:0; border:none; border-bottom: 1px solid var(--border);"><table style="border:none;"><thead><tr><th>Sl.No</th><th>Date</th><th>HP No</th><th>Customer Name</th><th>Vehicle No</th><th>Vehicle Name</th><th>Debit Amt</th></tr></thead><tbody>${hpHTML || `<tr><td colspan="7" style="color:var(--text-muted); text-align:center;">No new agreements.</td></tr>`}</tbody></table></div><div class="rep-sub">Sub Total: ₹${window.fmtMoney(hpSub)} (Debit)</div></div>
+            <div class="rep-section"><div class="rep-header"><span>💵 Collections (EMI & OD)</span><span>CREDIT</span></div><div class="table-wrap" style="margin:0; border:none; border-bottom: 1px solid var(--border);"><table style="border:none;"><thead><tr><th>Sl.No</th><th>Date</th><th>HP No</th><th>Customer Name</th><th>Vehicle No</th><th>Vehicle Name</th><th>TR Number</th><th>Receipt Amt</th></tr></thead><tbody>${rcHTML || `<tr><td colspan="8" style="color:var(--text-muted); text-align:center;">No collections.</td></tr>`}</tbody></table></div><div class="rep-sub">Sub Total: ₹${window.fmtMoney(rcSub)} (Credit)</div></div>
+            <div class="rep-section"><div class="rep-header"><span>🛑 Seizing Collections</span><span>CREDIT</span></div><div class="table-wrap" style="margin:0; border:none; border-bottom: 1px solid var(--border);"><table style="border:none;"><thead><tr><th>Sl.No</th><th>Date</th><th>HP No</th><th>Customer Name</th><th>Vehicle No</th><th>Vehicle Name</th><th>TR Number</th><th>Receipt Amt</th></tr></thead><tbody>${szHTML || `<tr><td colspan="8" style="color:var(--text-muted); text-align:center;">No seizing collections.</td></tr>`}</tbody></table></div><div class="rep-sub">Sub Total: ₹${window.fmtMoney(szSub)} (Credit)</div></div>
+            <div class="rep-section"><div class="rep-header"><span>🤝 Consultancy / Dealer Doc Charges</span><span>DEBIT</span></div><div class="table-wrap" style="margin:0; border:none; border-bottom: 1px solid var(--border);"><table style="border:none;"><thead><tr><th>Sl.No</th><th>Date</th><th>Consultancy/Dealer</th><th>Vehicle No</th><th>Vehicle Name</th><th>Doc Charges (₹)</th><th>Action</th></tr></thead><tbody>${consHTML || `<tr><td colspan="7" style="color:var(--text-muted); text-align:center;">No consultancy transactions.</td></tr>`}</tbody></table></div><div class="rep-sub">Sub Total: ₹${window.fmtMoney(consSub)} (Debit)</div></div>
+            <div class="rep-section"><div class="rep-header"><span>📄 Pending Document Payments (Given)</span><span>DEBIT</span></div><div class="table-wrap" style="margin:0; border:none; border-bottom: 1px solid var(--border);"><table style="border:none;"><thead><tr><th>Sl.No</th><th>Given Date</th><th>HP No</th><th>Vehicle Details</th><th>Doc Given</th><th>Amount Paid (₹)</th></tr></thead><tbody>${docPayHTML || `<tr><td colspan="6" style="color:var(--text-muted); text-align:center;">No pending documents paid.</td></tr>`}</tbody></table></div><div class="rep-sub">Sub Total: ₹${window.fmtMoney(docPaySub)} (Debit)</div></div>
+            <div class="rep-section"><div class="rep-header"><span>💸 Expenses & Returns (Day Book)</span><span>DEBIT / CREDIT</span></div><div class="table-wrap" style="margin:0; border:none; border-bottom: 1px solid var(--border);"><table style="border:none;"><thead><tr><th>Sl.No</th><th>Date</th><th>Name</th><th>Purpose</th><th>Source</th><th>Issued By</th><th style="color:var(--success);">Credit (+)</th><th style="color:var(--danger);">Debit (-)</th></tr></thead><tbody>${dbHTML || `<tr><td colspan="8" style="color:var(--text-muted); text-align:center;">No daybook transactions.</td></tr>`}</tbody></table></div><div class="rep-sub">Net Total: ₹${window.fmtMoney(dbSub)}</div></div>
+        `;
+        document.getElementById("drRenderArea").innerHTML = renderAreaHtml;
+        let netBal = rcSub + szSub + dbSub - hpSub - consSub - docPaySub; 
+        document.getElementById("drFinalBal").innerText = (netBal >= 0 ? "+" : "") + "₹" + window.fmtMoney(netBal);
+        document.getElementById("drFinalBal").style.color = netBal < 0 ? "#fca5a5" : "#fff"; document.getElementById("dailyReportArea").style.display = "block";
+    }
+
+    // --- 13. ALL ORIGINAL FUNCTIONS (Search, Entry, Docs, Dues, Calc, Seize, Receipt, Close) ---
+    window.renderPendingDocsList = function() {
+        let fDate = document.getElementById("pdFDate").value; let tDate = document.getElementById("pdTDate").value; let html = ""; let sno = 1;
+        window.dbData.forEach(d => {
+            if(fDate && tDate) { if(d.fdt < fDate || d.fdt > tDate) return; }
+            let pendingStr = []; let holdAmt = 0;
+            if(d.cb === "No") { pendingStr.push("RC"); holdAmt += (parseFloat(d.cbHoldAmt)||0); }
+            if(d.noc === "No") { pendingStr.push("NOC"); holdAmt += (parseFloat(d.nocHoldAmt)||0); }
+            if(pendingStr.length > 0 && d.acStatus === "OPEN") {
+                html += `<tr><td>${sno++}</td><td>${d.fdt}</td><td><b style="color:var(--primary);">${d.hp}</b></td><td>${d.vno}<br><small style="color:var(--secondary);font-weight:700;">${d.vnm}</small></td><td>${d.consultancy || '-'}</td><td><span class="tag tag-pending">${pendingStr.join(' & ')}</span></td><td style="color:var(--danger); font-weight:800; font-size:14px;">₹${window.fmtMoney(holdAmt)}</td><td><button class="btn btn-green" style="padding:8px 15px; font-size:12px; box-shadow:none;" onclick="markDocGiven('${d.hp}')">Give Amt / RC OK ✅</button></td></tr>`;
+            }
+        });
+        document.getElementById("pagePendingDocsList").innerHTML = html || `<tr><td colspan="8" style="text-align:center; padding:30px; color:var(--text-muted); font-weight:700;">No pending documents found!</td></tr>`;
+    };
+
+    window.markDocGiven = function(hp) {
+        let d = window.dbData.find(x => x.hp === hp); if(!d) return;
+        let totalHold = (parseFloat(d.cbHoldAmt)||0) + (parseFloat(d.nocHoldAmt)||0);
+        if(confirm(`Confirm documents received for ${hp}?\nStopped Amount to Release: ₹${totalHold}`)) {
+            let updates = {}; if(d.cb === "No") { updates.cb = "Yes"; updates.cbGivenDt = window.getTodayDate(); } if(d.noc === "No") { updates.noc = "Yes"; updates.nocGivenDt = window.getTodayDate(); }
+            update(ref(database, 'accounts/' + hp), updates).then(() => { alert("✅ Documents Updated & Amount Released!"); updateDashboardCounts(); });
+        }
+    };
+
+    window.payConsDoc = function(hp) {
+        if(confirm(`Confirm payment of Consultancy / Dealer Doc charges for Account: ${hp}?`)) {
+            update(ref(database, 'accounts/' + hp), { docPaid: true, consPaidDt: window.getTodayDate() }).then(() => { alert("✅ Payment marked successfully!"); window.generateDailyReport(); });
+        }
+    };
+
+    window.toggleDocReason = () => {
+        let cbNo = document.getElementById("in_cb").value === 'No'; let nocNo = document.getElementById("in_noc").value === 'No';
+        document.getElementById("cb_r_box").style.display = cbNo ? 'flex' : 'none'; document.getElementById("noc_r_box").style.display = nocNo ? 'flex' : 'none'; document.getElementById("doc_hold_amt_box").style.display = (cbNo || nocNo) ? 'flex' : 'none';
     };
 
     window.executeHPSave = async function() {
-        let targetHP = document.getElementById("in_hp").value.toUpperCase().trim();
-        if(!targetHP) { alert("Error: Please enter HP Number"); return; }
+        let targetHP = document.getElementById("in_hp").value.toUpperCase().trim(); if(!targetHP) { alert("Error: Please enter HP Number"); return; }
         if(window.dbData.find(x => x.hp === targetHP)) { alert(`Error: The HP Number "${targetHP}" is already used!`); return; }
-
         let targetVno = document.getElementById("in_vreg").value.toUpperCase().trim();
-        if(window.dbData.find(x => x.vno === targetVno && x.acStatus === 'OPEN')) { 
-            if(!confirm(`Warning: Vehicle Number ${targetVno} is already ACTIVE. Continue?`)) return; 
-        }
-
+        if(window.dbData.find(x => x.vno === targetVno && x.acStatus === 'OPEN')) { if(!confirm(`Warning: Vehicle Number ${targetVno} is already ACTIVE. Continue?`)) return; }
         let saveBtn = document.getElementById("saveBtn"); saveBtn.innerText = "⏳ Saving..."; saveBtn.disabled = true;
-        
         try {
-            let cImgUrl = "https://ui-avatars.com/api/?name=User&background=random"; 
-            let gImgUrl = "https://ui-avatars.com/api/?name=Guarantor&background=random";
-            let cImgFile = document.getElementById("in_cimg").files[0]; 
-            let gImgFile = document.getElementById("in_gimg").files[0];
-            
+            let cImgUrl = "https://ui-avatars.com/api/?name=User&background=random"; let gImgUrl = "https://ui-avatars.com/api/?name=Guarantor&background=random";
+            let cImgFile = document.getElementById("in_cimg").files[0]; let gImgFile = document.getElementById("in_gimg").files[0];
             if(cImgFile) { let compressed = await compressImage(cImgFile); let imgRef = sRef(storage, `kyc/${targetHP}_customer.jpg`); await uploadBytes(imgRef, compressed); cImgUrl = await getDownloadURL(imgRef); }
             if(gImgFile) { let compressed = await compressImage(gImgFile); let imgRef = sRef(storage, `kyc/${targetHP}_guarantor.jpg`); await uploadBytes(imgRef, compressed); gImgUrl = await getDownloadURL(imgRef); }
-            
             let agreeDate = document.getElementById("in_fdt").value || window.getTodayDate();
             let amt = parseFloat(document.getElementById("in_famt").value) || 0; let doc = parseFloat(document.getElementById("in_doc").value) || 0; let bdoc = parseFloat(document.getElementById("in_bdoc").value) || 0; let hpc = parseFloat(document.getElementById("in_hpc").value) || 0; let ten = parseInt(document.getElementById("in_ten").value) || 24;
-            let emiAmount = Math.round((amt + doc + bdoc + hpc) / ten);
-
-            let expDate = new Date(agreeDate); expDate.setMonth(expDate.getMonth() + ten);
-            
+            let emiAmount = Math.round((amt + doc + bdoc + hpc) / ten); let expDate = new Date(agreeDate); expDate.setMonth(expDate.getMonth() + ten);
+            let combinedHoldAmt = (document.getElementById("in_cb").value === "No" || document.getElementById("in_noc").value === "No") ? (parseFloat(document.getElementById("in_doc_hold_amt").value) || 0) : 0;
             let newAccount = {
                 hp: targetHP, nm: document.getElementById("in_cnm").value, fnm: document.getElementById("in_cfnm").value, srn: document.getElementById("in_csur").value, mob: document.getElementById("in_cmob").value, occ: document.getElementById("in_cocc").value,
                 vno: targetVno, vnm: document.getElementById("in_vnm").value, yr: document.getElementById("in_vyr").value, vl: document.getElementById("in_cvl").value, md: document.getElementById("in_cmd").value, adr: document.getElementById("in_cadr").value, aadh: document.getElementById("in_caad").value, pin: document.getElementById("in_cpin").value,
                 gnm: document.getElementById("in_gnm").value, gsrn: document.getElementById("in_gsur").value, gmob: document.getElementById("in_gmob").value, gocc: document.getElementById("in_gocc").value, gadr: document.getElementById("in_gadr").value, gfnm: document.getElementById("in_gfnm").value, gaad: document.getElementById("in_gaad").value, gvl: document.getElementById("in_gvl").value, gmd: document.getElementById("in_gmd").value,
                 fdt: agreeDate, exp: expDate.toISOString().split('T')[0], amt, doc, bdoc, hpc, ten, consultancy: document.getElementById("in_cons").value, verifiedBy: document.getElementById("in_ver").value, vcn: document.getElementById("in_vcn").value, ven: document.getElementById("in_ven").value, vcol: document.getElementById("in_vcol").value,
-                cb: document.getElementById("in_cb").value, cbReason: document.getElementById("in_cb").value === "No" ? document.getElementById("in_cb_r").value : "", noc: document.getElementById("in_noc").value, nocReason: document.getElementById("in_noc").value === "No" ? document.getElementById("in_noc_r").value : "", vYear: document.getElementById("in_vyr").value,
-                pIns: ten, iAmt: emiAmount, pInsDone: 0, lastRecDt: "", matured: false, sz: false, sBy: "", yard: "", szC: 0, szDt: "", cImg: cImgUrl, gImg: gImgUrl, acStatus: "OPEN", closedDt: "", closedBy: "", settledAmt: 0, settledOd: 0
+                cb: document.getElementById("in_cb").value, cbReason: document.getElementById("in_cb").value === "No" ? document.getElementById("in_cb_r").value : "", cbHoldAmt: document.getElementById("in_cb").value === "No" ? combinedHoldAmt : 0,
+                noc: document.getElementById("in_noc").value, nocReason: document.getElementById("in_noc").value === "No" ? document.getElementById("in_noc_r").value : "", nocHoldAmt: (document.getElementById("in_cb").value === "Yes" && document.getElementById("in_noc").value === "No") ? combinedHoldAmt : 0,
+                vYear: document.getElementById("in_vyr").value, pIns: ten, iAmt: emiAmount, pInsDone: 0, lastRecDt: "", matured: false, sz: false, sBy: "", yard: "", szC: 0, szDt: "", cImg: cImgUrl, gImg: gImgUrl, acStatus: "OPEN", closedDt: "", closedBy: "", settledAmt: 0, settledOd: 0, docPaid: false, consPaidDt: "", cbGivenDt: "", nocGivenDt: "", retDt: ""
             };
-            
-            await set(ref(database, 'accounts/' + targetHP), newAccount);
-            alert(`Success: Account ${targetHP} Saved!`); 
-            document.getElementById("hpMainInputForm").reset();
-        } catch (err) { alert("Error saving: " + err); } 
-        finally { saveBtn.innerText = "💾 Save Account in Database"; saveBtn.disabled = false; }
+            await set(ref(database, 'accounts/' + targetHP), newAccount); alert(`Success: Account ${targetHP} Saved!`); document.getElementById("hpMainInputForm").reset();
+            document.getElementById("cb_r_box").style.display = 'none'; document.getElementById("noc_r_box").style.display = 'none'; document.getElementById("doc_hold_amt_box").style.display = 'none';
+        } catch (err) { alert("Error saving: " + err); } finally { saveBtn.innerText = "💾 Save Account in Database"; saveBtn.disabled = false; }
     }
 
-    // --- 11. SEARCH & REGISTRY ---
     window.executeSearchQuery = function(){ 
-        let t = document.getElementById("vsType").value; let v = document.getElementById("vsVal").value.toLowerCase().trim(); 
-        let html = ""; 
+        let t = document.getElementById("vsType").value; let v = document.getElementById("vsVal").value.toLowerCase().trim(); let html = ""; 
         let res = window.dbData.filter(d => {
-            if(!v) return true;
-            if(t==='hp') return d.hp.toLowerCase().includes(v); if(t==='vno') return d.vno.toLowerCase().replace(/\s/g,'').includes(v.replace(/\s/g,''));
+            if(!v) return true; if(t==='hp') return d.hp.toLowerCase().includes(v); if(t==='vno') return d.vno.toLowerCase().replace(/\s/g,'').includes(v.replace(/\s/g,''));
             if(t==='nm') return (d.srn+" "+d.nm).toLowerCase().includes(v); if(t==='vl') return d.vl.toLowerCase().includes(v);
             if(t==='ad') return (d.aadh && d.aadh.includes(v)); if(t==='mo') return (d.mob && d.mob.includes(v)); return false;
         });
@@ -1174,12 +1296,9 @@
     }
 
     window.ldReg = function(){ 
-        let h = document.getElementById("regHp").value.toUpperCase().trim(); 
-        let res = h ? window.dbData.filter(d=>d.hp===h) : window.dbData;
-        let html = "";
+        let h = document.getElementById("regHp").value.toUpperCase().trim(); let res = h ? window.dbData.filter(d=>d.hp===h) : window.dbData; let html = "";
         res.forEach((d) => { 
-            let statTag = d.acStatus==='CLOSED' ? `<span class="tag tag-seized">CLOSED</span>` : `<span class="tag tag-paid">RUNNING</span>`;
-            let totalLoan = parseFloat(d.amt) || 0;
+            let statTag = d.acStatus==='CLOSED' ? `<span class="tag tag-seized">CLOSED</span>` : `<span class="tag tag-paid">RUNNING</span>`; let totalLoan = parseFloat(d.amt) || 0;
             html += `<tr><td><b style="color:var(--primary); font-size:14px;">${esc(d.hp)}</b></td><td>${esc(d.fdt)}</td><td><div class="profile-summary"><b>${esc(d.srn)} ${esc(d.nm)}</b><br><span>${esc(d.mob)}</span></div></td><td><b>${esc(d.vno)}</b></td><td style="font-weight:700;">₹${window.fmtMoney(totalLoan)}</td><td>${statTag}</td><td><button class="btn" onclick="vReg('${esc(d.hp)}')">👁️ View</button></td></tr>`;
         }); 
         document.getElementById("regTb").innerHTML = html;
@@ -1198,48 +1317,33 @@
         document.getElementById("regModal").style.display="flex"; 
     }
 
-    // --- 12. PENDING DUES ---
     window.chgDueUI = () => { let m = document.getElementById("dType").value==="Matured"; document.getElementById("dToDt").style.display=m?'block':'none'; document.getElementById("dLblDt").innerText=m?'Date':'Today Date'; document.getElementById("dThDt").innerText=m?'End Date':'Agr Date'; };
     window.chgDueOp = () => { document.getElementById("dVl2Box").style.display = document.getElementById("dOp").value === "Between" ? "block" : "none"; };
     
     window.genDues = function(){ 
         let v1 = parseFloat(document.getElementById("dVl").value)||0; let v2 = parseFloat(document.getElementById("dVl2Box").style.display === "block" ? document.getElementById("dVl2").value : 0)||0; 
-        let op = document.getElementById("dOp").value; let m = document.getElementById("dType").value==="Matured"; 
-        
-        let html = ""; let sno = 1; let today = new Date();
-        
+        let op = document.getElementById("dOp").value; let m = document.getElementById("dType").value==="Matured"; let html = ""; let sno = 1; let today = new Date();
         window.dbData.forEach((d) => { 
             if(d.sz || d.acStatus === "CLOSED") return; 
-            
-            let passedMonths = getMonthsDiff(d.fdt, today);
-            if (passedMonths > d.ten) passedMonths = d.ten;
-            
+            let passedMonths = getMonthsDiff(d.fdt, today); if (passedMonths > d.ten) passedMonths = d.ten;
             let totalPaid = window.receiptHistory.filter(h => h.hp === d.hp && h.type === "Installment").reduce((sum, r) => sum + r.amt, 0);
             let overdueAmount = (passedMonths * d.iAmt) - totalPaid; if(overdueAmount < 0) overdueAmount = 0;
             let overdueEMIsCount = parseFloat((overdueAmount / d.iAmt).toFixed(2));
-            
-            let totalRemainingEMIs = parseFloat((((d.ten * d.iAmt) - totalPaid) / d.iAmt).toFixed(2));
-            let completedEMIs = parseFloat((d.ten - totalRemainingEMIs).toFixed(2));
+            let totalRemainingEMIs = parseFloat((((d.ten * d.iAmt) - totalPaid) / d.iAmt).toFixed(2)); let completedEMIs = parseFloat((d.ten - totalRemainingEMIs).toFixed(2));
 
             let mtc = false; 
             if(op==="All") mtc=true; else if(op==="=") mtc=(overdueEMIsCount===v1); else if(op===">") mtc=(overdueEMIsCount>v1); else if(op==="<") mtc=(overdueEMIsCount<v1); else if(op==="Between") mtc=(overdueEMIsCount >= v1 && overdueEMIsCount <= v2);
-            if (op !== "All" && op !== "=" && overdueEMIsCount === 0 && v1 !== 0) mtc = false;
-            if (op === "All" && overdueEMIsCount === 0) mtc = false;
+            if (op !== "All" && op !== "=" && overdueEMIsCount === 0 && v1 !== 0) mtc = false; if (op === "All" && overdueEMIsCount === 0) mtc = false;
             
             if(mtc) {
                 let dueColor = overdueEMIsCount > 0 ? "var(--danger)" : "var(--success)";
                 let cLbl = `<b>${esc(d.srn)} ${esc(d.nm)}</b><br><span>Ph:</span> ${esc(d.mob)}<br><span>Add:</span> ${esc(d.adr)}<br><span>Aadhar:</span> ${esc(d.aadh)}<br><span>Work:</span> ${esc(d.occ)}`;
                 let gLbl = `<b>${esc(d.gsrn)} ${esc(d.gnm)}</b><br><span>Ph:</span> ${esc(d.gmob)}<br><span>Add:</span> ${esc(d.gadr)}<br><span>Aadhar:</span> ${esc(d.gaad)}<br><span>Work:</span> ${esc(d.gocc)}`;
-                
                 html += `<tr><td>${sno++}</td><td><b style="color:var(--primary); font-size:14px;">${esc(d.hp)}</b></td>
                 <td><div class="profile-summary">${cLbl}</div></td><td><div class="profile-summary">${gLbl}</div></td>
                 <td style="font-weight:800;">${esc(d.vl).toUpperCase()}</td><td style="font-weight:800;">${esc(d.md).toUpperCase()}</td>
-                <td>
-                    <span class="tag tag-pending" style="font-size:12px; margin-bottom:4px;">${esc(d.vno)}</span>
-                    <br><small style="color:var(--secondary); font-weight:700;">${esc(d.vnm)}</small>
-                </td>
-                <td>${m?esc(d.exp):esc(d.fdt)}</td>
-                <td style="font-weight:800; color:var(--text-muted); text-align:center;">${esc(d.lastRecDt) || '-'}</td>
+                <td><span class="tag tag-pending" style="font-size:12px; margin-bottom:4px;">${esc(d.vno)}</span><br><small style="color:var(--secondary); font-weight:700;">${esc(d.vnm)}</small></td>
+                <td>${m?esc(d.exp):esc(d.fdt)}</td><td style="font-weight:800; color:var(--text-muted); text-align:center;">${esc(d.lastRecDt) || '-'}</td>
                 <td style="color:${dueColor};font-weight:800;font-size:16px;text-align:center;">${overdueEMIsCount}</td><td style="font-weight:600;">₹${window.fmtMoney(d.iAmt)}</td>
                 <td style="color:${dueColor};font-weight:800; font-size:14px;">₹${window.fmtMoney(overdueAmount)}</td>
                 <td style="text-align:center;"><span class="tag tag-paid">Active: ${completedEMIs} / ${d.ten}</span></td></tr>`;
@@ -1248,35 +1352,31 @@
         document.getElementById("duesTb").innerHTML = html;
     }
 
-    // --- 13. CALCULATIONS (OD) ---
     window.genOD = function(){ 
         let hp=document.getElementById("odAcc").value.toUpperCase(); let pc=document.getElementById("odPer").value; let d=window.dbData.find(x=>x.hp===hp); 
         if(!d){alert("Account not found. (ఈ నంబర్ లేదు!)"); return;}
-        
-        const safeSet = (id, val) => { let el = document.getElementById(id); if(el) el.innerText = val; };
+        const safeSet = (id, val) => { let el = document.getElementById(id); if(el) el.innerHTML = val; };
         safeSet("od_nm", (d.srn+" "+d.nm).toUpperCase()); safeSet("od_area", d.md.toUpperCase()); safeSet("od_town", d.vl.toUpperCase()); safeSet("od_ac", d.hp); safeSet("od_verBy", d.verifiedBy?.toUpperCase() || "NONE"); safeSet("od_consName", d.consultancy?.toUpperCase() || "");
         safeSet("od_vno", d.vno.replace(/\s/g,'')); safeSet("od_mk", d.yr); safeSet("od_mdl", d.vnm.toUpperCase()); safeSet("od_en", d.ven || ""); safeSet("od_cn", d.vcn || ""); safeSet("od_currentDt", window.getTodayDate());
         
         let statusEl = document.getElementById("od_acStat"); 
         if(d.acStatus === "CLOSED") { statusEl.innerHTML = `<span style="color:var(--danger);">A/C CLOSED<br>(Date: ${d.closedDt})</span>`; } else { statusEl.innerText = "NOT CLOSED"; statusEl.style.color = "var(--success)"; }
         
-        document.getElementById("od_szBulb").className = d.sz ? "bulb bulb-r" : "bulb bulb-g"; document.getElementById("od_matBulb").className = d.mat ? "bulb bulb-r" : "bulb bulb-g"; document.getElementById("od_cbBulb").className = d.cb === "Yes" ? "bulb bulb-g" : "bulb bulb-r"; 
+        document.getElementById("od_szBulb").className = d.sz ? "bulb bulb-r" : "bulb bulb-g"; if(d.sz && d.szDt) { safeSet("od_szDateTxt", `(Seized On: ${d.szDt.split('-').reverse().join('-')})`); } else { safeSet("od_szDateTxt", ""); }
+        document.getElementById("od_matBulb").className = d.mat ? "bulb bulb-r" : "bulb bulb-g"; document.getElementById("od_cbBulb").className = d.cb === "Yes" ? "bulb bulb-g" : "bulb bulb-r"; 
         safeSet("od_matTxt", d.mat ? "M" : "R"); safeSet("od_prcTxt", pc);
-        safeSet("od_desc", `${d.cb === "Yes" ? "RC OK" : "RC PENDING"} | ${d.noc === "Yes" ? "NOC OK" : "NOC PENDING"}`);
         
-        let html="", tf=0, td=0, ti=0; 
-        let mthParts = d.fdt.split('-'); let mth = new Date(mthParts[0], mthParts[1] - 1, mthParts[2]); 
+        let rcStat = d.cb === "Yes" ? `RC OK <span style="color:var(--success); font-size:10px;">${d.cbGivenDt ? `(${d.cbGivenDt.split('-').reverse().join('-')})` : ''}</span>` : "RC PENDING";
+        let nocStat = d.noc === "Yes" ? `NOC OK <span style="color:var(--success); font-size:10px;">${d.nocGivenDt ? `(${d.nocGivenDt.split('-').reverse().join('-')})` : ''}</span>` : "NOC PENDING";
+        safeSet("od_desc", `${rcStat} | ${nocStat}`);
         
+        let html="", tf=0, td=0, ti=0; let mthParts = d.fdt.split('-'); let mth = new Date(mthParts[0], mthParts[1] - 1, mthParts[2]); 
         let matchedSlips = window.receiptHistory.filter(h=>h.hp===d.hp && h.type==="Installment").sort((a,b) => new Date(a.dt) - new Date(b.dt));
-        let totalEmiPaid = matchedSlips.reduce((s, x) => s + x.amt, 0);
-        let remainingSlips = JSON.parse(JSON.stringify(matchedSlips));
-        let totalReceiptDue = 0; let finalPendingCount = 0;
-        let todayDateObj = new Date(); todayDateObj.setHours(0, 0, 0, 0);
+        let totalEmiPaid = matchedSlips.reduce((s, x) => s + x.amt, 0); let remainingSlips = JSON.parse(JSON.stringify(matchedSlips));
+        let totalReceiptDue = 0; let finalPendingCount = 0; let todayDateObj = new Date(); todayDateObj.setHours(0, 0, 0, 0);
 
         for(let i=1; i<=d.ten; i++){ 
-            let dd = new Date(mth); dd.setMonth(dd.getMonth() + i); 
-            let dueAmt = d.iAmt; let paidAmt = 0; let paidDate = ""; let trNum = []; let chunkOdInt = 0; let displayOdDays = 0;
-
+            let dd = new Date(mth); dd.setMonth(dd.getMonth() + i); let dueAmt = d.iAmt; let paidAmt = 0; let paidDate = ""; let trNum = []; let chunkOdInt = 0; let displayOdDays = 0;
             while(dueAmt > 0 && remainingSlips.length > 0) {
                 let slip = remainingSlips[0]; if (slip.amt <= 0) { remainingSlips.shift(); continue; }
                 let chunkAmt = 0;
@@ -1285,7 +1385,6 @@
                 let pDateObj = new Date(paidDate);
                 if (pDateObj > dd) { let lateDays = Math.ceil((pDateObj - dd) / (1000 * 60 * 60 * 24)); chunkOdInt += (chunkAmt * lateDays * (parseInt(pc)/100)) / 26.5; displayOdDays = lateDays; }
             }
-
             let receiptDue = d.iAmt - paidAmt;
             if (dd <= todayDateObj) {
                 if (d.acStatus !== "CLOSED") totalReceiptDue += receiptDue;
@@ -1296,7 +1395,6 @@
                 }
             }
             tf += d.iAmt; td += displayOdDays; ti += chunkOdInt;
-
             if (d.acStatus === "CLOSED" && paidAmt === 0) {
                 let lastTrNumCode = window.receiptHistory.filter(h=>h.hp===d.hp).pop()?.tr || "CLS";
                 html+=`<tr><td>${i}</td><td>${dd.toLocaleDateString('en-GB')}</td><td>${esc(d.closedDt)}</td><td>${d.iAmt.toFixed(2)}</td><td><b>${esc(lastTrNumCode)}</b></td><td>${d.iAmt.toFixed(2)}</td><td>0.00</td><td>${displayOdDays}</td><td>${chunkOdInt.toFixed(2)}</td></tr>`;
@@ -1304,43 +1402,21 @@
                 html+=`<tr><td>${i}</td><td>${dd.toLocaleDateString('en-GB')}</td><td>${esc(paidDate)}</td><td>${d.iAmt.toFixed(2)}</td><td><b>${esc(trNum.join(', '))}</b></td><td>${paidAmt.toFixed(2)}</td><td>${receiptDue.toFixed(2)}</td><td>${displayOdDays}</td><td>${chunkOdInt.toFixed(2)}</td></tr>`;
             }
         }
+        document.getElementById("odTb").innerHTML = html; safeSet("od_rdue", window.fmtMoney(totalReceiptDue)); safeSet("od_pend", finalPendingCount.toFixed(2));
+        safeSet("od_tf", window.fmtMoney(tf)); safeSet("od_td", td); 
         
-        document.getElementById("odTb").innerHTML = html;
-        safeSet("od_rdue", window.fmtMoney(totalReceiptDue)); 
-        safeSet("od_pend", finalPendingCount.toFixed(2));
-        safeSet("od_tf", window.fmtMoney(tf)); 
-        safeSet("od_td", td); 
+        if(d.acStatus === "CLOSED") { let displayODVal = `${ti.toFixed(2)} - <span style="color:var(--danger); font-weight:800;">${(d.settledOd || 0).toFixed(2)}</span>`; safeSet("od_ti", displayODVal); safeSet("sum_odue", displayODVal); } 
+        else { safeSet("od_ti", window.fmtMoney(ti)); safeSet("sum_odue", window.fmtMoney(ti)); }
         
-        if(d.acStatus === "CLOSED") { 
-            let displayODVal = `${ti.toFixed(2)} - <span style="color:var(--danger); font-weight:800;">${(d.settledOd || 0).toFixed(2)}</span>`; 
-            document.getElementById("od_ti").innerHTML = displayODVal; document.getElementById("sum_odue").innerHTML = displayODVal; 
-        } else { 
-            safeSet("od_ti", window.fmtMoney(ti)); 
-            safeSet("sum_odue", window.fmtMoney(ti)); 
-        }
-        
-        let baseFin = parseFloat(d.amt) || 0; 
-        let hpc = parseFloat(d.hpc) || 0; 
-        let seizeCharge = parseFloat(d.szC) || 0;
-        let totalLiability = baseFin + hpc; 
-        
-        safeSet("sum_fin", window.fmtMoney(baseFin)); 
-        safeSet("sum_hp", window.fmtMoney(hpc)); 
-        safeSet("sum_tot1", window.fmtMoney(totalLiability)); 
-        safeSet("sum_fin2", window.fmtMoney(totalLiability)); 
-        safeSet("sum_hp2", window.fmtMoney(hpc)); 
-        
+        let baseFin = parseFloat(d.amt) || 0; let hpc = parseFloat(d.hpc) || 0; let seizeCharge = parseFloat(d.szC) || 0; let totalLiability = baseFin + hpc; 
+        safeSet("sum_fin", window.fmtMoney(baseFin)); safeSet("sum_hp", window.fmtMoney(hpc)); safeSet("sum_tot1", window.fmtMoney(totalLiability)); 
+        safeSet("sum_fin2", window.fmtMoney(totalLiability)); safeSet("sum_hp2", window.fmtMoney(hpc)); 
         let principalBalance = totalLiability - totalEmiPaid; if(principalBalance < 0) principalBalance = 0;
-        safeSet("sum_col", window.fmtMoney(totalEmiPaid)); 
-        safeSet("sum_tdue", d.acStatus === "CLOSED" ? "0.00" : window.fmtMoney(principalBalance)); 
-        safeSet("sum_szc", window.fmtMoney(seizeCharge)); 
-        
-        let fBal = d.acStatus === "CLOSED" ? 0.00 : (principalBalance + ti + seizeCharge); 
-        safeSet("sum_fbal", window.fmtMoney(fBal)); 
+        safeSet("sum_col", window.fmtMoney(totalEmiPaid)); safeSet("sum_tdue", d.acStatus === "CLOSED" ? "0.00" : window.fmtMoney(principalBalance)); safeSet("sum_szc", window.fmtMoney(seizeCharge)); 
+        let fBal = d.acStatus === "CLOSED" ? 0.00 : (principalBalance + ti + seizeCharge); safeSet("sum_fbal", window.fmtMoney(fBal)); 
         document.getElementById("odReportArea").style.display="block";
     }
 
-    // --- 14. SEIZE & RELEASE ---
     window.fetchSeizeProfile = function(){ 
         let d = window.dbData.find(x=>x.hp===document.getElementById("szHp").value.toUpperCase().trim()); 
         if(d){ 
@@ -1348,10 +1424,8 @@
             let totalEmiPaid = window.receiptHistory.filter(x => x.hp === d.hp && x.type === "Installment").reduce((s, x) => s + x.amt, 0);
             let passedMonths = getMonthsDiff(d.fdt, new Date()); if (passedMonths > d.ten) passedMonths = d.ten;
             let overdueAmount = (passedMonths * d.iAmt) - totalEmiPaid; if(overdueAmount < 0) overdueAmount = 0;
-
             const safeSet = (id, val) => { let el = document.getElementById(id); if(el) el.innerText = val; };
             safeSet("szN", (d.srn+" "+d.nm).toUpperCase()); safeSet("szV", d.vno); safeSet("szVnm", d.vnm.toUpperCase()); safeSet("szD", window.fmtMoney(overdueAmount)); 
-            
             document.getElementById("szData").style.display="block"; 
             if(d.sz) { document.getElementById("szSt").value = "Seized"; document.getElementById("szYard").value = d.yard; document.getElementById("szChrg").value = d.szC; } else { document.getElementById("szSt").value = ""; document.getElementById("szYard").value = ""; document.getElementById("szChrg").value = ""; }
             window.executeSeizeToggleLogic();
@@ -1371,7 +1445,7 @@
             let updates = {};
             if(st === "Seized") { updates = { sz: true, szC: (d.szC || 0) + (parseInt(document.getElementById("szChrg").value)||0), yard: document.getElementById("szYard").value, sBy: pName, szDt: window.getTodayDate() }; } 
             else if(st === "Returned") { 
-                updates = { sz: false, sBy: pName, szDt: window.getTodayDate() };
+                updates = { sz: false, sBy: pName, retDt: window.getTodayDate() };
                 let collectedSz = parseInt(document.getElementById("szChrg").value) || 0;
                 if(collectedSz > 0) { let szTrCode = "SZ-" + Math.floor(Math.random()*900000+100000); push(ref(database, 'receipts'), { tr: szTrCode, hp: hp, amt: collectedSz, type: "Seizing", dt: window.getTodayDate() }); }
             }
@@ -1380,128 +1454,74 @@
     }
     
     window.generateSeizeHistoryReport = function(){ 
-        let fDate = document.getElementById("szFDate")?.value;
-        let tDate = document.getElementById("szTDate")?.value;
-        let stat = document.getElementById("szFilterStat")?.value || "All";
-        let html = ""; 
-        
-        let seizedAccounts = window.dbData.filter(x => {
-            if(stat === "Seized" && !x.sz) return false;
-            if(stat === "Returned" && (x.sz || !x.szDt)) return false;
-            if(stat === "All" && !x.sz && !x.szDt) return false;
-            return true;
-        });
-        
+        let fDate = document.getElementById("szFDate")?.value; let tDate = document.getElementById("szTDate")?.value; let stat = document.getElementById("szFilterStat")?.value || "All"; let html = ""; 
+        let seizedAccounts = window.dbData.filter(x => { if(stat === "Seized" && !x.sz) return false; if(stat === "Returned" && (x.sz || !x.szDt)) return false; if(stat === "All" && !x.sz && !x.szDt) return false; return true; });
         if (fDate && tDate) seizedAccounts = seizedAccounts.filter(x => x.szDt >= fDate && x.szDt <= tDate);
-        if(seizedAccounts.length === 0) html = `<tr><td colspan="9" style="color:var(--danger); text-align:center; font-weight:800; padding:30px;">No seized vehicles found.</td></tr>`;
+        if(seizedAccounts.length === 0) html = `<tr><td colspan="10" style="color:var(--danger); text-align:center; font-weight:800; padding:30px;">No seized vehicles found.</td></tr>`;
         else seizedAccounts.forEach(d => { 
-            let statusBadge = d.sz ? `<span class="tag tag-seized">SEIZED</span>` : `<span class="tag tag-paid">RETURNED</span>`;
-            html += `<tr><td>${esc(d.szDt)}</td><td><b style="color:var(--primary);">${esc(d.hp)}</b></td><td><div class="profile-summary"><b>${esc(d.srn)} ${esc(d.nm)}</b></div></td><td><span class="tag tag-pending">${esc(d.vno)}</span></td><td><b style="color:var(--secondary);">${esc(d.vnm)}</b></td><td>${esc(d.yard)}</td><td style="color:var(--danger);font-weight:800;">₹${window.fmtMoney(d.szC)}</td><td>👤 ${esc(d.sBy)}</td><td>${statusBadge}</td></tr>`; 
+            let statusBadge = d.sz ? `<span class="tag tag-seized">SEIZED</span>` : `<span class="tag tag-paid">RETURNED</span>`; let retDateStr = d.retDt ? `<b style="color:var(--success);">${esc(d.retDt)}</b>` : '-';
+            html += `<tr><td>${esc(d.szDt)}</td><td>${retDateStr}</td><td><b style="color:var(--primary);">${esc(d.hp)}</b></td><td><div class="profile-summary"><b>${esc(d.srn)} ${esc(d.nm)}</b></div></td><td><span class="tag tag-pending">${esc(d.vno)}</span></td><td><b style="color:var(--secondary);">${esc(d.vnm)}</b></td><td>${esc(d.yard)}</td><td style="color:var(--danger);font-weight:800;">₹${window.fmtMoney(d.szC)}</td><td>👤 ${esc(d.sBy)}</td><td>${statusBadge}</td></tr>`; 
         }); 
         document.getElementById("szrTb").innerHTML = html;
     }
 
-    // --- 15. RECEIPTS & WHATSAPP ---
     window.getRc = function(){ 
-        let hpInput = document.getElementById("rcHp").value.toUpperCase().trim(); 
-        if(!hpInput) { alert("Please enter HP Number."); return; } 
+        let hpInput = document.getElementById("rcHp").value.toUpperCase().trim(); if(!hpInput) { alert("Please enter HP Number."); return; } 
         let d = window.dbData.find(x=>x.hp===hpInput); 
         if(d){
             if(d.acStatus === "CLOSED") { alert("Account is Closed."); return; }
             document.getElementById("rcPreviewBox").style.display="none"; document.getElementById("rcptEntryContainer").style.display="grid";
-            
             let totalEmiPaid = window.receiptHistory.filter(x => x.hp === d.hp && x.type === "Installment").reduce((s, x) => s + x.amt, 0);
             let passedMonths = getMonthsDiff(d.fdt, new Date()); if (passedMonths > d.ten) passedMonths = d.ten;
-            let overdueAmount = (passedMonths * d.iAmt) - totalEmiPaid; if(overdueAmount < 0) overdueAmount = 0;
-            
-            let pendingEmis = overdueAmount > 0 ? parseFloat((overdueAmount / d.iAmt).toFixed(2)) : 0;
-            
-            document.getElementById("rcN").innerText=esc((d.srn+" "+d.nm).toUpperCase()); 
-            document.getElementById("rcMob").innerText=esc(d.mob); 
-            document.getElementById("rcV").innerText=esc(d.vno); 
-            document.getElementById("rcI").innerText=window.fmtMoney(d.iAmt); 
-            document.getElementById("rcP").innerText=window.fmtMoney(overdueAmount); 
-            document.getElementById("rcPEmis").innerText = pendingEmis;
-            
-            document.getElementById("rcTr").value="TR-"+Math.floor(Math.random()*900000+100000); 
-            document.getElementById("rcDate").value = window.getTodayDate();
-            document.getElementById("rcData").style.display="block";
+            let overdueAmount = (passedMonths * d.iAmt) - totalEmiPaid; if(overdueAmount < 0) overdueAmount = 0; let pendingEmis = overdueAmount > 0 ? parseFloat((overdueAmount / d.iAmt).toFixed(2)) : 0;
+            document.getElementById("rcN").innerText=esc((d.srn+" "+d.nm).toUpperCase()); document.getElementById("rcMob").innerText=esc(d.mob); document.getElementById("rcV").innerText=esc(d.vno); document.getElementById("rcI").innerText=window.fmtMoney(d.iAmt); document.getElementById("rcP").innerText=window.fmtMoney(overdueAmount); document.getElementById("rcPEmis").innerText = pendingEmis;
+            document.getElementById("rcTr").value="TR-"+Math.floor(Math.random()*900000+100000); document.getElementById("rcDate").value = window.getTodayDate(); document.getElementById("rcData").style.display="block";
         } else alert("HP Number not found.");
     }
 
     window.genRc = function(){ 
-        let hp=document.getElementById("rcHp").value.toUpperCase().trim(); let d=window.dbData.find(x=>x.hp===hp); 
-        let amt=parseInt(document.getElementById("rcAmt").value)||0; 
+        let hp=document.getElementById("rcHp").value.toUpperCase().trim(); let d=window.dbData.find(x=>x.hp===hp); let amt=parseInt(document.getElementById("rcAmt").value)||0; 
         let typeSelect = document.getElementById("rcTyp"); let typText = typeSelect.options[typeSelect.selectedIndex].text; let typValue = typeSelect.value;
         let modeSelect = document.getElementById("rcMode"); let modeText = modeSelect.options[modeSelect.selectedIndex].text;
-        let trCode = document.getElementById("rcTr").value;
-        let receiptDate = document.getElementById("rcDate").value || window.getTodayDate();
-        
-        if(!d) { alert("Please fetch account details first!"); return; } 
-        if(amt <= 0 || isNaN(amt)) { alert("⚠️ Enter proper amount"); return; } 
-        
+        let trCode = document.getElementById("rcTr").value; let receiptDate = document.getElementById("rcDate").value || window.getTodayDate();
+        if(!d) { alert("Please fetch account details first!"); return; } if(amt <= 0 || isNaN(amt)) { alert("⚠️ Enter proper amount"); return; } 
         update(ref(database, 'accounts/' + hp), { lastRecDt: receiptDate }).then(() => {
             push(ref(database, 'receipts'), { tr: trCode, hp: hp, amt: amt, type: typValue, dt: receiptDate });
-            
             const safeSet = (id, val) => { let el = document.getElementById(id); if(el) el.innerText = val; };
-            safeSet("pr_tr", trCode); safeSet("pr_dt", receiptDate.split('-').reverse().join('-')); 
-            safeSet("pr_hp", hp); safeSet("pr_nm", (d.srn+" "+d.nm).toUpperCase());
-            safeSet("pr_vno", d.vno); safeSet("pr_mode", modeText); safeSet("pr_type", typText);
-            safeSet("pr_amt", "₹ " + window.fmtMoney(amt));
-            
-            document.getElementById("rcptEntryContainer").style.display="none"; 
-            document.getElementById("rcPreviewBox").style.display="block";
-            document.getElementById("rcHp").value = ""; document.getElementById("rcAmt").value = "";
+            safeSet("pr_tr", trCode); safeSet("pr_dt", receiptDate.split('-').reverse().join('-')); safeSet("pr_hp", hp); safeSet("pr_nm", (d.srn+" "+d.nm).toUpperCase()); safeSet("pr_vno", d.vno); safeSet("pr_mode", modeText); safeSet("pr_type", typText); safeSet("pr_amt", "₹ " + window.fmtMoney(amt));
+            document.getElementById("rcptEntryContainer").style.display="none"; document.getElementById("rcPreviewBox").style.display="block"; document.getElementById("rcHp").value = ""; document.getElementById("rcAmt").value = "";
         });
     }
 
     window.sendWhatsAppReceipt = function() {
-        let hp = document.getElementById("pr_hp").innerText;
-        let amt = document.getElementById("pr_amt").innerText;
-        let type = document.getElementById("pr_type").innerText;
-        let tr = document.getElementById("pr_tr").innerText;
-        let custMob = document.getElementById("rcMob").innerText;
-        
+        let hp = document.getElementById("pr_hp").innerText; let amt = document.getElementById("pr_amt").innerText; let type = document.getElementById("pr_type").innerText; let tr = document.getElementById("pr_tr").innerText; let custMob = document.getElementById("rcMob").innerText;
         let msg = `Dear Customer, \nSri Vishnu Priya Finance lo mee A/C No: *${hp}* ki *${amt}* (${type}) receive ayyindi. \nReceipt No: ${tr}. \nThank You.`;
-        let url = (custMob && custMob.length === 10) ? `https://wa.me/91${custMob}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`;
-        window.open(url, '_blank');
+        let url = (custMob && custMob.length === 10) ? `https://wa.me/91${custMob}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`; window.open(url, '_blank');
     }
 
-    window.printOnlyReceipt = () => window.print();
-    window.closePreview = () => { document.getElementById("rcPreviewBox").style.display = "none"; document.getElementById("rcptEntryContainer").style.display = "grid"; };
-    
+    window.printOnlyReceipt = () => window.print(); window.closePreview = () => { document.getElementById("rcPreviewBox").style.display = "none"; document.getElementById("rcptEntryContainer").style.display = "grid"; };
     window.adjustReceiptSearchUI = () => { let filter = document.getElementById("repFilter").value; document.getElementById("repVal2Box").style.display = filter === "rng" ? "flex" : "none"; document.getElementById("repVal1Lbl").innerText = filter === "hp" ? "Enter HP Number" : "Select Date"; document.getElementById("repVal1").type = filter === "hp" ? "text" : "date"; }
     
     window.executeReceiptLogSearch = function() {
-        let filterMode = document.getElementById("repFilter").value; let val1 = document.getElementById("repVal1").value.trim().toUpperCase(); let val2 = document.getElementById("repVal2").value; let slipType = document.getElementById("repTyp").value;
-        let html = "";
+        let filterMode = document.getElementById("repFilter").value; let val1 = document.getElementById("repVal1").value.trim().toUpperCase(); let val2 = document.getElementById("repVal2").value; let slipType = document.getElementById("repTyp").value; let html = "";
         let matchedData = window.receiptHistory.filter(r => {
-            if(slipType !== "All" && r.type !== slipType) return false;
-            if(filterMode === "hp" && val1 && r.hp !== val1) return false;
-            if(filterMode === "dt" && val1 && r.dt !== val1) return false;
-            if(filterMode === "rng" && val1 && val2) { if(r.dt < val1 || r.dt > val2) return false; } return true;
+            if(slipType !== "All" && r.type !== slipType) return false; if(filterMode === "hp" && val1 && r.hp !== val1) return false;
+            if(filterMode === "dt" && val1 && r.dt !== val1) return false; if(filterMode === "rng" && val1 && val2) { if(r.dt < val1 || r.dt > val2) return false; } return true;
         });
         if(matchedData.length === 0) html = `<tr><td colspan="6" style="color:var(--danger); font-weight:800; text-align:center; padding:30px;">No receipts found.</td></tr>`;
         else matchedData.forEach(r => { let labelType = r.type === "Installment" ? "EMI" : r.type; html += `<tr><td><b style="color:var(--secondary);">${esc(r.tr)}</b></td><td>${esc(r.dt)}</td><td><b style="color:var(--primary);">${esc(r.hp)}</b></td><td style="color:var(--success); font-weight:800;">₹${window.fmtMoney(r.amt)}</td><td><span class="tag tag-paid">${esc(labelType)}</span></td><td><button class="btn btn-green" onclick="window.print()">🖨️ Print</button></td></tr>`; });
-        document.getElementById("reprintRowsBody").innerHTML = html;
-        document.getElementById("rpTb").style.display = "block";
+        document.getElementById("reprintRowsBody").innerHTML = html; document.getElementById("rpTb").style.display = "block";
     }
 
-    // --- 16. ACCOUNT CLOSING ---
     window.searchClosingAccount = function() {
         let hp = document.getElementById("clHp").value.toUpperCase().trim(); let pc = document.getElementById("clPer").value; let d = window.dbData.find(x=>x.hp === hp);
         if(!d) { alert("Account not found."); return; } if(d.acStatus === "CLOSED") { alert("This account is already closed."); return; }
-        
         const safeSet = (id, val) => { let el = document.getElementById(id); if(el) el.innerText = val; };
         safeSet("clLNm", (d.srn + " " + d.nm).toUpperCase()); safeSet("clLMob", d.mob); safeSet("clLVno", d.vno.replace(/\s/g,'')); safeSet("clLVnm", d.vnm.toUpperCase());
         
         let totalEmiPaid = window.receiptHistory.filter(x => x.hp === hp && x.type === "Installment").reduce((s, x) => s + x.amt, 0);
-        let totalLiability = (parseFloat(d.amt) || 0) + (parseFloat(d.hpc) || 0); 
-        let totalPrincipalDue = totalLiability - totalEmiPaid; if(totalPrincipalDue < 0) totalPrincipalDue = 0; totalPrincipalDue += (parseFloat(d.szC) || 0); 
-
-        let mthParts = d.fdt.split('-'); let mth = new Date(mthParts[0], mthParts[1] - 1, mthParts[2]);
-        let matchedSlips = window.receiptHistory.filter(h=>h.hp===d.hp && h.type==="Installment").sort((a,b) => new Date(a.dt) - new Date(b.dt));
-        let remainingSlips = JSON.parse(JSON.stringify(matchedSlips)); let totalOD = 0; let todayDateObj = new Date(); todayDateObj.setHours(0,0,0,0);
+        let totalLiability = (parseFloat(d.amt) || 0) + (parseFloat(d.hpc) || 0); let totalPrincipalDue = totalLiability - totalEmiPaid; if(totalPrincipalDue < 0) totalPrincipalDue = 0; totalPrincipalDue += (parseFloat(d.szC) || 0); 
+        let mthParts = d.fdt.split('-'); let mth = new Date(mthParts[0], mthParts[1] - 1, mthParts[2]); let matchedSlips = window.receiptHistory.filter(h=>h.hp===d.hp && h.type==="Installment").sort((a,b) => new Date(a.dt) - new Date(b.dt)); let remainingSlips = JSON.parse(JSON.stringify(matchedSlips)); let totalOD = 0; let todayDateObj = new Date(); todayDateObj.setHours(0,0,0,0);
 
         for(let i=1; i<=d.ten; i++) {
             let dd = new Date(mth); dd.setMonth(dd.getMonth() + i); let dueAmt = d.iAmt; let paidAmt = 0;
@@ -1512,22 +1532,15 @@
             }
             let receiptDue = d.iAmt - paidAmt; if (receiptDue > 0 && dd <= todayDateObj) { let diffDays = Math.ceil((todayDateObj - dd) / (1000 * 60 * 60 * 24)); if(diffDays > 0) { totalOD += (receiptDue * diffDays * (parseInt(pc)/100)) / 26.5; } }
         }
-
         window.currentClosingMainDues = totalPrincipalDue; window.currentClosingODDues = totalOD;
-        safeSet("clLMain", window.fmtMoney(window.currentClosingMainDues)); 
-        safeSet("clLOd", window.fmtMoney(window.currentClosingODDues)); 
-        safeSet("clLTotal", window.fmtMoney(window.currentClosingMainDues + window.currentClosingODDues));
+        safeSet("clLMain", window.fmtMoney(window.currentClosingMainDues)); safeSet("clLOd", window.fmtMoney(window.currentClosingODDues)); safeSet("clLTotal", window.fmtMoney(window.currentClosingMainDues + window.currentClosingODDues));
         
-        document.getElementById("clSetPer").value = 0; document.getElementById("clLOdCalcVal").value = "₹" + window.currentClosingODDues.toFixed(2); 
-        document.getElementById("clSettledAmt").value = (window.currentClosingMainDues + window.currentClosingODDues).toFixed(2); 
-        document.getElementById("clRcptAmt").value = (window.currentClosingMainDues + window.currentClosingODDues).toFixed(2); 
-        document.getElementById("clArea").style.display = "block";
+        document.getElementById("clSetPer").value = 0; document.getElementById("clLOdCalcVal").value = "₹" + window.currentClosingODDues.toFixed(2); document.getElementById("clSettledAmt").value = (window.currentClosingMainDues + window.currentClosingODDues).toFixed(2); document.getElementById("clRcptAmt").value = (window.currentClosingMainDues + window.currentClosingODDues).toFixed(2); document.getElementById("clArea").style.display = "block";
     }
     
     window.calcOdSettlementAmt = function() {
         let per = parseFloat(document.getElementById("clSetPer").value) || 0; let discount = (window.currentClosingODDues * per) / 100; let netOD = window.currentClosingODDues - discount;
-        document.getElementById("clLOdCalcVal").value = "₹" + netOD.toFixed(2); let grand = window.currentClosingMainDues + netOD; 
-        document.getElementById("clSettledAmt").value = grand.toFixed(2); document.getElementById("clRcptAmt").value = grand.toFixed(2);
+        document.getElementById("clLOdCalcVal").value = "₹" + netOD.toFixed(2); let grand = window.currentClosingMainDues + netOD; document.getElementById("clSettledAmt").value = grand.toFixed(2); document.getElementById("clRcptAmt").value = grand.toFixed(2);
     }
     
     window.submitAccountClose = function() {
@@ -1535,8 +1548,7 @@
         if(!settledFinalVal || !collectAmtValue) { alert("Please enter settlement amount."); return; }
         if(confirm(`Are you sure you want to CLOSE Account ${hp}?\nAmount Paying: ₹${collectAmtValue}`)) {
             if(confirm(`WARNING: Account will be permanently closed. Proceed?`)) {
-                let closeTrCode = "CLS-" + Math.floor(Math.random()*900000+100000);
-                let updates = { acStatus: "CLOSED", closedBy: closingOfficer, closedDt: window.getTodayDate(), settledAmt: parseFloat(settledFinalVal), settledOd: calculatedODPart };
+                let closeTrCode = "CLS-" + Math.floor(Math.random()*900000+100000); let updates = { acStatus: "CLOSED", closedBy: closingOfficer, closedDt: window.getTodayDate(), settledAmt: parseFloat(settledFinalVal), settledOd: calculatedODPart };
                 update(ref(database, 'accounts/' + hp), updates).then(() => {
                     push(ref(database, 'receipts'), { tr: closeTrCode, hp: hp, amt: parseFloat(collectAmtValue), type: "Account Closed", dt: window.getTodayDate() });
                     alert(`🎉 Account ${hp} is Closed Successfully.`); document.getElementById("clArea").style.display = "none"; document.getElementById("clHp").value = ""; window.nav("pDash");
