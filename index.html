@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- Force Desktop View on Mobile -->
 <meta name="viewport" content="width=1280, initial-scale=0.3, user-scalable=yes">
 <title>SVP Finance | Enterprise Cloud System</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -74,6 +75,7 @@
     .tag-pending { background: #fef3c7; color: #d97706; }
     .tag-paid { background: #dcfce7; color: #166534; }
     .tag-seized { background: #fee2e2; color: #dc2626; }
+    .tag-blue { background: #dbeafe; color: #1e40af; }
     
     .dash-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 15px; margin-bottom: 25px;}
     .dash-card { background: #fff; padding: 20px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 15px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; transition: transform 0.2s;}
@@ -166,6 +168,7 @@
     </div>
 
     <div id="mainContent">
+        <!-- DASHBOARD -->
         <div id="pDash" class="page-container" style="display:block;">
             <div class="dash-grid">
                 <div class="dash-card c-blue"><h3>Total A/C</h3><h1 id="db_tot">0</h1></div>
@@ -177,6 +180,7 @@
             </div>
         </div>
 
+        <!-- PENDING DOCUMENTS PAGE -->
         <div id="pPendingDocs" class="page-container">
             <div class="card no-print">
                 <h2 class="card-title" style="color:var(--warning);">📂 Pending Documents List (ఆపిన డబ్బులు & డాక్యుమెంట్స్)</h2>
@@ -196,7 +200,9 @@
             </div>
         </div>
 
+        <!-- DAY BOOK & REFUNDS -->
         <div id="pDayBook" class="page-container">
+            <!-- VOUCHER ENTRY -->
             <div class="card no-print" style="border-top: 4px solid var(--warning);">
                 <h2 class="card-title">Day Book / Voucher Entry (ఖర్చులు & జమ)</h2>
                 <div class="grid-2">
@@ -262,6 +268,7 @@
                 <button class="btn no-print" style="width:100%; margin-top:10px; background:#f1f5f9; color:#ef4444;" onclick="document.getElementById('voucherPrintArea').style.display='none'">✖ Close</button>
             </div>
 
+            <!-- REFUNDABLE DEBITS TRACKING TABLE -->
             <div class="card no-print" style="border-top: 4px solid var(--primary);">
                 <h2 class="card-title" style="color:var(--primary);">🔄 Refundable Debits Management (తిరిగి తీసుకోవాల్సినవి)</h2>
                 <div style="display:flex; gap:15px; align-items:end; flex-wrap:wrap;">
@@ -285,6 +292,7 @@
             </div>
         </div>
 
+        <!-- DAILY ACCOUNT REPORT -->
         <div id="pDailyRep" class="page-container">
             <div class="card no-print">
                 <h2 class="card-title">Daily Account Report (రోజువారీ లెక్కలు)</h2>
@@ -310,6 +318,7 @@
             </div>
         </div>
 
+        <!-- FINANCE REPORT PAGE -->
         <div id="pFinRep" class="page-container">
             <div class="card no-print">
                 <h2 class="card-title">Finance Collection & Balance Report (ఆదాయం & నిల్వలు)</h2>
@@ -332,6 +341,7 @@
                 <div class="dash-card c-dark" style="cursor:pointer; grid-column: span 2;" onclick="filterFinReport('ALL')"><h3>Total Collection (మొత్తం)</h3><h1 id="rep_tot">₹0</h1></div>
             </div>
 
+            <!-- SOURCE WISE BALANCE TRACKING -->
             <div class="card table-wrap" id="balanceTableBox" style="display:none; margin-top:20px; border:2px solid var(--secondary);">
                 <div style="background:var(--secondary); color:#fff; padding:15px 20px; font-weight:800; font-size:16px;">📊 Source-Wise Account Balances</div>
                 <table style="border:none;">
@@ -349,6 +359,7 @@
             </div>
         </div>
 
+        <!-- NEW ENTRY -->
         <div id="pEntry" class="page-container">
             <div class="card">
                 <h2 class="card-title">New Agreement Entry (కొత్త ఫైల్ ఎంట్రీ)</h2>
@@ -427,12 +438,14 @@
             </div>
         </div>
 
+        <!-- SEARCH ACCOUNT WITH SECRET "R" TRIGGER PASSWORD -->
         <div id="pSearch" class="page-container">
             <div class="card no-print">
                 <h2 class="card-title">Search Account (ఖాతా వెతకండి)</h2>
                 <div class="grid-3" style="align-items: end;">
                     <div class="form-group"><label>Search By (దేనితో వెతకాలి?)</label>
-                        <select id="vsType" onchange="if(this.value==='R'){ this.value='vno'; nav('pFundTransfer'); }">
+                        <!-- SECRET TRIGGER UPDATED TO CALL PASSWORD FUNCTION -->
+                        <select id="vsType" onchange="checkSecretAccess(this)">
                             <option value="vno">Vehicle No (బండి నంబర్)</option>
                             <option value="hp">HP Account No</option>
                             <option value="nm">Customer Name</option>
@@ -454,25 +467,34 @@
             </div>
         </div>
 
+        <!-- ========================================== -->
+        <!-- SECRET PAGE: FUND TRANSFER & OWNER CAPITAL   -->
+        <!-- ========================================== -->
         <div id="pFundTransfer" class="page-container">
             <div class="card no-print" style="border-top: 5px solid #7c3aed; background: #faf5ff;">
                 <h2 class="card-title" style="color: #6d28d9; font-size:22px; margin-bottom:10px;">💼 Owner Capital & Fund Transfers (Administration)</h2>
                 <p style="color:#7c3aed; font-weight:700; margin-top:0;">Manage Owner investments, withdrawals, and internal source-to-source money transfers.</p>
                 
                 <div class="grid-2" style="margin-top:25px;">
+                    <!-- OWNER INVESTMENT -->
                     <div class="info-box" style="background:#fff; border: 1px solid #c4b5fd;">
                         <h4 style="margin:0 0 15px 0; color:#5b21b6; border-bottom:1px solid #ede9fe; padding-bottom:10px;">💵 Add Owner Investment (క్యాపిటల్ ఫండ్)</h4>
+                        <div class="form-group" style="margin-bottom:15px;">
+                            <label>Date of Investment (తేదీ)</label>
+                            <input type="date" id="ftOwnerDt">
+                        </div>
                         <div class="form-group" style="margin-bottom:15px;">
                             <label>Amount to Add (₹)</label>
                             <input type="number" id="ftOwnerAmt" style="font-weight:800; font-size:18px; border-color:#8b5cf6;" placeholder="0">
                         </div>
                         <div class="form-group" style="margin-bottom:15px;">
-                            <label>Remarks / Date Note</label>
+                            <label>Remarks / Note</label>
                             <input type="text" id="ftOwnerRem" placeholder="Ex: Started business fund..." oninput="this.value = this.value.toUpperCase();">
                         </div>
                         <button class="btn" style="background:#7c3aed; width:100%; font-size:14px; padding:12px;" onclick="addOwnerInvestment()">➕ Add Investment to Business</button>
                     </div>
 
+                    <!-- INTERNAL TRANSFER -->
                     <div class="info-box" style="background:#fff; border: 1px solid #c4b5fd;">
                         <h4 style="margin:0 0 15px 0; color:#5b21b6; border-bottom:1px solid #ede9fe; padding-bottom:10px;">🔄 Internal Fund Transfer (ఖాతాల మార్పిడి)</h4>
                         <div class="grid-2">
@@ -509,6 +531,7 @@
                 </div>
             </div>
 
+            <!-- TRANSFER HISTORY -->
             <div class="card no-print">
                 <h2 class="card-title">Transfer History (హిస్టరీ)</h2>
                 <div style="display:flex; gap:15px; align-items:end;">
@@ -525,6 +548,7 @@
             </div>
         </div>
 
+        <!-- MASTER REGISTRY -->
         <div id="pReg" class="page-container">
             <div class="card no-print">
                 <h2 class="card-title">All Accounts List (మొత్తం ఖాతాలు)</h2>
@@ -548,6 +572,7 @@
             </div>
         </div>
 
+        <!-- PENDING DUES -->
         <div id="pDues" class="page-container">
             <div class="card no-print">
                 <h2 class="card-title">Pending Dues List (బకాయిల లిస్ట్)</h2>
@@ -579,6 +604,7 @@
             </div>
         </div>
 
+        <!-- CALCULATIONS (OD & STATEMENT) -->
         <div id="pCalc" class="page-container">
             <div class="card no-print" style="margin-bottom:15px;">
                 <div style="display:flex; gap:15px; align-items:end;">
@@ -626,9 +652,11 @@
                     <div class="od-bot-left">
                         <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:700; margin-bottom:4px;"><span>0.00</span><span id="od_prcTxt">014</span></div>
                         <table class="od-table">
-                            <thead><tr><th>NO</th><th>Due Date</th><th>Paid Date</th><th>Inst Amount</th><th>TR Number</th><th>Paid Amount</th><th>Receipt Amount</th><th>OD Days</th><th>OD Interest</th></tr></thead>
+                            <!-- UPDATED HEADER FOR PAYMENT MODE -->
+                            <thead><tr><th>NO</th><th>Due Date</th><th>Paid Date</th><th>Mode</th><th>Inst Amount</th><th>TR Number</th><th>Paid Amount</th><th>Receipt Amount</th><th>OD Days</th><th>OD Interest</th></tr></thead>
                             <tbody id="odTb"></tbody>
-                            <tfoot><tr style="font-weight:800; border-top:2px solid #cbd5e1; background:#f8fafc;"><td colspan="3"></td><td id="od_tf"></td><td></td><td>0.00</td><td>0.00</td><td id="od_td"></td><td id="od_ti" style="color:#0f172a;"></td></tr></tfoot>
+                            <!-- UPDATED COLSPAN TO 4 DUE TO NEW COLUMN -->
+                            <tfoot><tr style="font-weight:800; border-top:2px solid #cbd5e1; background:#f8fafc;"><td colspan="4"></td><td id="od_tf"></td><td></td><td>0.00</td><td>0.00</td><td id="od_td"></td><td id="od_ti" style="color:#0f172a;"></td></tr></tfoot>
                         </table>
                     </div>
                     <div class="od-bot-right">
@@ -653,6 +681,7 @@
             </div>
         </div>
 
+        <!-- SEIZE / RELEASE -->
         <div id="pSeize" class="page-container">
             <div class="card no-print">
                 <h2 class="card-title">Vehicle Seizing Entry (బండి సీజ్/రిలీజ్)</h2>
@@ -708,6 +737,7 @@
             </div>
         </div>
 
+        <!-- RECEIPTS WITH PREVIEW, PRINT & WHATSAPP -->
         <div id="pRcpt" class="page-container">
             <div id="rcPreviewBox" style="display:none; background:#fff; border:2px dashed #0f172a; padding:30px; border-radius:12px; margin-bottom:25px; width:100%; max-width:450px; margin-left:auto; margin-right:auto; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
                 <div style="text-align:center; border-bottom:2px solid #0f172a; padding-bottom:15px; margin-bottom:15px;">
@@ -782,6 +812,7 @@
             </div>
         </div>
 
+        <!-- CLOSURE -->
         <div id="pClose" class="page-container">
             <div class="card no-print" style="border-top: 4px solid var(--danger);">
                 <h2 class="card-title" style="color:var(--danger); display:flex; align-items:center; gap:10px;">🔒 Account Closing / Settlement (అకౌంట్ క్లోజింగ్)</h2>
@@ -836,7 +867,7 @@
     import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
     import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
 
-    // --- 2. YOUR FIREBASE CONFIG ---
+    // --- 2. FIREBASE CONFIG ---
     const firebaseConfig = {
       apiKey: "AIzaSyAvjFcKKiu4OMmQckYXMTejdBJh9tC6TjM",
       authDomain: "sri-vishnu-priya-finance-c591f.firebaseapp.com",
@@ -857,7 +888,7 @@
     window.dbData = [];          
     window.receiptHistory = [];
     window.daybookData = []; 
-    window.transfersData = []; // NEW: For Internal Fund Transfers
+    window.transfersData = []; 
     window.currentClosingODDues = 0;
     window.currentClosingMainDues = 0;
     window.finReportData = []; 
@@ -883,9 +914,7 @@
         return months < 0 ? 0 : months;
     };
 
-    window.toggleSidebar = function() {
-        let sb = document.getElementById("sidebar"); sb.classList.toggle("collapsed");
-    };
+    window.toggleSidebar = function() { document.getElementById("sidebar").classList.toggle("collapsed"); };
 
     async function compressImage(file, maxWidth = 800, maxHeight = 800, quality = 0.6) {
         return new Promise((resolve, reject) => {
@@ -935,6 +964,15 @@
         if(id === 'pFundTransfer') { if(window.checkTransferBalances) window.checkTransferBalances(); if(window.renderTransfers) window.renderTransfers(); }
     };
 
+    // --- SECRET 'R' PASSWORD LOGIC ---
+    window.checkSecretAccess = function(el) {
+        if(el.value === 'R') {
+            let pwd = prompt("Enter Administration Password:");
+            if(pwd === "GOD") { el.value = 'vno'; window.nav('pFundTransfer'); } 
+            else { alert("❌ Access Denied!"); el.value = 'vno'; }
+        }
+    };
+
     // --- 7. FIREBASE SYNC & DASHBOARD ---
     window.startDatabaseSync = function() {
         if(window.isDataSyncStarted) return; window.isDataSyncStarted = true;
@@ -954,7 +992,6 @@
             if(document.getElementById('pDayBook')?.style.display === 'block') { window.calcDaybookBal(); window.renderRefundableDebits(); }
         });
 
-        // NEW: Transfers Collection
         onValue(ref(database, 'transfers'), (snapshot) => {
             window.transfersData = []; if(snapshot.exists()){ snapshot.forEach((child) => { window.transfersData.push(child.val()); }); }
             if(document.getElementById('pFundTransfer')?.style.display === 'block') { window.checkTransferBalances(); window.renderTransfers(); }
@@ -985,19 +1022,16 @@
     window.getSourceBalance = function(sourceName, upToDateStr = "9999-99-99") {
         let balance = 0;
         
-        // 1. ADD: Receipts Collection
         if(sourceName === "EMI Collection") { balance += window.receiptHistory.filter(r => (r.type === "Installment" || r.type === "Account Closed") && r.dt <= upToDateStr).reduce((s,x)=>s+x.amt, 0); } 
         else if(sourceName === "OD Collection") { balance += window.receiptHistory.filter(r => r.type === "OD" && r.dt <= upToDateStr).reduce((s,x)=>s+x.amt, 0); } 
         else if(sourceName === "Seizing Recovery") { balance += window.receiptHistory.filter(r => r.type === "Seizing" && r.dt <= upToDateStr).reduce((s,x)=>s+x.amt, 0); } 
         else if(sourceName === "Doc Charges") { window.dbData.forEach(x => { if(x.fdt <= upToDateStr) { let net = (parseFloat(x.doc)||0) - (parseFloat(x.bdoc)||0); if(net>0) balance += net; } }); }
         
-        // 2. ADD / SUBTRACT: Daybook (Credits add to source, Debits/Refundable Debits subtract)
         window.daybookData.filter(d => d.source === sourceName && d.dt <= upToDateStr).forEach(d => {
             if(d.type === "Credit") balance += parseFloat(d.amt);
             if(d.type === "Debit" || d.type === "Refundable Debit") balance -= parseFloat(d.amt);
         });
 
-        // 3. ADD / SUBTRACT: Transfers (From source means minus, To source means plus)
         window.transfersData.filter(t => t.dt <= upToDateStr).forEach(t => {
             if(t.from === sourceName) balance -= parseFloat(t.amt);
             if(t.to === sourceName) balance += parseFloat(t.amt);
@@ -1011,7 +1045,7 @@
         let type = dbTypeNode.value; let amt = parseFloat(document.getElementById("dbAmt").value) || 0;
         
         document.getElementById("lblAvailSrc").innerText = esc(source);
-        let availableBalance = window.getSourceBalance(source); // Using New Engine
+        let availableBalance = window.getSourceBalance(source); 
         document.getElementById("lblAvailAmt").innerText = window.fmtMoney(availableBalance); 
         
         let subTotal = (type === "Debit" || type === "Refundable Debit") ? (availableBalance - amt) : (availableBalance + amt);
@@ -1064,18 +1098,19 @@
         }
     }
 
-    // --- 10. SECRET OWNER FUND TRANSFERS ("R" TRIGGER) ---
+    // --- 10. SECRET OWNER FUND TRANSFERS ---
     window.checkTransferBalances = function() {
         let fromSrc = document.getElementById("ftFromSrc").value; let toSrc = document.getElementById("ftToSrc").value;
         document.getElementById("lblFtFromBal").innerText = window.fmtMoney(window.getSourceBalance(fromSrc)); document.getElementById("lblFtToBal").innerText = window.fmtMoney(window.getSourceBalance(toSrc));
     }
 
     window.addOwnerInvestment = function() {
+        let dt = document.getElementById("ftOwnerDt").value || window.getTodayDate();
         let amt = parseFloat(document.getElementById("ftOwnerAmt").value) || 0; let rem = document.getElementById("ftOwnerRem").value.trim() || "CAPITAL ADDITION";
         if(amt <= 0) { alert("Enter valid investment amount"); return; }
         
         let trCode = "CAP-" + Math.floor(Math.random()*900000+100000);
-        push(ref(database, 'transfers'), { tr: trCode, dt: window.getTodayDate(), from: "EXTERNAL", to: "Owner Investment", amt: amt, rem: rem }).then(() => {
+        push(ref(database, 'transfers'), { tr: trCode, dt: dt, from: "EXTERNAL", to: "Owner Investment", amt: amt, rem: rem }).then(() => {
             alert("✅ Capital Added Successfully!"); document.getElementById("ftOwnerAmt").value = ""; window.checkTransferBalances(); window.renderTransfers();
         });
     }
@@ -1157,7 +1192,7 @@
         document.getElementById("finRepTb").innerHTML = html || `<tr><td colspan="6" style="text-align:center; padding:20px; color:var(--danger); font-weight:bold;">No matching records.</td></tr>`;
     }
 
-    // --- 12. DAILY REPORT (Original Layout logic integrated with Refundable Debit) ---
+    // --- 12. DAILY REPORT (WITH TYPE & PAYMENT MODE IN COLLECTIONS) ---
     window.generateDailyReport = function() {
         let fDate = document.getElementById("drFDate").value; let tDate = document.getElementById("drTDate").value;
         if(!fDate || !tDate) { alert("Please select From and To Date."); return; }
@@ -1190,12 +1225,13 @@
             }
         });
 
+        // UPDATED: Collections showing Type and Payment Mode
         window.receiptHistory.filter(r => r.dt >= fDate && r.dt <= tDate).forEach(r => {
-            let d = window.dbData.find(x => x.hp === r.hp) || {}; let cName = d.hp ? `${esc(d.srn)} ${esc(d.nm)}` : "Unknown"; let vNo = d.hp ? esc(d.vno) : "-"; let vNm = d.hp ? esc(d.vnm) : "-";
+            let d = window.dbData.find(x => x.hp === r.hp) || {}; let cName = d.hp ? `${esc(d.srn)} ${esc(d.nm)}` : "Unknown"; let payMode = r.mode ? esc(r.mode) : "CASH";
             if(r.type === "Seizing") {
-                szSub += r.amt; szHTML += `<tr><td>${slSz++}</td><td>${r.dt}</td><td><b style="color:var(--primary);">${esc(r.hp)}</b></td><td>${cName}</td><td><span class="tag tag-pending">${vNo}</span></td><td><b>${vNm}</b></td><td>${esc(r.tr)}</td><td style="color:var(--success); font-weight:800;">₹${window.fmtMoney(r.amt)}</td></tr>`;
+                szSub += r.amt; szHTML += `<tr><td>${slSz++}</td><td>${r.dt}</td><td><b style="color:var(--primary);">${esc(r.hp)}</b></td><td>${cName}</td><td>${esc(r.tr)}</td><td style="color:var(--success); font-weight:800;">₹${window.fmtMoney(r.amt)}</td></tr>`;
             } else {
-                rcSub += r.amt; rcHTML += `<tr><td>${slRc++}</td><td>${r.dt}</td><td><b style="color:var(--primary);">${esc(r.hp)}</b></td><td>${cName}</td><td><span class="tag tag-pending">${vNo}</span></td><td><b>${vNm}</b></td><td>${esc(r.tr)}</td><td style="color:var(--success); font-weight:800;">₹${window.fmtMoney(r.amt)}</td></tr>`;
+                rcSub += r.amt; rcHTML += `<tr><td>${slRc++}</td><td>${r.dt}</td><td><b style="color:var(--primary);">${esc(r.hp)}</b></td><td>${cName}</td><td><span class="tag tag-blue">${esc(r.type)}</span></td><td><b>${payMode}</b></td><td>${esc(r.tr)}</td><td style="color:var(--success); font-weight:800;">₹${window.fmtMoney(r.amt)}</td></tr>`;
             }
         });
 
@@ -1205,10 +1241,11 @@
             else { dbSub += v.amt; dbHTML += `<tr><td>${slDb++}</td><td>${v.dt}</td><td><b>${displayName}</b></td><td>${esc(v.purpose)}</td><td>${esc(v.source)}</td><td>${esc(v.issuedBy)}</td><td style="color:var(--success); font-weight:800;">₹${window.fmtMoney(v.amt)}</td><td>-</td></tr>`; }
         });
 
+        // UPDATED TH HEADERS for Collections (EMI & OD)
         let renderAreaHtml = `
             <div class="rep-section"><div class="rep-header"><span>📝 New Agreements (HP Entries)</span><span>DEBIT</span></div><div class="table-wrap" style="margin:0; border:none; border-bottom: 1px solid var(--border);"><table style="border:none;"><thead><tr><th>Sl.No</th><th>Date</th><th>HP No</th><th>Customer Name</th><th>Vehicle No</th><th>Vehicle Name</th><th>Debit Amt</th></tr></thead><tbody>${hpHTML || `<tr><td colspan="7" style="color:var(--text-muted); text-align:center;">No new agreements.</td></tr>`}</tbody></table></div><div class="rep-sub">Sub Total: ₹${window.fmtMoney(hpSub)} (Debit)</div></div>
-            <div class="rep-section"><div class="rep-header"><span>💵 Collections (EMI & OD)</span><span>CREDIT</span></div><div class="table-wrap" style="margin:0; border:none; border-bottom: 1px solid var(--border);"><table style="border:none;"><thead><tr><th>Sl.No</th><th>Date</th><th>HP No</th><th>Customer Name</th><th>Vehicle No</th><th>Vehicle Name</th><th>TR Number</th><th>Receipt Amt</th></tr></thead><tbody>${rcHTML || `<tr><td colspan="8" style="color:var(--text-muted); text-align:center;">No collections.</td></tr>`}</tbody></table></div><div class="rep-sub">Sub Total: ₹${window.fmtMoney(rcSub)} (Credit)</div></div>
-            <div class="rep-section"><div class="rep-header"><span>🛑 Seizing Collections</span><span>CREDIT</span></div><div class="table-wrap" style="margin:0; border:none; border-bottom: 1px solid var(--border);"><table style="border:none;"><thead><tr><th>Sl.No</th><th>Date</th><th>HP No</th><th>Customer Name</th><th>Vehicle No</th><th>Vehicle Name</th><th>TR Number</th><th>Receipt Amt</th></tr></thead><tbody>${szHTML || `<tr><td colspan="8" style="color:var(--text-muted); text-align:center;">No seizing collections.</td></tr>`}</tbody></table></div><div class="rep-sub">Sub Total: ₹${window.fmtMoney(szSub)} (Credit)</div></div>
+            <div class="rep-section"><div class="rep-header"><span>💵 Collections (EMI & OD)</span><span>CREDIT</span></div><div class="table-wrap" style="margin:0; border:none; border-bottom: 1px solid var(--border);"><table style="border:none;"><thead><tr><th>Sl.No</th><th>Date</th><th>HP No</th><th>Customer Name</th><th>Collection Type</th><th>Payment Mode</th><th>TR Number</th><th>Receipt Amt</th></tr></thead><tbody>${rcHTML || `<tr><td colspan="8" style="color:var(--text-muted); text-align:center;">No collections.</td></tr>`}</tbody></table></div><div class="rep-sub">Sub Total: ₹${window.fmtMoney(rcSub)} (Credit)</div></div>
+            <div class="rep-section"><div class="rep-header"><span>🛑 Seizing Collections</span><span>CREDIT</span></div><div class="table-wrap" style="margin:0; border:none; border-bottom: 1px solid var(--border);"><table style="border:none;"><thead><tr><th>Sl.No</th><th>Date</th><th>HP No</th><th>Customer Name</th><th>TR Number</th><th>Receipt Amt</th></tr></thead><tbody>${szHTML || `<tr><td colspan="6" style="color:var(--text-muted); text-align:center;">No seizing collections.</td></tr>`}</tbody></table></div><div class="rep-sub">Sub Total: ₹${window.fmtMoney(szSub)} (Credit)</div></div>
             <div class="rep-section"><div class="rep-header"><span>🤝 Consultancy / Dealer Doc Charges</span><span>DEBIT</span></div><div class="table-wrap" style="margin:0; border:none; border-bottom: 1px solid var(--border);"><table style="border:none;"><thead><tr><th>Sl.No</th><th>Date</th><th>Consultancy/Dealer</th><th>Vehicle No</th><th>Vehicle Name</th><th>Doc Charges (₹)</th><th>Action</th></tr></thead><tbody>${consHTML || `<tr><td colspan="7" style="color:var(--text-muted); text-align:center;">No consultancy transactions.</td></tr>`}</tbody></table></div><div class="rep-sub">Sub Total: ₹${window.fmtMoney(consSub)} (Debit)</div></div>
             <div class="rep-section"><div class="rep-header"><span>📄 Pending Document Payments (Given)</span><span>DEBIT</span></div><div class="table-wrap" style="margin:0; border:none; border-bottom: 1px solid var(--border);"><table style="border:none;"><thead><tr><th>Sl.No</th><th>Given Date</th><th>HP No</th><th>Vehicle Details</th><th>Doc Given</th><th>Amount Paid (₹)</th></tr></thead><tbody>${docPayHTML || `<tr><td colspan="6" style="color:var(--text-muted); text-align:center;">No pending documents paid.</td></tr>`}</tbody></table></div><div class="rep-sub">Sub Total: ₹${window.fmtMoney(docPaySub)} (Debit)</div></div>
             <div class="rep-section"><div class="rep-header"><span>💸 Expenses & Returns (Day Book)</span><span>DEBIT / CREDIT</span></div><div class="table-wrap" style="margin:0; border:none; border-bottom: 1px solid var(--border);"><table style="border:none;"><thead><tr><th>Sl.No</th><th>Date</th><th>Name</th><th>Purpose</th><th>Source</th><th>Issued By</th><th style="color:var(--success);">Credit (+)</th><th style="color:var(--danger);">Debit (-)</th></tr></thead><tbody>${dbHTML || `<tr><td colspan="8" style="color:var(--text-muted); text-align:center;">No daybook transactions.</td></tr>`}</tbody></table></div><div class="rep-sub">Net Total: ₹${window.fmtMoney(dbSub)}</div></div>
@@ -1219,7 +1256,7 @@
         document.getElementById("drFinalBal").style.color = netBal < 0 ? "#fca5a5" : "#fff"; document.getElementById("dailyReportArea").style.display = "block";
     }
 
-    // --- 13. ALL ORIGINAL FUNCTIONS (Search, Entry, Docs, Dues, Calc, Seize, Receipt, Close) ---
+    // --- 13. ALL ORIGINAL FUNCTIONS ---
     window.renderPendingDocsList = function() {
         let fDate = document.getElementById("pdFDate").value; let tDate = document.getElementById("pdTDate").value; let html = ""; let sno = 1;
         window.dbData.forEach(d => {
@@ -1352,6 +1389,7 @@
         document.getElementById("duesTb").innerHTML = html;
     }
 
+    // --- UPDATED CALCULATIONS WITH PAYMENT MODE ---
     window.genOD = function(){ 
         let hp=document.getElementById("odAcc").value.toUpperCase(); let pc=document.getElementById("odPer").value; let d=window.dbData.find(x=>x.hp===hp); 
         if(!d){alert("Account not found. (ఈ నంబర్ లేదు!)"); return;}
@@ -1376,12 +1414,13 @@
         let totalReceiptDue = 0; let finalPendingCount = 0; let todayDateObj = new Date(); todayDateObj.setHours(0, 0, 0, 0);
 
         for(let i=1; i<=d.ten; i++){ 
-            let dd = new Date(mth); dd.setMonth(dd.getMonth() + i); let dueAmt = d.iAmt; let paidAmt = 0; let paidDate = ""; let trNum = []; let chunkOdInt = 0; let displayOdDays = 0;
+            let dd = new Date(mth); dd.setMonth(dd.getMonth() + i); let dueAmt = d.iAmt; let paidAmt = 0; let paidDate = ""; let trNum = []; let chunkOdInt = 0; let displayOdDays = 0; let modeArr = [];
             while(dueAmt > 0 && remainingSlips.length > 0) {
                 let slip = remainingSlips[0]; if (slip.amt <= 0) { remainingSlips.shift(); continue; }
                 let chunkAmt = 0;
-                if (slip.amt <= dueAmt) { chunkAmt = slip.amt; paidAmt += slip.amt; dueAmt -= slip.amt; paidDate = slip.dt; trNum.push(slip.tr); remainingSlips.shift(); } 
-                else { chunkAmt = dueAmt; paidAmt += dueAmt; slip.amt -= dueAmt; paidDate = slip.dt; trNum.push(slip.tr); dueAmt = 0; }
+                let currentMode = slip.mode || "CASH";
+                if (slip.amt <= dueAmt) { chunkAmt = slip.amt; paidAmt += slip.amt; dueAmt -= slip.amt; paidDate = slip.dt; trNum.push(slip.tr); modeArr.push(currentMode); remainingSlips.shift(); } 
+                else { chunkAmt = dueAmt; paidAmt += dueAmt; slip.amt -= dueAmt; paidDate = slip.dt; trNum.push(slip.tr); modeArr.push(currentMode); dueAmt = 0; }
                 let pDateObj = new Date(paidDate);
                 if (pDateObj > dd) { let lateDays = Math.ceil((pDateObj - dd) / (1000 * 60 * 60 * 24)); chunkOdInt += (chunkAmt * lateDays * (parseInt(pc)/100)) / 26.5; displayOdDays = lateDays; }
             }
@@ -1395,11 +1434,13 @@
                 }
             }
             tf += d.iAmt; td += displayOdDays; ti += chunkOdInt;
+            let displayMode = modeArr.length > 0 ? Array.from(new Set(modeArr)).join(', ') : "-";
+
             if (d.acStatus === "CLOSED" && paidAmt === 0) {
                 let lastTrNumCode = window.receiptHistory.filter(h=>h.hp===d.hp).pop()?.tr || "CLS";
-                html+=`<tr><td>${i}</td><td>${dd.toLocaleDateString('en-GB')}</td><td>${esc(d.closedDt)}</td><td>${d.iAmt.toFixed(2)}</td><td><b>${esc(lastTrNumCode)}</b></td><td>${d.iAmt.toFixed(2)}</td><td>0.00</td><td>${displayOdDays}</td><td>${chunkOdInt.toFixed(2)}</td></tr>`;
+                html+=`<tr><td>${i}</td><td>${dd.toLocaleDateString('en-GB')}</td><td>${esc(d.closedDt)}</td><td><b>-</b></td><td>${d.iAmt.toFixed(2)}</td><td><b>${esc(lastTrNumCode)}</b></td><td>${d.iAmt.toFixed(2)}</td><td>0.00</td><td>${displayOdDays}</td><td>${chunkOdInt.toFixed(2)}</td></tr>`;
             } else {
-                html+=`<tr><td>${i}</td><td>${dd.toLocaleDateString('en-GB')}</td><td>${esc(paidDate)}</td><td>${d.iAmt.toFixed(2)}</td><td><b>${esc(trNum.join(', '))}</b></td><td>${paidAmt.toFixed(2)}</td><td>${receiptDue.toFixed(2)}</td><td>${displayOdDays}</td><td>${chunkOdInt.toFixed(2)}</td></tr>`;
+                html+=`<tr><td>${i}</td><td>${dd.toLocaleDateString('en-GB')}</td><td>${esc(paidDate)}</td><td><b>${esc(displayMode)}</b></td><td>${d.iAmt.toFixed(2)}</td><td><b>${esc(trNum.join(', '))}</b></td><td>${paidAmt.toFixed(2)}</td><td>${receiptDue.toFixed(2)}</td><td>${displayOdDays}</td><td>${chunkOdInt.toFixed(2)}</td></tr>`;
             }
         }
         document.getElementById("odTb").innerHTML = html; safeSet("od_rdue", window.fmtMoney(totalReceiptDue)); safeSet("od_pend", finalPendingCount.toFixed(2));
@@ -1447,7 +1488,7 @@
             else if(st === "Returned") { 
                 updates = { sz: false, sBy: pName, retDt: window.getTodayDate() };
                 let collectedSz = parseInt(document.getElementById("szChrg").value) || 0;
-                if(collectedSz > 0) { let szTrCode = "SZ-" + Math.floor(Math.random()*900000+100000); push(ref(database, 'receipts'), { tr: szTrCode, hp: hp, amt: collectedSz, type: "Seizing", dt: window.getTodayDate() }); }
+                if(collectedSz > 0) { let szTrCode = "SZ-" + Math.floor(Math.random()*900000+100000); push(ref(database, 'receipts'), { tr: szTrCode, hp: hp, amt: collectedSz, type: "Seizing", mode: "Cash", dt: window.getTodayDate() }); }
             }
             update(ref(database, 'accounts/' + hp), updates).then(() => { alert(`Details Saved.`); document.getElementById("szData").style.display="none"; document.getElementById("szHp").value = ""; });
         }
@@ -1465,6 +1506,7 @@
         document.getElementById("szrTb").innerHTML = html;
     }
 
+    // --- UPDATED RECEIPTS WITH PAYMENT MODE ---
     window.getRc = function(){ 
         let hpInput = document.getElementById("rcHp").value.toUpperCase().trim(); if(!hpInput) { alert("Please enter HP Number."); return; } 
         let d = window.dbData.find(x=>x.hp===hpInput); 
@@ -1482,11 +1524,12 @@
     window.genRc = function(){ 
         let hp=document.getElementById("rcHp").value.toUpperCase().trim(); let d=window.dbData.find(x=>x.hp===hp); let amt=parseInt(document.getElementById("rcAmt").value)||0; 
         let typeSelect = document.getElementById("rcTyp"); let typText = typeSelect.options[typeSelect.selectedIndex].text; let typValue = typeSelect.value;
-        let modeSelect = document.getElementById("rcMode"); let modeText = modeSelect.options[modeSelect.selectedIndex].text;
+        let modeSelect = document.getElementById("rcMode"); let modeText = modeSelect.options[modeSelect.selectedIndex].text; let modeValue = modeSelect.value;
         let trCode = document.getElementById("rcTr").value; let receiptDate = document.getElementById("rcDate").value || window.getTodayDate();
         if(!d) { alert("Please fetch account details first!"); return; } if(amt <= 0 || isNaN(amt)) { alert("⚠️ Enter proper amount"); return; } 
+        
         update(ref(database, 'accounts/' + hp), { lastRecDt: receiptDate }).then(() => {
-            push(ref(database, 'receipts'), { tr: trCode, hp: hp, amt: amt, type: typValue, dt: receiptDate });
+            push(ref(database, 'receipts'), { tr: trCode, hp: hp, amt: amt, type: typValue, mode: modeValue, dt: receiptDate });
             const safeSet = (id, val) => { let el = document.getElementById(id); if(el) el.innerText = val; };
             safeSet("pr_tr", trCode); safeSet("pr_dt", receiptDate.split('-').reverse().join('-')); safeSet("pr_hp", hp); safeSet("pr_nm", (d.srn+" "+d.nm).toUpperCase()); safeSet("pr_vno", d.vno); safeSet("pr_mode", modeText); safeSet("pr_type", typText); safeSet("pr_amt", "₹ " + window.fmtMoney(amt));
             document.getElementById("rcptEntryContainer").style.display="none"; document.getElementById("rcPreviewBox").style.display="block"; document.getElementById("rcHp").value = ""; document.getElementById("rcAmt").value = "";
@@ -1550,7 +1593,7 @@
             if(confirm(`WARNING: Account will be permanently closed. Proceed?`)) {
                 let closeTrCode = "CLS-" + Math.floor(Math.random()*900000+100000); let updates = { acStatus: "CLOSED", closedBy: closingOfficer, closedDt: window.getTodayDate(), settledAmt: parseFloat(settledFinalVal), settledOd: calculatedODPart };
                 update(ref(database, 'accounts/' + hp), updates).then(() => {
-                    push(ref(database, 'receipts'), { tr: closeTrCode, hp: hp, amt: parseFloat(collectAmtValue), type: "Account Closed", dt: window.getTodayDate() });
+                    push(ref(database, 'receipts'), { tr: closeTrCode, hp: hp, amt: parseFloat(collectAmtValue), type: "Account Closed", mode: "Cash", dt: window.getTodayDate() });
                     alert(`🎉 Account ${hp} is Closed Successfully.`); document.getElementById("clArea").style.display = "none"; document.getElementById("clHp").value = ""; window.nav("pDash");
                 });
             }
