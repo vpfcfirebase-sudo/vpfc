@@ -10,22 +10,24 @@
     :root { 
         --primary: #2563eb; --primary-dark: #1e40af; --secondary: #0f172a; 
         --bg-main: #f4f7f9; --bg-card: #ffffff; --text-main: #1e293b; --text-muted: #64748b; 
-        --border: #e2e8f0; --success: #10b981; --danger: #ef4444; --warning: #f59e0b;
+        --border: #cbd5e1; /* Slightly darkened border for better visibility */
+        --success: #10b981; --danger: #ef4444; --warning: #f59e0b;
         --app-header: #0b1120;
     }
     * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
     
     body { margin: 0; padding: 0; background: var(--bg-main); color: var(--text-main); display: flex; flex-direction: column; height: 100vh; overflow: hidden; font-size: 13px; }
     
-    /* App Header - Height & Border Doubled */
+    /* App Header - Center Aligned & Bigger Font */
     #globalHeader { 
+        position: relative; 
         width: 100%; 
         height: 110px; 
         background: var(--app-header); 
         color: #fff; 
         display: flex; 
         align-items: center; 
-        justify-content: space-between; 
+        justify-content: flex-end; 
         padding: 0 40px; 
         flex-shrink: 0; 
         z-index: 9999; 
@@ -33,7 +35,19 @@
         border-bottom: 6px solid var(--primary); 
         display: none; 
     }
-    #globalHeader h1 { margin: 0; font-size: 24px; font-weight: 900; letter-spacing: 1.5px; color: #fff; display:flex; align-items:center; gap:10px;}
+    #globalHeader h1 { 
+        position: absolute; 
+        left: 50%;
+        transform: translateX(-50%);
+        margin: 0; 
+        font-size: 34px; 
+        font-weight: 900; 
+        letter-spacing: 2px; 
+        color: #fff; 
+        display:flex; 
+        align-items:center; 
+        gap:10px;
+    }
     #globalHeader h1 span { color: #10b981; }
     
     .user-badge { font-size: 12px; font-weight: 700; color: #10b981; background: rgba(16, 185, 129, 0.1); padding: 8px 16px; border-radius: 30px; border: 1px solid rgba(16, 185, 129, 0.2);}
@@ -60,7 +74,6 @@
     .page-container { padding: 30px; max-width: 1600px; margin: 0 auto; width: 100%; display: none; animation: fadeIn 0.3s ease; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
     
-    /* Cleaner Card UI */
     .card { background: var(--bg-card); border-radius: 16px; border: 1px solid rgba(226, 232, 240, 0.8); box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04); padding: 30px; margin-bottom: 25px; transition: box-shadow 0.3s;}
     .card:hover { box-shadow: 0 10px 35px rgba(15, 23, 42, 0.07); }
     .card-title { margin-top: 0; color: var(--secondary); border-bottom: 2px solid #f8fafc; padding-bottom: 15px; margin-bottom: 25px; font-weight: 800; font-size: 16px; display: flex; align-items: center; gap:10px;}
@@ -80,12 +93,12 @@
     .btn-green:hover { background: #059669; box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3);}
     .btn-red { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2); }
     
+    /* UPDATED: Table styles with Column Lines (Vertical Borders) */
     .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; margin-top: 15px; background: #fff;}
     table { width: 100%; border-collapse: collapse; text-align: left; }
-    th { background: #f8fafc; color: var(--text-muted); padding: 14px 15px; font-size: 11px; font-weight: 800; text-transform: uppercase; border-bottom: 2px solid var(--border); position: sticky; top:0; z-index: 2;}
-    td { padding: 14px 15px; border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 600; vertical-align: middle; line-height: 1.5; color: var(--secondary);}
-    tr:hover td { background: #f8fafc; }
-    tr:last-child td { border-bottom: none; }
+    th { background: #f8fafc; color: var(--text-muted); padding: 14px 15px; font-size: 11px; font-weight: 800; text-transform: uppercase; border: 1px solid var(--border); border-bottom: 2px solid var(--border); position: sticky; top:0; z-index: 2;}
+    td { padding: 14px 15px; border: 1px solid var(--border); font-size: 13px; font-weight: 600; vertical-align: middle; line-height: 1.5; color: var(--secondary);}
+    tr:hover td { background: #f1f5f9; }
     
     .profile-summary { font-size: 12px; color: var(--text-muted); }
     .profile-summary b { color: var(--secondary); font-size: 14px; font-weight: 800; }
@@ -138,11 +151,8 @@
         #mainContent { overflow: visible; padding:0;} 
         .card, .page-container { box-shadow: none; border: none; padding: 0; margin: 0; background:#fff;} 
         #rcPreviewBox { border: none !important; box-shadow: none !important; margin: 0 !important; max-width: 100% !important; padding: 0 !important; }
-        
-        /* Idhi Dues list table rows ni 4 ki okasari cut chesthundi */
         #duesTb tr:nth-child(4n) { break-after: page; page-break-after: always; }
         #duesTb tr { page-break-inside: avoid; }
-        
         .rep-section { border: 1px solid #000; border-radius: 0;}
         .rep-header, .rep-sub { background: #eee !important; color: #000 !important; -webkit-print-color-adjust: exact; }
     }
@@ -582,10 +592,20 @@
                 
                 <table>
                     <thead><tr>
-                        <th>No.</th><th>HP No</th><th>Customer Details</th><th>Guarantor Details</th>
-                        <th>Village</th><th>Mandal</th>
-                        <th>Vehicle No</th><th id="dThDt">Agr Date</th><th>Last Paid</th>
-                        <th>Pending EMIs</th><th>EMI Amount</th><th>Total Due</th><th>Status</th>
+                        <th>Sl No.</th>
+                        <th>HP No</th>
+                        <th>Customer Details</th>
+                        <th>Guarantor Details</th>
+                        <th id="dThDt">Agr Date</th>
+                        <th>Vehicle No</th>
+                        <th>Vehicle Name</th>
+                        <th>Village</th>
+                        <th>Mandal</th>
+                        <th>Pending EMIs</th>
+                        <th>EMI Amount</th>
+                        <th>Pending Due</th>
+                        <th>Status</th>
+                        <th>Last Receipt</th>
                     </tr></thead>
                     <tbody id="duesTb"></tbody>
                     <tfoot id="duesFoot"></tfoot>
@@ -642,7 +662,7 @@
                         <table class="od-table">
                             <thead><tr><th>NO</th><th>Due Date</th><th>Paid Date</th><th>Mode</th><th>Inst Amount</th><th>TR Number</th><th>Paid Amount</th><th>Receipt Amount</th><th>OD Days</th><th>OD Interest</th></tr></thead>
                             <tbody id="odTb"></tbody>
-                            <tfoot><tr style="font-weight:800; border-top:2px solid #cbd5e1; background:#f8fafc;"><td colspan="4"></td><td id="od_tf"></td><td></td><td>0.00</td><td>0.00</td><td id="od_td"></td><td id="od_ti" style="color:#0f172a;"></td></tr></tfoot>
+                            <tfoot><tr style="font-weight:800; border-top:2px solid #cbd5e1; background:#f8fafc;"><td colspan="4"></td><td id="od_tf"></td><td></td><td id="od_tpaid" style="color:var(--success);">0.00</td><td id="od_trec" style="color:var(--danger);">0.00</td><td id="od_td"></td><td id="od_ti" style="color:#0f172a;"></td></tr></tfoot>
                         </table>
                     </div>
                     <div class="od-bot-right">
@@ -860,6 +880,13 @@
     window.isDataSyncStarted = false; 
 
     // --- 5. UTILITY FUNCTIONS ---
+    window.formatName = function(srn, nm) {
+        let s = (srn || "").trim(); let n = (nm || "").trim();
+        if(!s) return n; if(!n) return s;
+        if(n.toUpperCase().startsWith(s.toUpperCase())) return n;
+        return s + " " + n;
+    };
+
     window.fmtMoney = (amt) => Number(amt).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
     window.getTodayDate = () => {
@@ -944,7 +971,10 @@
         if(window.isDataSyncStarted) return; window.isDataSyncStarted = true;
         
         onValue(ref(database, 'accounts'), (snapshot) => {
-            window.dbData = []; if (snapshot.exists()) { snapshot.forEach((child) => { window.dbData.push(child.val()); }); }
+            window.dbData = []; 
+            if (snapshot.exists()) { 
+                snapshot.forEach((child) => { window.dbData.push(child.val()); }); 
+            }
             updateDashboardCounts(); if(document.getElementById('pReg')?.style.display === 'block') window.ldReg();
         });
 
@@ -964,14 +994,23 @@
         });
     };
 
+    // BULLETPROOF EXACT MATH ENGINE IN DASHBOARD
     function updateDashboardCounts() {
         let tot=0, act=0, due=0, sz=0, cls=0, mat=0; let today = new Date();
         window.dbData.forEach((d) => {
             tot++;
             if(d.acStatus === "OPEN") { 
-                act++; let passedMonths = getMonthsDiff(d.fdt, today); if (passedMonths >= d.ten) { mat++; passedMonths = d.ten; }
+                act++; 
+                let baseFin = parseFloat(d.amt) || 0; let hpc = parseFloat(d.hpc) || 0; let totalLiability = baseFin + hpc;
+                let ten = parseInt(d.ten) || 1; let stdEmi = Math.round(totalLiability / ten);
+                
+                let passedMonths = getMonthsDiff(d.fdt, today); 
+                if (passedMonths >= ten) { mat++; passedMonths = ten; }
+                
                 let totalPaid = window.receiptHistory.filter(h => h.hp === d.hp && h.type === "Installment").reduce((sum, r) => sum + r.amt, 0);
-                if ((passedMonths * d.iAmt) - totalPaid > 0) due++;
+                let expectedPaid = (passedMonths === ten) ? totalLiability : (passedMonths * stdEmi);
+                
+                if (expectedPaid - totalPaid > 0) due++;
             }
             if(d.acStatus === "CLOSED") cls++; if(d.sz) sz++; 
         });
@@ -991,31 +1030,31 @@
         let events = [];
         
         window.dbData.forEach(a => {
-            let hp = a.hp; let name = a.srn + " " + a.nm;
+            let hp = a.hp; let name = window.formatName(a.srn, a.nm);
             
-            // 1. Loan Issue (Owner Investment -> Customer)
+            // 1. Loan Issue
             if(parseFloat(a.amt) > 0) events.push({ date: a.fdt, hp, name, purpose: "Loan Amount Issued", fromAcc: "Owner Investment", toAcc: "Customer", amt: parseFloat(a.amt), type: "LOAN" });
             
-            // 2. Office Doc Deduction (Customer -> Doc Charges)
+            // 2. Office Doc Deduction
             if(parseFloat(a.doc) > 0) events.push({ date: a.fdt, hp, name, purpose: "Office Doc Charges Cut", fromAcc: "Customer", toAcc: "Doc Charges", amt: parseFloat(a.doc), type: "DOC" });
             
-            // 3. Consultancy / Dealer Comm Deduction (Customer -> Pending Commission)
+            // 3. Consultancy Comm
             if(parseFloat(a.bdoc) > 0) events.push({ date: a.fdt, hp, name, purpose: `Commission Added for ${a.consultancy||'Dealer'}`, fromAcc: "Customer", toAcc: "Pending Commission", amt: parseFloat(a.bdoc), type: "COMM_ADD" });
             
-            // 4. Pending Docs Hold (Customer -> Pending Docs Hold)
+            // 4. Pending Docs Hold
             let holdAmt = (parseFloat(a.cbHoldAmt)||0) + (parseFloat(a.nocHoldAmt)||0);
-            if(holdAmt > 0) events.push({ date: a.fdt, hp, name, purpose: "Customer Hold Amount for Documents (RC/NOC)", fromAcc: "Customer", toAcc: "Pending Docs Hold", amt: holdAmt, type: "DOCS_HOLD" });
+            if(holdAmt > 0) events.push({ date: a.fdt, hp, name, purpose: "Customer Hold Amount for Documents", fromAcc: "Customer", toAcc: "Pending Docs Hold", amt: holdAmt, type: "DOCS_HOLD" });
             
-            // 5. Commission Paid to Dealer (DIRECT ROUTING: Pending Commission -> External Dealer)
+            // 5. Commission Paid
             if(a.docPaid && a.consPaidDt) events.push({ date: a.consPaidDt, hp, name, purpose: `Commission Paid to ${a.consultancy||'Dealer'}`, fromAcc: "Pending Commission", toAcc: "Dealer / Agent", amt: parseFloat(a.bdoc), type: "COMM_PAID" });
             
-            // 6. Hold Amount Returned (DIRECT ROUTING: Pending Docs Hold -> Customer)
+            // 6. Hold Amount Returned
             if(a.cb === "Yes" && a.cbGivenDt && parseFloat(a.cbHoldAmt) > 0) events.push({ date: a.cbGivenDt, hp, name, purpose: "RC Hold Amount Returned", fromAcc: "Pending Docs Hold", toAcc: "Customer", amt: parseFloat(a.cbHoldAmt), type: "HOLD_RETURN" });
             if(a.noc === "Yes" && a.nocGivenDt && parseFloat(a.nocHoldAmt) > 0) events.push({ date: a.nocGivenDt, hp, name, purpose: "NOC Hold Amount Returned", fromAcc: "Pending Docs Hold", toAcc: "Customer", amt: parseFloat(a.nocHoldAmt), type: "HOLD_RETURN" });
         });
         
         window.receiptHistory.forEach(r => {
-            let rData = window.dbData.find(x => x.hp === r.hp); let name = rData ? (rData.srn + " " + rData.nm) : "Unknown";
+            let rData = window.dbData.find(x => x.hp === r.hp); let name = rData ? window.formatName(rData.srn, rData.nm) : "Unknown";
             if(r.type === "Installment" || r.type === "Account Closed") events.push({ date: r.dt, hp: r.hp, name, purpose: "EMI Collection", fromAcc: "Customer", toAcc: "EMI Collection", amt: r.amt, type: "EMI" });
             else if(r.type === "OD") events.push({ date: r.dt, hp: r.hp, name, purpose: "OD Penalty Collection", fromAcc: "Customer", toAcc: "OD Collection", amt: r.amt, type: "OD" });
             else if(r.type === "Seizing") events.push({ date: r.dt, hp: r.hp, name, purpose: "Seizing Charge Recovery", fromAcc: "Customer", toAcc: "Seizing Recovery", amt: r.amt, type: "SEIZING" });
@@ -1029,72 +1068,33 @@
         
         window.transfersData.forEach(t => { events.push({ date: t.dt, hp: "N/A", name: "Internal Fund Transfer", purpose: t.rem, fromAcc: t.from, toAcc: t.to, amt: parseFloat(t.amt), type: "TRANSFER" }); });
         
-        // Sort chronologically
         events.sort((a,b) => new Date(a.date) - new Date(b.date));
         
-        // Running Balances Engine
         let internalAccs = ["Owner Investment", "Doc Charges", "Pending Commission", "Pending Docs Hold", "EMI Collection", "OD Collection", "Seizing Recovery", "Office Cash"];
         let balances = {}; internalAccs.forEach(acc => balances[acc] = 0);
-        
         let htmlRows = ""; let sno = 1;
         
         events.forEach(ev => {
-            let isFromInternal = internalAccs.includes(ev.fromAcc);
-            let isToInternal = internalAccs.includes(ev.toAcc);
-            
-            // Debit Flow (Money leaving the internal account)
+            let isFromInternal = internalAccs.includes(ev.fromAcc); let isToInternal = internalAccs.includes(ev.toAcc);
             if(isFromInternal) {
                 let balBefore = balances[ev.fromAcc]; balances[ev.fromAcc] -= ev.amt; let balAfter = balances[ev.fromAcc];
                 if(ev.date >= fDate && ev.date <= tDate) {
-                    htmlRows += `<tr>
-                        <td>${sno++}</td><td>${ev.date}</td>
-                        <td><b style="color:var(--primary);">${esc(ev.hp)}</b></td>
-                        <td><b>${esc(ev.name)}</b><br><span style="font-size:11px;color:var(--text-muted);">${esc(ev.purpose)}</span></td>
-                        <td>
-                            <div style="font-size:10px; font-weight:800; color:var(--danger); margin-bottom:4px;">A/C: ${ev.fromAcc.toUpperCase()}</div>
-                            <span class="tag tag-pending">${ev.fromAcc}</span> ➔ <span class="tag tag-dark">${ev.toAcc}</span>
-                        </td>
-                        <td style="color:var(--danger);font-weight:bold;">₹${window.fmtMoney(ev.amt)}</td><td>-</td>
-                        <td>₹${window.fmtMoney(balBefore)}</td><td style="font-weight:800; color:${balAfter<0?'var(--danger)':'var(--secondary)'};">₹${window.fmtMoney(balAfter)}</td>
-                    </tr>`;
+                    htmlRows += `<tr><td>${sno++}</td><td>${ev.date}</td><td><b style="color:var(--primary);">${esc(ev.hp)}</b></td><td><b>${esc(ev.name)}</b><br><span style="font-size:11px;color:var(--text-muted);">${esc(ev.purpose)}</span></td><td><div style="font-size:10px; font-weight:800; color:var(--danger); margin-bottom:4px;">A/C: ${ev.fromAcc.toUpperCase()}</div><span class="tag tag-pending">${ev.fromAcc}</span> ➔ <span class="tag tag-dark">${ev.toAcc}</span></td><td style="color:var(--danger);font-weight:bold;">₹${window.fmtMoney(ev.amt)}</td><td>-</td><td>₹${window.fmtMoney(balBefore)}</td><td style="font-weight:800; color:${balAfter<0?'var(--danger)':'var(--secondary)'};">₹${window.fmtMoney(balAfter)}</td></tr>`;
                 }
             }
-            
-            // Credit Flow (Money entering the internal account)
             if(isToInternal) {
                 let balBefore = balances[ev.toAcc]; balances[ev.toAcc] += ev.amt; let balAfter = balances[ev.toAcc];
                 if(ev.date >= fDate && ev.date <= tDate) {
-                    htmlRows += `<tr>
-                        <td>${sno++}</td><td>${ev.date}</td>
-                        <td><b style="color:var(--primary);">${esc(ev.hp)}</b></td>
-                        <td><b>${esc(ev.name)}</b><br><span style="font-size:11px;color:var(--text-muted);">${esc(ev.purpose)}</span></td>
-                        <td>
-                            <div style="font-size:10px; font-weight:800; color:var(--success); margin-bottom:4px;">A/C: ${ev.toAcc.toUpperCase()}</div>
-                            <span class="tag tag-dark">${ev.fromAcc}</span> ➔ <span class="tag tag-paid">${ev.toAcc}</span>
-                        </td>
-                        <td>-</td><td style="color:var(--success);font-weight:bold;">₹${window.fmtMoney(ev.amt)}</td>
-                        <td>₹${window.fmtMoney(balBefore)}</td><td style="font-weight:800; color:var(--success);">₹${window.fmtMoney(balAfter)}</td>
-                    </tr>`;
+                    htmlRows += `<tr><td>${sno++}</td><td>${ev.date}</td><td><b style="color:var(--primary);">${esc(ev.hp)}</b></td><td><b>${esc(ev.name)}</b><br><span style="font-size:11px;color:var(--text-muted);">${esc(ev.purpose)}</span></td><td><div style="font-size:10px; font-weight:800; color:var(--success); margin-bottom:4px;">A/C: ${ev.toAcc.toUpperCase()}</div><span class="tag tag-dark">${ev.fromAcc}</span> ➔ <span class="tag tag-paid">${ev.toAcc}</span></td><td>-</td><td style="color:var(--success);font-weight:bold;">₹${window.fmtMoney(ev.amt)}</td><td>₹${window.fmtMoney(balBefore)}</td><td style="font-weight:800; color:var(--success);">₹${window.fmtMoney(balAfter)}</td></tr>`;
                 }
             }
         });
         
         document.getElementById("finRepTb").innerHTML = htmlRows || `<tr><td colspan="9" style="text-align:center; padding:20px; color:var(--danger); font-weight:bold;">No matching records in this date range.</td></tr>`;
         
-        // Cards Show Exact Running Balances After All Transfers
-        document.getElementById("rep_doc").innerText = "₹" + window.fmtMoney(balances["Doc Charges"]);
-        document.getElementById("rep_emi").innerText = "₹" + window.fmtMoney(balances["EMI Collection"]);
-        document.getElementById("rep_od").innerText = "₹" + window.fmtMoney(balances["OD Collection"]);
-        document.getElementById("rep_sz").innerText = "₹" + window.fmtMoney(balances["Seizing Recovery"]);
-        
-        document.getElementById("rep_pend_doc").innerText = "₹" + window.fmtMoney(balances["Pending Docs Hold"]);
-        document.getElementById("rep_pend_comm").innerText = "₹" + window.fmtMoney(balances["Pending Commission"]);
-        
-        let totalMainBox = balances["EMI Collection"] + balances["OD Collection"] + balances["Seizing Recovery"];
-        document.getElementById("rep_tot").innerText = "₹" + window.fmtMoney(totalMainBox);
-        
-        document.getElementById("finRepResults").style.display = "grid";
-        document.getElementById("finRepTableBox").style.display = "block";
+        document.getElementById("rep_doc").innerText = "₹" + window.fmtMoney(balances["Doc Charges"]); document.getElementById("rep_emi").innerText = "₹" + window.fmtMoney(balances["EMI Collection"]); document.getElementById("rep_od").innerText = "₹" + window.fmtMoney(balances["OD Collection"]); document.getElementById("rep_sz").innerText = "₹" + window.fmtMoney(balances["Seizing Recovery"]); document.getElementById("rep_pend_doc").innerText = "₹" + window.fmtMoney(balances["Pending Docs Hold"]); document.getElementById("rep_pend_comm").innerText = "₹" + window.fmtMoney(balances["Pending Commission"]);
+        let totalMainBox = balances["EMI Collection"] + balances["OD Collection"] + balances["Seizing Recovery"]; document.getElementById("rep_tot").innerText = "₹" + window.fmtMoney(totalMainBox);
+        document.getElementById("finRepResults").style.display = "grid"; document.getElementById("finRepTableBox").style.display = "block";
     }
 
     // --- 9. DAY BOOK, TRANSFERS, OTHER FUNCTIONS ---
@@ -1204,7 +1204,7 @@
         window.dbData.forEach(d => {
             if(d.fdt >= fDate && d.fdt <= tDate) {
                 let givenAmt = parseFloat(d.amt) || 0; hpSub += givenAmt;
-                hpHTML += `<tr><td>${slHp++}</td><td>${d.fdt}</td><td><b style="color:var(--primary);">${esc(d.hp)}</b></td><td>${esc(d.srn)} ${esc(d.nm)}</td><td><span class="tag tag-pending">${esc(d.vno)}</span></td><td><b>${esc(d.vnm)}</b></td><td style="color:var(--danger); font-weight:800;">₹${window.fmtMoney(givenAmt)}</td></tr>`;
+                hpHTML += `<tr><td>${slHp++}</td><td>${d.fdt}</td><td><b style="color:var(--primary);">${esc(d.hp)}</b></td><td>${window.formatName(d.srn, d.nm)}</td><td><span class="tag tag-pending">${esc(d.vno)}</span></td><td><b>${esc(d.vnm)}</b></td><td style="color:var(--danger); font-weight:800;">₹${window.fmtMoney(givenAmt)}</td></tr>`;
             }
             let bdocAmt = parseFloat(d.bdoc) || 0;
             if(bdocAmt > 0) {
@@ -1224,7 +1224,7 @@
         });
 
         window.receiptHistory.filter(r => r.dt >= fDate && r.dt <= tDate).forEach(r => {
-            let d = window.dbData.find(x => x.hp === r.hp) || {}; let cName = d.hp ? `${esc(d.srn)} ${esc(d.nm)}` : "Unknown"; let payMode = r.mode ? esc(r.mode) : "CASH";
+            let d = window.dbData.find(x => x.hp === r.hp) || {}; let cName = d.hp ? window.formatName(d.srn, d.nm) : "Unknown"; let payMode = r.mode ? esc(r.mode) : "CASH";
             if(r.type === "Seizing") {
                 szSub += r.amt; szHTML += `<tr><td>${slSz++}</td><td>${r.dt}</td><td><b style="color:var(--primary);">${esc(r.hp)}</b></td><td>${cName}</td><td>${esc(r.tr)}</td><td style="color:var(--success); font-weight:800;">₹${window.fmtMoney(r.amt)}</td></tr>`;
             } else {
@@ -1305,7 +1305,7 @@
             let bdoc = parseFloat(document.getElementById("in_bdoc").value) || 0; 
             let hpc = parseFloat(document.getElementById("in_hpc").value) || 0; 
             let ten = parseInt(document.getElementById("in_ten").value) || 24;
-            let emiAmount = Math.round((amt + hpc) / ten);
+            let emiAmount = Math.round((amt + hpc) / ten); // Initial DB save (Legacy backward compatibility, the real engine ignores this)
             let expDate = new Date(agreeDate); expDate.setMonth(expDate.getMonth() + ten);
             let combinedHoldAmt = (document.getElementById("in_cb").value === "No" || document.getElementById("in_noc").value === "No") ? (parseFloat(document.getElementById("in_doc_hold_amt").value) || 0) : 0;
             
@@ -1331,7 +1331,7 @@
             if(t==='ad') return (d.aadh && d.aadh.includes(v)); if(t==='mo') return (d.mob && d.mob.includes(v)); return false;
         });
         if(res.length===0) html = `<tr><td colspan="10" style="color:var(--danger); text-align:center; font-weight:800; padding:30px;">No accounts found.</td></tr>`;
-        else res.forEach(d => { html += `<tr><td><b>${esc(d.hp)}</b></td><td>${esc(d.fdt)}</td><td>${esc(d.srn)} ${esc(d.nm)}</td><td>${esc(d.mob)}</td><td><span class="tag tag-pending">${esc(d.vno)}</span></td><td>${esc(d.vnm)}</td><td>${esc(d.yr)}</td><td>${esc(d.vl)}</td><td>${esc(d.md)}</td><td>${esc(d.adr)}</td></tr>`; }); 
+        else res.forEach(d => { html += `<tr><td><b>${esc(d.hp)}</b></td><td>${esc(d.fdt)}</td><td>${window.formatName(d.srn, d.nm)}</td><td>${esc(d.mob)}</td><td><span class="tag tag-pending">${esc(d.vno)}</span></td><td>${esc(d.vnm)}</td><td>${esc(d.yr)}</td><td>${esc(d.vl)}</td><td>${esc(d.md)}</td><td>${esc(d.adr)}</td></tr>`; }); 
         document.getElementById("vsTb").innerHTML = html;
     }
 
@@ -1339,7 +1339,7 @@
         let h = document.getElementById("regHp").value.toUpperCase().trim(); let res = h ? window.dbData.filter(d=>d.hp===h) : window.dbData; let html = "";
         res.forEach((d) => { 
             let statTag = d.acStatus==='CLOSED' ? `<span class="tag tag-seized">CLOSED</span>` : `<span class="tag tag-paid">RUNNING</span>`; let totalLoan = parseFloat(d.amt) || 0;
-            html += `<tr><td><b style="color:var(--primary); font-size:14px;">${esc(d.hp)}</b></td><td>${esc(d.fdt)}</td><td><div class="profile-summary"><b>${esc(d.srn)} ${esc(d.nm)}</b><br><span>${esc(d.mob)}</span></div></td><td><b>${esc(d.vno)}</b></td><td style="font-weight:700;">₹${window.fmtMoney(totalLoan)}</td><td>${statTag}</td><td><button class="btn" onclick="vReg('${esc(d.hp)}')">👁️ View</button></td></tr>`;
+            html += `<tr><td><b style="color:var(--primary); font-size:14px;">${esc(d.hp)}</b></td><td>${esc(d.fdt)}</td><td><div class="profile-summary"><b>${window.formatName(d.srn, d.nm)}</b><br><span>${esc(d.mob)}</span></div></td><td><b>${esc(d.vno)}</b></td><td style="font-weight:700;">₹${window.fmtMoney(totalLoan)}</td><td>${statTag}</td><td><button class="btn" onclick="vReg('${esc(d.hp)}')">👁️ View</button></td></tr>`;
         }); 
         document.getElementById("regTb").innerHTML = html;
     }
@@ -1349,18 +1349,24 @@
         document.getElementById("modTitle").innerText=`Details for Account : ${d.hp}`; 
         document.getElementById("modBody").innerHTML=`
             <div class="grid-2"><div class="info-box" style="display:flex;gap:20px; align-items:flex-start;"><img src="${esc(d.cImg)}" class="profile-img">
-            <div><b style="color:var(--primary); font-size:14px;">👤 Customer Details</b><br><br><div class="grid-2" style="gap:5px;"><span><b>Name:</b></span><span>${esc(d.srn)} ${esc(d.nm)}</span><span><b>F/S Name:</b></span><span>${esc(d.fnm)}</span><span><b>Mobile:</b></span><span>${esc(d.mob)}</span><span><b>Aadhar:</b></span><span>${esc(d.aadh)}</span><span><b>Work:</b></span><span>${esc(d.occ)}</span><span style="grid-column:span 2;"><b>Address:</b> ${esc(d.adr)}, ${esc(d.vl)}, ${esc(d.md)}</span></div></div></div>
+            <div><b style="color:var(--primary); font-size:14px;">👤 Customer Details</b><br><br><div class="grid-2" style="gap:5px;"><span><b>Name:</b></span><span>${window.formatName(d.srn, d.nm)}</span><span><b>F/S Name:</b></span><span>${esc(d.fnm)}</span><span><b>Mobile:</b></span><span>${esc(d.mob)}</span><span><b>Aadhar:</b></span><span>${esc(d.aadh)}</span><span><b>Work:</b></span><span>${esc(d.occ)}</span><span style="grid-column:span 2;"><b>Address:</b> ${esc(d.adr)}, ${esc(d.vl)}, ${esc(d.md)}</span></div></div></div>
             <div class="info-box" style="display:flex;gap:20px; align-items:flex-start;"><img src="${esc(d.gImg)}" class="profile-img">
-            <div><b style="color:var(--primary); font-size:14px;">🤝 Guarantor Details</b><br><br><div class="grid-2" style="gap:5px;"><span><b>Name:</b></span><span>${esc(d.gsrn)} ${esc(d.gnm)}</span><span><b>Mobile:</b></span><span>${esc(d.gmob)}</span><span><b>Aadhar:</b></span><span>${esc(d.gaad)}</span><span><b>Work:</b></span><span>${esc(d.gocc)}</span><span style="grid-column:span 2;"><b>Address:</b> ${esc(d.gadr)}, ${esc(d.gvl)}, ${esc(d.gmd)}</span></div></div></div></div>
+            <div><b style="color:var(--primary); font-size:14px;">🤝 Guarantor Details</b><br><br><div class="grid-2" style="gap:5px;"><span><b>Name:</b></span><span>${window.formatName(d.gsrn, d.gnm)}</span><span><b>Mobile:</b></span><span>${esc(d.gmob)}</span><span><b>Aadhar:</b></span><span>${esc(d.gaad)}</span><span><b>Work:</b></span><span>${esc(d.gocc)}</span><span style="grid-column:span 2;"><b>Address:</b> ${esc(d.gadr)}, ${esc(d.gvl)}, ${esc(d.gmd)}</span></div></div></div></div>
             <div class="info-box" style="background:#fff;"><b style="color:var(--secondary); font-size:14px;">⚙️ Vehicle Details:</b> <br>Vehicle No: <b>${esc(d.vno)}</b> | Name & Model: ${esc(d.vnm)} | Year: ${esc(d.vYear)} | Chassis No: ${esc(d.vcn)} | Engine No: ${esc(d.ven)} | Color: ${esc(d.vcol)}<br><br>
             <b style="color:var(--secondary); font-size:14px;">📊 Finance Details:</b> <br>Loan Amount: <b>₹${window.fmtMoney(d.amt)}</b> | Office Doc: ₹${d.doc} | Broker Doc: ₹${d.bdoc || 0} | Total Interest: ₹${d.hpc} | Months: ${d.ten} Mos <br> RC Book: ${esc(d.cb)} | NOC: ${esc(d.noc)} | Officer: ${esc(d.verifiedBy)} | Status: <b style="color:${d.acStatus==='CLOSED'?'var(--danger)':'var(--success)'};">${esc(d.acStatus)}</b></div>`; 
         document.getElementById("regModal").style.display="flex"; 
     }
 
-    window.chgDueUI = () => { let m = document.getElementById("dType").value==="Matured"; document.getElementById("dToDt").style.display=m?'block':'none'; document.getElementById("dLblDt").innerText=m?'Date':'Today Date'; document.getElementById("dThDt").innerText=m?'End Date':'Agr Date'; };
+    // UPDATED: DUE UI DATES LABEL LOGIC
+    window.chgDueUI = () => { 
+        let m = document.getElementById("dType").value==="Matured"; 
+        document.getElementById("dToDt").style.display=m?'block':'none'; 
+        document.getElementById("dLblDt").innerText=m?'Date':'Today Date'; 
+        document.getElementById("dThDt").innerText=m?'Exp Date':'Agr Date'; 
+    };
     window.chgDueOp = () => { document.getElementById("dVl2Box").style.display = document.getElementById("dOp").value === "Between" ? "block" : "none"; };
     
-    // UPDATED: Dues generation with sorting & Grand Total
+    // BULLETPROOF EXACT MATH ENGINE IN DUES LIST
     window.genDues = function(){ 
         let v1 = parseFloat(document.getElementById("dVl").value)||0; 
         let v2 = parseFloat(document.getElementById("dVl2Box").style.display === "block" ? document.getElementById("dVl2").value : 0)||0; 
@@ -1370,15 +1376,36 @@
         
         let matchedAccounts = [];
         
-        // 1. Data ni filter chesi oka array lo store cheyadam
         window.dbData.forEach((d) => { 
             if(d.sz || d.acStatus === "CLOSED") return; 
-            let passedMonths = getMonthsDiff(d.fdt, today); if (passedMonths > d.ten) passedMonths = d.ten;
+            
+            // EXACT MATH
+            let baseFin = parseFloat(d.amt) || 0; 
+            let hpc = parseFloat(d.hpc) || 0; 
+            let totalLiability = baseFin + hpc;
+            let ten = parseInt(d.ten) || 1;
+            let stdEmi = Math.round(totalLiability / ten);
+
+            let passedMonths = getMonthsDiff(d.fdt, today); 
+            if (passedMonths > ten) passedMonths = ten;
+            
             let totalPaid = window.receiptHistory.filter(h => h.hp === d.hp && h.type === "Installment").reduce((sum, r) => sum + r.amt, 0);
-            let overdueAmount = (passedMonths * d.iAmt) - totalPaid; if(overdueAmount < 0) overdueAmount = 0;
-            let overdueEMIsCount = parseFloat((overdueAmount / d.iAmt).toFixed(2));
-            let totalRemainingEMIs = parseFloat((((d.ten * d.iAmt) - totalPaid) / d.iAmt).toFixed(2)); 
-            let completedEMIs = parseFloat((d.ten - totalRemainingEMIs).toFixed(2));
+            
+            // Calculate EXACTLY what they should have paid based on standard EMI
+            let expectedPaid = 0;
+            if(passedMonths === ten) {
+                expectedPaid = totalLiability;
+            } else {
+                expectedPaid = passedMonths * stdEmi;
+            }
+
+            let overdueAmount = expectedPaid - totalPaid; 
+            if(overdueAmount < 0) overdueAmount = 0;
+            let overdueEMIsCount = parseFloat((overdueAmount / stdEmi).toFixed(2));
+            
+            let remainingLiability = totalLiability - totalPaid;
+            let totalRemainingEMIs = parseFloat((remainingLiability / stdEmi).toFixed(2)); 
+            let completedEMIs = parseFloat((ten - totalRemainingEMIs).toFixed(2));
 
             let mtc = false; 
             if(op==="All") mtc=true; 
@@ -1395,19 +1422,18 @@
                     ...d,
                     overdueAmount,
                     overdueEMIsCount,
-                    completedEMIs
+                    completedEMIs,
+                    stdEmi
                 });
             }
         });
 
-        // 2. Mandal mariyu Village wise varusaga (Alphabetical) Sorting cheyadam
         matchedAccounts.sort((a, b) => {
             let mCmp = (a.md || "").localeCompare(b.md || "");
             if (mCmp !== 0) return mCmp; 
             return (a.vl || "").localeCompare(b.vl || ""); 
         });
 
-        // 3. HTML Table Generate cheyadam mariyu Grand Total add cheyadam
         let html = ""; 
         let sno = 1; 
         let grandTotal = 0;
@@ -1415,36 +1441,65 @@
         matchedAccounts.forEach(d => {
             grandTotal += d.overdueAmount; 
             let dueColor = d.overdueEMIsCount > 0 ? "var(--danger)" : "var(--success)";
-            let cLbl = `<b>${esc(d.srn)} ${esc(d.nm)}</b><br><span>Ph:</span> ${esc(d.mob)}<br><span>Add:</span> ${esc(d.adr)}<br><span>Aadhar:</span> ${esc(d.aadh)}<br><span>Work:</span> ${esc(d.occ)}`;
-            let gLbl = `<b>${esc(d.gsrn)} ${esc(d.gnm)}</b><br><span>Ph:</span> ${esc(d.gmob)}<br><span>Add:</span> ${esc(d.gadr)}<br><span>Aadhar:</span> ${esc(d.gaad)}<br><span>Work:</span> ${esc(d.gocc)}`;
             
-            html += `<tr><td>${sno++}</td><td><b style="color:var(--primary); font-size:14px;">${esc(d.hp)}</b></td>
-            <td><div class="profile-summary">${cLbl}</div></td><td><div class="profile-summary">${gLbl}</div></td>
-            <td style="font-weight:800;">${esc(d.vl).toUpperCase()}</td><td style="font-weight:800;">${esc(d.md).toUpperCase()}</td>
-            <td><span class="tag tag-pending" style="font-size:12px; margin-bottom:4px;">${esc(d.vno)}</span><br><small style="color:var(--secondary); font-weight:700;">${esc(d.vnm)}</small></td>
-            <td>${m?esc(d.exp):esc(d.fdt)}</td><td style="font-weight:800; color:var(--text-muted); text-align:center;">${esc(d.lastRecDt) || '-'}</td>
-            <td style="color:${dueColor};font-weight:800;font-size:16px;text-align:center;">${d.overdueEMIsCount}</td><td style="font-weight:600;">₹${window.fmtMoney(d.iAmt)}</td>
-            <td style="color:${dueColor};font-weight:800; font-size:15px;">₹${window.fmtMoney(d.overdueAmount)}</td>
-            <td style="text-align:center;"><span class="tag tag-paid">Active: ${d.completedEMIs} / ${d.ten}</span></td></tr>`;
+            // EXACT FORMAT MATCHING USER REQUEST
+            let cLbl = `<b style="font-size:14px; color:var(--primary-dark); text-transform:uppercase;">${window.formatName(d.srn, d.nm)}</b><br>
+                        <span style="font-weight:700; color:var(--text-muted); font-size:12px;">S/O: ${esc(d.fnm)}</span><br>
+                        <span style="font-weight:800; font-size:14px; color:#0f172a; display:inline-block; margin-top:4px;">${esc(d.mob)}</span><br>
+                        <span style="font-size:11px; color:var(--text-muted); display:inline-block; margin-top:2px;">${esc(d.adr)}</span><br>
+                        <span style="font-size:11px; margin-top:4px; display:inline-block;"><b>Aadhar:</b> ${esc(d.aadh)}</span><br>
+                        <span style="font-size:11px;"><b>Work:</b> ${esc(d.occ)}</span>`;
+                        
+            let gLbl = `<b style="font-size:14px; color:var(--secondary); text-transform:uppercase;">${window.formatName(d.gsrn, d.gnm)}</b><br>
+                        <span style="font-weight:700; color:var(--text-muted); font-size:12px;">S/O: ${esc(d.gfnm)}</span><br>
+                        <span style="font-weight:800; font-size:14px; color:#0f172a; display:inline-block; margin-top:4px;">${esc(d.gmob)}</span><br>
+                        <span style="font-size:11px; color:var(--text-muted); display:inline-block; margin-top:2px;">${esc(d.gadr)}</span><br>
+                        <span style="font-size:11px; margin-top:4px; display:inline-block;"><b>Aadhar:</b> ${esc(d.gaad)}</span><br>
+                        <span style="font-size:11px;"><b>Work:</b> ${esc(d.gocc)}</span>`;
+            
+            html += `<tr>
+                <td>${sno++}</td>
+                <td><b style="color:var(--primary); font-size:14px;">${esc(d.hp)}</b></td>
+                <td><div class="profile-summary" style="line-height:1.6;">${cLbl}</div></td>
+                <td><div class="profile-summary" style="line-height:1.6;">${gLbl}</div></td>
+                <td style="font-weight:700;">${m ? esc(d.exp) : esc(d.fdt)}</td>
+                <td><span class="tag tag-pending" style="font-size:12px;">${esc(d.vno)}</span></td>
+                <td><b style="color:var(--secondary); font-size:11px;">${esc(d.vnm)}</b></td>
+                <td style="font-weight:800;">${esc(d.vl).toUpperCase()}</td>
+                <td style="font-weight:800;">${esc(d.md).toUpperCase()}</td>
+                <td style="color:${dueColor};font-weight:900;font-size:16px;text-align:center;">${d.overdueEMIsCount}</td>
+                <td style="font-weight:700;">₹${window.fmtMoney(d.stdEmi)}</td>
+                <td style="color:${dueColor};font-weight:900; font-size:15px;">₹${window.fmtMoney(d.overdueAmount)}</td>
+                <td style="text-align:center;"><span class="tag tag-paid">Active: ${d.completedEMIs}/${d.ten}</span></td>
+                <td style="font-weight:800; color:var(--text-muted); text-align:center;">${esc(d.lastRecDt) || '-'}</td>
+            </tr>`;
         });
         
         document.getElementById("duesTb").innerHTML = html;
         
-        // 4. Total Dues Amount Display below the table
         let footHtml = `<tr>
             <td colspan="11" style="text-align:right; font-weight:900; font-size:16px; color:var(--secondary); padding: 20px;">GRAND TOTAL OVERDUE:</td>
             <td style="color:var(--danger); font-weight:900; font-size:20px;">₹${window.fmtMoney(grandTotal)}</td>
-            <td></td>
+            <td colspan="2"></td>
         </tr>`;
         document.getElementById("duesFoot").innerHTML = footHtml;
     }
 
-    // --- EXACT FINANCE AMOUNT BINDING FOR OD CALCULATION ---
+    // --- BULLETPROOF EXACT MATH ENGINE IN CALCULATION STATEMENT ---
     window.genOD = function(){ 
         let hp=document.getElementById("odAcc").value.toUpperCase(); let pc=document.getElementById("odPer").value; let d=window.dbData.find(x=>x.hp===hp); 
         if(!d){alert("Account not found. (ఈ నంబర్ లేదు!)"); return;}
+        
+        // --- EXACT BULLETPROOF CALCULATION ---
+        let baseFin = parseFloat(d.amt) || 0; 
+        let hpc = parseFloat(d.hpc) || 0; 
+        let seizeCharge = parseFloat(d.szC) || 0; 
+        let totalLiability = baseFin + hpc; 
+        let ten = parseInt(d.ten) || 1;
+        let stdEmi = Math.round(totalLiability / ten);
+
         const safeSet = (id, val) => { let el = document.getElementById(id); if(el) el.innerHTML = val; };
-        safeSet("od_nm", (d.srn+" "+d.nm).toUpperCase()); safeSet("od_area", d.md.toUpperCase()); safeSet("od_town", d.vl.toUpperCase()); safeSet("od_ac", d.hp); safeSet("od_verBy", d.verifiedBy?.toUpperCase() || "NONE"); safeSet("od_consName", d.consultancy?.toUpperCase() || "");
+        safeSet("od_nm", window.formatName(d.srn, d.nm).toUpperCase()); safeSet("od_area", d.md.toUpperCase()); safeSet("od_town", d.vl.toUpperCase()); safeSet("od_ac", d.hp); safeSet("od_verBy", d.verifiedBy?.toUpperCase() || "NONE"); safeSet("od_consName", d.consultancy?.toUpperCase() || "");
         safeSet("od_vno", d.vno.replace(/\s/g,'')); safeSet("od_mk", d.yr); safeSet("od_mdl", d.vnm.toUpperCase()); safeSet("od_en", d.ven || ""); safeSet("od_cn", d.vcn || ""); safeSet("od_currentDt", window.getTodayDate());
         
         let statusEl = document.getElementById("od_acStat"); 
@@ -1463,8 +1518,19 @@
         let totalEmiPaid = matchedSlips.reduce((s, x) => s + x.amt, 0); let remainingSlips = JSON.parse(JSON.stringify(matchedSlips));
         let totalReceiptDue = 0; let finalPendingCount = 0; let todayDateObj = new Date(); todayDateObj.setHours(0, 0, 0, 0);
 
-        for(let i=1; i<=d.ten; i++){ 
-            let dd = new Date(mth); dd.setMonth(dd.getMonth() + i); let dueAmt = d.iAmt; let paidAmt = 0; let paidDate = ""; let trNum = []; let chunkOdInt = 0; let displayOdDays = 0; let modeArr = [];
+        let totalTablePaid = 0;
+        let totalTableRecDue = 0;
+
+        for(let i=1; i<=ten; i++){ 
+            let dd = new Date(mth); dd.setMonth(dd.getMonth() + i); 
+            
+            // MATH ENGINE: Exact split for Last EMI to exactly match total liability
+            let currentEmiDue = (i === ten) ? (totalLiability - (stdEmi * (ten - 1))) : stdEmi;
+            if(currentEmiDue < 0) currentEmiDue = stdEmi; // Absolute safety fallback
+
+            let dueAmt = currentEmiDue; 
+            let paidAmt = 0; let paidDate = ""; let trNum = []; let chunkOdInt = 0; let displayOdDays = 0; let modeArr = [];
+            
             while(dueAmt > 0 && remainingSlips.length > 0) {
                 let slip = remainingSlips[0]; if (slip.amt <= 0) { remainingSlips.shift(); continue; }
                 let chunkAmt = 0; let currentMode = slip.mode || "CASH";
@@ -1473,32 +1539,40 @@
                 let pDateObj = new Date(paidDate);
                 if (pDateObj > dd) { let lateDays = Math.ceil((pDateObj - dd) / (1000 * 60 * 60 * 24)); chunkOdInt += (chunkAmt * lateDays * (parseInt(pc)/100)) / 26.5; displayOdDays = lateDays; }
             }
-            let receiptDue = d.iAmt - paidAmt;
+            
+            let receiptDue = currentEmiDue - paidAmt;
             if (dd <= todayDateObj) {
                 if (d.acStatus !== "CLOSED") totalReceiptDue += receiptDue;
                 if (receiptDue > 0 && d.acStatus !== "CLOSED") {
                     let diffTime = todayDateObj - dd; let daysToToday = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                     if (daysToToday > 0) { chunkOdInt += (receiptDue * daysToToday * (parseInt(pc)/100)) / 26.5; displayOdDays = daysToToday; }
-                    finalPendingCount += (receiptDue / d.iAmt);
+                    finalPendingCount += (receiptDue / currentEmiDue);
                 }
             }
-            tf += d.iAmt; td += displayOdDays; ti += chunkOdInt;
+            tf += currentEmiDue; td += displayOdDays; ti += chunkOdInt;
             let displayMode = modeArr.length > 0 ? Array.from(new Set(modeArr)).join(', ') : "-";
 
             if (d.acStatus === "CLOSED" && paidAmt === 0) {
                 let lastTrNumCode = window.receiptHistory.filter(h=>h.hp===d.hp).pop()?.tr || "CLS";
-                html+=`<tr><td>${i}</td><td>${dd.toLocaleDateString('en-GB')}</td><td>${esc(d.closedDt)}</td><td><b>-</b></td><td>${d.iAmt.toFixed(2)}</td><td><b>${esc(lastTrNumCode)}</b></td><td>${d.iAmt.toFixed(2)}</td><td>0.00</td><td>${displayOdDays}</td><td>${chunkOdInt.toFixed(2)}</td></tr>`;
+                html+=`<tr><td>${i}</td><td>${dd.toLocaleDateString('en-GB')}</td><td>${esc(d.closedDt)}</td><td><b>-</b></td><td>${currentEmiDue.toFixed(2)}</td><td><b>${esc(lastTrNumCode)}</b></td><td>${currentEmiDue.toFixed(2)}</td><td>0.00</td><td>${displayOdDays}</td><td>${chunkOdInt.toFixed(2)}</td></tr>`;
+                totalTablePaid += currentEmiDue;
             } else {
-                html+=`<tr><td>${i}</td><td>${dd.toLocaleDateString('en-GB')}</td><td>${esc(paidDate)}</td><td><b>${esc(displayMode)}</b></td><td>${d.iAmt.toFixed(2)}</td><td><b>${esc(trNum.join(', '))}</b></td><td>${paidAmt.toFixed(2)}</td><td>${receiptDue.toFixed(2)}</td><td>${displayOdDays}</td><td>${chunkOdInt.toFixed(2)}</td></tr>`;
+                html+=`<tr><td>${i}</td><td>${dd.toLocaleDateString('en-GB')}</td><td>${esc(paidDate)}</td><td><b>${esc(displayMode)}</b></td><td>${currentEmiDue.toFixed(2)}</td><td><b>${esc(trNum.join(', '))}</b></td><td>${paidAmt.toFixed(2)}</td><td>${receiptDue.toFixed(2)}</td><td>${displayOdDays}</td><td>${chunkOdInt.toFixed(2)}</td></tr>`;
+                totalTablePaid += paidAmt;
+                totalTableRecDue += receiptDue;
             }
         }
-        document.getElementById("odTb").innerHTML = html; safeSet("od_rdue", window.fmtMoney(totalReceiptDue)); safeSet("od_pend", finalPendingCount.toFixed(2));
+        document.getElementById("odTb").innerHTML = html; 
+        
+        safeSet("od_tpaid", totalTablePaid.toFixed(2));
+        safeSet("od_trec", totalTableRecDue.toFixed(2));
+
+        safeSet("od_rdue", window.fmtMoney(totalReceiptDue)); safeSet("od_pend", finalPendingCount.toFixed(2));
         safeSet("od_tf", window.fmtMoney(tf)); safeSet("od_td", td); 
         
         if(d.acStatus === "CLOSED") { let displayODVal = `${ti.toFixed(2)} - <span style="color:var(--danger); font-weight:800;">${(d.settledOd || 0).toFixed(2)}</span>`; safeSet("od_ti", displayODVal); safeSet("sum_odue", displayODVal); } 
         else { safeSet("od_ti", window.fmtMoney(ti)); safeSet("sum_odue", window.fmtMoney(ti)); }
         
-        let baseFin = parseFloat(d.amt) || 0; let hpc = parseFloat(d.hpc) || 0; let seizeCharge = parseFloat(d.szC) || 0; let totalLiability = baseFin + hpc; 
         safeSet("sum_fin", window.fmtMoney(baseFin)); safeSet("sum_hp", window.fmtMoney(hpc)); safeSet("sum_tot1", window.fmtMoney(totalLiability)); 
         safeSet("sum_fin2", window.fmtMoney(totalLiability)); safeSet("sum_hp2", window.fmtMoney(hpc)); 
         let principalBalance = totalLiability - totalEmiPaid; if(principalBalance < 0) principalBalance = 0;
@@ -1511,11 +1585,19 @@
         let d = window.dbData.find(x=>x.hp===document.getElementById("szHp").value.toUpperCase().trim()); 
         if(d){ 
             if(d.acStatus === "CLOSED") { alert("Account is Closed."); return; }
+            
+            // EXACT MATH ENGINE
+            let baseFin = parseFloat(d.amt) || 0; let hpc = parseFloat(d.hpc) || 0; let totalLiability = baseFin + hpc;
+            let ten = parseInt(d.ten) || 1; let stdEmi = Math.round(totalLiability / ten);
+
             let totalEmiPaid = window.receiptHistory.filter(x => x.hp === d.hp && x.type === "Installment").reduce((s, x) => s + x.amt, 0);
-            let passedMonths = getMonthsDiff(d.fdt, new Date()); if (passedMonths > d.ten) passedMonths = d.ten;
-            let overdueAmount = (passedMonths * d.iAmt) - totalEmiPaid; if(overdueAmount < 0) overdueAmount = 0;
+            let passedMonths = getMonthsDiff(d.fdt, new Date()); if (passedMonths > ten) passedMonths = ten;
+            let expectedPaid = (passedMonths === ten) ? totalLiability : (passedMonths * stdEmi);
+            
+            let overdueAmount = expectedPaid - totalEmiPaid; if(overdueAmount < 0) overdueAmount = 0;
+
             const safeSet = (id, val) => { let el = document.getElementById(id); if(el) el.innerText = val; };
-            safeSet("szN", (d.srn+" "+d.nm).toUpperCase()); safeSet("szV", d.vno); safeSet("szVnm", d.vnm.toUpperCase()); safeSet("szD", window.fmtMoney(overdueAmount)); 
+            safeSet("szN", window.formatName(d.srn, d.nm).toUpperCase()); safeSet("szV", d.vno); safeSet("szVnm", d.vnm.toUpperCase()); safeSet("szD", window.fmtMoney(overdueAmount)); 
             document.getElementById("szData").style.display="block"; 
             if(d.sz) { document.getElementById("szSt").value = "Seized"; document.getElementById("szYard").value = d.yard; document.getElementById("szChrg").value = d.szC; } else { document.getElementById("szSt").value = ""; document.getElementById("szYard").value = ""; document.getElementById("szChrg").value = ""; }
             window.executeSeizeToggleLogic();
@@ -1550,21 +1632,33 @@
         if(seizedAccounts.length === 0) html = `<tr><td colspan="10" style="color:var(--danger); text-align:center; font-weight:800; padding:30px;">No seized vehicles found.</td></tr>`;
         else seizedAccounts.forEach(d => { 
             let statusBadge = d.sz ? `<span class="tag tag-seized">SEIZED</span>` : `<span class="tag tag-paid">RETURNED</span>`; let retDateStr = d.retDt ? `<b style="color:var(--success);">${esc(d.retDt)}</b>` : '-';
-            html += `<tr><td>${esc(d.szDt)}</td><td>${retDateStr}</td><td><b style="color:var(--primary);">${esc(d.hp)}</b></td><td><div class="profile-summary"><b>${esc(d.srn)} ${esc(d.nm)}</b></div></td><td><span class="tag tag-pending">${esc(d.vno)}</span></td><td><b style="color:var(--secondary);">${esc(d.vnm)}</b></td><td>${esc(d.yard)}</td><td style="color:var(--danger);font-weight:800;">₹${window.fmtMoney(d.szC)}</td><td>👤 ${esc(d.sBy)}</td><td>${statusBadge}</td></tr>`; 
+            html += `<tr><td>${esc(d.szDt)}</td><td>${retDateStr}</td><td><b style="color:var(--primary);">${esc(d.hp)}</b></td><td><div class="profile-summary"><b>${window.formatName(d.srn, d.nm)}</b></div></td><td><span class="tag tag-pending">${esc(d.vno)}</span></td><td><b style="color:var(--secondary);">${esc(d.vnm)}</b></td><td>${esc(d.yard)}</td><td style="color:var(--danger);font-weight:800;">₹${window.fmtMoney(d.szC)}</td><td>👤 ${esc(d.sBy)}</td><td>${statusBadge}</td></tr>`; 
         }); 
         document.getElementById("szrTb").innerHTML = html;
     }
 
+    // --- BULLETPROOF MATH ENGINE IN RECEIPTS ENTRY ---
     window.getRc = function(){ 
         let hpInput = document.getElementById("rcHp").value.toUpperCase().trim(); if(!hpInput) { alert("Please enter HP Number."); return; } 
         let d = window.dbData.find(x=>x.hp===hpInput); 
         if(d){
             if(d.acStatus === "CLOSED") { alert("Account is Closed."); return; }
             document.getElementById("rcPreviewBox").style.display="none"; document.getElementById("rcptEntryContainer").style.display="grid";
+            
+            // EXACT MATH ENGINE
+            let baseFin = parseFloat(d.amt) || 0; let hpc = parseFloat(d.hpc) || 0; let totalLiability = baseFin + hpc;
+            let ten = parseInt(d.ten) || 1; let stdEmi = Math.round(totalLiability / ten);
+
             let totalEmiPaid = window.receiptHistory.filter(x => x.hp === d.hp && x.type === "Installment").reduce((s, x) => s + x.amt, 0);
-            let passedMonths = getMonthsDiff(d.fdt, new Date()); if (passedMonths > d.ten) passedMonths = d.ten;
-            let overdueAmount = (passedMonths * d.iAmt) - totalEmiPaid; if(overdueAmount < 0) overdueAmount = 0; let pendingEmis = overdueAmount > 0 ? parseFloat((overdueAmount / d.iAmt).toFixed(2)) : 0;
-            document.getElementById("rcN").innerText=esc((d.srn+" "+d.nm).toUpperCase()); document.getElementById("rcMob").innerText=esc(d.mob); document.getElementById("rcV").innerText=esc(d.vno); document.getElementById("rcI").innerText=window.fmtMoney(d.iAmt); document.getElementById("rcP").innerText=window.fmtMoney(overdueAmount); document.getElementById("rcPEmis").innerText = pendingEmis;
+            let passedMonths = getMonthsDiff(d.fdt, new Date()); if (passedMonths > ten) passedMonths = ten;
+            let expectedPaid = (passedMonths === ten) ? totalLiability : (passedMonths * stdEmi);
+
+            let overdueAmount = expectedPaid - totalEmiPaid; if(overdueAmount < 0) overdueAmount = 0; 
+            let pendingEmis = overdueAmount > 0 ? parseFloat((overdueAmount / stdEmi).toFixed(2)) : 0;
+            
+            document.getElementById("rcN").innerText=window.formatName(d.srn, d.nm).toUpperCase(); document.getElementById("rcMob").innerText=esc(d.mob); document.getElementById("rcV").innerText=esc(d.vno); 
+            document.getElementById("rcI").innerText=window.fmtMoney(stdEmi); // FORCED CORRECT EMI
+            document.getElementById("rcP").innerText=window.fmtMoney(overdueAmount); document.getElementById("rcPEmis").innerText = pendingEmis;
             document.getElementById("rcTr").value="TR-"+Math.floor(Math.random()*900000+100000); document.getElementById("rcDate").value = window.getTodayDate(); document.getElementById("rcData").style.display="block";
         } else alert("HP Number not found.");
     }
@@ -1579,7 +1673,7 @@
         update(ref(database, 'accounts/' + hp), { lastRecDt: receiptDate }).then(() => {
             push(ref(database, 'receipts'), { tr: trCode, hp: hp, amt: amt, type: typValue, mode: modeValue, dt: receiptDate });
             const safeSet = (id, val) => { let el = document.getElementById(id); if(el) el.innerText = val; };
-            safeSet("pr_tr", trCode); safeSet("pr_dt", receiptDate.split('-').reverse().join('-')); safeSet("pr_hp", hp); safeSet("pr_nm", (d.srn+" "+d.nm).toUpperCase()); safeSet("pr_vno", d.vno); safeSet("pr_mode", modeText); safeSet("pr_type", typText); safeSet("pr_amt", "₹ " + window.fmtMoney(amt));
+            safeSet("pr_tr", trCode); safeSet("pr_dt", receiptDate.split('-').reverse().join('-')); safeSet("pr_hp", hp); safeSet("pr_nm", window.formatName(d.srn, d.nm).toUpperCase()); safeSet("pr_vno", d.vno); safeSet("pr_mode", modeText); safeSet("pr_type", typText); safeSet("pr_amt", "₹ " + window.fmtMoney(amt));
             document.getElementById("rcptEntryContainer").style.display="none"; document.getElementById("rcPreviewBox").style.display="block"; document.getElementById("rcHp").value = ""; document.getElementById("rcAmt").value = "";
         });
     }
@@ -1604,24 +1698,39 @@
         document.getElementById("reprintRowsBody").innerHTML = html; document.getElementById("rpTb").style.display = "block";
     }
 
+    // --- BULLETPROOF MATH ENGINE IN SETTLEMENT ---
     window.searchClosingAccount = function() {
         let hp = document.getElementById("clHp").value.toUpperCase().trim(); let pc = document.getElementById("clPer").value; let d = window.dbData.find(x=>x.hp === hp);
         if(!d) { alert("Account not found."); return; } if(d.acStatus === "CLOSED") { alert("This account is already closed."); return; }
+        
+        let baseFin = parseFloat(d.amt) || 0; 
+        let hpc = parseFloat(d.hpc) || 0; 
+        let totalLiability = baseFin + hpc;
+        let ten = parseInt(d.ten) || 1;
+        let stdEmi = Math.round(totalLiability / ten);
+
         const safeSet = (id, val) => { let el = document.getElementById(id); if(el) el.innerText = val; };
-        safeSet("clLNm", (d.srn + " " + d.nm).toUpperCase()); safeSet("clLMob", d.mob); safeSet("clLVno", d.vno.replace(/\s/g,'')); safeSet("clLVnm", d.vnm.toUpperCase());
+        safeSet("clLNm", window.formatName(d.srn, d.nm).toUpperCase()); safeSet("clLMob", d.mob); safeSet("clLVno", d.vno.replace(/\s/g,'')); safeSet("clLVnm", d.vnm.toUpperCase());
         
         let totalEmiPaid = window.receiptHistory.filter(x => x.hp === hp && x.type === "Installment").reduce((s, x) => s + x.amt, 0);
-        let totalLiability = (parseFloat(d.amt) || 0) + (parseFloat(d.hpc) || 0); let totalPrincipalDue = totalLiability - totalEmiPaid; if(totalPrincipalDue < 0) totalPrincipalDue = 0; totalPrincipalDue += (parseFloat(d.szC) || 0); 
+        let totalPrincipalDue = totalLiability - totalEmiPaid; if(totalPrincipalDue < 0) totalPrincipalDue = 0; totalPrincipalDue += (parseFloat(d.szC) || 0); 
+        
         let mthParts = d.fdt.split('-'); let mth = new Date(mthParts[0], mthParts[1] - 1, mthParts[2]); let matchedSlips = window.receiptHistory.filter(h=>h.hp===d.hp && h.type==="Installment").sort((a,b) => new Date(a.dt) - new Date(b.dt)); let remainingSlips = JSON.parse(JSON.stringify(matchedSlips)); let totalOD = 0; let todayDateObj = new Date(); todayDateObj.setHours(0,0,0,0);
 
-        for(let i=1; i<=d.ten; i++) {
-            let dd = new Date(mth); dd.setMonth(dd.getMonth() + i); let dueAmt = d.iAmt; let paidAmt = 0;
+        // BULLETPROOF OD CALC LOOP
+        for(let i=1; i<=ten; i++) {
+            let dd = new Date(mth); dd.setMonth(dd.getMonth() + i); 
+            let currentEmiDue = (i === ten) ? (totalLiability - (stdEmi * (ten - 1))) : stdEmi;
+            if(currentEmiDue < 0) currentEmiDue = stdEmi; 
+
+            let dueAmt = currentEmiDue; 
+            let paidAmt = 0;
             while(dueAmt > 0 && remainingSlips.length > 0) {
                 let slip = remainingSlips[0]; if(slip.amt <= 0) { remainingSlips.shift(); continue; }
                 let chunkAmt = 0; if(slip.amt <= dueAmt) { chunkAmt = slip.amt; paidAmt += slip.amt; dueAmt -= slip.amt; remainingSlips.shift(); } else { chunkAmt = dueAmt; paidAmt += dueAmt; slip.amt -= dueAmt; dueAmt = 0; }
                 let pDateObj = new Date(slip.dt); if (pDateObj > dd) { let lateDays = Math.ceil((pDateObj - dd) / (1000 * 60 * 60 * 24)); totalOD += (chunkAmt * lateDays * (parseInt(pc)/100)) / 26.5; }
             }
-            let receiptDue = d.iAmt - paidAmt; if (receiptDue > 0 && dd <= todayDateObj) { let diffDays = Math.ceil((todayDateObj - dd) / (1000 * 60 * 60 * 24)); if(diffDays > 0) { totalOD += (receiptDue * diffDays * (parseInt(pc)/100)) / 26.5; } }
+            let receiptDue = currentEmiDue - paidAmt; if (receiptDue > 0 && dd <= todayDateObj) { let diffDays = Math.ceil((todayDateObj - dd) / (1000 * 60 * 60 * 24)); if(diffDays > 0) { totalOD += (receiptDue * diffDays * (parseInt(pc)/100)) / 26.5; } }
         }
         window.currentClosingMainDues = totalPrincipalDue; window.currentClosingODDues = totalOD;
         safeSet("clLMain", window.fmtMoney(window.currentClosingMainDues)); safeSet("clLOd", window.fmtMoney(window.currentClosingODDues)); safeSet("clLTotal", window.fmtMoney(window.currentClosingMainDues + window.currentClosingODDues));
