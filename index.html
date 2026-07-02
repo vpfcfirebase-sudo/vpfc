@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=1280, initial-scale=0.3, user-scalable=yes">
+<!-- UPDATE: Changed Viewport for perfect Mobile & Desktop scaling -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VSS Finance | Premium Cloud App</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -126,6 +127,45 @@
     .rep-header { background: #f8fafc; padding: 15px 25px; font-weight: 800; color: var(--secondary); border-bottom: 1px solid var(--border); font-size: 14px; display:flex; justify-content: space-between;}
     .rep-sub { padding: 15px 25px; background: #f1f5f9; text-align: right; font-weight: 800; font-size: 15px; color: var(--secondary); border-top: 2px solid var(--border);}
     
+    /* ========== UPDATE: RESPONSIVE DESIGN FOR MOBILE FIXES ========== */
+    @media (max-width: 768px) {
+        /* Fix Viewport Scaling & Header */
+        #globalHeader { padding: 0 15px; justify-content: space-between; height: 70px; }
+        #globalHeader h1 { position: static; transform: none; font-size: 16px; margin: 0; }
+        .user-badge { padding: 6px 10px; font-size: 10px; }
+        
+        /* Nav Menu Scroll Fix */
+        #topNav { padding: 10px 15px; }
+        .nav-links li { font-size: 11px; padding: 8px 12px; }
+
+        /* Grids to Stack on Mobile */
+        .dash-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; gap: 15px; }
+        .od-grid-top { grid-template-columns: 1fr; gap: 15px; }
+        .od-bottom { flex-direction: column; }
+        
+        /* Login Box */
+        .login-box { padding: 25px; width: 90%; }
+        .login-box h2 { font-size: 20px; }
+        
+        /* General Padding & Modals */
+        .page-container { padding: 15px; }
+        .card { padding: 15px; margin-bottom: 15px;}
+        .dash-card { padding: 15px; }
+        .dash-card h1 { font-size: 20px; }
+        
+        /* Modals and previews */
+        .modal-content { width: 95%; max-height: 85vh; }
+        .modal-body { padding: 15px; }
+        #rcPreviewBox { padding: 20px; }
+        .profile-img { width: 80px; height: 100px; }
+        .info-box { padding: 15px; }
+        
+        /* Table Scroll */
+        .table-wrap { margin-top: 10px; }
+        td, th { padding: 10px; font-size: 11px; }
+    }
+
     @media print { 
         #topNav, #globalHeader, .btn, .no-print, .nav-links, .brand { display: none !important; } 
         body { display:block; height: auto; overflow: visible; background:#fff; color:#000;}
