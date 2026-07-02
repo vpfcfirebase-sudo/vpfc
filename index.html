@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<!-- UPDATE: Changed Viewport for perfect Mobile & Desktop scaling -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VSS Finance | Premium Cloud App</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -127,41 +126,28 @@
     .rep-header { background: #f8fafc; padding: 15px 25px; font-weight: 800; color: var(--secondary); border-bottom: 1px solid var(--border); font-size: 14px; display:flex; justify-content: space-between;}
     .rep-sub { padding: 15px 25px; background: #f1f5f9; text-align: right; font-weight: 800; font-size: 15px; color: var(--secondary); border-top: 2px solid var(--border);}
     
-    /* ========== UPDATE: RESPONSIVE DESIGN FOR MOBILE FIXES ========== */
+    /* ========== RESPONSIVE DESIGN ========== */
     @media (max-width: 768px) {
-        /* Fix Viewport Scaling & Header */
         #globalHeader { padding: 0 15px; justify-content: space-between; height: 70px; }
         #globalHeader h1 { position: static; transform: none; font-size: 16px; margin: 0; }
         .user-badge { padding: 6px 10px; font-size: 10px; }
-        
-        /* Nav Menu Scroll Fix */
         #topNav { padding: 10px 15px; }
         .nav-links li { font-size: 11px; padding: 8px 12px; }
-
-        /* Grids to Stack on Mobile */
         .dash-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
         .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; gap: 15px; }
         .od-grid-top { grid-template-columns: 1fr; gap: 15px; }
         .od-bottom { flex-direction: column; }
-        
-        /* Login Box */
         .login-box { padding: 25px; width: 90%; }
         .login-box h2 { font-size: 20px; }
-        
-        /* General Padding & Modals */
         .page-container { padding: 15px; }
         .card { padding: 15px; margin-bottom: 15px;}
         .dash-card { padding: 15px; }
         .dash-card h1 { font-size: 20px; }
-        
-        /* Modals and previews */
         .modal-content { width: 95%; max-height: 85vh; }
         .modal-body { padding: 15px; }
         #rcPreviewBox { padding: 20px; }
         .profile-img { width: 80px; height: 100px; }
         .info-box { padding: 15px; }
-        
-        /* Table Scroll */
         .table-wrap { margin-top: 10px; }
         td, th { padding: 10px; font-size: 11px; }
     }
@@ -221,7 +207,6 @@
         <li onclick="nav('pSeize')" id="nl_pSeize">🛑 Seize Vehicle</li>
         <li onclick="nav('pSzRep')" id="nl_pSzRep">📋 Seized List</li>
         <li onclick="nav('pClose')" id="nl_pClose" class="nav-danger">🔒 Settlement</li>
-        <!-- NEW: Employee Management Option (Hidden by default, shown only to Admin) -->
         <li onclick="nav('pEmpMgmt')" id="nl_pEmpMgmt" class="nav-admin" style="display:none;">👥 Employee Logins</li>
     </ul>
 </div>
@@ -234,13 +219,12 @@
             <div class="card no-print" style="border-top: 5px solid #7c3aed; background: #faf5ff;">
                 <h2 class="card-title" style="color: #6d28d9; font-size:20px; margin-bottom:10px;">👥 Create & Manage Employee Logins</h2>
                 <div class="grid-2" style="margin-top:20px;">
-                    <!-- Create Employee Form -->
                     <div class="info-box" style="background:#fff; border: 1px solid #c4b5fd;">
                         <h4 style="margin:0 0 15px 0; color:#5b21b6; border-bottom:1px solid #ede9fe; padding-bottom:10px;">➕ Add New Employee</h4>
                         <div class="grid-2">
                             <div class="form-group"><label>Employee Name</label><input type="text" id="empName" placeholder="Ex: Suresh"></div>
                             <div class="form-group"><label>Designation</label><input type="text" id="empDesig" placeholder="Ex: Telecaller"></div>
-                            <div class="form-group"><label>User ID (For Login)</label><input type="text" id="empUid" placeholder="Ex: suresh123" oninput="this.value=this.value.toLowerCase().replace(/\\s/g,'')"></div>
+                            <div class="form-group"><label>User ID (For Login)</label><input type="text" id="empUid" placeholder="Ex: suresh123" oninput="this.value=this.value.toLowerCase().replace(/\s/g,'')"></div>
                             <div class="form-group"><label>Password</label><input type="text" id="empPwd" placeholder="Min 6 chars"></div>
                         </div>
                         
@@ -263,36 +247,27 @@
                         
                         <div style="background:#f1f5f9; padding:15px; border-radius:8px; margin-top:15px; border:1px solid #cbd5e1;">
                             <label style="font-weight:800; font-size:14px; color:var(--primary);"><input type="checkbox" class="emp-perm" value="pSearch" id="permSearchMain" onchange="document.getElementById('rAuthBox').style.display = this.checked ? 'block' : 'none'"> 🔍 Search Account</label>
-                            
-                            <!-- SECRET 'R' PERMISSION (Shows only if Search is selected) -->
                             <div id="rAuthBox" style="display:none; margin-top:10px; margin-left:25px; padding-top:10px; border-top:1px dashed #cbd5e1;">
                                 <label style="color:#b45309; font-weight:800; font-size:12px; cursor:pointer;"><input type="checkbox" id="permRAccess"> ⚠️ Allow 'R' Admin Access (Capital & Transfers)</label>
                                 <div style="font-size:10px; color:var(--text-muted); margin-top:4px; margin-left:22px;">Only give this to trusted admins. Gives access to internal funds.</div>
                             </div>
                         </div>
-                        
                         <button class="btn" style="background:#7c3aed; width:100%; margin-top:20px; font-size:14px; padding:15px;" onclick="createEmployeeLogin()">➕ Create Employee Login</button>
                     </div>
                     
-                    <!-- Employee Accounts List -->
                     <div class="info-box" style="background:#fff; border: 1px solid #c4b5fd;">
                         <h4 style="margin:0 0 15px 0; color:#5b21b6; border-bottom:1px solid #ede9fe; padding-bottom:10px;">📋 Existing Employee Logins</h4>
                         <p style="font-size:11px; color:var(--text-muted); margin-bottom:15px;">To prevent data loss, employee accounts cannot be deleted. Use the Active/Revoked button to block their login access.</p>
-                        
                         <div class="table-wrap" style="margin-top:0;">
                             <table>
                                 <thead><tr><th>Name / Designation</th><th>User ID</th><th>Status</th><th>Action</th></tr></thead>
-                                <tbody id="empListBody">
-                                    <!-- Populated by JS -->
-                                </tbody>
+                                <tbody id="empListBody"></tbody>
                             </table>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- ================= EXISTING PAGES START HERE ================= -->
 
         <div id="pDash" class="page-container" style="display:block;">
             <div class="dash-grid">
@@ -454,7 +429,6 @@
                 <div class="dash-card c-green" style="cursor:pointer;" onclick="filterFinReport('EMI')"><h3>EMI Collected</h3><h1 id="rep_emi">₹0</h1></div>
                 <div class="dash-card c-yellow" style="cursor:pointer;" onclick="filterFinReport('OD')"><h3>OD Collected</h3><h1 id="rep_od">₹0</h1></div>
                 <div class="dash-card c-red" style="cursor:pointer;" onclick="filterFinReport('SEIZING')"><h3>Seizing Recovered</h3><h1 id="rep_sz">₹0</h1></div>
-                
                 <div class="dash-card c-orange" style="cursor:pointer;" onclick="filterFinReport('PENDING_DOCS')"><h3>Pending Docs Amt (Hold)</h3><h1 id="rep_pend_doc">₹0</h1></div>
                 <div class="dash-card" style="cursor:pointer; border-left:4px solid #8b5cf6;" onclick="filterFinReport('PENDING_COMM')"><h3>Pending Commission</h3><h1 id="rep_pend_comm" style="color:#8b5cf6;">₹0</h1></div>
                 <div class="dash-card c-dark" style="cursor:pointer; grid-column: span 2;" onclick="filterFinReport('ALL')"><h3>Total Main Collection</h3><h1 id="rep_tot">₹0</h1></div>
@@ -615,7 +589,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="card no-print">
                 <h2 class="card-title">Transfer History</h2>
                 <div style="display:flex; gap:15px; align-items:end;">
@@ -678,23 +651,11 @@
                     <h3 style="margin:0; font-weight:900; color:var(--secondary); font-size:18px;">📋 PENDING DUES LIST</h3>
                     <h3 style="margin:0; font-weight:900; color:var(--primary); font-size:18px; letter-spacing: 1px;">VENKATA SIVA SAI FINANCE</h3>
                 </div>
-                
                 <table>
                     <thead><tr>
-                        <th>Sl No.</th>
-                        <th>HP No</th>
-                        <th>Customer Details</th>
-                        <th>Guarantor Details</th>
-                        <th id="dThDt">Agr Date</th>
-                        <th>Vehicle No</th>
-                        <th>Vehicle Name</th>
-                        <th>Village</th>
-                        <th>Mandal</th>
-                        <th>Pending EMIs</th>
-                        <th>EMI Amount</th>
-                        <th>Pending Due</th>
-                        <th>Status</th>
-                        <th>Last Receipt</th>
+                        <th>Sl No.</th><th>HP No</th><th>Customer Details</th><th>Guarantor Details</th><th id="dThDt">Agr Date</th>
+                        <th>Vehicle No</th><th>Vehicle Name</th><th>Village</th><th>Mandal</th><th>Pending EMIs</th>
+                        <th>EMI Amount</th><th>Pending Due</th><th>Status</th><th>Last Receipt</th>
                     </tr></thead>
                     <tbody id="duesTb"></tbody>
                     <tfoot id="duesFoot"></tfoot>
@@ -759,14 +720,11 @@
                         <div class="od-row"><div class="od-lbl">HP CHARGES</div><div class="od-val">: <span id="sum_hp"></span></div></div>
                         <hr style="border:1px dashed #cbd5e1; margin:8px 0;">
                         <div class="od-row"><div class="od-lbl"></div><div class="od-val" style="font-weight:800; font-size:14px; color:#0f172a;"><span id="sum_tot1"></span></div></div><br>
-                        
                         <div class="od-row"><div class="od-lbl">TOTAL LIABILITY</div><div class="od-val">: <span id="sum_fin2"></span></div></div>
                         <div class="od-row"><div class="od-lbl">TOTAL INTEREST</div><div class="od-val">: <span id="sum_hp2"></span></div></div>
                         <hr style="border:1px dashed #cbd5e1; margin:8px 0;">
-                        
                         <div class="od-row"><div class="od-lbl">COLLECTED AMNT</div><div class="od-val">: <span id="sum_col">0.00</span></div></div>
                         <hr style="border:1px dashed #cbd5e1; margin:8px 0;">
-                        
                         <div class="od-row"><div class="od-lbl">TOTAL DUE</div><div class="od-val">: <span id="sum_tdue"></span></div></div>
                         <div class="od-row"><div class="od-lbl">OD DUE</div><div class="od-val">: <span id="sum_odue"></span></div></div>
                         <div class="od-row" id="sum_szc_row"><div class="od-lbl">SEIZING CHARGES</div><div class="od-val">: <span id="sum_szc">0.00</span></div></div>
@@ -964,7 +922,7 @@
     window.receiptHistory = [];
     window.daybookData = []; 
     window.transfersData = []; 
-    window.employeesData = []; // NEW: To store employee data
+    window.employeesData = []; 
     window.currentClosingODDues = 0;
     window.currentClosingMainDues = 0;
     window.isDataSyncStarted = false; 
@@ -1045,7 +1003,7 @@
         uid = uid.replace(/[<>]/g, ""); let email = uid.includes("@") ? uid : uid + "@vssfinance.com";
         setPersistence(auth, browserSessionPersistence)
             .then(() => signInWithEmailAndPassword(auth, email, pwd))
-            .then(() => { showApp(uid, null); }) // null indicates Admin
+            .then(() => { showApp(uid, null); }) 
             .catch(() => { alert("Authentication Failed. Please check your ID and Password."); });
     };
 
@@ -1068,23 +1026,20 @@
         
         // --- APPLY ROLE BASED UI PERMISSIONS ---
         let allNavLinks = document.querySelectorAll(".nav-links li");
-        allNavLinks.forEach(li => li.style.display = "none"); // Hide all by default
+        allNavLinks.forEach(li => li.style.display = "none"); 
         
-        document.getElementById('optRAccess').style.display = "none"; // Hide 'R' option by default
+        document.getElementById('optRAccess').style.display = "none"; 
 
         if(!empData) {
-            // ADMIN VIEW: Show everything + Employee Mgmt
             allNavLinks.forEach(li => li.style.display = "flex");
-            document.getElementById("optRAccess").style.display = "block"; // Admin gets 'R' option
+            document.getElementById("optRAccess").style.display = "block";
         } else {
-            // EMPLOYEE VIEW: Show only allowed menus
             if(empData.perms && empData.perms.length > 0) {
                 empData.perms.forEach(permId => {
                     let navItem = document.getElementById("nl_" + permId);
                     if(navItem) navItem.style.display = "flex";
                 });
             }
-            // Check secret 'R' access for employee
             if(empData.rAccess === true) {
                 document.getElementById("optRAccess").style.display = "block";
             }
@@ -1092,7 +1047,6 @@
 
         window.startDatabaseSync(); 
         
-        // Auto-navigate to first available page
         if(!empData || empData.perms.includes('pDash')) window.nav("pDash");
         else if(empData.perms.length > 0) window.nav(empData.perms[0]);
     }
@@ -1107,22 +1061,19 @@
         if(!name || !desig || !uid || !pwd) { alert("Please fill all details!"); return; }
         if(pwd.length < 6) { alert("Password must be at least 6 characters."); return; }
         
-        // Get checked permissions
         let selectedPerms = [];
         document.querySelectorAll('.emp-perm:checked').forEach(cb => selectedPerms.push(cb.value));
         
         if(selectedPerms.length === 0) { alert("Please assign at least one menu permission."); return; }
         
         let rAccess = document.getElementById("permRAccess").checked;
-        if(!selectedPerms.includes('pSearch')) rAccess = false; // Only valid if search is given
+        if(!selectedPerms.includes('pSearch')) rAccess = false; 
         
-        // Check if UID already exists
         get(ref(database, 'employees/' + uid)).then((snap) => {
             if(snap.exists()) {
                 alert(`Error: User ID '${uid}' already exists! Choose another.`);
                 return;
             }
-            // Save to DB
             let newEmp = {
                 name: name, desig: desig, uid: uid, pwd: pwd,
                 perms: selectedPerms, rAccess: rAccess,
@@ -1202,7 +1153,6 @@
             if(document.getElementById('pFundTransfer')?.style.display === 'block') { window.checkTransferBalances(); window.renderTransfers(); }
         });
         
-        // Sync Employees List
         onValue(ref(database, 'employees'), (snapshot) => {
             window.employeesData = []; 
             let html = "";
@@ -1230,7 +1180,6 @@
         });
     };
 
-    // BULLETPROOF EXACT MATH ENGINE IN DASHBOARD
     function updateDashboardCounts() {
         let tot=0, act=0, due=0, sz=0, cls=0, mat=0; let today = new Date();
         window.dbData.forEach((d) => {
@@ -1259,7 +1208,7 @@
         if(document.getElementById('pPendingDocs')?.style.display === 'block') window.renderPendingDocsList();
     }
 
-    // --- 8. DOUBLE-ENTRY LEDGER (NEW ENGINE FOR REPORTS) ---
+    // --- 8. DOUBLE-ENTRY LEDGER ---
     window.generateFinanceReport = function() {
         let fDate = document.getElementById("finFDate").value; let tDate = document.getElementById("finTDate").value;
         if(!fDate || !tDate) { alert("Please select both dates"); return; }
@@ -1268,23 +1217,15 @@
         window.dbData.forEach(a => {
             let hp = a.hp; let name = window.formatName(a.srn, a.nm);
             
-            // 1. Loan Issue
             if(parseFloat(a.amt) > 0) events.push({ date: a.fdt, hp, name, purpose: "Loan Amount Issued", fromAcc: "Owner Investment", toAcc: "Customer", amt: parseFloat(a.amt), type: "LOAN" });
-            
-            // 2. Office Doc Deduction
             if(parseFloat(a.doc) > 0) events.push({ date: a.fdt, hp, name, purpose: "Office Doc Charges Cut", fromAcc: "Customer", toAcc: "Doc Charges", amt: parseFloat(a.doc), type: "DOC" });
-            
-            // 3. Consultancy Comm
             if(parseFloat(a.bdoc) > 0) events.push({ date: a.fdt, hp, name, purpose: `Commission Added for ${a.consultancy||'Dealer'}`, fromAcc: "Customer", toAcc: "Pending Commission", amt: parseFloat(a.bdoc), type: "COMM_ADD" });
             
-            // 4. Pending Docs Hold
             let holdAmt = (parseFloat(a.cbHoldAmt)||0) + (parseFloat(a.nocHoldAmt)||0);
             if(holdAmt > 0) events.push({ date: a.fdt, hp, name, purpose: "Customer Hold Amount for Documents", fromAcc: "Customer", toAcc: "Pending Docs Hold", amt: holdAmt, type: "DOCS_HOLD" });
             
-            // 5. Commission Paid
             if(a.docPaid && a.consPaidDt) events.push({ date: a.consPaidDt, hp, name, purpose: `Commission Paid to ${a.consultancy||'Dealer'}`, fromAcc: "Pending Commission", toAcc: "Dealer / Agent", amt: parseFloat(a.bdoc), type: "COMM_PAID" });
             
-            // 6. Hold Amount Returned
             if(a.cb === "Yes" && a.cbGivenDt && parseFloat(a.cbHoldAmt) > 0) events.push({ date: a.cbGivenDt, hp, name, purpose: "RC Hold Amount Returned", fromAcc: "Pending Docs Hold", toAcc: "Customer", amt: parseFloat(a.cbHoldAmt), type: "HOLD_RETURN" });
             if(a.noc === "Yes" && a.nocGivenDt && parseFloat(a.nocHoldAmt) > 0) events.push({ date: a.nocGivenDt, hp, name, purpose: "NOC Hold Amount Returned", fromAcc: "Pending Docs Hold", toAcc: "Customer", amt: parseFloat(a.nocHoldAmt), type: "HOLD_RETURN" });
         });
@@ -1333,7 +1274,7 @@
         document.getElementById("finRepResults").style.display = "grid"; document.getElementById("finRepTableBox").style.display = "block";
     }
 
-    // --- 9. DAY BOOK, TRANSFERS, OTHER FUNCTIONS ---
+    // --- 9. DAY BOOK & TRANSFERS ---
     window.getSourceBalance = function(sourceName) {
         let balance = 0;
         if(sourceName === "EMI Collection") { balance += window.receiptHistory.filter(r => (r.type === "Installment" || r.type === "Account Closed")).reduce((s,x)=>s+x.amt, 0); } 
@@ -1535,13 +1476,12 @@
             if(gImgFile) { let compressed = await compressImage(gImgFile); let imgRef = sRef(storage, `kyc/${targetHP}_guarantor.jpg`); await uploadBytes(imgRef, compressed); gImgUrl = await getDownloadURL(imgRef); }
             let agreeDate = document.getElementById("in_fdt").value || window.getTodayDate();
             
-            // EXACT LOAN AMOUNT LOGIC 
             let amt = parseFloat(document.getElementById("in_famt").value) || 0; 
             let doc = parseFloat(document.getElementById("in_doc").value) || 0; 
             let bdoc = parseFloat(document.getElementById("in_bdoc").value) || 0; 
             let hpc = parseFloat(document.getElementById("in_hpc").value) || 0; 
             let ten = parseInt(document.getElementById("in_ten").value) || 24;
-            let emiAmount = Math.round((amt + hpc) / ten); // Initial DB save (Legacy backward compatibility, the real engine ignores this)
+            let emiAmount = Math.round((amt + hpc) / ten);
             let expDate = new Date(agreeDate); expDate.setMonth(expDate.getMonth() + ten);
             let combinedHoldAmt = (document.getElementById("in_cb").value === "No" || document.getElementById("in_noc").value === "No") ? (parseFloat(document.getElementById("in_doc_hold_amt").value) || 0) : 0;
             
@@ -1601,7 +1541,6 @@
     };
     window.chgDueOp = () => { document.getElementById("dVl2Box").style.display = document.getElementById("dOp").value === "Between" ? "block" : "none"; };
     
-    // BULLETPROOF EXACT MATH ENGINE IN DUES LIST
     window.genDues = function(){ 
         let v1 = parseFloat(document.getElementById("dVl").value)||0; 
         let v2 = parseFloat(document.getElementById("dVl2Box").style.display === "block" ? document.getElementById("dVl2").value : 0)||0; 
@@ -1614,7 +1553,6 @@
         window.dbData.forEach((d) => { 
             if(d.sz || d.acStatus === "CLOSED") return; 
             
-            // EXACT MATH
             let baseFin = parseFloat(d.amt) || 0; 
             let hpc = parseFloat(d.hpc) || 0; 
             let totalLiability = baseFin + hpc;
@@ -1626,7 +1564,6 @@
             
             let totalPaid = window.receiptHistory.filter(h => h.hp === d.hp && h.type === "Installment").reduce((sum, r) => sum + r.amt, 0);
             
-            // Calculate EXACTLY what they should have paid based on standard EMI
             let expectedPaid = 0;
             if(passedMonths === ten) {
                 expectedPaid = totalLiability;
@@ -1677,7 +1614,6 @@
             grandTotal += d.overdueAmount; 
             let dueColor = d.overdueEMIsCount > 0 ? "var(--danger)" : "var(--success)";
             
-            // EXACT FORMAT MATCHING USER REQUEST
             let cLbl = `<b style="font-size:14px; color:var(--primary-dark); text-transform:uppercase;">${window.formatName(d.srn, d.nm)}</b><br>
                         <span style="font-weight:700; color:var(--text-muted); font-size:12px;">S/O: ${esc(d.fnm)}</span><br>
                         <span style="font-weight:800; font-size:14px; color:#0f172a; display:inline-block; margin-top:4px;">${esc(d.mob)}</span><br>
@@ -1720,12 +1656,10 @@
         document.getElementById("duesFoot").innerHTML = footHtml;
     }
 
-    // --- BULLETPROOF EXACT MATH ENGINE IN CALCULATION STATEMENT ---
     window.genOD = function(){ 
         let hp=document.getElementById("odAcc").value.toUpperCase(); let pc=document.getElementById("odPer").value; let d=window.dbData.find(x=>x.hp===hp); 
         if(!d){alert("Account not found. (ఈ నంబర్ లేదు!)"); return;}
         
-        // --- EXACT BULLETPROOF CALCULATION ---
         let baseFin = parseFloat(d.amt) || 0; 
         let hpc = parseFloat(d.hpc) || 0; 
         let seizeCharge = parseFloat(d.szC) || 0; 
@@ -1759,9 +1693,8 @@
         for(let i=1; i<=ten; i++){ 
             let dd = new Date(mth); dd.setMonth(dd.getMonth() + i); 
             
-            // MATH ENGINE: Exact split for Last EMI to exactly match total liability
             let currentEmiDue = (i === ten) ? (totalLiability - (stdEmi * (ten - 1))) : stdEmi;
-            if(currentEmiDue < 0) currentEmiDue = stdEmi; // Absolute safety fallback
+            if(currentEmiDue < 0) currentEmiDue = stdEmi; 
 
             let dueAmt = currentEmiDue; 
             let paidAmt = 0; let paidDate = ""; let trNum = []; let chunkOdInt = 0; let displayOdDays = 0; let modeArr = [];
@@ -1821,7 +1754,6 @@
         if(d){ 
             if(d.acStatus === "CLOSED") { alert("Account is Closed."); return; }
             
-            // EXACT MATH ENGINE
             let baseFin = parseFloat(d.amt) || 0; let hpc = parseFloat(d.hpc) || 0; let totalLiability = baseFin + hpc;
             let ten = parseInt(d.ten) || 1; let stdEmi = Math.round(totalLiability / ten);
 
@@ -1872,7 +1804,6 @@
         document.getElementById("szrTb").innerHTML = html;
     }
 
-    // --- BULLETPROOF MATH ENGINE IN RECEIPTS ENTRY ---
     window.getRc = function(){ 
         let hpInput = document.getElementById("rcHp").value.toUpperCase().trim(); if(!hpInput) { alert("Please enter HP Number."); return; } 
         let d = window.dbData.find(x=>x.hp===hpInput); 
@@ -1880,7 +1811,6 @@
             if(d.acStatus === "CLOSED") { alert("Account is Closed."); return; }
             document.getElementById("rcPreviewBox").style.display="none"; document.getElementById("rcptEntryContainer").style.display="grid";
             
-            // EXACT MATH ENGINE
             let baseFin = parseFloat(d.amt) || 0; let hpc = parseFloat(d.hpc) || 0; let totalLiability = baseFin + hpc;
             let ten = parseInt(d.ten) || 1; let stdEmi = Math.round(totalLiability / ten);
 
@@ -1892,7 +1822,7 @@
             let pendingEmis = overdueAmount > 0 ? parseFloat((overdueAmount / stdEmi).toFixed(2)) : 0;
             
             document.getElementById("rcN").innerText=window.formatName(d.srn, d.nm).toUpperCase(); document.getElementById("rcMob").innerText=esc(d.mob); document.getElementById("rcV").innerText=esc(d.vno); 
-            document.getElementById("rcI").innerText=window.fmtMoney(stdEmi); // FORCED CORRECT EMI
+            document.getElementById("rcI").innerText=window.fmtMoney(stdEmi); 
             document.getElementById("rcP").innerText=window.fmtMoney(overdueAmount); document.getElementById("rcPEmis").innerText = pendingEmis;
             document.getElementById("rcTr").value="TR-"+Math.floor(Math.random()*900000+100000); document.getElementById("rcDate").value = window.getTodayDate(); document.getElementById("rcData").style.display="block";
         } else alert("HP Number not found.");
@@ -1952,7 +1882,6 @@
         
         let mthParts = d.fdt.split('-'); let mth = new Date(mthParts[0], mthParts[1] - 1, mthParts[2]); let matchedSlips = window.receiptHistory.filter(h=>h.hp===d.hp && h.type==="Installment").sort((a,b) => new Date(a.dt) - new Date(b.dt)); let remainingSlips = JSON.parse(JSON.stringify(matchedSlips)); let totalOD = 0; let todayDateObj = new Date(); todayDateObj.setHours(0,0,0,0);
 
-        // BULLETPROOF OD CALC LOOP
         for(let i=1; i<=ten; i++) {
             let dd = new Date(mth); dd.setMonth(dd.getMonth() + i); 
             let currentEmiDue = (i === ten) ? (totalLiability - (stdEmi * (ten - 1))) : stdEmi;
