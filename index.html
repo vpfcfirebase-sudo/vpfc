@@ -18,9 +18,9 @@
     
     body { margin: 0; padding: 0; background: var(--bg-main); color: var(--text-main); display: flex; flex-direction: column; height: 100vh; overflow: hidden; font-size: 13px; }
     
-    /* App Header */
+    /* App Header - Updated for Mobile Responsiveness */
     #globalHeader { 
-        position: relative; width: 100%; height: 110px; background: var(--app-header); color: #fff; 
+        position: relative; width: 100%; min-height: 110px; background: var(--app-header); color: #fff; 
         display: flex; align-items: center; justify-content: flex-end; padding: 0 40px; flex-shrink: 0; 
         z-index: 9999; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-bottom: 6px solid var(--primary); display: none; 
     }
@@ -29,6 +29,12 @@
         font-weight: 900; letter-spacing: 2px; color: #fff; display:flex; align-items:center; gap:10px;
     }
     #globalHeader h1 span { color: #10b981; }
+    
+    @media (max-width: 992px) {
+        #globalHeader { flex-direction: column; justify-content: center; padding: 20px; align-items: center; gap: 15px; }
+        #globalHeader h1 { position: static; transform: none; font-size: 24px; text-align: center; }
+        #header-actions { width: 100%; display: flex; justify-content: space-between; align-items: center; }
+    }
     
     .user-badge { font-size: 12px; font-weight: 700; color: #10b981; background: rgba(16, 185, 129, 0.1); padding: 8px 16px; border-radius: 30px; border: 1px solid rgba(16, 185, 129, 0.2);}
     
@@ -142,6 +148,21 @@
 </head>
 <body>
 
+<!-- Reset Password Modal (Kothaga Add Chesindi) -->
+<div id="pwdResetModal" class="modal" style="display:none; z-index:4000;">
+    <div class="modal-content" style="max-width:400px; padding:30px;">
+        <h3 style="color:var(--primary); margin-top:0;">🔑 Reset Password</h3>
+        <div class="form-group">
+            <label>New Password for <span id="pwdResetUid" style="color:var(--danger);"></span></label>
+            <input type="text" id="newEmpPwd" placeholder="Enter new password (Min 6 chars)">
+        </div>
+        <div style="display:flex; gap:10px; margin-top:20px;">
+            <button class="btn btn-green" style="flex:1;" onclick="confirmPasswordReset()">Update Password</button>
+            <button class="btn" style="flex:1; background:#f1f5f9; color:var(--danger); border:1px solid #cbd5e1;" onclick="document.getElementById('pwdResetModal').style.display='none'">Cancel</button>
+        </div>
+    </div>
+</div>
+
 <div id="loginScreen">
     <div class="login-box">
         <h2 style="color:var(--primary);">SRI VENKATA SIVA SAI FINANCE <br><span style="font-size:13px; color:#64748b; font-weight:600; text-transform:uppercase; letter-spacing:2px;">Enterprise Cloud</span></h2>
@@ -159,7 +180,7 @@
 
 <div id="globalHeader" class="no-print">
     <h1>SRI VENKATA SIVA SAI <span>FINANCE</span></h1>
-    <div style="display:flex; align-items:center; gap:20px;">
+    <div id="header-actions" style="display:flex; align-items:center; gap:20px;">
         <span class="user-badge" id="cloudStatus">🟢 Sync Active</span>
         <button class="btn" style="background:transparent; color:#ef4444; border:1px solid #ef4444; padding:8px 16px; border-radius:30px; font-size:11px;" onclick="doLogout()">LOGOUT</button>
     </div>
@@ -175,13 +196,14 @@
         <li onclick="nav('pDayBook')" id="nl_pDayBook">💸 Day Book</li>
         <li onclick="nav('pDailyRep')" id="nl_pDailyRep">📆 Daily Report</li>
         <li onclick="nav('pFinRep')" id="nl_pFinRep">📈 Ledger Report</li>
-        <li onclick="nav('pCalc')" id="nl_pCalc">🧮 Calculator</li>
+        <!-- Name changed to Calculation -->
+        <li onclick="nav('pCalc')" id="nl_pCalc">🧮 Calculation</li>
         <li onclick="nav('pPendingDocs')" id="nl_pPendingDocs">📁 Pending Docs</li>
-        <li onclick="nav('pReg')" id="nl_pReg">📂 All Accounts</li>
+        <!-- Name changed to HP Register -->
+        <li onclick="nav('pReg')" id="nl_pReg">📂 HP Register</li>
         <li onclick="nav('pSeize')" id="nl_pSeize">🛑 Seize Vehicle</li>
         <li onclick="nav('pSzRep')" id="nl_pSzRep">📋 Seized List</li>
         <li onclick="nav('pClose')" id="nl_pClose" class="nav-danger">🔒 Settlement</li>
-        <!-- NEW: Employee Management Option (Hidden by default, shown only to Admin) -->
         <li onclick="nav('pEmpMgmt')" id="nl_pEmpMgmt" class="nav-admin" style="display:none;">👥 Employee Logins</li>
     </ul>
 </div>
@@ -213,9 +235,9 @@
                             <label><input type="checkbox" class="emp-perm" value="pDayBook"> 💸 Day Book</label>
                             <label><input type="checkbox" class="emp-perm" value="pDailyRep"> 📆 Daily Report</label>
                             <label><input type="checkbox" class="emp-perm" value="pFinRep"> 📈 Ledger Report</label>
-                            <label><input type="checkbox" class="emp-perm" value="pCalc"> 🧮 Calculator</label>
+                            <label><input type="checkbox" class="emp-perm" value="pCalc"> 🧮 Calculation</label>
                             <label><input type="checkbox" class="emp-perm" value="pPendingDocs"> 📁 Pending Docs</label>
-                            <label><input type="checkbox" class="emp-perm" value="pReg"> 📂 All Accounts</label>
+                            <label><input type="checkbox" class="emp-perm" value="pReg"> 📂 HP Register</label>
                             <label><input type="checkbox" class="emp-perm" value="pSeize"> 🛑 Seize Vehicle</label>
                             <label><input type="checkbox" class="emp-perm" value="pSzRep"> 📋 Seized List</label>
                             <label style="color:var(--danger);"><input type="checkbox" class="emp-perm" value="pClose"> 🔒 Settlement</label>
@@ -224,7 +246,7 @@
                         <div style="background:#f1f5f9; padding:15px; border-radius:8px; margin-top:15px; border:1px solid #cbd5e1;">
                             <label style="font-weight:800; font-size:14px; color:var(--primary);"><input type="checkbox" class="emp-perm" value="pSearch" id="permSearchMain" onchange="document.getElementById('rAuthBox').style.display = this.checked ? 'block' : 'none'"> 🔍 Search Account</label>
                             
-                            <!-- SECRET 'R' PERMISSION (Shows only if Search is selected) -->
+                            <!-- SECRET 'R' PERMISSION -->
                             <div id="rAuthBox" style="display:none; margin-top:10px; margin-left:25px; padding-top:10px; border-top:1px dashed #cbd5e1;">
                                 <label style="color:#b45309; font-weight:800; font-size:12px; cursor:pointer;"><input type="checkbox" id="permRAccess"> ⚠️ Allow 'R' Admin Access (Capital & Transfers)</label>
                                 <div style="font-size:10px; color:var(--text-muted); margin-top:4px; margin-left:22px;">Only give this to trusted admins. Gives access to internal funds.</div>
@@ -444,6 +466,8 @@
                         <div class="grid-4">
                             <div class="form-group"><label>Surname</label><input type="text" id="in_csur" oninput="this.value = this.value.toUpperCase();"></div>
                             <div class="form-group"><label>Customer Name</label><input type="text" id="in_cnm" oninput="this.value = this.value.toUpperCase();"></div>
+                            <!-- Age field added -->
+                            <div class="form-group"><label>Age</label><input type="number" id="in_cage" placeholder="Ex: 35"></div>
                             <div class="form-group"><label>Father/Husband</label><input type="text" id="in_cfnm" oninput="this.value = this.value.toUpperCase();"></div>
                             <div class="form-group"><label>Village/Town</label><input type="text" id="in_cvl" oninput="this.value = this.value.toUpperCase();"></div>
                             <div class="form-group"><label>Mandal/Dist</label><input type="text" id="in_cmd" oninput="this.value = this.value.toUpperCase();"></div>
@@ -460,6 +484,8 @@
                         <div class="grid-4">
                             <div class="form-group"><label>Surname</label><input type="text" id="in_gsur" oninput="this.value = this.value.toUpperCase();"></div>
                             <div class="form-group"><label>Guarantor Name</label><input type="text" id="in_gnm" oninput="this.value = this.value.toUpperCase();"></div>
+                            <!-- Age field added -->
+                            <div class="form-group"><label>Age</label><input type="number" id="in_gage" placeholder="Ex: 40"></div>
                             <div class="form-group"><label>Father/Husband</label><input type="text" id="in_gfnm" oninput="this.value = this.value.toUpperCase();"></div>
                             <div class="form-group"><label>Mobile No</label><input type="number" id="in_gmob" oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);"></div>
                             <div class="form-group"><label>Village/Town</label><input type="text" id="in_gvl" oninput="this.value = this.value.toUpperCase();"></div>
@@ -479,6 +505,9 @@
                             <div class="form-group"><label>Chassis No</label><input type="text" id="in_vcn" oninput="this.value = this.value.toUpperCase();"></div>
                             <div class="form-group"><label>Engine No</label><input type="text" id="in_ven" oninput="this.value = this.value.toUpperCase();"></div>
                             <div class="form-group"><label>Color</label><input type="text" id="in_vcol" oninput="this.value = this.value.toUpperCase();"></div>
+                            <!-- RTO & Hypothecation fields added -->
+                            <div class="form-group"><label>RTO</label><input type="text" id="in_vrto" placeholder="Ex: WARANGAL" oninput="this.value = this.value.toUpperCase();"></div>
+                            <div class="form-group"><label>Hypothecation</label><input type="text" id="in_v" placeholder="Finance Name" oninput="this.value = this.value.toUpperCase();"></div>
                         </div>
                     </div>
 
@@ -594,7 +623,8 @@
 
         <div id="pReg" class="page-container">
             <div class="card no-print">
-                <h2 class="card-title">📂 All Accounts Directory</h2>
+                <!-- Name changed to HP Register -->
+                <h2 class="card-title">📂 HP Register</h2>
                 <div class="grid-3" style="align-items: end;">
                     <div class="form-group"><label>Enter HP Number</label><input type="text" id="regHp" placeholder="Scan HP Number..." style="font-weight:700;" oninput="this.value = this.value.toUpperCase();"></div>
                     <button class="btn btn-green" onclick="ldReg()">Fetch Details</button>
@@ -691,6 +721,9 @@
                         <div class="od-row"><div class="od-lbl">VEHICLE NO</div><div class="od-val">: <span id="od_vno"></span></div></div>
                         <div class="od-row"><div class="od-lbl">VEH MAKE</div><div class="od-val">: <span id="od_mk"></span></div></div>
                         <div class="od-row"><div class="od-lbl">VEH MODEL</div><div class="od-val">: <span id="od_mdl"></span></div></div>
+                        <!-- New RTO & Hypothecation IDs added for calculation view -->
+                        <div class="od-row"><div class="od-lbl">RTO</div><div class="od-val">: <span id="od_rto"></span></div></div>
+                        <div class="od-row"><div class="od-lbl">Hypothecation</div><div class="od-val">: <span id="od_hypothecation"></span></div></div>
                         <div class="od-row"><div class="od-lbl">MATURED</div><div class="od-val">: <div class="bulb" id="od_matBulb"></div> <b id="od_matTxt">M</b></div></div><br>
                         <div class="od-row"><div class="od-lbl">C BOOK</div><div class="od-val">: <div class="bulb" id="od_cbBulb"></div></div></div><br>
                         <div class="od-row"><div class="od-lbl">RECEIPT DUE AMNT</div><div class="od-val">: <span id="od_rdue"></span></div></div>
@@ -926,7 +959,7 @@
     window.receiptHistory = [];
     window.daybookData = []; 
     window.transfersData = []; 
-    window.employeesData = []; // NEW: To store employee data
+    window.employeesData = []; 
     window.currentClosingODDues = 0;
     window.currentClosingMainDues = 0;
     window.isDataSyncStarted = false; 
@@ -977,7 +1010,7 @@
         });
     }
 
-    // --- 6. AUTHENTICATION & ROLE MANAGEMENT (UPDATED) ---
+    // --- 6. AUTHENTICATION & ROLE MANAGEMENT (BUG FIXED) ---
     window.doLogin = async function(){ 
         let uid = document.getElementById("uid").value.trim().toLowerCase(); 
         let pwd = document.getElementById("pwd").value.trim();
@@ -993,7 +1026,6 @@
                         alert("❌ Your access has been revoked. Contact Admin.");
                         return;
                     }
-                    // Employee Login Success
                     showApp(uid, empData);
                     return;
                 } else {
@@ -1003,11 +1035,11 @@
             }
         } catch (e) { console.error(e); }
 
-        // Step 2: If not an employee, attempt Admin Login via Firebase Auth
+        // Step 2: Admin Login
         uid = uid.replace(/[<>]/g, ""); let email = uid.includes("@") ? uid : uid + "@vssfinance.com";
         setPersistence(auth, browserSessionPersistence)
             .then(() => signInWithEmailAndPassword(auth, email, pwd))
-            .then(() => { showApp(uid, null); }) // null indicates Admin
+            .then(() => { showApp(uid, null); }) 
             .catch(() => { alert("Authentication Failed. Please check your ID and Password."); });
     };
 
@@ -1028,25 +1060,24 @@
         let headerText = empData ? `👤 Employee: ${empData.name.toUpperCase()}` : `🟢 Admin: ${userId.toUpperCase()}`;
         document.getElementById("cloudStatus").innerText = headerText; 
         
-        // --- APPLY ROLE BASED UI PERMISSIONS ---
+        // --- SECURE UI PERMISSIONS LOGIC ---
         let allNavLinks = document.querySelectorAll(".nav-links li");
-        allNavLinks.forEach(li => li.style.display = "none"); // Hide all by default
+        allNavLinks.forEach(li => li.style.display = "none"); // Force hide everything initially
         
-        document.getElementById('optRAccess').style.display = "none"; // Hide 'R' option by default
+        document.getElementById('optRAccess').style.display = "none"; 
 
         if(!empData) {
-            // ADMIN VIEW: Show everything + Employee Mgmt
+            // ADMIN: Show all
             allNavLinks.forEach(li => li.style.display = "flex");
-            document.getElementById("optRAccess").style.display = "block"; // Admin gets 'R' option
+            document.getElementById("optRAccess").style.display = "block"; 
         } else {
-            // EMPLOYEE VIEW: Show only allowed menus
+            // EMPLOYEE: Show only assigned
             if(empData.perms && empData.perms.length > 0) {
                 empData.perms.forEach(permId => {
                     let navItem = document.getElementById("nl_" + permId);
                     if(navItem) navItem.style.display = "flex";
                 });
             }
-            // Check secret 'R' access for employee
             if(empData.rAccess === true) {
                 document.getElementById("optRAccess").style.display = "block";
             }
@@ -1054,66 +1085,58 @@
 
         window.startDatabaseSync(); 
         
-        // Auto-navigate to first available page
         if(!empData || empData.perms.includes('pDash')) window.nav("pDash");
         else if(empData.perms.length > 0) window.nav(empData.perms[0]);
     }
 
-    // --- 6.1 EMPLOYEE MANAGEMENT FUNCTIONS (NEW) ---
+    // --- EMPLOYEE MANAGEMENT & PASSWORD RESET ---
     window.createEmployeeLogin = function() {
-        let name = document.getElementById("empName").value.trim();
-        let desig = document.getElementById("empDesig").value.trim();
-        let uid = document.getElementById("empUid").value.trim().toLowerCase();
-        let pwd = document.getElementById("empPwd").value.trim();
+        let name = document.getElementById("empName").value.trim(); let desig = document.getElementById("empDesig").value.trim();
+        let uid = document.getElementById("empUid").value.trim().toLowerCase(); let pwd = document.getElementById("empPwd").value.trim();
         
         if(!name || !desig || !uid || !pwd) { alert("Please fill all details!"); return; }
         if(pwd.length < 6) { alert("Password must be at least 6 characters."); return; }
         
-        // Get checked permissions
-        let selectedPerms = [];
-        document.querySelectorAll('.emp-perm:checked').forEach(cb => selectedPerms.push(cb.value));
-        
+        let selectedPerms = []; document.querySelectorAll('.emp-perm:checked').forEach(cb => selectedPerms.push(cb.value));
         if(selectedPerms.length === 0) { alert("Please assign at least one menu permission."); return; }
         
         let rAccess = document.getElementById("permRAccess").checked;
-        if(!selectedPerms.includes('pSearch')) rAccess = false; // Only valid if search is given
+        if(!selectedPerms.includes('pSearch')) rAccess = false; 
         
-        // Check if UID already exists
         get(ref(database, 'employees/' + uid)).then((snap) => {
-            if(snap.exists()) {
-                alert(`Error: User ID '${uid}' already exists! Choose another.`);
-                return;
-            }
-            // Save to DB
-            let newEmp = {
-                name: name, desig: desig, uid: uid, pwd: pwd,
-                perms: selectedPerms, rAccess: rAccess,
-                status: "Active", createdDt: window.getTodayDate()
-            };
+            if(snap.exists()) { alert(`Error: User ID '${uid}' already exists! Choose another.`); return; }
+            let newEmp = { name, desig, uid, pwd, perms: selectedPerms, rAccess, status: "Active", createdDt: window.getTodayDate() };
             set(ref(database, 'employees/' + uid), newEmp).then(() => {
                 alert(`✅ Employee Login Created Successfully for ${name}`);
-                document.getElementById("empName").value = "";
-                document.getElementById("empDesig").value = "";
-                document.getElementById("empUid").value = "";
-                document.getElementById("empPwd").value = "";
+                document.getElementById("empName").value = ""; document.getElementById("empDesig").value = "";
+                document.getElementById("empUid").value = ""; document.getElementById("empPwd").value = "";
                 document.querySelectorAll('.emp-perm').forEach(cb => cb.checked = false);
-                document.getElementById("permRAccess").checked = false;
-                document.getElementById("rAuthBox").style.display = "none";
+                document.getElementById("permRAccess").checked = false; document.getElementById("rAuthBox").style.display = "none";
             });
         });
     }
 
     window.toggleEmployeeStatus = function(uid, currentStatus) {
         let newStatus = currentStatus === "Active" ? "Revoked" : "Active";
-        let confirmMsg = newStatus === "Revoked" 
-            ? `Are you sure you want to REVOKE access for ${uid}? They will not be able to login.` 
-            : `Are you sure you want to ACTIVATE access for ${uid}?`;
-            
-        if(confirm(confirmMsg)) {
-            update(ref(database, 'employees/' + uid), { status: newStatus }).then(() => {
-                alert(`Employee status updated to: ${newStatus}`);
-            });
+        if(confirm(`Update status for ${uid} to ${newStatus}?`)) {
+            update(ref(database, 'employees/' + uid), { status: newStatus }).then(() => { alert(`Status updated to: ${newStatus}`); });
         }
+    }
+
+    window.openPwdReset = function(uid) {
+        document.getElementById('pwdResetUid').innerText = uid;
+        document.getElementById('newEmpPwd').value = '';
+        document.getElementById('pwdResetModal').style.display = 'flex';
+    }
+
+    window.confirmPasswordReset = function() {
+        let uid = document.getElementById('pwdResetUid').innerText;
+        let newPwd = document.getElementById('newEmpPwd').value.trim();
+        if(newPwd.length < 6) { alert("Password must be at least 6 characters."); return; }
+        update(ref(database, 'employees/' + uid), { pwd: newPwd }).then(() => {
+            alert(`✅ Password successfully updated for employee: ${uid}`);
+            document.getElementById('pwdResetModal').style.display = 'none';
+        });
     }
 
     window.nav = function(id){ 
@@ -1143,9 +1166,7 @@
         
         onValue(ref(database, 'accounts'), (snapshot) => {
             window.dbData = []; 
-            if (snapshot.exists()) { 
-                snapshot.forEach((child) => { window.dbData.push(child.val()); }); 
-            }
+            if (snapshot.exists()) { snapshot.forEach((child) => { window.dbData.push(child.val()); }); }
             updateDashboardCounts(); if(document.getElementById('pReg')?.style.display === 'block') window.ldReg();
         });
 
@@ -1164,35 +1185,29 @@
             if(document.getElementById('pFundTransfer')?.style.display === 'block') { window.checkTransferBalances(); window.renderTransfers(); }
         });
         
-        // Sync Employees List
         onValue(ref(database, 'employees'), (snapshot) => {
-            window.employeesData = []; 
-            let html = "";
+            window.employeesData = []; let html = "";
             if(snapshot.exists()){ 
                 snapshot.forEach((child) => { 
-                    let emp = child.val(); 
-                    window.employeesData.push(emp); 
+                    let emp = child.val(); window.employeesData.push(emp); 
                     
                     let statBadge = emp.status === "Active" ? `<span class="tag tag-paid">🟢 ACTIVE</span>` : `<span class="tag tag-seized">🔴 REVOKED</span>`;
                     let actionBtn = emp.status === "Active" 
-                        ? `<button class="btn btn-red" style="padding:6px 12px; font-size:11px;" onclick="toggleEmployeeStatus('${emp.uid}', '${emp.status}')">Block Access</button>`
+                        ? `<button class="btn btn-red" style="padding:6px 12px; font-size:11px;" onclick="toggleEmployeeStatus('${emp.uid}', '${emp.status}')">Block</button>`
                         : `<button class="btn btn-green" style="padding:6px 12px; font-size:11px;" onclick="toggleEmployeeStatus('${emp.uid}', '${emp.status}')">Unblock</button>`;
                         
                     html += `<tr>
                         <td><b>${esc(emp.name)}</b><br><span style="font-size:11px; color:var(--text-muted);">${esc(emp.desig)}</span></td>
                         <td><b style="color:var(--primary);">${esc(emp.uid)}</b></td>
                         <td>${statBadge}</td>
-                        <td>${actionBtn}</td>
+                        <td><div style="display:flex; gap:8px;">${actionBtn} <button class="btn" style="background:#0f172a; padding:6px 12px; font-size:11px;" onclick="openPwdReset('${emp.uid}')">🔑 Reset Pwd</button></div></td>
                     </tr>`;
                 }); 
             }
-            if(document.getElementById("empListBody")) {
-                document.getElementById("empListBody").innerHTML = html || `<tr><td colspan="4" style="text-align:center; padding:20px; color:var(--text-muted);">No employees found.</td></tr>`;
-            }
+            if(document.getElementById("empListBody")) { document.getElementById("empListBody").innerHTML = html || `<tr><td colspan="4" style="text-align:center; padding:20px; color:var(--text-muted);">No employees found.</td></tr>`; }
         });
     };
 
-    // BULLETPROOF EXACT MATH ENGINE IN DASHBOARD
     function updateDashboardCounts() {
         let tot=0, act=0, due=0, sz=0, cls=0, mat=0; let today = new Date();
         window.dbData.forEach((d) => {
@@ -1221,7 +1236,7 @@
         if(document.getElementById('pPendingDocs')?.style.display === 'block') window.renderPendingDocsList();
     }
 
-    // --- 8. DOUBLE-ENTRY LEDGER (NEW ENGINE FOR REPORTS) ---
+    // --- 8. DOUBLE-ENTRY LEDGER ---
     window.generateFinanceReport = function() {
         let fDate = document.getElementById("finFDate").value; let tDate = document.getElementById("finTDate").value;
         if(!fDate || !tDate) { alert("Please select both dates"); return; }
@@ -1229,24 +1244,13 @@
         
         window.dbData.forEach(a => {
             let hp = a.hp; let name = window.formatName(a.srn, a.nm);
-            
-            // 1. Loan Issue
             if(parseFloat(a.amt) > 0) events.push({ date: a.fdt, hp, name, purpose: "Loan Amount Issued", fromAcc: "Owner Investment", toAcc: "Customer", amt: parseFloat(a.amt), type: "LOAN" });
-            
-            // 2. Office Doc Deduction
             if(parseFloat(a.doc) > 0) events.push({ date: a.fdt, hp, name, purpose: "Office Doc Charges Cut", fromAcc: "Customer", toAcc: "Doc Charges", amt: parseFloat(a.doc), type: "DOC" });
-            
-            // 3. Consultancy Comm
             if(parseFloat(a.bdoc) > 0) events.push({ date: a.fdt, hp, name, purpose: `Commission Added for ${a.consultancy||'Dealer'}`, fromAcc: "Customer", toAcc: "Pending Commission", amt: parseFloat(a.bdoc), type: "COMM_ADD" });
             
-            // 4. Pending Docs Hold
             let holdAmt = (parseFloat(a.cbHoldAmt)||0) + (parseFloat(a.nocHoldAmt)||0);
             if(holdAmt > 0) events.push({ date: a.fdt, hp, name, purpose: "Customer Hold Amount for Documents", fromAcc: "Customer", toAcc: "Pending Docs Hold", amt: holdAmt, type: "DOCS_HOLD" });
-            
-            // 5. Commission Paid
             if(a.docPaid && a.consPaidDt) events.push({ date: a.consPaidDt, hp, name, purpose: `Commission Paid to ${a.consultancy||'Dealer'}`, fromAcc: "Pending Commission", toAcc: "Dealer / Agent", amt: parseFloat(a.bdoc), type: "COMM_PAID" });
-            
-            // 6. Hold Amount Returned
             if(a.cb === "Yes" && a.cbGivenDt && parseFloat(a.cbHoldAmt) > 0) events.push({ date: a.cbGivenDt, hp, name, purpose: "RC Hold Amount Returned", fromAcc: "Pending Docs Hold", toAcc: "Customer", amt: parseFloat(a.cbHoldAmt), type: "HOLD_RETURN" });
             if(a.noc === "Yes" && a.nocGivenDt && parseFloat(a.nocHoldAmt) > 0) events.push({ date: a.nocGivenDt, hp, name, purpose: "NOC Hold Amount Returned", fromAcc: "Pending Docs Hold", toAcc: "Customer", amt: parseFloat(a.nocHoldAmt), type: "HOLD_RETURN" });
         });
@@ -1265,7 +1269,6 @@
         });
         
         window.transfersData.forEach(t => { events.push({ date: t.dt, hp: "N/A", name: "Internal Fund Transfer", purpose: t.rem, fromAcc: t.from, toAcc: t.to, amt: parseFloat(t.amt), type: "TRANSFER" }); });
-        
         events.sort((a,b) => new Date(a.date) - new Date(b.date));
         
         let internalAccs = ["Owner Investment", "Doc Charges", "Pending Commission", "Pending Docs Hold", "EMI Collection", "OD Collection", "Seizing Recovery", "Office Cash"];
@@ -1276,26 +1279,21 @@
             let isFromInternal = internalAccs.includes(ev.fromAcc); let isToInternal = internalAccs.includes(ev.toAcc);
             if(isFromInternal) {
                 let balBefore = balances[ev.fromAcc]; balances[ev.fromAcc] -= ev.amt; let balAfter = balances[ev.fromAcc];
-                if(ev.date >= fDate && ev.date <= tDate) {
-                    htmlRows += `<tr><td>${sno++}</td><td>${ev.date}</td><td><b style="color:var(--primary);">${esc(ev.hp)}</b></td><td><b>${esc(ev.name)}</b><br><span style="font-size:11px;color:var(--text-muted);">${esc(ev.purpose)}</span></td><td><div style="font-size:10px; font-weight:800; color:var(--danger); margin-bottom:4px;">A/C: ${ev.fromAcc.toUpperCase()}</div><span class="tag tag-pending">${ev.fromAcc}</span> ➔ <span class="tag tag-dark">${ev.toAcc}</span></td><td style="color:var(--danger);font-weight:bold;">₹${window.fmtMoney(ev.amt)}</td><td>-</td><td>₹${window.fmtMoney(balBefore)}</td><td style="font-weight:800; color:${balAfter<0?'var(--danger)':'var(--secondary)'};">₹${window.fmtMoney(balAfter)}</td></tr>`;
-                }
+                if(ev.date >= fDate && ev.date <= tDate) { htmlRows += `<tr><td>${sno++}</td><td>${ev.date}</td><td><b style="color:var(--primary);">${esc(ev.hp)}</b></td><td><b>${esc(ev.name)}</b><br><span style="font-size:11px;color:var(--text-muted);">${esc(ev.purpose)}</span></td><td><div style="font-size:10px; font-weight:800; color:var(--danger); margin-bottom:4px;">A/C: ${ev.fromAcc.toUpperCase()}</div><span class="tag tag-pending">${ev.fromAcc}</span> ➔ <span class="tag tag-dark">${ev.toAcc}</span></td><td style="color:var(--danger);font-weight:bold;">₹${window.fmtMoney(ev.amt)}</td><td>-</td><td>₹${window.fmtMoney(balBefore)}</td><td style="font-weight:800; color:${balAfter<0?'var(--danger)':'var(--secondary)'};">₹${window.fmtMoney(balAfter)}</td></tr>`; }
             }
             if(isToInternal) {
                 let balBefore = balances[ev.toAcc]; balances[ev.toAcc] += ev.amt; let balAfter = balances[ev.toAcc];
-                if(ev.date >= fDate && ev.date <= tDate) {
-                    htmlRows += `<tr><td>${sno++}</td><td>${ev.date}</td><td><b style="color:var(--primary);">${esc(ev.hp)}</b></td><td><b>${esc(ev.name)}</b><br><span style="font-size:11px;color:var(--text-muted);">${esc(ev.purpose)}</span></td><td><div style="font-size:10px; font-weight:800; color:var(--success); margin-bottom:4px;">A/C: ${ev.toAcc.toUpperCase()}</div><span class="tag tag-dark">${ev.fromAcc}</span> ➔ <span class="tag tag-paid">${ev.toAcc}</span></td><td>-</td><td style="color:var(--success);font-weight:bold;">₹${window.fmtMoney(ev.amt)}</td><td>₹${window.fmtMoney(balBefore)}</td><td style="font-weight:800; color:var(--success);">₹${window.fmtMoney(balAfter)}</td></tr>`;
-                }
+                if(ev.date >= fDate && ev.date <= tDate) { htmlRows += `<tr><td>${sno++}</td><td>${ev.date}</td><td><b style="color:var(--primary);">${esc(ev.hp)}</b></td><td><b>${esc(ev.name)}</b><br><span style="font-size:11px;color:var(--text-muted);">${esc(ev.purpose)}</span></td><td><div style="font-size:10px; font-weight:800; color:var(--success); margin-bottom:4px;">A/C: ${ev.toAcc.toUpperCase()}</div><span class="tag tag-dark">${ev.fromAcc}</span> ➔ <span class="tag tag-paid">${ev.toAcc}</span></td><td>-</td><td style="color:var(--success);font-weight:bold;">₹${window.fmtMoney(ev.amt)}</td><td>₹${window.fmtMoney(balBefore)}</td><td style="font-weight:800; color:var(--success);">₹${window.fmtMoney(balAfter)}</td></tr>`; }
             }
         });
         
         document.getElementById("finRepTb").innerHTML = htmlRows || `<tr><td colspan="9" style="text-align:center; padding:20px; color:var(--danger); font-weight:bold;">No matching records in this date range.</td></tr>`;
-        
         document.getElementById("rep_doc").innerText = "₹" + window.fmtMoney(balances["Doc Charges"]); document.getElementById("rep_emi").innerText = "₹" + window.fmtMoney(balances["EMI Collection"]); document.getElementById("rep_od").innerText = "₹" + window.fmtMoney(balances["OD Collection"]); document.getElementById("rep_sz").innerText = "₹" + window.fmtMoney(balances["Seizing Recovery"]); document.getElementById("rep_pend_doc").innerText = "₹" + window.fmtMoney(balances["Pending Docs Hold"]); document.getElementById("rep_pend_comm").innerText = "₹" + window.fmtMoney(balances["Pending Commission"]);
         let totalMainBox = balances["EMI Collection"] + balances["OD Collection"] + balances["Seizing Recovery"]; document.getElementById("rep_tot").innerText = "₹" + window.fmtMoney(totalMainBox);
         document.getElementById("finRepResults").style.display = "grid"; document.getElementById("finRepTableBox").style.display = "block";
     }
 
-    // --- 9. DAY BOOK, TRANSFERS, OTHER FUNCTIONS ---
+    // --- 9. DAY BOOK & OTHER ---
     window.getSourceBalance = function(sourceName) {
         let balance = 0;
         if(sourceName === "EMI Collection") { balance += window.receiptHistory.filter(r => (r.type === "Installment" || r.type === "Account Closed")).reduce((s,x)=>s+x.amt, 0); } 
@@ -1484,6 +1482,7 @@
         document.getElementById("cb_r_box").style.display = cbNo ? 'flex' : 'none'; document.getElementById("noc_r_box").style.display = nocNo ? 'flex' : 'none'; document.getElementById("doc_hold_amt_box").style.display = (cbNo || nocNo) ? 'flex' : 'none';
     };
 
+    // --- SAVE HP LOGIC UPDATED WITH NEW FIELDS ---
     window.executeHPSave = async function() {
         let targetHP = document.getElementById("in_hp").value.toUpperCase().trim(); if(!targetHP) { alert("Error: Please enter HP Number"); return; }
         if(window.dbData.find(x => x.hp === targetHP)) { alert(`Error: The HP Number "${targetHP}" is already used!`); return; }
@@ -1497,20 +1496,24 @@
             if(gImgFile) { let compressed = await compressImage(gImgFile); let imgRef = sRef(storage, `kyc/${targetHP}_guarantor.jpg`); await uploadBytes(imgRef, compressed); gImgUrl = await getDownloadURL(imgRef); }
             let agreeDate = document.getElementById("in_fdt").value || window.getTodayDate();
             
-            // EXACT LOAN AMOUNT LOGIC 
             let amt = parseFloat(document.getElementById("in_famt").value) || 0; 
             let doc = parseFloat(document.getElementById("in_doc").value) || 0; 
             let bdoc = parseFloat(document.getElementById("in_bdoc").value) || 0; 
             let hpc = parseFloat(document.getElementById("in_hpc").value) || 0; 
             let ten = parseInt(document.getElementById("in_ten").value) || 24;
-            let emiAmount = Math.round((amt + hpc) / ten); // Initial DB save (Legacy backward compatibility, the real engine ignores this)
+            let emiAmount = Math.round((amt + hpc) / ten);
             let expDate = new Date(agreeDate); expDate.setMonth(expDate.getMonth() + ten);
             let combinedHoldAmt = (document.getElementById("in_cb").value === "No" || document.getElementById("in_noc").value === "No") ? (parseFloat(document.getElementById("in_doc_hold_amt").value) || 0) : 0;
             
+            // New Fields Captured
             let newAccount = {
-                hp: targetHP, nm: document.getElementById("in_cnm").value, fnm: document.getElementById("in_cfnm").value, srn: document.getElementById("in_csur").value, mob: document.getElementById("in_cmob").value, occ: document.getElementById("in_cocc").value,
+                hp: targetHP, nm: document.getElementById("in_cnm").value, fnm: document.getElementById("in_cfnm").value, srn: document.getElementById("in_csur").value, mob: document.getElementById("in_cmob").value, occ: document.getElementById("in_cocc").value, 
+                cage: document.getElementById("in_cage").value, // Customer Age
                 vno: targetVno, vnm: document.getElementById("in_vnm").value, yr: document.getElementById("in_vyr").value, vl: document.getElementById("in_cvl").value, md: document.getElementById("in_cmd").value, adr: document.getElementById("in_cadr").value, aadh: document.getElementById("in_caad").value, pin: document.getElementById("in_cpin").value,
                 gnm: document.getElementById("in_gnm").value, gsrn: document.getElementById("in_gsur").value, gmob: document.getElementById("in_gmob").value, gocc: document.getElementById("in_gocc").value, gadr: document.getElementById("in_gadr").value, gfnm: document.getElementById("in_gfnm").value, gaad: document.getElementById("in_gaad").value, gvl: document.getElementById("in_gvl").value, gmd: document.getElementById("in_gmd").value,
+                gage: document.getElementById("in_gage").value, // Guarantor Age
+                rto: document.getElementById("in_vrto").value, // RTO
+                : document.getElementById("in_vhypothecation").value, // Hypothecation
                 fdt: agreeDate, exp: expDate.toISOString().split('T')[0], amt, doc, bdoc, hpc, ten, consultancy: document.getElementById("in_cons").value, verifiedBy: document.getElementById("in_ver").value, vcn: document.getElementById("in_vcn").value, ven: document.getElementById("in_ven").value, vcol: document.getElementById("in_vcol").value,
                 cb: document.getElementById("in_cb").value, cbReason: document.getElementById("in_cb").value === "No" ? document.getElementById("in_cb_r").value : "", cbHoldAmt: document.getElementById("in_cb").value === "No" ? combinedHoldAmt : 0,
                 noc: document.getElementById("in_noc").value, nocReason: document.getElementById("in_noc").value === "No" ? document.getElementById("in_noc_r").value : "", nocHoldAmt: (document.getElementById("in_cb").value === "Yes" && document.getElementById("in_noc").value === "No") ? combinedHoldAmt : 0,
@@ -1542,15 +1545,16 @@
         document.getElementById("regTb").innerHTML = html;
     }
     
+    // --- HP REGISTER MODAL UPDATED WITH NEW FIELDS ---
     window.vReg = function(hp){ 
         let d = window.dbData.find(x=>x.hp===hp); if(!d) return;
         document.getElementById("modTitle").innerText=`Details for Account : ${d.hp}`; 
         document.getElementById("modBody").innerHTML=`
             <div class="grid-2"><div class="info-box" style="display:flex;gap:20px; align-items:flex-start;"><img src="${esc(d.cImg)}" class="profile-img">
-            <div><b style="color:var(--primary); font-size:14px;">👤 Customer Details</b><br><br><div class="grid-2" style="gap:5px;"><span><b>Name:</b></span><span>${window.formatName(d.srn, d.nm)}</span><span><b>F/S Name:</b></span><span>${esc(d.fnm)}</span><span><b>Mobile:</b></span><span>${esc(d.mob)}</span><span><b>Aadhar:</b></span><span>${esc(d.aadh)}</span><span><b>Work:</b></span><span>${esc(d.occ)}</span><span style="grid-column:span 2;"><b>Address:</b> ${esc(d.adr)}, ${esc(d.vl)}, ${esc(d.md)}</span></div></div></div>
+            <div><b style="color:var(--primary); font-size:14px;">👤 Customer Details</b><br><br><div class="grid-2" style="gap:5px;"><span><b>Name:</b></span><span>${window.formatName(d.srn, d.nm)}</span><span><b>Age:</b></span><span>${esc(d.cage) || '-'} Yrs</span><span><b>F/S Name:</b></span><span>${esc(d.fnm)}</span><span><b>Mobile:</b></span><span>${esc(d.mob)}</span><span><b>Aadhar:</b></span><span>${esc(d.aadh)}</span><span><b>Work:</b></span><span>${esc(d.occ)}</span><span style="grid-column:span 2;"><b>Address:</b> ${esc(d.adr)}, ${esc(d.vl)}, ${esc(d.md)}</span></div></div></div>
             <div class="info-box" style="display:flex;gap:20px; align-items:flex-start;"><img src="${esc(d.gImg)}" class="profile-img">
-            <div><b style="color:var(--primary); font-size:14px;">🤝 Guarantor Details</b><br><br><div class="grid-2" style="gap:5px;"><span><b>Name:</b></span><span>${window.formatName(d.gsrn, d.gnm)}</span><span><b>Mobile:</b></span><span>${esc(d.gmob)}</span><span><b>Aadhar:</b></span><span>${esc(d.gaad)}</span><span><b>Work:</b></span><span>${esc(d.gocc)}</span><span style="grid-column:span 2;"><b>Address:</b> ${esc(d.gadr)}, ${esc(d.gvl)}, ${esc(d.gmd)}</span></div></div></div></div>
-            <div class="info-box" style="background:#fff;"><b style="color:var(--secondary); font-size:14px;">⚙️ Vehicle Details:</b> <br>Vehicle No: <b>${esc(d.vno)}</b> | Name & Model: ${esc(d.vnm)} | Year: ${esc(d.vYear)} | Chassis No: ${esc(d.vcn)} | Engine No: ${esc(d.ven)} | Color: ${esc(d.vcol)}<br><br>
+            <div><b style="color:var(--primary); font-size:14px;">🤝 Guarantor Details</b><br><br><div class="grid-2" style="gap:5px;"><span><b>Name:</b></span><span>${window.formatName(d.gsrn, d.gnm)}</span><span><b>Age:</b></span><span>${esc(d.gage) || '-'} Yrs</span><span><b>Mobile:</b></span><span>${esc(d.gmob)}</span><span><b>Aadhar:</b></span><span>${esc(d.gaad)}</span><span><b>Work:</b></span><span>${esc(d.gocc)}</span><span style="grid-column:span 2;"><b>Address:</b> ${esc(d.gadr)}, ${esc(d.gvl)}, ${esc(d.gmd)}</span></div></div></div></div>
+            <div class="info-box" style="background:#fff;"><b style="color:var(--secondary); font-size:14px;">⚙️ Vehicle Details:</b> <br>Vehicle No: <b>${esc(d.vno)}</b> | Name & Model: ${esc(d.vnm)} | Year: ${esc(d.vYear)} | Chassis No: ${esc(d.vcn)} | Engine No: ${esc(d.ven)} | Color: ${esc(d.vcol)} <br> RTO: <b style="color:var(--primary);">${esc(d.rto) || '-'}</b> | Hypothecation: <b>${esc(d.Hypothecation) || '-'}</b><br><br>
             <b style="color:var(--secondary); font-size:14px;">📊 Finance Details:</b> <br>Loan Amount: <b>₹${window.fmtMoney(d.amt)}</b> | Office Doc: ₹${d.doc} | Broker Doc: ₹${d.bdoc || 0} | Total Interest: ₹${d.hpc} | Months: ${d.ten} Mos <br> RC Book: ${esc(d.cb)} | NOC: ${esc(d.noc)} | Officer: ${esc(d.verifiedBy)} | Status: <b style="color:${d.acStatus==='CLOSED'?'var(--danger)':'var(--success)'};">${esc(d.acStatus)}</b></div>`; 
         document.getElementById("regModal").style.display="flex"; 
     }
@@ -1563,7 +1567,7 @@
     };
     window.chgDueOp = () => { document.getElementById("dVl2Box").style.display = document.getElementById("dOp").value === "Between" ? "block" : "none"; };
     
-    // BULLETPROOF EXACT MATH ENGINE IN DUES LIST
+    // --- EXACT MATH ENGINE IN DUES LIST ---
     window.genDues = function(){ 
         let v1 = parseFloat(document.getElementById("dVl").value)||0; 
         let v2 = parseFloat(document.getElementById("dVl2Box").style.display === "block" ? document.getElementById("dVl2").value : 0)||0; 
@@ -1576,7 +1580,6 @@
         window.dbData.forEach((d) => { 
             if(d.sz || d.acStatus === "CLOSED") return; 
             
-            // EXACT MATH
             let baseFin = parseFloat(d.amt) || 0; 
             let hpc = parseFloat(d.hpc) || 0; 
             let totalLiability = baseFin + hpc;
@@ -1588,13 +1591,8 @@
             
             let totalPaid = window.receiptHistory.filter(h => h.hp === d.hp && h.type === "Installment").reduce((sum, r) => sum + r.amt, 0);
             
-            // Calculate EXACTLY what they should have paid based on standard EMI
             let expectedPaid = 0;
-            if(passedMonths === ten) {
-                expectedPaid = totalLiability;
-            } else {
-                expectedPaid = passedMonths * stdEmi;
-            }
+            if(passedMonths === ten) { expectedPaid = totalLiability; } else { expectedPaid = passedMonths * stdEmi; }
 
             let overdueAmount = expectedPaid - totalPaid; 
             if(overdueAmount < 0) overdueAmount = 0;
@@ -1614,32 +1612,17 @@
             if (op !== "All" && op !== "=" && overdueEMIsCount === 0 && v1 !== 0) mtc = false; 
             if (op === "All" && overdueEMIsCount === 0) mtc = false;
             
-            if(mtc) {
-                matchedAccounts.push({
-                    ...d,
-                    overdueAmount,
-                    overdueEMIsCount,
-                    completedEMIs,
-                    stdEmi
-                });
-            }
+            if(mtc) { matchedAccounts.push({ ...d, overdueAmount, overdueEMIsCount, completedEMIs, stdEmi }); }
         });
 
-        matchedAccounts.sort((a, b) => {
-            let mCmp = (a.md || "").localeCompare(b.md || "");
-            if (mCmp !== 0) return mCmp; 
-            return (a.vl || "").localeCompare(b.vl || ""); 
-        });
+        matchedAccounts.sort((a, b) => { let mCmp = (a.md || "").localeCompare(b.md || ""); if (mCmp !== 0) return mCmp; return (a.vl || "").localeCompare(b.vl || ""); });
 
-        let html = ""; 
-        let sno = 1; 
-        let grandTotal = 0;
+        let html = ""; let sno = 1; let grandTotal = 0;
 
         matchedAccounts.forEach(d => {
             grandTotal += d.overdueAmount; 
             let dueColor = d.overdueEMIsCount > 0 ? "var(--danger)" : "var(--success)";
             
-            // EXACT FORMAT MATCHING USER REQUEST
             let cLbl = `<b style="font-size:14px; color:var(--primary-dark); text-transform:uppercase;">${window.formatName(d.srn, d.nm)}</b><br>
                         <span style="font-weight:700; color:var(--text-muted); font-size:12px;">S/O: ${esc(d.fnm)}</span><br>
                         <span style="font-weight:800; font-size:14px; color:#0f172a; display:inline-block; margin-top:4px;">${esc(d.mob)}</span><br>
@@ -1673,7 +1656,6 @@
         });
         
         document.getElementById("duesTb").innerHTML = html;
-        
         let footHtml = `<tr>
             <td colspan="11" style="text-align:right; font-weight:900; font-size:16px; color:var(--secondary); padding: 20px;">GRAND TOTAL OVERDUE:</td>
             <td style="color:var(--danger); font-weight:900; font-size:20px;">₹${window.fmtMoney(grandTotal)}</td>
@@ -1682,23 +1664,21 @@
         document.getElementById("duesFoot").innerHTML = footHtml;
     }
 
-    // --- BULLETPROOF EXACT MATH ENGINE IN CALCULATION STATEMENT ---
+    // --- EXACT MATH ENGINE & NEW FIELDS IN CALCULATION STATEMENT ---
     window.genOD = function(){ 
         let hp=document.getElementById("odAcc").value.toUpperCase(); let pc=document.getElementById("odPer").value; let d=window.dbData.find(x=>x.hp===hp); 
         if(!d){alert("Account not found. (ఈ నంబర్ లేదు!)"); return;}
         
-        // --- EXACT BULLETPROOF CALCULATION ---
-        let baseFin = parseFloat(d.amt) || 0; 
-        let hpc = parseFloat(d.hpc) || 0; 
-        let seizeCharge = parseFloat(d.szC) || 0; 
-        let totalLiability = baseFin + hpc; 
-        let ten = parseInt(d.ten) || 1;
-        let stdEmi = Math.round(totalLiability / ten);
+        let baseFin = parseFloat(d.amt) || 0; let hpc = parseFloat(d.hpc) || 0; let seizeCharge = parseFloat(d.szC) || 0; 
+        let totalLiability = baseFin + hpc; let ten = parseInt(d.ten) || 1; let stdEmi = Math.round(totalLiability / ten);
 
         const safeSet = (id, val) => { let el = document.getElementById(id); if(el) el.innerHTML = val; };
         safeSet("od_nm", window.formatName(d.srn, d.nm).toUpperCase()); safeSet("od_area", d.md.toUpperCase()); safeSet("od_town", d.vl.toUpperCase()); safeSet("od_ac", d.hp); safeSet("od_verBy", d.verifiedBy?.toUpperCase() || "NONE"); safeSet("od_consName", d.consultancy?.toUpperCase() || "");
         safeSet("od_vno", d.vno.replace(/\s/g,'')); safeSet("od_mk", d.yr); safeSet("od_mdl", d.vnm.toUpperCase()); safeSet("od_en", d.ven || ""); safeSet("od_cn", d.vcn || ""); safeSet("od_currentDt", window.getTodayDate());
         
+        // Updating RTO &  Values in Calc view
+        safeSet("od_rto", esc(d.rto) || "-"); safeSet("od_hypothecation", esc(d.Hypothecation) || "-");
+
         let statusEl = document.getElementById("od_acStat"); 
         if(d.acStatus === "CLOSED") { statusEl.innerHTML = `<span style="color:var(--danger);">A/C CLOSED<br>(Date: ${d.closedDt})</span>`; } else { statusEl.innerText = "NOT CLOSED"; statusEl.style.color = "var(--success)"; }
         
@@ -1715,15 +1695,12 @@
         let totalEmiPaid = matchedSlips.reduce((s, x) => s + x.amt, 0); let remainingSlips = JSON.parse(JSON.stringify(matchedSlips));
         let totalReceiptDue = 0; let finalPendingCount = 0; let todayDateObj = new Date(); todayDateObj.setHours(0, 0, 0, 0);
 
-        let totalTablePaid = 0;
-        let totalTableRecDue = 0;
+        let totalTablePaid = 0; let totalTableRecDue = 0;
 
         for(let i=1; i<=ten; i++){ 
             let dd = new Date(mth); dd.setMonth(dd.getMonth() + i); 
-            
-            // MATH ENGINE: Exact split for Last EMI to exactly match total liability
             let currentEmiDue = (i === ten) ? (totalLiability - (stdEmi * (ten - 1))) : stdEmi;
-            if(currentEmiDue < 0) currentEmiDue = stdEmi; // Absolute safety fallback
+            if(currentEmiDue < 0) currentEmiDue = stdEmi; 
 
             let dueAmt = currentEmiDue; 
             let paidAmt = 0; let paidDate = ""; let trNum = []; let chunkOdInt = 0; let displayOdDays = 0; let modeArr = [];
@@ -1755,15 +1732,12 @@
                 totalTablePaid += currentEmiDue;
             } else {
                 html+=`<tr><td>${i}</td><td>${dd.toLocaleDateString('en-GB')}</td><td>${esc(paidDate)}</td><td><b>${esc(displayMode)}</b></td><td>${currentEmiDue.toFixed(2)}</td><td><b>${esc(trNum.join(', '))}</b></td><td>${paidAmt.toFixed(2)}</td><td>${receiptDue.toFixed(2)}</td><td>${displayOdDays}</td><td>${chunkOdInt.toFixed(2)}</td></tr>`;
-                totalTablePaid += paidAmt;
-                totalTableRecDue += receiptDue;
+                totalTablePaid += paidAmt; totalTableRecDue += receiptDue;
             }
         }
         document.getElementById("odTb").innerHTML = html; 
         
-        safeSet("od_tpaid", totalTablePaid.toFixed(2));
-        safeSet("od_trec", totalTableRecDue.toFixed(2));
-
+        safeSet("od_tpaid", totalTablePaid.toFixed(2)); safeSet("od_trec", totalTableRecDue.toFixed(2));
         safeSet("od_rdue", window.fmtMoney(totalReceiptDue)); safeSet("od_pend", finalPendingCount.toFixed(2));
         safeSet("od_tf", window.fmtMoney(tf)); safeSet("od_td", td); 
         
@@ -1782,8 +1756,6 @@
         let d = window.dbData.find(x=>x.hp===document.getElementById("szHp").value.toUpperCase().trim()); 
         if(d){ 
             if(d.acStatus === "CLOSED") { alert("Account is Closed."); return; }
-            
-            // EXACT MATH ENGINE
             let baseFin = parseFloat(d.amt) || 0; let hpc = parseFloat(d.hpc) || 0; let totalLiability = baseFin + hpc;
             let ten = parseInt(d.ten) || 1; let stdEmi = Math.round(totalLiability / ten);
 
@@ -1834,7 +1806,7 @@
         document.getElementById("szrTb").innerHTML = html;
     }
 
-    // --- BULLETPROOF MATH ENGINE IN RECEIPTS ENTRY ---
+    // --- EXACT MATH ENGINE IN RECEIPTS ENTRY ---
     window.getRc = function(){ 
         let hpInput = document.getElementById("rcHp").value.toUpperCase().trim(); if(!hpInput) { alert("Please enter HP Number."); return; } 
         let d = window.dbData.find(x=>x.hp===hpInput); 
@@ -1842,7 +1814,6 @@
             if(d.acStatus === "CLOSED") { alert("Account is Closed."); return; }
             document.getElementById("rcPreviewBox").style.display="none"; document.getElementById("rcptEntryContainer").style.display="grid";
             
-            // EXACT MATH ENGINE
             let baseFin = parseFloat(d.amt) || 0; let hpc = parseFloat(d.hpc) || 0; let totalLiability = baseFin + hpc;
             let ten = parseInt(d.ten) || 1; let stdEmi = Math.round(totalLiability / ten);
 
@@ -1854,7 +1825,7 @@
             let pendingEmis = overdueAmount > 0 ? parseFloat((overdueAmount / stdEmi).toFixed(2)) : 0;
             
             document.getElementById("rcN").innerText=window.formatName(d.srn, d.nm).toUpperCase(); document.getElementById("rcMob").innerText=esc(d.mob); document.getElementById("rcV").innerText=esc(d.vno); 
-            document.getElementById("rcI").innerText=window.fmtMoney(stdEmi); // FORCED CORRECT EMI
+            document.getElementById("rcI").innerText=window.fmtMoney(stdEmi); 
             document.getElementById("rcP").innerText=window.fmtMoney(overdueAmount); document.getElementById("rcPEmis").innerText = pendingEmis;
             document.getElementById("rcTr").value="TR-"+Math.floor(Math.random()*900000+100000); document.getElementById("rcDate").value = window.getTodayDate(); document.getElementById("rcData").style.display="block";
         } else alert("HP Number not found.");
@@ -1895,16 +1866,13 @@
         document.getElementById("reprintRowsBody").innerHTML = html; document.getElementById("rpTb").style.display = "block";
     }
 
-    // --- BULLETPROOF MATH ENGINE IN SETTLEMENT ---
+    // --- EXACT MATH ENGINE IN SETTLEMENT ---
     window.searchClosingAccount = function() {
         let hp = document.getElementById("clHp").value.toUpperCase().trim(); let pc = document.getElementById("clPer").value; let d = window.dbData.find(x=>x.hp === hp);
         if(!d) { alert("Account not found."); return; } if(d.acStatus === "CLOSED") { alert("This account is already closed."); return; }
         
-        let baseFin = parseFloat(d.amt) || 0; 
-        let hpc = parseFloat(d.hpc) || 0; 
-        let totalLiability = baseFin + hpc;
-        let ten = parseInt(d.ten) || 1;
-        let stdEmi = Math.round(totalLiability / ten);
+        let baseFin = parseFloat(d.amt) || 0; let hpc = parseFloat(d.hpc) || 0; let totalLiability = baseFin + hpc;
+        let ten = parseInt(d.ten) || 1; let stdEmi = Math.round(totalLiability / ten);
 
         const safeSet = (id, val) => { let el = document.getElementById(id); if(el) el.innerText = val; };
         safeSet("clLNm", window.formatName(d.srn, d.nm).toUpperCase()); safeSet("clLMob", d.mob); safeSet("clLVno", d.vno.replace(/\s/g,'')); safeSet("clLVnm", d.vnm.toUpperCase());
@@ -1914,14 +1882,12 @@
         
         let mthParts = d.fdt.split('-'); let mth = new Date(mthParts[0], mthParts[1] - 1, mthParts[2]); let matchedSlips = window.receiptHistory.filter(h=>h.hp===d.hp && h.type==="Installment").sort((a,b) => new Date(a.dt) - new Date(b.dt)); let remainingSlips = JSON.parse(JSON.stringify(matchedSlips)); let totalOD = 0; let todayDateObj = new Date(); todayDateObj.setHours(0,0,0,0);
 
-        // BULLETPROOF OD CALC LOOP
         for(let i=1; i<=ten; i++) {
             let dd = new Date(mth); dd.setMonth(dd.getMonth() + i); 
             let currentEmiDue = (i === ten) ? (totalLiability - (stdEmi * (ten - 1))) : stdEmi;
             if(currentEmiDue < 0) currentEmiDue = stdEmi; 
 
-            let dueAmt = currentEmiDue; 
-            let paidAmt = 0;
+            let dueAmt = currentEmiDue; let paidAmt = 0;
             while(dueAmt > 0 && remainingSlips.length > 0) {
                 let slip = remainingSlips[0]; if(slip.amt <= 0) { remainingSlips.shift(); continue; }
                 let chunkAmt = 0; if(slip.amt <= dueAmt) { chunkAmt = slip.amt; paidAmt += slip.amt; dueAmt -= slip.amt; remainingSlips.shift(); } else { chunkAmt = dueAmt; paidAmt += dueAmt; slip.amt -= dueAmt; dueAmt = 0; }
