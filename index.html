@@ -133,22 +133,50 @@
     .rep-sub { padding: 15px 25px; background: #f1f5f9; text-align: right; font-weight: 800; font-size: 15px; color: var(--secondary); border-top: 2px solid var(--border);}
     
     @media print { 
+        /* 1. Force A4 Landscape & Margins */
+        @page { size: A4 landscape; margin: 10mm; } 
+
         #topNav, #globalHeader, .btn, .no-print, .nav-links, .brand { display: none !important; } 
         body { display:block; height: auto; overflow: visible; background:#fff; color:#000;}
         #appWrapper { display:block; overflow:visible; }
         #mainContent { overflow: visible; padding:0;} 
         .card, .page-container { box-shadow: none; border: none; padding: 0; margin: 0; background:#fff;} 
         #rcPreviewBox { border: none !important; box-shadow: none !important; margin: 0 !important; max-width: 100% !important; padding: 0 !important; }
-        #duesTb tr:nth-child(4n) { break-after: page; page-break-after: always; }
-        #duesTb tr { page-break-inside: avoid; }
-        .rep-section { border: 1px solid #000; border-radius: 0;}
-        .rep-header, .rep-sub { background: #eee !important; color: #000 !important; -webkit-print-color-adjust: exact; }
+        
+        /* 2. Fix Table Squishing Issue */
+        .table-wrap { border: none !important; overflow: visible !important; margin-top: 0 !important; }
+        table { width: 100% !important; border-collapse: collapse !important; }
+        
+        /* 3. Padding and Font Size for 4 Rows */
+        th, td {
+            padding: 8px 6px !important; 
+            font-size: 10px !important; 
+            line-height: 1.4 !important;
+            border: 1px solid #333 !important; 
+            color: #000 !important;
+            vertical-align: middle !important;
+        }
+        th { font-size: 11px !important; background-color: #f1f5f9 !important; -webkit-print-color-adjust: exact; }
+
+        /* Compact the Profile Text to save vertical space */
+        .profile-summary { line-height: 1.2 !important; margin: 0 !important; }
+        .profile-summary b { font-size: 10px !important; color: #000 !important; }
+        .profile-summary span { font-size: 9px !important; color: #444 !important; display: inline !important; margin-top: 0 !important; }
+        
+        /* 4. EXACTLY 4 ROWS PER PAGE LOGIC */
+        #duesTb tr { page-break-inside: avoid !important; }
+        #duesTb tr:nth-child(4n) { break-after: page !important; page-break-after: always !important; }
+
+        /* 5. Tag colors for print */
+        .tag { padding: 4px 8px !important; font-size: 10px !important; border: 1px solid #999 !important; }
+
+        .rep-section { border: 1px solid #000; border-radius: 0; margin-bottom: 15px !important;}
+        .rep-header, .rep-sub { background: #eee !important; color: #000 !important; padding: 8px 15px !important; -webkit-print-color-adjust: exact; }
     }
 </style>
 </head>
 <body>
 
-<!-- Reset Password Modal (Kothaga Add Chesindi) -->
 <div id="pwdResetModal" class="modal" style="display:none; z-index:4000;">
     <div class="modal-content" style="max-width:400px; padding:30px;">
         <h3 style="color:var(--primary); margin-top:0;">🔑 Reset Password</h3>
@@ -196,10 +224,8 @@
         <li onclick="nav('pDayBook')" id="nl_pDayBook">💸 Day Book</li>
         <li onclick="nav('pDailyRep')" id="nl_pDailyRep">📆 Daily Report</li>
         <li onclick="nav('pFinRep')" id="nl_pFinRep">📈 Ledger Report</li>
-        <!-- Name changed to Calculation -->
         <li onclick="nav('pCalc')" id="nl_pCalc">🧮 Calculation</li>
         <li onclick="nav('pPendingDocs')" id="nl_pPendingDocs">📁 Pending Docs</li>
-        <!-- Name changed to HP Register -->
         <li onclick="nav('pReg')" id="nl_pReg">📂 HP Register</li>
         <li onclick="nav('pSeize')" id="nl_pSeize">🛑 Seize Vehicle</li>
         <li onclick="nav('pSzRep')" id="nl_pSzRep">📋 Seized List</li>
@@ -211,18 +237,16 @@
 <div id="appWrapper">
     <div id="mainContent">
         
-        <!-- ================= EMPLOYEE MANAGEMENT PAGE ================= -->
         <div id="pEmpMgmt" class="page-container">
             <div class="card no-print" style="border-top: 5px solid #7c3aed; background: #faf5ff;">
                 <h2 class="card-title" style="color: #6d28d9; font-size:20px; margin-bottom:10px;">👥 Create & Manage Employee Logins</h2>
                 <div class="grid-2" style="margin-top:20px;">
-                    <!-- Create Employee Form -->
                     <div class="info-box" style="background:#fff; border: 1px solid #c4b5fd;">
                         <h4 style="margin:0 0 15px 0; color:#5b21b6; border-bottom:1px solid #ede9fe; padding-bottom:10px;">➕ Add New Employee</h4>
                         <div class="grid-2">
                             <div class="form-group"><label>Employee Name</label><input type="text" id="empName" placeholder="Ex: Suresh"></div>
                             <div class="form-group"><label>Designation</label><input type="text" id="empDesig" placeholder="Ex: Telecaller"></div>
-                            <div class="form-group"><label>User ID (For Login)</label><input type="text" id="empUid" placeholder="Ex: suresh123" oninput="this.value=this.value.toLowerCase().replace(/\\s/g,'')"></div>
+                            <div class="form-group"><label>User ID (For Login)</label><input type="text" id="empUid" placeholder="Ex: suresh123" oninput="this.value=this.value.toLowerCase().replace(/\s/g,'')"></div>
                             <div class="form-group"><label>Password</label><input type="text" id="empPwd" placeholder="Min 6 chars"></div>
                         </div>
                         
@@ -246,35 +270,27 @@
                         <div style="background:#f1f5f9; padding:15px; border-radius:8px; margin-top:15px; border:1px solid #cbd5e1;">
                             <label style="font-weight:800; font-size:14px; color:var(--primary);"><input type="checkbox" class="emp-perm" value="pSearch" id="permSearchMain" onchange="document.getElementById('rAuthBox').style.display = this.checked ? 'block' : 'none'"> 🔍 Search Account</label>
                             
-                            <!-- SECRET 'R' PERMISSION -->
                             <div id="rAuthBox" style="display:none; margin-top:10px; margin-left:25px; padding-top:10px; border-top:1px dashed #cbd5e1;">
                                 <label style="color:#b45309; font-weight:800; font-size:12px; cursor:pointer;"><input type="checkbox" id="permRAccess"> ⚠️ Allow 'R' Admin Access (Capital & Transfers)</label>
                                 <div style="font-size:10px; color:var(--text-muted); margin-top:4px; margin-left:22px;">Only give this to trusted admins. Gives access to internal funds.</div>
                             </div>
                         </div>
-                        
                         <button class="btn" style="background:#7c3aed; width:100%; margin-top:20px; font-size:14px; padding:15px;" onclick="createEmployeeLogin()">➕ Create Employee Login</button>
                     </div>
                     
-                    <!-- Employee Accounts List -->
                     <div class="info-box" style="background:#fff; border: 1px solid #c4b5fd;">
                         <h4 style="margin:0 0 15px 0; color:#5b21b6; border-bottom:1px solid #ede9fe; padding-bottom:10px;">📋 Existing Employee Logins</h4>
                         <p style="font-size:11px; color:var(--text-muted); margin-bottom:15px;">To prevent data loss, employee accounts cannot be deleted. Use the Active/Revoked button to block their login access.</p>
-                        
                         <div class="table-wrap" style="margin-top:0;">
                             <table>
                                 <thead><tr><th>Name / Designation</th><th>User ID</th><th>Status</th><th>Action</th></tr></thead>
-                                <tbody id="empListBody">
-                                    <!-- Populated by JS -->
-                                </tbody>
+                                <tbody id="empListBody"></tbody>
                             </table>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- ================= EXISTING PAGES START HERE ================= -->
 
         <div id="pDash" class="page-container" style="display:block;">
             <div class="dash-grid">
@@ -339,6 +355,10 @@
                             <span style="font-size:12px; font-weight:700; color:var(--text-muted);">Current Balance in <span id="lblAvailSrc">EMI Collection</span>:</span>
                             <span style="font-size:18px; font-weight:800; color:var(--primary-dark);">₹<span id="lblAvailAmt">0</span></span>
                         </div>
+                        <div class="form-group" style="margin-bottom:15px;">
+                            <label>Voucher No <span id="hint_db_vch" style="color:var(--primary); font-size:11px; font-weight:800; margin-left:5px;"></span></label>
+                            <input type="text" id="dbVch" placeholder="Enter Voucher No..." style="font-weight:800; border-color:var(--primary); font-size:16px;" oninput="this.value = this.value.toUpperCase();">
+                        </div>
                         <div class="form-group" style="margin-bottom:15px;"><label>Issued By</label><input type="text" id="dbIssuedBy" placeholder="Name..." oninput="this.value = this.value.toUpperCase();"></div>
                         <div class="form-group" style="margin-bottom:20px;"><label>Amount (₹)</label><input type="number" id="dbAmt" oninput="calcDaybookBal()" style="font-weight:800; font-size:20px; border-color:var(--primary); padding: 15px;"></div>
                         <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px dashed #cbd5e1; padding-top:15px; margin-bottom:20px;">
@@ -388,7 +408,7 @@
                 </div>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>Si No</th><th>Date</th><th>Name</th><th>Purpose</th><th>Source</th><th>Issued By</th><th>Amount (₹)</th><th>Action</th></tr></thead>
+                        <thead><tr><th>Si No</th><th>Date</th><th>Vch No</th><th>Name</th><th>Purpose</th><th>Source</th><th>Issued By</th><th>Amount (₹)</th><th>Action</th></tr></thead>
                         <tbody id="refundTbBody"></tbody>
                     </table>
                 </div>
@@ -436,7 +456,6 @@
                 <div class="dash-card c-green" style="cursor:pointer;" onclick="filterFinReport('EMI')"><h3>EMI Collected</h3><h1 id="rep_emi">₹0</h1></div>
                 <div class="dash-card c-yellow" style="cursor:pointer;" onclick="filterFinReport('OD')"><h3>OD Collected</h3><h1 id="rep_od">₹0</h1></div>
                 <div class="dash-card c-red" style="cursor:pointer;" onclick="filterFinReport('SEIZING')"><h3>Seizing Recovered</h3><h1 id="rep_sz">₹0</h1></div>
-                
                 <div class="dash-card c-orange" style="cursor:pointer;" onclick="filterFinReport('PENDING_DOCS')"><h3>Pending Docs Amt (Hold)</h3><h1 id="rep_pend_doc">₹0</h1></div>
                 <div class="dash-card" style="cursor:pointer; border-left:4px solid #8b5cf6;" onclick="filterFinReport('PENDING_COMM')"><h3>Pending Commission</h3><h1 id="rep_pend_comm" style="color:#8b5cf6;">₹0</h1></div>
                 <div class="dash-card c-dark" style="cursor:pointer; grid-column: span 2;" onclick="filterFinReport('ALL')"><h3>Total Main Collection</h3><h1 id="rep_tot">₹0</h1></div>
@@ -447,7 +466,7 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Sl No</th><th>Date</th><th>HP No</th><th>Customer Name & Purpose</th>
+                            <th>Sl No</th><th>Date</th><th>Voucher / HP No</th><th>Customer Name & Purpose</th>
                             <th>Transaction Route (From ➔ To)</th>
                             <th style="color:var(--danger);">Debit (-)</th><th style="color:var(--success);">Credit (+)</th>
                             <th>Bal Before</th><th>Bal After</th>
@@ -466,7 +485,6 @@
                         <div class="grid-4">
                             <div class="form-group"><label>Surname</label><input type="text" id="in_csur" oninput="this.value = this.value.toUpperCase();"></div>
                             <div class="form-group"><label>Customer Name</label><input type="text" id="in_cnm" oninput="this.value = this.value.toUpperCase();"></div>
-                            <!-- Age field added -->
                             <div class="form-group"><label>Age</label><input type="number" id="in_cage" placeholder="Ex: 35"></div>
                             <div class="form-group"><label>Father/Husband</label><input type="text" id="in_cfnm" oninput="this.value = this.value.toUpperCase();"></div>
                             <div class="form-group"><label>Village/Town</label><input type="text" id="in_cvl" oninput="this.value = this.value.toUpperCase();"></div>
@@ -484,7 +502,6 @@
                         <div class="grid-4">
                             <div class="form-group"><label>Surname</label><input type="text" id="in_gsur" oninput="this.value = this.value.toUpperCase();"></div>
                             <div class="form-group"><label>Guarantor Name</label><input type="text" id="in_gnm" oninput="this.value = this.value.toUpperCase();"></div>
-                            <!-- Age field added -->
                             <div class="form-group"><label>Age</label><input type="number" id="in_gage" placeholder="Ex: 40"></div>
                             <div class="form-group"><label>Father/Husband</label><input type="text" id="in_gfnm" oninput="this.value = this.value.toUpperCase();"></div>
                             <div class="form-group"><label>Mobile No</label><input type="number" id="in_gmob" oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);"></div>
@@ -505,7 +522,6 @@
                             <div class="form-group"><label>Chassis No</label><input type="text" id="in_vcn" oninput="this.value = this.value.toUpperCase();"></div>
                             <div class="form-group"><label>Engine No</label><input type="text" id="in_ven" oninput="this.value = this.value.toUpperCase();"></div>
                             <div class="form-group"><label>Color</label><input type="text" id="in_vcol" oninput="this.value = this.value.toUpperCase();"></div>
-                            <!-- RTO & Hypothecation fields added -->
                             <div class="form-group"><label>RTO</label><input type="text" id="in_vrto" placeholder="Ex: WARANGAL" oninput="this.value = this.value.toUpperCase();"></div>
                             <div class="form-group"><label>Hypothecation</label><input type="text" id="in_vhypo" placeholder="Finance Name" oninput="this.value = this.value.toUpperCase();"></div>
                         </div>
@@ -525,9 +541,15 @@
                             </div>
                             
                             <div class="form-group">
+                                <label>Debit Voucher No <span id="hint_hp_vch" style="color:var(--primary); font-size:11px; font-weight:800; margin-left:5px;"></span></label>
+                                <input type="text" id="in_vch" style="border-color:var(--danger); font-weight:800; background:#fff5f5; font-size:16px;" oninput="this.value = this.value.toUpperCase();" placeholder="Ex: VCH-101">
+                            </div>
+
+                            <div class="form-group">
                                 <label>HP Account No <span id="lastHpHint" style="color:var(--primary); font-size:11px; font-weight:800; margin-left:5px;"></span></label>
                                 <input type="text" id="in_hp" style="border-color:var(--primary); background:#eff6ff; font-weight:800; font-size:16px;" oninput="this.value = this.value.toUpperCase();">
                             </div>
+
                             <div class="form-group"><label>Loan Amount (₹)</label><input type="number" id="in_famt" style="font-weight:800;"></div>
                             <div class="form-group"><label>Office Doc Charges (₹)</label><input type="number" id="in_doc" value="0"></div>
                             <div class="form-group"><label>Dealer / Cons Commission (₹)</label><input type="number" id="in_bdoc" value="0"></div>
@@ -572,6 +594,12 @@
                 <div class="grid-2" style="margin-top:25px;">
                     <div class="info-box" style="background:#fff; border: 1px solid #c4b5fd;">
                         <h4 style="margin:0 0 15px 0; color:#5b21b6; border-bottom:1px solid #ede9fe; padding-bottom:10px;">💵 Add Owner Investment</h4>
+                        
+                        <div class="form-group" style="margin-bottom:15px;">
+                            <label>Voucher No <span id="hint_cap_vch" style="color:var(--primary); font-size:11px; font-weight:800; margin-left:5px;"></span></label>
+                            <input type="text" id="ftOwnerVch" placeholder="Ex: CAP-VCH-1" style="font-weight:800; border-color:#8b5cf6;" oninput="this.value = this.value.toUpperCase();">
+                        </div>
+
                         <div class="form-group" style="margin-bottom:15px;"><label>Date</label><input type="date" id="ftOwnerDt"></div>
                         <div class="form-group" style="margin-bottom:15px;"><label>Amount (₹)</label><input type="number" id="ftOwnerAmt" style="font-weight:800; font-size:18px; border-color:#8b5cf6;"></div>
                         <div class="form-group" style="margin-bottom:15px;"><label>Remarks</label><input type="text" id="ftOwnerRem" placeholder="Capital addition..." oninput="this.value = this.value.toUpperCase();"></div>
@@ -581,6 +609,11 @@
                     <div class="info-box" style="background:#fff; border: 1px solid #c4b5fd;">
                         <h4 style="margin:0 0 15px 0; color:#5b21b6; border-bottom:1px solid #ede9fe; padding-bottom:10px;">🔄 Internal Fund Transfer</h4>
                         <div class="grid-2">
+                            <div class="form-group" style="margin-bottom:15px; grid-column: span 2;">
+                                <label>Voucher No <span id="hint_trf_vch" style="color:var(--primary); font-size:11px; font-weight:800; margin-left:5px;"></span></label>
+                                <input type="text" id="ftTrfVch" placeholder="Ex: TRF-VCH-1" style="font-weight:800;" oninput="this.value = this.value.toUpperCase();">
+                            </div>
+
                             <div class="form-group" style="margin-bottom:15px;">
                                 <label>From Source</label>
                                 <select id="ftFromSrc" onchange="checkTransferBalances()">
@@ -614,7 +647,7 @@
                 </div>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>Si No</th><th>Date</th><th>From Source</th><th>To Source</th><th>Amount (₹)</th><th>Remarks</th></tr></thead>
+                        <thead><tr><th>Si No</th><th>Date</th><th>Vch No</th><th>From Source</th><th>To Source</th><th>Amount (₹)</th><th>Remarks</th></tr></thead>
                         <tbody id="ftHistoryTb"></tbody>
                     </table>
                 </div>
@@ -623,7 +656,6 @@
 
         <div id="pReg" class="page-container">
             <div class="card no-print">
-                <!-- Name changed to HP Register -->
                 <h2 class="card-title">📂 HP Register</h2>
                 <div class="grid-3" style="align-items: end;">
                     <div class="form-group"><label>Enter HP Number</label><input type="text" id="regHp" placeholder="Scan HP Number..." style="font-weight:700;" oninput="this.value = this.value.toUpperCase();"></div>
@@ -668,23 +700,11 @@
                     <h3 style="margin:0; font-weight:900; color:var(--secondary); font-size:18px;">📋 PENDING DUES LIST</h3>
                     <h3 style="margin:0; font-weight:900; color:var(--primary); font-size:18px; letter-spacing: 1px;">SRI VENKATA SIVA SAI FINANCE</h3>
                 </div>
-                
                 <table>
                     <thead><tr>
-                        <th>Sl No.</th>
-                        <th>HP No</th>
-                        <th>Customer Details</th>
-                        <th>Guarantor Details</th>
-                        <th id="dThDt">Agr Date</th>
-                        <th>Vehicle No</th>
-                        <th>Vehicle Name</th>
-                        <th>Village</th>
-                        <th>Mandal</th>
-                        <th>Pending EMIs</th>
-                        <th>EMI Amount</th>
-                        <th>Pending Due</th>
-                        <th>Status</th>
-                        <th>Last Receipt</th>
+                        <th>Sl No.</th><th>HP No</th><th>Customer Details</th><th>Guarantor Details</th><th id="dThDt">Agr Date</th>
+                        <th>Vehicle No</th><th>Vehicle Name</th><th>Village</th><th>Mandal</th><th>Pending EMIs</th>
+                        <th>EMI Amount</th><th>Pending Due</th><th>Status</th><th>Last Receipt</th>
                     </tr></thead>
                     <tbody id="duesTb"></tbody>
                     <tfoot id="duesFoot"></tfoot>
@@ -721,7 +741,6 @@
                         <div class="od-row"><div class="od-lbl">VEHICLE NO</div><div class="od-val">: <span id="od_vno"></span></div></div>
                         <div class="od-row"><div class="od-lbl">VEH MAKE</div><div class="od-val">: <span id="od_mk"></span></div></div>
                         <div class="od-row"><div class="od-lbl">VEH MODEL</div><div class="od-val">: <span id="od_mdl"></span></div></div>
-                        <!-- New RTO & HYPO IDs added for calculation view -->
                         <div class="od-row"><div class="od-lbl">RTO</div><div class="od-val">: <span id="od_rto"></span></div></div>
                         <div class="od-row"><div class="od-lbl">HYPO</div><div class="od-val">: <span id="od_hypo"></span></div></div>
                         <div class="od-row"><div class="od-lbl">MATURED</div><div class="od-val">: <div class="bulb" id="od_matBulb"></div> <b id="od_matTxt">M</b></div></div><br>
@@ -752,14 +771,11 @@
                         <div class="od-row"><div class="od-lbl">HP CHARGES</div><div class="od-val">: <span id="sum_hp"></span></div></div>
                         <hr style="border:1px dashed #cbd5e1; margin:8px 0;">
                         <div class="od-row"><div class="od-lbl"></div><div class="od-val" style="font-weight:800; font-size:14px; color:#0f172a;"><span id="sum_tot1"></span></div></div><br>
-                        
                         <div class="od-row"><div class="od-lbl">TOTAL LIABILITY</div><div class="od-val">: <span id="sum_fin2"></span></div></div>
                         <div class="od-row"><div class="od-lbl">TOTAL INTEREST</div><div class="od-val">: <span id="sum_hp2"></span></div></div>
                         <hr style="border:1px dashed #cbd5e1; margin:8px 0;">
-                        
                         <div class="od-row"><div class="od-lbl">COLLECTED AMNT</div><div class="od-val">: <span id="sum_col">0.00</span></div></div>
                         <hr style="border:1px dashed #cbd5e1; margin:8px 0;">
-                        
                         <div class="od-row"><div class="od-lbl">TOTAL DUE</div><div class="od-val">: <span id="sum_tdue"></span></div></div>
                         <div class="od-row"><div class="od-lbl">OD DUE</div><div class="od-val">: <span id="sum_odue"></span></div></div>
                         <div class="od-row" id="sum_szc_row"><div class="od-lbl">SEIZING CHARGES</div><div class="od-val">: <span id="sum_szc">0.00</span></div></div>
@@ -963,8 +979,11 @@
     window.currentClosingODDues = 0;
     window.currentClosingMainDues = 0;
     window.isDataSyncStarted = false; 
+    window.currentLastVch = "None"; // Store last voucher for prompts
 
     // --- 5. UTILITY FUNCTIONS ---
+    window.updateLastVoucher = function(vchNo) { set(ref(database, 'metadata/lastVch'), vchNo); }
+
     window.formatName = function(srn, nm) {
         let s = (srn || "").trim(); let n = (nm || "").trim();
         if(!s) return n; if(!n) return s;
@@ -1010,13 +1029,12 @@
         });
     }
 
-    // --- 6. AUTHENTICATION & ROLE MANAGEMENT (BUG FIXED) ---
+    // --- 6. AUTHENTICATION & ROLE MANAGEMENT ---
     window.doLogin = async function(){ 
-        let uid = document.getElementById("uid").value.trim().toLowerCase(); 
+        let uid = document.getElementById("uid").value.trim().toLowerCase().replace(/\s/g, ''); 
         let pwd = document.getElementById("pwd").value.trim();
         if(!uid || !pwd) { alert("Please enter both ID and Password"); return; }
         
-        // Step 1: Check if the user is an Employee in Database
         try {
             let empSnap = await get(ref(database, 'employees/' + uid));
             if(empSnap.exists()) {
@@ -1035,7 +1053,6 @@
             }
         } catch (e) { console.error(e); }
 
-        // Step 2: Admin Login
         uid = uid.replace(/[<>]/g, ""); let email = uid.includes("@") ? uid : uid + "@vssfinance.com";
         setPersistence(auth, browserSessionPersistence)
             .then(() => signInWithEmailAndPassword(auth, email, pwd))
@@ -1060,18 +1077,15 @@
         let headerText = empData ? `👤 Employee: ${empData.name.toUpperCase()}` : `🟢 Admin: ${userId.toUpperCase()}`;
         document.getElementById("cloudStatus").innerText = headerText; 
         
-        // --- SECURE UI PERMISSIONS LOGIC ---
         let allNavLinks = document.querySelectorAll(".nav-links li");
-        allNavLinks.forEach(li => li.style.display = "none"); // Force hide everything initially
+        allNavLinks.forEach(li => li.style.display = "none"); 
         
         document.getElementById('optRAccess').style.display = "none"; 
 
         if(!empData) {
-            // ADMIN: Show all
             allNavLinks.forEach(li => li.style.display = "flex");
             document.getElementById("optRAccess").style.display = "block"; 
         } else {
-            // EMPLOYEE: Show only assigned
             if(empData.perms && empData.perms.length > 0) {
                 empData.perms.forEach(permId => {
                     let navItem = document.getElementById("nl_" + permId);
@@ -1164,6 +1178,16 @@
     window.startDatabaseSync = function() {
         if(window.isDataSyncStarted) return; window.isDataSyncStarted = true;
         
+        // Listen for last voucher number and update hint fields globally
+        onValue(ref(database, 'metadata/lastVch'), (snapshot) => {
+            window.currentLastVch = snapshot.exists() ? snapshot.val() : "None";
+            let hintText = `(Last Used: ${window.currentLastVch})`;
+            if(document.getElementById("hint_hp_vch")) document.getElementById("hint_hp_vch").innerText = hintText;
+            if(document.getElementById("hint_db_vch")) document.getElementById("hint_db_vch").innerText = hintText;
+            if(document.getElementById("hint_cap_vch")) document.getElementById("hint_cap_vch").innerText = hintText;
+            if(document.getElementById("hint_trf_vch")) document.getElementById("hint_trf_vch").innerText = hintText;
+        });
+
         onValue(ref(database, 'accounts'), (snapshot) => {
             window.dbData = []; 
             if (snapshot.exists()) { snapshot.forEach((child) => { window.dbData.push(child.val()); }); }
@@ -1190,7 +1214,6 @@
             if(snapshot.exists()){ 
                 snapshot.forEach((child) => { 
                     let emp = child.val(); window.employeesData.push(emp); 
-                    
                     let statBadge = emp.status === "Active" ? `<span class="tag tag-paid">🟢 ACTIVE</span>` : `<span class="tag tag-seized">🔴 REVOKED</span>`;
                     let actionBtn = emp.status === "Active" 
                         ? `<button class="btn btn-red" style="padding:6px 12px; font-size:11px;" onclick="toggleEmployeeStatus('${emp.uid}', '${emp.status}')">Block</button>`
@@ -1244,15 +1267,17 @@
         
         window.dbData.forEach(a => {
             let hp = a.hp; let name = window.formatName(a.srn, a.nm);
-            if(parseFloat(a.amt) > 0) events.push({ date: a.fdt, hp, name, purpose: "Loan Amount Issued", fromAcc: "Owner Investment", toAcc: "Customer", amt: parseFloat(a.amt), type: "LOAN" });
-            if(parseFloat(a.doc) > 0) events.push({ date: a.fdt, hp, name, purpose: "Office Doc Charges Cut", fromAcc: "Customer", toAcc: "Doc Charges", amt: parseFloat(a.doc), type: "DOC" });
-            if(parseFloat(a.bdoc) > 0) events.push({ date: a.fdt, hp, name, purpose: `Commission Added for ${a.consultancy||'Dealer'}`, fromAcc: "Customer", toAcc: "Pending Commission", amt: parseFloat(a.bdoc), type: "COMM_ADD" });
+            
+            if(parseFloat(a.amt) > 0) events.push({ date: a.fdt, hp: (a.vchNo || hp), name, purpose: "Loan Amount Issued", fromAcc: "Owner Investment", toAcc: "Customer", amt: parseFloat(a.amt), type: "LOAN" });
+            if(parseFloat(a.doc) > 0) events.push({ date: a.fdt, hp: (a.vchNo || hp), name, purpose: "Office Doc Charges Cut", fromAcc: "Customer", toAcc: "Doc Charges", amt: parseFloat(a.doc), type: "DOC" });
+            if(parseFloat(a.bdoc) > 0) events.push({ date: a.fdt, hp: (a.vchNo || hp), name, purpose: `Commission Added for ${a.consultancy||'Dealer'}`, fromAcc: "Customer", toAcc: "Pending Commission", amt: parseFloat(a.bdoc), type: "COMM_ADD" });
             
             let holdAmt = (parseFloat(a.cbHoldAmt)||0) + (parseFloat(a.nocHoldAmt)||0);
-            if(holdAmt > 0) events.push({ date: a.fdt, hp, name, purpose: "Customer Hold Amount for Documents", fromAcc: "Customer", toAcc: "Pending Docs Hold", amt: holdAmt, type: "DOCS_HOLD" });
-            if(a.docPaid && a.consPaidDt) events.push({ date: a.consPaidDt, hp, name, purpose: `Commission Paid to ${a.consultancy||'Dealer'}`, fromAcc: "Pending Commission", toAcc: "Dealer / Agent", amt: parseFloat(a.bdoc), type: "COMM_PAID" });
-            if(a.cb === "Yes" && a.cbGivenDt && parseFloat(a.cbHoldAmt) > 0) events.push({ date: a.cbGivenDt, hp, name, purpose: "RC Hold Amount Returned", fromAcc: "Pending Docs Hold", toAcc: "Customer", amt: parseFloat(a.cbHoldAmt), type: "HOLD_RETURN" });
-            if(a.noc === "Yes" && a.nocGivenDt && parseFloat(a.nocHoldAmt) > 0) events.push({ date: a.nocGivenDt, hp, name, purpose: "NOC Hold Amount Returned", fromAcc: "Pending Docs Hold", toAcc: "Customer", amt: parseFloat(a.nocHoldAmt), type: "HOLD_RETURN" });
+            if(holdAmt > 0) events.push({ date: a.fdt, hp: hp, name, purpose: "Customer Hold Amount for Documents", fromAcc: "Customer", toAcc: "Pending Docs Hold", amt: holdAmt, type: "DOCS_HOLD" });
+            
+            if(a.docPaid && a.consPaidDt) events.push({ date: a.consPaidDt, hp: (a.consPaidVch || hp), name, purpose: `Commission Paid to ${a.consultancy||'Dealer'}`, fromAcc: "Pending Commission", toAcc: "Dealer / Agent", amt: parseFloat(a.bdoc), type: "COMM_PAID" });
+            if(a.cb === "Yes" && a.cbGivenDt && parseFloat(a.cbHoldAmt) > 0) events.push({ date: a.cbGivenDt, hp: (a.cbGivenVch || hp), name, purpose: "RC Hold Amount Returned", fromAcc: "Pending Docs Hold", toAcc: "Customer", amt: parseFloat(a.cbHoldAmt), type: "HOLD_RETURN" });
+            if(a.noc === "Yes" && a.nocGivenDt && parseFloat(a.nocHoldAmt) > 0) events.push({ date: a.nocGivenDt, hp: (a.nocGivenVch || hp), name, purpose: "NOC Hold Amount Returned", fromAcc: "Pending Docs Hold", toAcc: "Customer", amt: parseFloat(a.nocHoldAmt), type: "HOLD_RETURN" });
         });
         
         window.receiptHistory.forEach(r => {
@@ -1264,11 +1289,11 @@
         
         window.daybookData.forEach(d => {
             let name = d.name || "Daybook Entry";
-            if(d.type === "Debit" || d.type === "Refundable Debit") events.push({ date: d.dt, hp: "N/A", name, purpose: d.purpose, fromAcc: d.source, toAcc: "Expense / Advance", amt: parseFloat(d.amt), type: "EXPENSE" });
-            else if(d.type === "Credit") events.push({ date: d.dt, hp: "N/A", name, purpose: d.purpose, fromAcc: "Income / Addition", toAcc: d.source, amt: parseFloat(d.amt), type: "INCOME" });
+            if(d.type === "Debit" || d.type === "Refundable Debit") events.push({ date: d.dt, hp: d.tr, name, purpose: d.purpose, fromAcc: d.source, toAcc: "Expense / Advance", amt: parseFloat(d.amt), type: "EXPENSE" });
+            else if(d.type === "Credit") events.push({ date: d.dt, hp: d.tr, name, purpose: d.purpose, fromAcc: "Income / Addition", toAcc: d.source, amt: parseFloat(d.amt), type: "INCOME" });
         });
         
-        window.transfersData.forEach(t => { events.push({ date: t.dt, hp: "N/A", name: "Internal Fund Transfer", purpose: t.rem, fromAcc: t.from, toAcc: t.to, amt: parseFloat(t.amt), type: "TRANSFER" }); });
+        window.transfersData.forEach(t => { events.push({ date: t.dt, hp: t.tr, name: "Internal Fund Transfer", purpose: t.rem, fromAcc: t.from, toAcc: t.to, amt: parseFloat(t.amt), type: "TRANSFER" }); });
         events.sort((a,b) => new Date(a.date) - new Date(b.date));
         
         let internalAccs = ["Owner Investment", "Doc Charges", "Pending Commission", "Pending Docs Hold", "EMI Collection", "OD Collection", "Seizing Recovery", "Office Cash"];
@@ -1316,20 +1341,31 @@
     }
     
     window.saveDaybookEntry = function() {
-        let type = document.querySelector('input[name="dbType"]:checked').value; let name = document.getElementById("dbName").value.trim(); let purpose = document.getElementById("dbPurpose").value.trim();
-        let source = document.getElementById("dbSource").value; let issuedBy = document.getElementById("dbIssuedBy").value.trim(); let amt = parseFloat(document.getElementById("dbAmt").value) || 0;
-        if(!name || !purpose || amt <= 0 || !issuedBy) { alert("Please enter Name, Purpose, Issued By, and Valid Amount."); return; }
+        let type = document.querySelector('input[name="dbType"]:checked').value; 
+        let name = document.getElementById("dbName").value.trim(); 
+        let purpose = document.getElementById("dbPurpose").value.trim();
+        let source = document.getElementById("dbSource").value; 
+        let issuedBy = document.getElementById("dbIssuedBy").value.trim(); 
+        let amt = parseFloat(document.getElementById("dbAmt").value) || 0;
+        let vchNo = document.getElementById("dbVch").value.trim().toUpperCase();
+
+        if(!vchNo || !name || !purpose || amt <= 0 || !issuedBy) { 
+            alert("Please enter Voucher No, Name, Purpose, Issued By, and Valid Amount."); 
+            return; 
+        }
         
-        let trCode = "VB-" + Math.floor(Math.random()*900000+100000); let date = window.getTodayDate();
-        let payload = { tr: trCode, dt: date, type, name, purpose, source, issuedBy, amt };
+        let date = window.getTodayDate();
+        let payload = { tr: vchNo, dt: date, type, name, purpose, source, issuedBy, amt };
         if(type === "Refundable Debit") payload.status = "Pending";
         
         push(ref(database, 'daybook'), payload).then(() => {
+            window.updateLastVoucher(vchNo);
             alert("✅ Voucher Saved Successfully!");
-            document.getElementById("vp_dt").innerText = date.split('-').reverse().join('-'); document.getElementById("vp_no").innerText = trCode;
+            document.getElementById("vp_dt").innerText = date.split('-').reverse().join('-'); document.getElementById("vp_no").innerText = vchNo;
             let tpEl = document.getElementById("vp_type"); tpEl.innerText = type.toUpperCase(); tpEl.style.background = type.includes("Debit") ? "#fee2e2" : "#dcfce7"; tpEl.style.color = type.includes("Debit") ? "#dc2626" : "#166534";
             document.getElementById("vp_name").innerText = esc(name); document.getElementById("vp_pur").innerText = esc(purpose); document.getElementById("vp_src").innerText = esc(source); document.getElementById("vp_iss").innerText = esc(issuedBy); document.getElementById("vp_amt").innerText = "₹ " + window.fmtMoney(amt);
-            document.getElementById("dbName").value = ""; document.getElementById("dbPurpose").value = ""; document.getElementById("dbAmt").value = "";
+            
+            document.getElementById("dbVch").value = ""; document.getElementById("dbName").value = ""; document.getElementById("dbPurpose").value = ""; document.getElementById("dbAmt").value = "";
             document.getElementById("voucherPrintArea").style.display = "block"; window.calcDaybookBal(); window.renderRefundableDebits();
         });
     }
@@ -1341,9 +1377,9 @@
             if(fDate && tDate && (d.dt < fDate || d.dt > tDate)) return; if(status !== "All" && (d.status || "Pending") !== status) return;
             let statTag = (d.status === "Refunded") ? `<span class="tag tag-paid">Refunded ✅<br><small>${d.refundDt}</small></span>` : `<span class="tag tag-pending">Pending ⏳</span>`;
             let actionBtn = (d.status !== "Refunded") ? `<button class="btn btn-green" style="padding:6px 12px; font-size:11px;" onclick="markAsRefunded('${d.id}', '${d.source}', ${d.amt}, '${esc(d.name)}')">Mark Refunded ✅</button>` : `-`;
-            html += `<tr><td>${sno++}</td><td>${d.dt}</td><td><b>${esc(d.name)}</b></td><td>${esc(d.purpose)}</td><td><span class="tag tag-blue">${esc(d.source)}</span></td><td>${esc(d.issuedBy)}</td><td style="color:var(--danger); font-weight:800;">₹${window.fmtMoney(d.amt)}</td><td>${d.status==="Refunded" ? statTag : actionBtn}</td></tr>`;
+            html += `<tr><td>${sno++}</td><td>${d.dt}</td><td><b style="color:var(--primary);">${esc(d.tr)}</b></td><td><b>${esc(d.name)}</b></td><td>${esc(d.purpose)}</td><td><span class="tag tag-blue">${esc(d.source)}</span></td><td>${esc(d.issuedBy)}</td><td style="color:var(--danger); font-weight:800;">₹${window.fmtMoney(d.amt)}</td><td>${d.status==="Refunded" ? statTag : actionBtn}</td></tr>`;
         });
-        document.getElementById("refundTbBody").innerHTML = html || `<tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:20px;">No refundable debits found.</td></tr>`;
+        document.getElementById("refundTbBody").innerHTML = html || `<tr><td colspan="9" style="text-align:center; color:var(--text-muted); padding:20px;">No refundable debits found.</td></tr>`;
     }
 
     window.markAsRefunded = function(id, source, amount, name) {
@@ -1358,23 +1394,37 @@
 
     window.checkTransferBalances = function() {
         let fromSrc = document.getElementById("ftFromSrc").value; let toSrc = document.getElementById("ftToSrc").value;
-        document.getElementById("lblFtFromBal").innerText = window.fmtMoney(window.getSourceBalance(fromSrc)); document.getElementById("lblFtToBal").innerText = window.fmtMoney(window.getSourceBalance(toSrc));
     }
 
     window.addOwnerInvestment = function() {
         let dt = document.getElementById("ftOwnerDt").value || window.getTodayDate();
-        let amt = parseFloat(document.getElementById("ftOwnerAmt").value) || 0; let rem = document.getElementById("ftOwnerRem").value.trim() || "CAPITAL ADDITION";
-        if(amt <= 0) { alert("Enter valid investment amount"); return; }
-        push(ref(database, 'transfers'), { tr: "CAP-" + Math.floor(Math.random()*900000+100000), dt: dt, from: "EXTERNAL", to: "Owner Investment", amt: amt, rem: rem }).then(() => {
-            alert("✅ Capital Added Successfully!"); document.getElementById("ftOwnerAmt").value = ""; window.checkTransferBalances(); window.renderTransfers();
+        let amt = parseFloat(document.getElementById("ftOwnerAmt").value) || 0; 
+        let rem = document.getElementById("ftOwnerRem").value.trim() || "CAPITAL ADDITION";
+        let vchNo = document.getElementById("ftOwnerVch").value.trim().toUpperCase();
+
+        if(!vchNo || amt <= 0) { alert("Enter valid Voucher No and Investment amount"); return; }
+        
+        push(ref(database, 'transfers'), { tr: vchNo, dt: dt, from: "EXTERNAL", to: "Owner Investment", amt: amt, rem: rem }).then(() => {
+            window.updateLastVoucher(vchNo);
+            alert("✅ Capital Added Successfully!"); 
+            document.getElementById("ftOwnerVch").value = ""; document.getElementById("ftOwnerAmt").value = ""; 
+            window.checkTransferBalances(); window.renderTransfers();
         });
     }
 
     window.executeFundTransfer = function() {
-        let fromSrc = document.getElementById("ftFromSrc").value; let toSrc = document.getElementById("ftToSrc").value; let amt = parseFloat(document.getElementById("ftTrAmt").value) || 0; let rem = document.getElementById("ftTrRem").value.trim();
-        if(fromSrc === toSrc) { alert("Cannot transfer to the same account!"); return; } if(amt <= 0 || !rem) { alert("Enter valid Amount and Remarks"); return; }
-        push(ref(database, 'transfers'), { tr: "TRF-" + Math.floor(Math.random()*900000+100000), dt: window.getTodayDate(), from: fromSrc, to: toSrc, amt: amt, rem: rem }).then(() => {
-            alert(`✅ Transfer of ₹${amt} successful!`); document.getElementById("ftTrAmt").value = ""; document.getElementById("ftTrRem").value = ""; window.checkTransferBalances(); window.renderTransfers();
+        let fromSrc = document.getElementById("ftFromSrc").value; let toSrc = document.getElementById("ftToSrc").value; 
+        let amt = parseFloat(document.getElementById("ftTrAmt").value) || 0; let rem = document.getElementById("ftTrRem").value.trim();
+        let vchNo = document.getElementById("ftTrfVch").value.trim().toUpperCase();
+
+        if(fromSrc === toSrc) { alert("Cannot transfer to the same account!"); return; } 
+        if(!vchNo || amt <= 0 || !rem) { alert("Enter Voucher No, valid Amount and Remarks"); return; }
+        
+        push(ref(database, 'transfers'), { tr: vchNo, dt: window.getTodayDate(), from: fromSrc, to: toSrc, amt: amt, rem: rem }).then(() => {
+            window.updateLastVoucher(vchNo);
+            alert(`✅ Transfer of ₹${amt} successful!`); 
+            document.getElementById("ftTrfVch").value = ""; document.getElementById("ftTrAmt").value = ""; document.getElementById("ftTrRem").value = ""; 
+            window.checkTransferBalances(); window.renderTransfers();
         });
     }
 
@@ -1383,9 +1433,9 @@
         window.transfersData.forEach(t => {
             if(fDate && tDate && (t.dt < fDate || t.dt > tDate)) return;
             let fromTag = t.from === "EXTERNAL" ? `<b style="color:var(--success);">💰 NEW ADDITION</b>` : `<span class="tag tag-pending">${t.from}</span>`; let toTag = t.to === "Profit / Withdrawal" ? `<span class="tag tag-seized">${t.to}</span>` : `<span class="tag tag-paid">${t.to}</span>`;
-            html += `<tr><td>${sno++}</td><td>${t.dt}</td><td>${fromTag}</td><td>${toTag}</td><td style="font-weight:800; color:var(--primary-dark);">₹${window.fmtMoney(t.amt)}</td><td>${esc(t.rem)}</td></tr>`;
+            html += `<tr><td>${sno++}</td><td>${t.dt}</td><td><b style="color:var(--primary);">${esc(t.tr)}</b></td><td>${fromTag}</td><td>${toTag}</td><td style="font-weight:800; color:var(--primary-dark);">₹${window.fmtMoney(t.amt)}</td><td>${esc(t.rem)}</td></tr>`;
         });
-        document.getElementById("ftHistoryTb").innerHTML = html || `<tr><td colspan="6" style="text-align:center; padding:20px;">No transfers found.</td></tr>`;
+        document.getElementById("ftHistoryTb").innerHTML = html || `<tr><td colspan="7" style="text-align:center; padding:20px;">No transfers found.</td></tr>`;
     }
 
     window.generateDailyReport = function() {
@@ -1400,21 +1450,22 @@
         window.dbData.forEach(d => {
             if(d.fdt >= fDate && d.fdt <= tDate) {
                 let givenAmt = parseFloat(d.amt) || 0; hpSub += givenAmt;
-                hpHTML += `<tr><td>${slHp++}</td><td>${d.fdt}</td><td><b style="color:var(--primary);">${esc(d.hp)}</b></td><td>${window.formatName(d.srn, d.nm)}</td><td><span class="tag tag-pending">${esc(d.vno)}</span></td><td><b>${esc(d.vnm)}</b></td><td style="color:var(--danger); font-weight:800;">₹${window.fmtMoney(givenAmt)}</td></tr>`;
+                hpHTML += `<tr><td>${slHp++}</td><td>${d.fdt}</td><td><b style="color:var(--primary);">${esc(d.vchNo)}</b></td><td><b style="color:var(--secondary);">${esc(d.hp)}</b></td><td>${window.formatName(d.srn, d.nm)}</td><td><span class="tag tag-pending">${esc(d.vno)}</span></td><td><b>${esc(d.vnm)}</b></td><td style="color:var(--danger); font-weight:800;">₹${window.fmtMoney(givenAmt)}</td></tr>`;
             }
             let bdocAmt = parseFloat(d.bdoc) || 0;
             if(bdocAmt > 0) {
                 if(d.docPaid && d.consPaidDt >= fDate && d.consPaidDt <= tDate) {
-                    consSub += bdocAmt; consHTML += `<tr><td>${slCons++}</td><td>${d.consPaidDt}</td><td><b style="color:var(--secondary);">${d.consultancy||'-'}</b></td><td>${d.vno}</td><td>${d.vnm}</td><td style="color:var(--danger);font-weight:800;">₹${window.fmtMoney(bdocAmt)}</td><td><span style="color:var(--success);font-weight:800;">✅ Paid</span></td></tr>`;
+                    consSub += bdocAmt; consHTML += `<tr><td>${slCons++}</td><td>${d.consPaidDt}</td><td><b style="color:var(--primary);">${esc(d.consPaidVch)}</b></td><td><b style="color:var(--secondary);">${d.consultancy||'-'}</b></td><td>${d.vno}</td><td>${d.vnm}</td><td style="color:var(--danger);font-weight:800;">₹${window.fmtMoney(bdocAmt)}</td><td><span style="color:var(--success);font-weight:800;">✅ Paid</span></td></tr>`;
                 } else if(!d.docPaid && d.fdt >= fDate && d.fdt <= tDate) {
-                    consHTML += `<tr><td>${slCons++}</td><td>${d.fdt}</td><td><b style="color:var(--secondary);">${d.consultancy||'-'}</b></td><td>${d.vno}</td><td>${d.vnm}</td><td style="color:var(--danger);font-weight:800;">₹${window.fmtMoney(bdocAmt)}</td><td><button class="btn" style="padding:6px 12px; font-size:11px;" onclick="payConsDoc('${d.hp}')">Pay Now</button></td></tr>`;
+                    consHTML += `<tr><td>${slCons++}</td><td>${d.fdt}</td><td>-</td><td><b style="color:var(--secondary);">${d.consultancy||'-'}</b></td><td>${d.vno}</td><td>${d.vnm}</td><td style="color:var(--danger);font-weight:800;">₹${window.fmtMoney(bdocAmt)}</td><td><button class="btn" style="padding:6px 12px; font-size:11px;" onclick="payConsDoc('${d.hp}')">Pay Now</button></td></tr>`;
                 }
             }
             let holdAmt = (parseFloat(d.cbHoldAmt)||0) + (parseFloat(d.nocHoldAmt)||0);
             if(holdAmt > 0) {
                 let givenDt = d.cbGivenDt || d.nocGivenDt; 
+                let givenVch = d.cbGivenVch || d.nocGivenVch;
                 if(givenDt >= fDate && givenDt <= tDate) {
-                    docPaySub += holdAmt; docPayHTML += `<tr><td>${slDocPay++}</td><td>${givenDt}</td><td><b style="color:var(--primary);">${d.hp}</b></td><td>${d.vno} - ${d.vnm}</td><td><span class="tag tag-paid">✅ Given</span></td><td style="color:var(--danger);font-weight:800;">₹${window.fmtMoney(holdAmt)}</td></tr>`;
+                    docPaySub += holdAmt; docPayHTML += `<tr><td>${slDocPay++}</td><td>${givenDt}</td><td><b style="color:var(--primary);">${esc(givenVch)}</b></td><td><b style="color:var(--secondary);">${d.hp}</b></td><td>${d.vno} - ${d.vnm}</td><td><span class="tag tag-paid">✅ Given</span></td><td style="color:var(--danger);font-weight:800;">₹${window.fmtMoney(holdAmt)}</td></tr>`;
                 }
             }
         });
@@ -1430,17 +1481,17 @@
 
         window.daybookData.filter(v => v.dt >= fDate && v.dt <= tDate).forEach(v => {
             let displayName = v.name ? esc(v.name) : esc(v.purpose);
-            if(v.type === "Debit" || v.type === "Refundable Debit") { dbSub -= v.amt; dbHTML += `<tr><td>${slDb++}</td><td>${v.dt}</td><td><b>${displayName}</b></td><td>${esc(v.purpose)}</td><td>${esc(v.source)}</td><td>${esc(v.issuedBy)}</td><td>-</td><td style="color:var(--danger); font-weight:800;">₹${window.fmtMoney(v.amt)}</td></tr>`; } 
-            else { dbSub += v.amt; dbHTML += `<tr><td>${slDb++}</td><td>${v.dt}</td><td><b>${displayName}</b></td><td>${esc(v.purpose)}</td><td>${esc(v.source)}</td><td>${esc(v.issuedBy)}</td><td style="color:var(--success); font-weight:800;">₹${window.fmtMoney(v.amt)}</td><td>-</td></tr>`; }
+            if(v.type === "Debit" || v.type === "Refundable Debit") { dbSub -= v.amt; dbHTML += `<tr><td>${slDb++}</td><td>${v.dt}</td><td><b style="color:var(--primary);">${esc(v.tr)}</b></td><td><b>${displayName}</b></td><td>${esc(v.purpose)}</td><td>${esc(v.source)}</td><td>${esc(v.issuedBy)}</td><td>-</td><td style="color:var(--danger); font-weight:800;">₹${window.fmtMoney(v.amt)}</td></tr>`; } 
+            else { dbSub += v.amt; dbHTML += `<tr><td>${slDb++}</td><td>${v.dt}</td><td><b style="color:var(--primary);">${esc(v.tr)}</b></td><td><b>${displayName}</b></td><td>${esc(v.purpose)}</td><td>${esc(v.source)}</td><td>${esc(v.issuedBy)}</td><td style="color:var(--success); font-weight:800;">₹${window.fmtMoney(v.amt)}</td><td>-</td></tr>`; }
         });
 
         let renderAreaHtml = `
-            <div class="rep-section"><div class="rep-header"><span>📝 New Agreements (HP Entries)</span><span>DEBIT</span></div><div class="table-wrap" style="margin:0; border:none; border-bottom: 1px solid var(--border);"><table style="border:none;"><thead><tr><th>Sl.No</th><th>Date</th><th>HP No</th><th>Customer Name</th><th>Vehicle No</th><th>Vehicle Name</th><th>Debit Amt</th></tr></thead><tbody>${hpHTML || `<tr><td colspan="7" style="color:var(--text-muted); text-align:center;">No new agreements.</td></tr>`}</tbody></table></div><div class="rep-sub">Sub Total: ₹${window.fmtMoney(hpSub)} (Debit)</div></div>
+            <div class="rep-section"><div class="rep-header"><span>📝 New Agreements (HP Entries)</span><span>DEBIT</span></div><div class="table-wrap" style="margin:0; border:none; border-bottom: 1px solid var(--border);"><table style="border:none;"><thead><tr><th>Sl.No</th><th>Date</th><th>Vch No</th><th>HP No</th><th>Customer Name</th><th>Vehicle No</th><th>Vehicle Name</th><th>Debit Amt</th></tr></thead><tbody>${hpHTML || `<tr><td colspan="8" style="color:var(--text-muted); text-align:center;">No new agreements.</td></tr>`}</tbody></table></div><div class="rep-sub">Sub Total: ₹${window.fmtMoney(hpSub)} (Debit)</div></div>
             <div class="rep-section"><div class="rep-header"><span>💵 Collections (EMI & OD)</span><span>CREDIT</span></div><div class="table-wrap" style="margin:0; border:none; border-bottom: 1px solid var(--border);"><table style="border:none;"><thead><tr><th>Sl.No</th><th>Date</th><th>HP No</th><th>Customer Name</th><th>Collection Type</th><th>Payment Mode</th><th>TR Number</th><th>Receipt Amt</th></tr></thead><tbody>${rcHTML || `<tr><td colspan="8" style="color:var(--text-muted); text-align:center;">No collections.</td></tr>`}</tbody></table></div><div class="rep-sub">Sub Total: ₹${window.fmtMoney(rcSub)} (Credit)</div></div>
             <div class="rep-section"><div class="rep-header"><span>🛑 Seizing Collections</span><span>CREDIT</span></div><div class="table-wrap" style="margin:0; border:none; border-bottom: 1px solid var(--border);"><table style="border:none;"><thead><tr><th>Sl.No</th><th>Date</th><th>HP No</th><th>Customer Name</th><th>TR Number</th><th>Receipt Amt</th></tr></thead><tbody>${szHTML || `<tr><td colspan="6" style="color:var(--text-muted); text-align:center;">No seizing collections.</td></tr>`}</tbody></table></div><div class="rep-sub">Sub Total: ₹${window.fmtMoney(szSub)} (Credit)</div></div>
-            <div class="rep-section"><div class="rep-header"><span>🤝 Consultancy / Dealer Doc Charges</span><span>DEBIT</span></div><div class="table-wrap" style="margin:0; border:none; border-bottom: 1px solid var(--border);"><table style="border:none;"><thead><tr><th>Sl.No</th><th>Date</th><th>Consultancy/Dealer</th><th>Vehicle No</th><th>Vehicle Name</th><th>Doc Charges (₹)</th><th>Action</th></tr></thead><tbody>${consHTML || `<tr><td colspan="7" style="color:var(--text-muted); text-align:center;">No consultancy transactions.</td></tr>`}</tbody></table></div><div class="rep-sub">Sub Total: ₹${window.fmtMoney(consSub)} (Debit)</div></div>
-            <div class="rep-section"><div class="rep-header"><span>📄 Pending Document Payments (Given)</span><span>DEBIT</span></div><div class="table-wrap" style="margin:0; border:none; border-bottom: 1px solid var(--border);"><table style="border:none;"><thead><tr><th>Sl.No</th><th>Given Date</th><th>HP No</th><th>Vehicle Details</th><th>Doc Given</th><th>Amount Paid (₹)</th></tr></thead><tbody>${docPayHTML || `<tr><td colspan="6" style="color:var(--text-muted); text-align:center;">No pending documents paid.</td></tr>`}</tbody></table></div><div class="rep-sub">Sub Total: ₹${window.fmtMoney(docPaySub)} (Debit)</div></div>
-            <div class="rep-section"><div class="rep-header"><span>💸 Expenses & Returns (Day Book)</span><span>DEBIT / CREDIT</span></div><div class="table-wrap" style="margin:0; border:none; border-bottom: 1px solid var(--border);"><table style="border:none;"><thead><tr><th>Sl.No</th><th>Date</th><th>Name</th><th>Purpose</th><th>Source</th><th>Issued By</th><th style="color:var(--success);">Credit (+)</th><th style="color:var(--danger);">Debit (-)</th></tr></thead><tbody>${dbHTML || `<tr><td colspan="8" style="color:var(--text-muted); text-align:center;">No daybook transactions.</td></tr>`}</tbody></table></div><div class="rep-sub">Net Total: ₹${window.fmtMoney(dbSub)}</div></div>
+            <div class="rep-section"><div class="rep-header"><span>🤝 Consultancy / Dealer Doc Charges</span><span>DEBIT</span></div><div class="table-wrap" style="margin:0; border:none; border-bottom: 1px solid var(--border);"><table style="border:none;"><thead><tr><th>Sl.No</th><th>Date</th><th>Vch No</th><th>Consultancy/Dealer</th><th>Vehicle No</th><th>Vehicle Name</th><th>Doc Charges (₹)</th><th>Action</th></tr></thead><tbody>${consHTML || `<tr><td colspan="8" style="color:var(--text-muted); text-align:center;">No consultancy transactions.</td></tr>`}</tbody></table></div><div class="rep-sub">Sub Total: ₹${window.fmtMoney(consSub)} (Debit)</div></div>
+            <div class="rep-section"><div class="rep-header"><span>📄 Pending Document Payments (Given)</span><span>DEBIT</span></div><div class="table-wrap" style="margin:0; border:none; border-bottom: 1px solid var(--border);"><table style="border:none;"><thead><tr><th>Sl.No</th><th>Given Date</th><th>Vch No</th><th>HP No</th><th>Vehicle Details</th><th>Doc Given</th><th>Amount Paid (₹)</th></tr></thead><tbody>${docPayHTML || `<tr><td colspan="7" style="color:var(--text-muted); text-align:center;">No pending documents paid.</td></tr>`}</tbody></table></div><div class="rep-sub">Sub Total: ₹${window.fmtMoney(docPaySub)} (Debit)</div></div>
+            <div class="rep-section"><div class="rep-header"><span>💸 Expenses & Returns (Day Book)</span><span>DEBIT / CREDIT</span></div><div class="table-wrap" style="margin:0; border:none; border-bottom: 1px solid var(--border);"><table style="border:none;"><thead><tr><th>Sl.No</th><th>Date</th><th>Vch No</th><th>Name</th><th>Purpose</th><th>Source</th><th>Issued By</th><th style="color:var(--success);">Credit (+)</th><th style="color:var(--danger);">Debit (-)</th></tr></thead><tbody>${dbHTML || `<tr><td colspan="9" style="color:var(--text-muted); text-align:center;">No daybook transactions.</td></tr>`}</tbody></table></div><div class="rep-sub">Net Total: ₹${window.fmtMoney(dbSub)}</div></div>
         `;
         document.getElementById("drRenderArea").innerHTML = renderAreaHtml;
         let netBal = rcSub + szSub + dbSub - hpSub - consSub - docPaySub; 
@@ -1465,15 +1516,37 @@
     window.markDocGiven = function(hp) {
         let d = window.dbData.find(x => x.hp === hp); if(!d) return;
         let totalHold = (parseFloat(d.cbHoldAmt)||0) + (parseFloat(d.nocHoldAmt)||0);
-        if(confirm(`Confirm documents received for ${hp}?\nStopped Amount to Release: ₹${totalHold}`)) {
-            let updates = {}; if(d.cb === "No") { updates.cb = "Yes"; updates.cbGivenDt = window.getTodayDate(); } if(d.noc === "No") { updates.noc = "Yes"; updates.nocGivenDt = window.getTodayDate(); }
-            update(ref(database, 'accounts/' + hp), updates).then(() => { alert("✅ Documents Updated & Amount Released!"); updateDashboardCounts(); });
+        
+        let vch = prompt(`Confirm documents received for HP: ${hp}\nStopped Amount to Release: ₹${totalHold}\n\nENTER DEBIT VOUCHER NUMBER:\n(Last Used: ${window.currentLastVch})`);
+        
+        if (vch !== null) {
+            vch = vch.trim().toUpperCase();
+            if(vch === "") { alert("Error: Voucher Number is required!"); return; }
+            
+            let updates = {}; 
+            if(d.cb === "No") { updates.cb = "Yes"; updates.cbGivenDt = window.getTodayDate(); updates.cbGivenVch = vch; } 
+            if(d.noc === "No") { updates.noc = "Yes"; updates.nocGivenDt = window.getTodayDate(); updates.nocGivenVch = vch; }
+            
+            update(ref(database, 'accounts/' + hp), updates).then(() => { 
+                window.updateLastVoucher(vch);
+                alert("✅ Documents Updated & Amount Released!"); 
+                updateDashboardCounts(); 
+            });
         }
     };
 
     window.payConsDoc = function(hp) {
-        if(confirm(`Confirm payment of Consultancy / Dealer Doc charges for Account: ${hp}?`)) {
-            update(ref(database, 'accounts/' + hp), { docPaid: true, consPaidDt: window.getTodayDate() }).then(() => { alert("✅ Payment marked successfully!"); window.generateDailyReport(); });
+        let vch = prompt(`Confirm payment of Consultancy / Dealer Doc charges for A/C: ${hp}\n\nENTER DEBIT VOUCHER NUMBER:\n(Last Used: ${window.currentLastVch})`);
+        
+        if(vch !== null) {
+            vch = vch.trim().toUpperCase();
+            if(vch === "") { alert("Error: Voucher Number is required!"); return; }
+            
+            update(ref(database, 'accounts/' + hp), { docPaid: true, consPaidDt: window.getTodayDate(), consPaidVch: vch }).then(() => { 
+                window.updateLastVoucher(vch);
+                alert("✅ Payment marked successfully!"); 
+                window.generateDailyReport(); 
+            });
         }
     };
 
@@ -1482,12 +1555,17 @@
         document.getElementById("cb_r_box").style.display = cbNo ? 'flex' : 'none'; document.getElementById("noc_r_box").style.display = nocNo ? 'flex' : 'none'; document.getElementById("doc_hold_amt_box").style.display = (cbNo || nocNo) ? 'flex' : 'none';
     };
 
-    // --- SAVE HP LOGIC UPDATED WITH NEW FIELDS ---
     window.executeHPSave = async function() {
-        let targetHP = document.getElementById("in_hp").value.toUpperCase().trim(); if(!targetHP) { alert("Error: Please enter HP Number"); return; }
+        let targetHP = document.getElementById("in_hp").value.toUpperCase().trim(); 
+        let targetVch = document.getElementById("in_vch").value.toUpperCase().trim();
+        
+        if(!targetVch) { alert("Error: Please enter Debit Voucher Number"); return; }
+        if(!targetHP) { alert("Error: Please enter HP Number"); return; }
         if(window.dbData.find(x => x.hp === targetHP)) { alert(`Error: The HP Number "${targetHP}" is already used!`); return; }
+        
         let targetVno = document.getElementById("in_vreg").value.toUpperCase().trim();
         if(window.dbData.find(x => x.vno === targetVno && x.acStatus === 'OPEN')) { if(!confirm(`Warning: Vehicle Number ${targetVno} is already ACTIVE. Continue?`)) return; }
+        
         let saveBtn = document.getElementById("saveBtn"); saveBtn.innerText = "⏳ Saving..."; saveBtn.disabled = true;
         try {
             let cImgUrl = "https://ui-avatars.com/api/?name=User&background=random"; let gImgUrl = "https://ui-avatars.com/api/?name=Guarantor&background=random";
@@ -1505,21 +1583,23 @@
             let expDate = new Date(agreeDate); expDate.setMonth(expDate.getMonth() + ten);
             let combinedHoldAmt = (document.getElementById("in_cb").value === "No" || document.getElementById("in_noc").value === "No") ? (parseFloat(document.getElementById("in_doc_hold_amt").value) || 0) : 0;
             
-            // New Fields Captured
             let newAccount = {
+                vchNo: targetVch,
                 hp: targetHP, nm: document.getElementById("in_cnm").value, fnm: document.getElementById("in_cfnm").value, srn: document.getElementById("in_csur").value, mob: document.getElementById("in_cmob").value, occ: document.getElementById("in_cocc").value, 
-                cage: document.getElementById("in_cage").value, // Customer Age
-                vno: targetVno, vnm: document.getElementById("in_vnm").value, yr: document.getElementById("in_vyr").value, vl: document.getElementById("in_cvl").value, md: document.getElementById("in_cmd").value, adr: document.getElementById("in_cadr").value, aadh: document.getElementById("in_caad").value, pin: document.getElementById("in_cpin").value,
+                cage: document.getElementById("in_cage").value, vno: targetVno, vnm: document.getElementById("in_vnm").value, yr: document.getElementById("in_vyr").value, vl: document.getElementById("in_cvl").value, md: document.getElementById("in_cmd").value, adr: document.getElementById("in_cadr").value, aadh: document.getElementById("in_caad").value, pin: document.getElementById("in_cpin").value,
                 gnm: document.getElementById("in_gnm").value, gsrn: document.getElementById("in_gsur").value, gmob: document.getElementById("in_gmob").value, gocc: document.getElementById("in_gocc").value, gadr: document.getElementById("in_gadr").value, gfnm: document.getElementById("in_gfnm").value, gaad: document.getElementById("in_gaad").value, gvl: document.getElementById("in_gvl").value, gmd: document.getElementById("in_gmd").value,
-                gage: document.getElementById("in_gage").value, // Guarantor Age
-                rto: document.getElementById("in_vrto").value, // RTO
-                hypo: document.getElementById("in_vhypo").value, // Hypothecation
+                gage: document.getElementById("in_gage").value, rto: document.getElementById("in_vrto").value, hypo: document.getElementById("in_vhypo").value,
                 fdt: agreeDate, exp: expDate.toISOString().split('T')[0], amt, doc, bdoc, hpc, ten, consultancy: document.getElementById("in_cons").value, verifiedBy: document.getElementById("in_ver").value, vcn: document.getElementById("in_vcn").value, ven: document.getElementById("in_ven").value, vcol: document.getElementById("in_vcol").value,
                 cb: document.getElementById("in_cb").value, cbReason: document.getElementById("in_cb").value === "No" ? document.getElementById("in_cb_r").value : "", cbHoldAmt: document.getElementById("in_cb").value === "No" ? combinedHoldAmt : 0,
                 noc: document.getElementById("in_noc").value, nocReason: document.getElementById("in_noc").value === "No" ? document.getElementById("in_noc_r").value : "", nocHoldAmt: (document.getElementById("in_cb").value === "Yes" && document.getElementById("in_noc").value === "No") ? combinedHoldAmt : 0,
                 vYear: document.getElementById("in_vyr").value, pIns: ten, iAmt: emiAmount, pInsDone: 0, lastRecDt: "", matured: false, sz: false, sBy: "", yard: "", szC: 0, szDt: "", cImg: cImgUrl, gImg: gImgUrl, acStatus: "OPEN", closedDt: "", closedBy: "", settledAmt: 0, settledOd: 0, docPaid: false, consPaidDt: "", cbGivenDt: "", nocGivenDt: "", retDt: ""
             };
-            await set(ref(database, 'accounts/' + targetHP), newAccount); alert(`Success: Account ${targetHP} Saved!`); document.getElementById("hpMainInputForm").reset();
+            
+            await set(ref(database, 'accounts/' + targetHP), newAccount); 
+            window.updateLastVoucher(targetVch); 
+            alert(`Success: Account ${targetHP} Saved!`); 
+            
+            document.getElementById("hpMainInputForm").reset();
             document.getElementById("cb_r_box").style.display = 'none'; document.getElementById("noc_r_box").style.display = 'none'; document.getElementById("doc_hold_amt_box").style.display = 'none';
         } catch (err) { alert("Error saving: " + err); } finally { saveBtn.innerText = "💾 Create New Account"; saveBtn.disabled = false; }
     }
@@ -1545,7 +1625,6 @@
         document.getElementById("regTb").innerHTML = html;
     }
     
-    // --- HP REGISTER MODAL UPDATED WITH NEW FIELDS ---
     window.vReg = function(hp){ 
         let d = window.dbData.find(x=>x.hp===hp); if(!d) return;
         document.getElementById("modTitle").innerText=`Details for Account : ${d.hp}`; 
@@ -1555,7 +1634,7 @@
             <div class="info-box" style="display:flex;gap:20px; align-items:flex-start;"><img src="${esc(d.gImg)}" class="profile-img">
             <div><b style="color:var(--primary); font-size:14px;">🤝 Guarantor Details</b><br><br><div class="grid-2" style="gap:5px;"><span><b>Name:</b></span><span>${window.formatName(d.gsrn, d.gnm)}</span><span><b>Age:</b></span><span>${esc(d.gage) || '-'} Yrs</span><span><b>Mobile:</b></span><span>${esc(d.gmob)}</span><span><b>Aadhar:</b></span><span>${esc(d.gaad)}</span><span><b>Work:</b></span><span>${esc(d.gocc)}</span><span style="grid-column:span 2;"><b>Address:</b> ${esc(d.gadr)}, ${esc(d.gvl)}, ${esc(d.gmd)}</span></div></div></div></div>
             <div class="info-box" style="background:#fff;"><b style="color:var(--secondary); font-size:14px;">⚙️ Vehicle Details:</b> <br>Vehicle No: <b>${esc(d.vno)}</b> | Name & Model: ${esc(d.vnm)} | Year: ${esc(d.vYear)} | Chassis No: ${esc(d.vcn)} | Engine No: ${esc(d.ven)} | Color: ${esc(d.vcol)} <br> RTO: <b style="color:var(--primary);">${esc(d.rto) || '-'}</b> | Hypothecation: <b>${esc(d.hypo) || '-'}</b><br><br>
-            <b style="color:var(--secondary); font-size:14px;">📊 Finance Details:</b> <br>Loan Amount: <b>₹${window.fmtMoney(d.amt)}</b> | Office Doc: ₹${d.doc} | Broker Doc: ₹${d.bdoc || 0} | Total Interest: ₹${d.hpc} | Months: ${d.ten} Mos <br> RC Book: ${esc(d.cb)} | NOC: ${esc(d.noc)} | Officer: ${esc(d.verifiedBy)} | Status: <b style="color:${d.acStatus==='CLOSED'?'var(--danger)':'var(--success)'};">${esc(d.acStatus)}</b></div>`; 
+            <b style="color:var(--secondary); font-size:14px;">📊 Finance Details:</b> <span style="float:right; color:var(--danger);">Voucher No: <b>${esc(d.vchNo)}</b></span><br>Loan Amount: <b>₹${window.fmtMoney(d.amt)}</b> | Office Doc: ₹${d.doc} | Broker Doc: ₹${d.bdoc || 0} | Total Interest: ₹${d.hpc} | Months: ${d.ten} Mos <br> RC Book: ${esc(d.cb)} | NOC: ${esc(d.noc)} | Officer: ${esc(d.verifiedBy)} | Status: <b style="color:${d.acStatus==='CLOSED'?'var(--danger)':'var(--success)'};">${esc(d.acStatus)}</b></div>`; 
         document.getElementById("regModal").style.display="flex"; 
     }
 
@@ -1567,7 +1646,7 @@
     };
     window.chgDueOp = () => { document.getElementById("dVl2Box").style.display = document.getElementById("dOp").value === "Between" ? "block" : "none"; };
     
-    // --- EXACT MATH ENGINE IN DUES LIST ---
+    // --- UPDATED MATH ENGINE IN DUES LIST WITH COMPACT LAYOUT FIX ---
     window.genDues = function(){ 
         let v1 = parseFloat(document.getElementById("dVl").value)||0; 
         let v2 = parseFloat(document.getElementById("dVl2Box").style.display === "block" ? document.getElementById("dVl2").value : 0)||0; 
@@ -1623,25 +1702,26 @@
             grandTotal += d.overdueAmount; 
             let dueColor = d.overdueEMIsCount > 0 ? "var(--danger)" : "var(--success)";
             
-            let cLbl = `<b style="font-size:14px; color:var(--primary-dark); text-transform:uppercase;">${window.formatName(d.srn, d.nm)}</b><br>
-                        <span style="font-weight:700; color:var(--text-muted); font-size:12px;">S/O: ${esc(d.fnm)}</span><br>
-                        <span style="font-weight:800; font-size:14px; color:#0f172a; display:inline-block; margin-top:4px;">${esc(d.mob)}</span><br>
-                        <span style="font-size:11px; color:var(--text-muted); display:inline-block; margin-top:2px;">${esc(d.adr)}</span><br>
-                        <span style="font-size:11px; margin-top:4px; display:inline-block;"><b>Aadhar:</b> ${esc(d.aadh)}</span><br>
-                        <span style="font-size:11px;"><b>Work:</b> ${esc(d.occ)}</span>`;
+            // Fixed Profile Labels for Print Layout (Removed gap-causing spans & brs)
+            let cLbl = `<b style="font-size:12px; color:var(--primary-dark); text-transform:uppercase;">${window.formatName(d.srn, d.nm)}</b><br>
+                        <span style="font-weight:700; color:var(--text-muted); font-size:10px;">S/O: ${esc(d.fnm)}</span><br>
+                        <b style="font-size:11px; color:#0f172a;">Ph: ${esc(d.mob)}</b><br>
+                        <span style="font-size:10px; color:var(--text-muted);">${esc(d.adr)}</span><br>
+                        <span style="font-size:10px;"><b>Aadhar:</b> ${esc(d.aadh)}</span><br>
+                        <span style="font-size:10px;"><b>Work:</b> ${esc(d.occ)}</span>`;
                         
-            let gLbl = `<b style="font-size:14px; color:var(--secondary); text-transform:uppercase;">${window.formatName(d.gsrn, d.gnm)}</b><br>
-                        <span style="font-weight:700; color:var(--text-muted); font-size:12px;">S/O: ${esc(d.gfnm)}</span><br>
-                        <span style="font-weight:800; font-size:14px; color:#0f172a; display:inline-block; margin-top:4px;">${esc(d.gmob)}</span><br>
-                        <span style="font-size:11px; color:var(--text-muted); display:inline-block; margin-top:2px;">${esc(d.gadr)}</span><br>
-                        <span style="font-size:11px; margin-top:4px; display:inline-block;"><b>Aadhar:</b> ${esc(d.gaad)}</span><br>
-                        <span style="font-size:11px;"><b>Work:</b> ${esc(d.gocc)}</span>`;
+            let gLbl = `<b style="font-size:12px; color:var(--secondary); text-transform:uppercase;">${window.formatName(d.gsrn, d.gnm)}</b><br>
+                        <span style="font-weight:700; color:var(--text-muted); font-size:10px;">S/O: ${esc(d.gfnm)}</span><br>
+                        <b style="font-size:11px; color:#0f172a;">Ph: ${esc(d.gmob)}</b><br>
+                        <span style="font-size:10px; color:var(--text-muted);">${esc(d.gadr)}</span><br>
+                        <span style="font-size:10px;"><b>Aadhar:</b> ${esc(d.gaad)}</span><br>
+                        <span style="font-size:10px;"><b>Work:</b> ${esc(d.gocc)}</span>`;
             
             html += `<tr>
                 <td>${sno++}</td>
                 <td><b style="color:var(--primary); font-size:14px;">${esc(d.hp)}</b></td>
-                <td><div class="profile-summary" style="line-height:1.6;">${cLbl}</div></td>
-                <td><div class="profile-summary" style="line-height:1.6;">${gLbl}</div></td>
+                <td><div class="profile-summary" style="line-height:1.2; margin:0;">${cLbl}</div></td>
+                <td><div class="profile-summary" style="line-height:1.2; margin:0;">${gLbl}</div></td>
                 <td style="font-weight:700;">${m ? esc(d.exp) : esc(d.fdt)}</td>
                 <td><span class="tag tag-pending" style="font-size:12px;">${esc(d.vno)}</span></td>
                 <td><b style="color:var(--secondary); font-size:11px;">${esc(d.vnm)}</b></td>
@@ -1664,7 +1744,6 @@
         document.getElementById("duesFoot").innerHTML = footHtml;
     }
 
-    // --- EXACT MATH ENGINE & NEW FIELDS IN CALCULATION STATEMENT ---
     window.genOD = function(){ 
         let hp=document.getElementById("odAcc").value.toUpperCase(); let pc=document.getElementById("odPer").value; let d=window.dbData.find(x=>x.hp===hp); 
         if(!d){alert("Account not found. (ఈ నంబర్ లేదు!)"); return;}
@@ -1676,7 +1755,6 @@
         safeSet("od_nm", window.formatName(d.srn, d.nm).toUpperCase()); safeSet("od_area", d.md.toUpperCase()); safeSet("od_town", d.vl.toUpperCase()); safeSet("od_ac", d.hp); safeSet("od_verBy", d.verifiedBy?.toUpperCase() || "NONE"); safeSet("od_consName", d.consultancy?.toUpperCase() || "");
         safeSet("od_vno", d.vno.replace(/\s/g,'')); safeSet("od_mk", d.yr); safeSet("od_mdl", d.vnm.toUpperCase()); safeSet("od_en", d.ven || ""); safeSet("od_cn", d.vcn || ""); safeSet("od_currentDt", window.getTodayDate());
         
-        // Updating RTO & Hypo Values in Calc view
         safeSet("od_rto", esc(d.rto) || "-"); safeSet("od_hypo", esc(d.hypo) || "-");
 
         let statusEl = document.getElementById("od_acStat"); 
@@ -1806,7 +1884,6 @@
         document.getElementById("szrTb").innerHTML = html;
     }
 
-    // --- EXACT MATH ENGINE IN RECEIPTS ENTRY ---
     window.getRc = function(){ 
         let hpInput = document.getElementById("rcHp").value.toUpperCase().trim(); if(!hpInput) { alert("Please enter HP Number."); return; } 
         let d = window.dbData.find(x=>x.hp===hpInput); 
@@ -1866,7 +1943,6 @@
         document.getElementById("reprintRowsBody").innerHTML = html; document.getElementById("rpTb").style.display = "block";
     }
 
-    // --- EXACT MATH ENGINE IN SETTLEMENT ---
     window.searchClosingAccount = function() {
         let hp = document.getElementById("clHp").value.toUpperCase().trim(); let pc = document.getElementById("clPer").value; let d = window.dbData.find(x=>x.hp === hp);
         if(!d) { alert("Account not found."); return; } if(d.acStatus === "CLOSED") { alert("This account is already closed."); return; }
