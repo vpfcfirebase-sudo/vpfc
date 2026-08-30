@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>THAMBOLA BOOK</title>
+<title>THAMBOLA BOOK LIVE</title>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <style>
@@ -14,28 +14,30 @@
   .container { padding: 20px; }
   .btn { padding: 10px 20px; font-size: 16px; color: white; background: #4caf50; border: none; border-radius: 5px; cursor: pointer; margin: 5px; font-weight: bold; transition: 0.3s; }
   .btn:hover { opacity: 0.9; }
-  .btn.red { background: #f44336; } .btn.blue { background: #2196f3; }
+  .btn.red { background: #f44336; } .btn.blue { background: #2196f3; } .btn.dark { background: #333; }
   .input-box { padding: 10px; font-size: 16px; width: 150px; margin: 5px; border: 1px solid #ccc; border-radius: 4px; }
   
   .panel { background: white; padding: 15px; margin: 15px auto; max-width: 600px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
   .big-number { font-size: 70px; color: #d32f2f; font-weight: bold; margin: 10px; }
   .link-box { background: #e3f2fd; padding: 15px; border: 1px dashed #2196f3; word-break: break-all; margin-top: 10px; font-size: 14px; }
   
-  /* Tickets */
-  .ticket-wrap { border: 3px solid #6a1b9a; margin: 15px auto; background: white; max-width: 500px; position: relative; }
+  .ticket-wrap { border: 3px solid #6a1b9a; margin: 15px auto; background: white; max-width: 500px; }
   .t-head { background: #f3e5f5; color: #4a148c; padding: 8px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
   .cancel-btn { background: #f44336; color: white; border: none; padding: 5px 10px; cursor: pointer; font-size: 12px; border-radius: 3px; font-weight: bold;}
   .t-grid { display: grid; grid-template-columns: repeat(9, 1fr); border-top: 2px solid #6a1b9a; }
-  .t-cell { border: 1px solid #ccc; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: bold; }
+  .t-cell { border: 1px solid #ccc; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; user-select: none; }
   .t-cell.empty { background: #fafafa; border-color: transparent; }
-  .t-cell.marked { background: #f44336; color: white; }
   
-  /* Board */
+  /* Player manual tick style */
+  .t-cell.num { cursor: pointer; transition: 0.2s; }
+  .t-cell.num:hover { background: #ffe0b2; }
+  .t-cell.marked { background: #e53935 !important; color: white; }
+  
   .board { display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px; max-width: 500px; margin: 15px auto; }
   .b-cell { background: white; border: 1px solid #999; padding: 5px; font-size: 12px; font-weight: bold; }
   .b-cell.called { background: #ffeb3b; } .b-cell.current { background: #f44336; color: white; }
   
-  #host-view, #player-view, #setup-view { display: none; }
+  #host-view, #player-view, #setup-view, #player-join-view { display: none; }
 </style>
 </head>
 <body>
@@ -45,20 +47,34 @@
   <div id="display-game-id" class="game-number"></div>
 </div>
 
+<!-- 1. LANDING VIEW (Host Start) -->
 <div id="setup-view" class="container">
   <div class="panel">
     <h2>Welcome to Live Tambola</h2>
-    <p>Database Connected Successfully.</p>
-    <button class="btn blue" onclick="initHostGame()">START NEW GAME (HOST)</button>
+    <p>Enter Game Number to Start:</p>
+    <input type="text" id="custom-game-id" class="input-box" value="001" style="text-align:center; font-size: 20px; font-weight: bold;">
+    <br><br>
+    <button class="btn blue" onclick="initHostGame()">CREATE GAME (HOST)</button>
   </div>
 </div>
 
+<!-- 2. PLAYER JOIN VIEW (Crucial for Voice & Live Sync Activation) -->
+<div id="player-join-view" class="container">
+  <div class="panel">
+    <h2>Welcome Player!</h2>
+    <p style="color:red; font-weight:bold;">Tap the button below to join the live game. This will enable voice announcements on your phone.</p>
+    <button class="btn blue" style="padding: 15px 30px; font-size: 20px;" onclick="enterPlayerGame()">JOIN GAME NOW</button>
+  </div>
+</div>
+
+<!-- 3. HOST VIEW -->
 <div id="host-view" class="container">
   <div class="panel">
     <h2>Host Dashboard</h2>
     <div id="host-current-num" class="big-number">--</div>
-    <button id="auto-play-btn" class="btn" onclick="toggleAutoPlay()">▶ START AUTO PLAY</button>
-    <button class="btn blue" onclick="drawSingle()">Draw 1 Number</button>
+    <button id="auto-play-btn" class="btn" onclick="toggleAutoPlay()">▶ AUTO PLAY</button>
+    <button class="btn blue" onclick="drawSingle()">DRAW 1 NUM</button>
+    <button class="btn dark" onclick="endGame()">GAME OVER</button>
   </div>
 
   <div class="panel">
@@ -70,23 +86,24 @@
   </div>
 
   <div class="panel">
-    <h3>All Players Tickets (Live Track)</h3>
+    <h3>All Players Tickets (Host Auto-Tick View)</h3>
     <div id="host-tickets-area"></div>
   </div>
 </div>
 
+<!-- 4. PLAYER VIEW -->
 <div id="player-view" class="container">
   <div class="panel">
     <h2 id="player-welcome-name"></h2>
-    <div class="board" id="player-board"></div>
     <div id="player-current-num" class="big-number">--</div>
+    <div class="board" id="player-board"></div>
   </div>
-  <h3>Your Tickets (Auto-Marked)</h3>
+  <h3>Your Tickets (Tap to Tick)</h3>
   <div id="player-tickets-area"></div>
 </div>
 
 <script>
-  // --- MEE FIREBASE CONFIG IKADA ADD CHESANU ---
+  // Mee Firebase Config
   const firebaseConfig = {
     apiKey: "AIzaSyAvjFcKKiu4OMmQckYXMTejdBJh9tC6TjM",
     authDomain: "sri-vishnu-priya-finance-c591f.firebaseapp.com",
@@ -97,7 +114,6 @@
     appId: "1:184676228358:web:c2b32b68debeeadadfd287"
   };
   
-  // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
@@ -105,26 +121,27 @@
   let autoPlayTimer = null;
   let allNumbers = [], calledNumbers = [];
   
-  // Check if link is for Player
   const urlParams = new URLSearchParams(window.location.search);
   const isPlayerLink = urlParams.has('game') && urlParams.has('player');
 
   window.onload = () => {
     if (isPlayerLink) {
-      joinGameAsPlayer();
+      // Player needs to click first to activate audio
+      document.getElementById('player-join-view').style.display = 'block';
+      gameId = urlParams.get('game');
+      playerId = urlParams.get('player');
     } else {
       document.getElementById('setup-view').style.display = 'block';
     }
     createEmptyBoard('player-board');
   };
 
-  // --- HOST FUNCTIONS ---
+  // --- HOST LOGIC ---
   function initHostGame() {
-    // Generate Random Game Number
-    gameId = Math.floor(1000 + Math.random() * 9000).toString(); 
+    gameId = document.getElementById('custom-game-id').value.trim();
+    if(!gameId) gameId = "001";
     document.getElementById('display-game-id').innerText = "Game Number: " + gameId;
     
-    // Reset pool
     allNumbers = Array.from({length: 90}, (_, i) => i + 1);
     for (let i = allNumbers.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -136,6 +153,9 @@
     document.getElementById('setup-view').style.display = 'none';
     document.getElementById('host-view').style.display = 'block';
     isHost = true;
+    
+    // Enable host voice context immediately
+    announceVoice("Game started");
     listenToGameState();
   }
 
@@ -148,40 +168,28 @@
     let tickets = [];
     for(let i=0; i<count; i++) tickets.push(generateTicketArray());
 
-    // Save tickets to Database
     db.ref(`games/${gameId}/tickets/${pId}`).set({ name: name, data: tickets });
 
-    let link = `${window.location.origin}${window.location.pathname}?game=${gameId}&player=${pId}`;
-    
-    // Check if running locally
-    if(window.location.origin === "file://") {
-      alert("WARNING: You are opening this file from your computer. The link won't work for others. Upload this file to tiiny.host or Netlify to get a shareable internet link.");
-    }
+    // Use current URL exactly as it is for the link
+    let baseUrl = window.location.href.split('?')[0];
+    let link = `${baseUrl}?game=${gameId}&player=${pId}`;
 
     document.getElementById('link-output').innerHTML = `
       <div class="link-box">
-        <strong>Send this link to ${name}:</strong><br><br>
+        <strong>Send this to ${name}:</strong><br><br>
         <a href="${link}" target="_blank">${link}</a><br><br>
         <button class="btn blue" onclick="navigator.clipboard.writeText('${link}'); alert('Link Copied!');">Copy Link</button>
       </div>
     `;
-    
     document.getElementById('p-name').value = '';
   }
 
-  function cancelTicket(pId) {
-    if(confirm("Are you sure you want to cancel this player's tickets?")) {
-      db.ref(`games/${gameId}/tickets/${pId}`).remove();
-    }
-  }
-
-  function announceVoice(num) {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      let msg = new SpeechSynthesisUtterance("Number is " + num);
-      msg.lang = 'en-IN'; 
-      msg.rate = 0.9;
-      window.speechSynthesis.speak(msg);
+  function endGame() {
+    if(confirm("Are you sure you want to end this game? Everyone will be disconnected.")) {
+      db.ref('games/' + gameId).update({ status: 'ended' });
+      clearInterval(autoPlayTimer);
+      alert("Game Over! Ready for a new game.");
+      window.location.href = window.location.href.split('?')[0];
     }
   }
 
@@ -196,53 +204,67 @@
     let btn = document.getElementById('auto-play-btn');
     if (autoPlayTimer) {
       clearInterval(autoPlayTimer); autoPlayTimer = null;
-      btn.innerText = "▶ START AUTO PLAY"; btn.classList.remove('red');
+      btn.innerText = "▶ AUTO PLAY"; btn.classList.remove('red');
     } else {
-      drawSingle(); // Draw first immediately
-      autoPlayTimer = setInterval(drawSingle, 5000); // Calls every 5 seconds
-      btn.innerText = "⏸ STOP AUTO PLAY"; btn.classList.add('red');
+      drawSingle(); 
+      autoPlayTimer = setInterval(drawSingle, 4000); 
+      btn.innerText = "⏸ STOP AUTO"; btn.classList.add('red');
     }
   }
 
-  // --- PLAYER FUNCTIONS ---
-  function joinGameAsPlayer() {
-    gameId = urlParams.get('game');
-    playerId = urlParams.get('player');
-    document.getElementById('display-game-id').innerText = "Game Number: " + gameId;
+  // --- PLAYER LOGIC ---
+  function enterPlayerGame() {
+    document.getElementById('player-join-view').style.display = 'none';
     document.getElementById('player-view').style.display = 'block';
+    document.getElementById('display-game-id').innerText = "Game Number: " + gameId;
     
+    // Play silent audio to unlock Speech API in browsers
+    announceVoice("Welcome");
+
     db.ref(`games/${gameId}/tickets/${playerId}`).once('value', snapshot => {
       if(snapshot.exists()) {
         document.getElementById('player-welcome-name').innerText = snapshot.val().name + "'s Tickets";
       } else {
-        alert("Your tickets were canceled or the game has ended.");
+        alert("Your tickets were canceled or game has ended.");
       }
     });
     listenToGameState();
   }
 
-  // --- REAL-TIME SYNC LOGIC ---
+  // --- REAL-TIME LIVE SYNC ---
   function listenToGameState() {
     db.ref('games/' + gameId).on('value', snapshot => {
       let data = snapshot.val();
       if(!data) return;
+
+      // Handle Game Over
+      if (data.status === 'ended') {
+        alert("Game Over! Host has ended the game.");
+        window.location.href = window.location.href.split('?')[0];
+        return;
+      }
+
       if(!isHost) allNumbers = data.pool || [];
-      
       let newNum = data.currentDraw;
       calledNumbers = data.called || [];
       
       if(newNum > 0) {
-        if(isHost) document.getElementById('host-current-num').innerText = newNum;
-        else document.getElementById('player-current-num').innerText = newNum;
+        if(isHost) {
+          document.getElementById('host-current-num').innerText = newNum;
+        } else {
+          document.getElementById('player-current-num').innerText = newNum;
+        }
         
-        // Voice is triggered ONLY when a NEW number comes from database
+        // Voice announce (Live)
         if (newNum !== window.lastAnnouncedNumber) {
           announceVoice(newNum);
           window.lastAnnouncedNumber = newNum;
         }
         
         updateBoard(newNum, calledNumbers);
-        markAllTicketsUI(); 
+        
+        // ONLY Host sees Auto-Tick. Players click manually.
+        if (isHost) markAllTicketsUI(); 
       }
     });
 
@@ -259,15 +281,25 @@
         document.getElementById('player-tickets-area').innerHTML = '';
         if(snapshot.exists()) {
           renderTickets('player-tickets-area', snapshot.val().data, snapshot.val().name, null, false);
-          markAllTicketsUI();
         } else {
-          document.getElementById('player-tickets-area').innerHTML = '<h3 style="color:red; text-align:center;">Tickets Cancelled by Host</h3>';
+          document.getElementById('player-tickets-area').innerHTML = '<h3 style="color:red;">Tickets Cancelled</h3>';
         }
       });
     }
   }
 
-  // --- UI & TICKET LOGIC ---
+  function announceVoice(text) {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      let speakText = typeof text === 'number' ? "Number is " + text : text;
+      let msg = new SpeechSynthesisUtterance(speakText);
+      msg.lang = 'en-IN'; 
+      msg.rate = 0.9;
+      window.speechSynthesis.speak(msg);
+    }
+  }
+
+  // --- UI ---
   function updateBoard(current, calledArray) {
     for(let i=1; i<=90; i++) {
       let cell = document.getElementById('b-'+i);
@@ -289,8 +321,10 @@
     }
   }
 
+  // Auto Mark ONLY for Host
   function markAllTicketsUI() {
-    document.querySelectorAll('.t-cell.num').forEach(cell => {
+    if (!isHost) return; 
+    document.querySelectorAll('#host-tickets-area .t-cell.num').forEach(cell => {
       if(calledNumbers.includes(parseInt(cell.innerText))) cell.classList.add('marked');
     });
   }
@@ -308,13 +342,36 @@
       for(let r=0; r<3; r++) {
         for(let c=0; c<9; c++) {
           let cell = document.createElement('div');
-          if(tData[r][c] === 0) { cell.className = 't-cell empty'; } 
-          else { cell.className = 't-cell num'; cell.innerText = tData[r][c]; }
+          if(tData[r][c] === 0) { 
+            cell.className = 't-cell empty'; 
+          } else { 
+            cell.className = 't-cell num'; 
+            cell.innerText = tData[r][c]; 
+            
+            // MANUAL TICK LOGIC (WITH CONFIRMATION) FOR PLAYERS ONLY
+            if (!isHostView) {
+              cell.onclick = function() {
+                if (this.classList.contains('marked')) {
+                  if (confirm("Ee number ni un-tick (deselect) cheyalanukuntunnara?")) {
+                    this.classList.remove('marked');
+                  }
+                } else {
+                  this.classList.add('marked');
+                }
+              };
+            }
+          }
           grid.appendChild(cell);
         }
       }
       wrap.appendChild(head); wrap.appendChild(grid); container.appendChild(wrap);
     });
+  }
+
+  function cancelTicket(pId) {
+    if(confirm("Are you sure you want to cancel this player's tickets?")) {
+      db.ref(`games/${gameId}/tickets/${pId}`).remove();
+    }
   }
 
   function generateTicketArray() {
