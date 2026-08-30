@@ -37,7 +37,7 @@
   .b-cell { background: white; border: 1px solid #999; padding: 5px; font-size: 12px; font-weight: bold; }
   .b-cell.called { background: #ffeb3b; } .b-cell.current { background: #f44336; color: white; }
   
-  #host-view, #player-view, #setup-view, #player-join-view { display: none; }
+  #host-view, #player-view, #setup-view, #player-join-view, #game-over-view { display: none; }
 </style>
 </head>
 <body>
@@ -58,11 +58,11 @@
   </div>
 </div>
 
-<!-- 2. PLAYER JOIN VIEW (Crucial for Voice & Live Sync Activation) -->
+<!-- 2. PLAYER JOIN VIEW -->
 <div id="player-join-view" class="container">
   <div class="panel">
     <h2>Welcome Player!</h2>
-    <p style="color:red; font-weight:bold;">Tap the button below to join the live game. This will enable voice announcements on your phone.</p>
+    <p style="color:red; font-weight:bold;">Tap the button below to join the game.</p>
     <button class="btn blue" style="padding: 15px 30px; font-size: 20px;" onclick="enterPlayerGame()">JOIN GAME NOW</button>
   </div>
 </div>
@@ -102,6 +102,15 @@
   <div id="player-tickets-area"></div>
 </div>
 
+<!-- 5. GAME OVER VIEW (For Players) -->
+<div id="game-over-view" class="container">
+  <div class="panel">
+    <h2 style="color: #d32f2f; font-size: 30px;">GAME OVER</h2>
+    <p style="font-size: 18px; font-weight: bold;">This game has been ended by the Host.</p>
+    <p>Please wait in your WhatsApp group for the next game link!</p>
+  </div>
+</div>
+
 <script>
   // Mee Firebase Config
   const firebaseConfig = {
@@ -126,7 +135,6 @@
 
   window.onload = () => {
     if (isPlayerLink) {
-      // Player needs to click first to activate audio
       document.getElementById('player-join-view').style.display = 'block';
       gameId = urlParams.get('game');
       playerId = urlParams.get('player');
@@ -148,13 +156,13 @@
       [allNumbers[i], allNumbers[j]] = [allNumbers[j], allNumbers[i]];
     }
 
-    db.ref('games/' + gameId).set({ status: 'active', currentDraw: 0, called: [0], pool: allNumbers });
+    // Lag taggadaniki 'pool' array theesesanu. Data chinna ga velthe fast ga sync avtundi.
+    db.ref('games/' + gameId).set({ status: 'active', currentDraw: 0, called: [0] });
     
     document.getElementById('setup-view').style.display = 'none';
     document.getElementById('host-view').style.display = 'block';
     isHost = true;
     
-    // Enable host voice context immediately
     announceVoice("Game started");
     listenToGameState();
   }
@@ -170,7 +178,6 @@
 
     db.ref(`games/${gameId}/tickets/${pId}`).set({ name: name, data: tickets });
 
-    // Use current URL exactly as it is for the link
     let baseUrl = window.location.href.split('?')[0];
     let link = `${baseUrl}?game=${gameId}&player=${pId}`;
 
@@ -185,11 +192,12 @@
   }
 
   function endGame() {
-    if(confirm("Are you sure you want to end this game? Everyone will be disconnected.")) {
+    if(confirm("Are you sure you want to end this game?")) {
       db.ref('games/' + gameId).update({ status: 'ended' });
       clearInterval(autoPlayTimer);
+      // Host ki mathrame page reload avtundi
       alert("Game Over! Ready for a new game.");
-      window.location.href = window.location.href.split('?')[0];
+      window.location.href = window.location.href.split('?')[0]; 
     }
   }
 
@@ -197,7 +205,8 @@
     if(allNumbers.length === 0) return alert("All numbers drawn!");
     let num = allNumbers.pop();
     calledNumbers.push(num);
-    db.ref('games/' + gameId).update({ currentDraw: num, called: calledNumbers, pool: allNumbers });
+    // Optimized Firebase Update (Fast Sync)
+    db.ref('games/' + gameId).update({ currentDraw: num, called: calledNumbers });
   }
 
   function toggleAutoPlay() {
@@ -218,8 +227,8 @@
     document.getElementById('player-view').style.display = 'block';
     document.getElementById('display-game-id').innerText = "Game Number: " + gameId;
     
-    // Play silent audio to unlock Speech API in browsers
-    announceVoice("Welcome");
+    // UI freeze avvakunda Voice engine ni background lo load chestundi
+    setTimeout(() => { announceVoice(""); }, 100);
 
     db.ref(`games/${gameId}/tickets/${playerId}`).once('value', snapshot => {
       if(snapshot.exists()) {
@@ -237,14 +246,13 @@
       let data = snapshot.val();
       if(!data) return;
 
-      // Handle Game Over
-      if (data.status === 'ended') {
-        alert("Game Over! Host has ended the game.");
-        window.location.href = window.location.href.split('?')[0];
+      // GAME OVER logic specific to Players (No Reload)
+      if (data.status === 'ended' && !isHost) {
+        document.getElementById('player-view').style.display = 'none';
+        document.getElementById('game-over-view').style.display = 'block';
         return;
       }
 
-      if(!isHost) allNumbers = data.pool || [];
       let newNum = data.currentDraw;
       calledNumbers = data.called || [];
       
@@ -255,15 +263,12 @@
           document.getElementById('player-current-num').innerText = newNum;
         }
         
-        // Voice announce (Live)
         if (newNum !== window.lastAnnouncedNumber) {
           announceVoice(newNum);
           window.lastAnnouncedNumber = newNum;
         }
         
         updateBoard(newNum, calledNumbers);
-        
-        // ONLY Host sees Auto-Tick. Players click manually.
         if (isHost) markAllTicketsUI(); 
       }
     });
@@ -288,14 +293,17 @@
     }
   }
 
+  // Lag ni aapadaniki setTimeout vadadam jarigindi
   function announceVoice(text) {
     if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      let speakText = typeof text === 'number' ? "Number is " + text : text;
-      let msg = new SpeechSynthesisUtterance(speakText);
-      msg.lang = 'en-IN'; 
-      msg.rate = 0.9;
-      window.speechSynthesis.speak(msg);
+      setTimeout(() => {
+        window.speechSynthesis.cancel();
+        let speakText = typeof text === 'number' ? "Number is " + text : text;
+        let msg = new SpeechSynthesisUtterance(speakText);
+        msg.lang = 'en-IN'; 
+        msg.rate = 0.9;
+        window.speechSynthesis.speak(msg);
+      }, 10);
     }
   }
 
@@ -321,7 +329,6 @@
     }
   }
 
-  // Auto Mark ONLY for Host
   function markAllTicketsUI() {
     if (!isHost) return; 
     document.querySelectorAll('#host-tickets-area .t-cell.num').forEach(cell => {
@@ -348,7 +355,6 @@
             cell.className = 't-cell num'; 
             cell.innerText = tData[r][c]; 
             
-            // MANUAL TICK LOGIC (WITH CONFIRMATION) FOR PLAYERS ONLY
             if (!isHostView) {
               cell.onclick = function() {
                 if (this.classList.contains('marked')) {
