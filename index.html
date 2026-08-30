@@ -81,7 +81,7 @@
     <h3>Create Player Tickets</h3>
     <input type="text" id="p-name" class="input-box" placeholder="Player Name">
     <input type="number" id="p-count" class="input-box" placeholder="Tickets (e.g. 2)" style="width: 100px;">
-    <button class="btn" onclick="createPlayerLink()">Generate Link</button>
+    <button class="btn" id="generate-link-btn" onclick="createPlayerLink()">Generate Link</button>
     <div id="link-output"></div>
   </div>
 
@@ -102,7 +102,7 @@
   <div id="player-tickets-area"></div>
 </div>
 
-<!-- 5. GAME OVER VIEW (For Players) -->
+<!-- 5. GAME OVER VIEW -->
 <div id="game-over-view" class="container">
   <div class="panel">
     <h2 style="color: #d32f2f; font-size: 30px;">GAME OVER</h2>
@@ -112,7 +112,6 @@
 </div>
 
 <script>
-  // Mee Firebase Config
   const firebaseConfig = {
     apiKey: "AIzaSyAvjFcKKiu4OMmQckYXMTejdBJh9tC6TjM",
     authDomain: "sri-vishnu-priya-finance-c591f.firebaseapp.com",
@@ -156,7 +155,6 @@
       [allNumbers[i], allNumbers[j]] = [allNumbers[j], allNumbers[i]];
     }
 
-    // Lag taggadaniki 'pool' array theesesanu. Data chinna ga velthe fast ga sync avtundi.
     db.ref('games/' + gameId).set({ status: 'active', currentDraw: 0, called: [0] });
     
     document.getElementById('setup-view').style.display = 'none';
@@ -167,35 +165,52 @@
     listenToGameState();
   }
 
+  // UPDATED FUNCTION: Fixed Cancelled Bug
   function createPlayerLink() {
     let name = document.getElementById('p-name').value.trim();
     let count = parseInt(document.getElementById('p-count').value);
     if(!name || !count) { alert("Enter Name and Ticket Count"); return; }
 
-    let pId = name.replace(/\s+/g, '_') + "_" + Math.floor(Math.random()*1000);
+    // Strict sanitize: Remove special characters and spaces to prevent Firebase rejection
+    let safeNameForId = name.replace(/[^a-zA-Z0-9]/g, '_');
+    let pId = safeNameForId + "_" + Date.now(); 
+    
     let tickets = [];
     for(let i=0; i<count; i++) tickets.push(generateTicketArray());
 
-    db.ref(`games/${gameId}/tickets/${pId}`).set({ name: name, data: tickets });
+    // Disable button to prevent double clicking
+    let btn = document.getElementById('generate-link-btn');
+    btn.disabled = true;
+    btn.innerText = "Generating...";
 
-    let baseUrl = window.location.href.split('?')[0];
-    let link = `${baseUrl}?game=${gameId}&player=${pId}`;
+    // 100% Confirmation logic. Ticket save ayyake link display avtundi.
+    db.ref(`games/${gameId}/tickets/${pId}`).set({ name: name, data: tickets })
+    .then(() => {
+      let baseUrl = window.location.href.split('?')[0];
+      let link = `${baseUrl}?game=${gameId}&player=${pId}`;
 
-    document.getElementById('link-output').innerHTML = `
-      <div class="link-box">
-        <strong>Send this to ${name}:</strong><br><br>
-        <a href="${link}" target="_blank">${link}</a><br><br>
-        <button class="btn blue" onclick="navigator.clipboard.writeText('${link}'); alert('Link Copied!');">Copy Link</button>
-      </div>
-    `;
-    document.getElementById('p-name').value = '';
+      document.getElementById('link-output').innerHTML = `
+        <div class="link-box">
+          <strong>Send this to ${name}:</strong><br><br>
+          <a href="${link}" target="_blank">${link}</a><br><br>
+          <button class="btn blue" onclick="navigator.clipboard.writeText('${link}'); alert('Link Copied!');">Copy Link</button>
+        </div>
+      `;
+      document.getElementById('p-name').value = '';
+    })
+    .catch((error) => {
+      alert("Network Error: Ticket save kaledu. Please check internet and try again.");
+    })
+    .finally(() => {
+      btn.disabled = false;
+      btn.innerText = "Generate Link";
+    });
   }
 
   function endGame() {
     if(confirm("Are you sure you want to end this game?")) {
       db.ref('games/' + gameId).update({ status: 'ended' });
       clearInterval(autoPlayTimer);
-      // Host ki mathrame page reload avtundi
       alert("Game Over! Ready for a new game.");
       window.location.href = window.location.href.split('?')[0]; 
     }
@@ -205,7 +220,6 @@
     if(allNumbers.length === 0) return alert("All numbers drawn!");
     let num = allNumbers.pop();
     calledNumbers.push(num);
-    // Optimized Firebase Update (Fast Sync)
     db.ref('games/' + gameId).update({ currentDraw: num, called: calledNumbers });
   }
 
@@ -227,26 +241,23 @@
     document.getElementById('player-view').style.display = 'block';
     document.getElementById('display-game-id').innerText = "Game Number: " + gameId;
     
-    // UI freeze avvakunda Voice engine ni background lo load chestundi
     setTimeout(() => { announceVoice(""); }, 100);
 
     db.ref(`games/${gameId}/tickets/${playerId}`).once('value', snapshot => {
       if(snapshot.exists()) {
         document.getElementById('player-welcome-name').innerText = snapshot.val().name + "'s Tickets";
       } else {
-        alert("Your tickets were canceled or game has ended.");
+        document.getElementById('player-tickets-area').innerHTML = '<h3 style="color:red;">Error: Ticket not found. Please ask host for a new link.</h3>';
       }
     });
     listenToGameState();
   }
 
-  // --- REAL-TIME LIVE SYNC ---
   function listenToGameState() {
     db.ref('games/' + gameId).on('value', snapshot => {
       let data = snapshot.val();
       if(!data) return;
 
-      // GAME OVER logic specific to Players (No Reload)
       if (data.status === 'ended' && !isHost) {
         document.getElementById('player-view').style.display = 'none';
         document.getElementById('game-over-view').style.display = 'block';
@@ -287,13 +298,12 @@
         if(snapshot.exists()) {
           renderTickets('player-tickets-area', snapshot.val().data, snapshot.val().name, null, false);
         } else {
-          document.getElementById('player-tickets-area').innerHTML = '<h3 style="color:red;">Tickets Cancelled</h3>';
+          document.getElementById('player-tickets-area').innerHTML = '<h3 style="color:red; text-align:center; padding: 20px;">Tickets have been Cancelled by the Host.</h3>';
         }
       });
     }
   }
 
-  // Lag ni aapadaniki setTimeout vadadam jarigindi
   function announceVoice(text) {
     if ('speechSynthesis' in window) {
       setTimeout(() => {
@@ -307,7 +317,6 @@
     }
   }
 
-  // --- UI ---
   function updateBoard(current, calledArray) {
     for(let i=1; i<=90; i++) {
       let cell = document.getElementById('b-'+i);
