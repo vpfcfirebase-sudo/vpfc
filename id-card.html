@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sri Vishnu Priya Finance - ID Card</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- THEME STYLES --- */
+        :root {
+            --primary-bg: #f0f2f5; 
+            --brand-color: #0c2046; 
+            --brand-gradient: linear-gradient(135deg, #0B3B60 0%, #1a5276 100%);
+            --accent-color: #E2A03F; 
+            --card-bg: #ffffff;
+            --text-main: #111827;
+            --text-muted: #4b5563;
+            --border-color: #e5e7eb;
+        }
+
+        [data-theme="light"] {
+            --primary-bg: #f8f9fa; --brand-color: #2563eb; --brand-gradient: linear-gradient(135deg, #2563eb 0%, #60a5fa 100%); --accent-color: #ffffff; --card-bg: #ffffff; --text-main: #1f2937; --text-muted: #6b7280; --border-color: #e5e7eb;
+        }
+
+        [data-theme="dark"] {
+            --primary-bg: #121212; --brand-color: #1e1e1e; --brand-gradient: linear-gradient(135deg, #1f2937 0%, #111827 100%); --accent-color: #3b82f6; --card-bg: #1f2937; --text-main: #f3f4f6; --text-muted: #9ca3af; --border-color: #374151;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', Arial, sans-serif; transition: background-color 0.3s, color 0.3s; }
+        body { background-color: var(--primary-bg); color: var(--text-main); -webkit-tap-highlight-color: transparent; display: flex; flex-direction: column; min-height: 100vh; }
+
+        /* --- COMMON HEADER --- */
+        .top-nav { background: var(--brand-gradient); padding: 20px 20px 25px 20px; border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .header-top-row { display: flex; justify-content: space-between; align-items: center; color: white; }
+        .header-actions i { font-size: 20px; margin-left: 15px; cursor: pointer; color: white; opacity: 0.9; }
+        .header-content h1 { font-size: 18px; font-weight: 700; color: var(--accent-color); margin: 0; }
+        
+        /* --- ACTION BAR (BACK BUTTON) --- */
+        .action-bar { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .back-btn { 
+            display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; 
+            color: var(--brand-color); background: var(--card-bg); padding: 10px 15px; 
+            border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); cursor: pointer; 
+            border: 1px solid var(--border-color); text-decoration: none;
+        }
+        .back-btn:active { transform: scale(0.96); }
+
+        /* --- ID CARD UI --- */
+        .id-card-container { padding: 10px 20px 30px 20px; display: flex; justify-content: center; align-items: center; flex: 1; }
+        
+        .id-card {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 350px; 
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border: 2px solid var(--brand-color);
+            padding: 25px 20px;
+            position: relative;
+        }
+
+        /* LOGO SECTION - FIREBASE */
+        .logo-section { text-align: center; margin-bottom: 20px; padding: 0 10px; }
+        .main-logo-img { width: 100%; max-width: 280px; height: auto; object-fit: contain; }
+
+        /* PHOTO SECTION */
+        .photo-section { text-align: center; margin-bottom: 20px; }
+        .emp-photo {
+            width: 110px;
+            height: 140px; 
+            border: 3px solid var(--brand-color);
+            border-radius: 8px;
+            object-fit: cover;
+            background-color: #f3f4f6;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        /* DETAILS SECTION */
+        .details-box {
+            background-color: #f8fafc; 
+            border: 1px solid #f1f5f9;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .info-row {
+            display: grid;
+            grid-template-columns: 75px 15px 1fr;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+        .info-row:last-child { margin-bottom: 0; }
+        
+        .label { font-weight: 800; color: var(--brand-color); font-size: 12px; }
+        .colon { font-weight: 800; color: var(--brand-color); }
+        .value { font-weight: 700; color: var(--brand-color); text-transform: uppercase; word-break: break-word; }
+
+        /* STATUS SECTION */
+        .status-section { text-align: center; font-size: 18px; font-weight: 800; color: var(--brand-color); margin-top: 10px; letter-spacing: 0.5px; }
+
+        #loadingIndicator { text-align: center; width: 100%; font-size: 14px; color: var(--brand-color); font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <!-- COMMON TOP HEADER -->
+    <div class="top-nav">
+        <div class="header-top-row">
+            <div class="header-content">
+                <h1>SRI VISHNU PRIYA</h1>
+                <div style="font-size: 13px; opacity: 0.9; margin-top:3px; font-weight: 600;" id="user-display-email">Loading...</div>
+            </div>
+            <div class="header-actions">
+                <i class="fas fa-palette" onclick="toggleTheme()" title="Change Theme"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- ACTION BAR (BACK BUTTON) -->
+    <div class="action-bar">
+        <a href="dashboard.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+    </div>
+
+    <!-- ID CARD AREA -->
+    <div class="id-card-container">
+        
+        <div id="loadingIndicator"><i class="fas fa-spinner fa-spin"></i> Loading ID Card...</div>
+
+        <!-- ID Card -->
+        <div class="id-card" id="idCard" style="display: none;">
+            
+            <!-- FIREBASE LOGO AREA -->
+            <div class="logo-section">
+                <img src="" alt="Company Logo" class="main-logo-img" id="companyLogo" style="display: none;">
+            </div>
+            
+            <!-- Photo area -->
+            <div class="photo-section">
+                <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Employee Photo" class="emp-photo" id="empPhoto">
+            </div>
+
+            <!-- Details Box -->
+            <div class="details-box">
+                <div class="info-row">
+                    <span class="label">EMP ID</span><span class="colon">:</span>
+                    <span class="value" id="val-empid">---</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">NAME</span><span class="colon">:</span>
+                    <span class="value" id="val-name">---</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">ROLE</span><span class="colon">:</span>
+                    <span class="value" id="val-role">---</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">BRANCH</span><span class="colon">:</span>
+                    <span class="value" id="val-branch">---</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">MOBILE</span><span class="colon">:</span>
+                    <span class="value" id="val-mobile">---</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">JOINED</span><span class="colon">:</span>
+                    <span class="value" id="val-joined">---</span>
+                </div>
+            </div>
+            
+            <!-- Status -->
+            <div class="status-section" id="val-status">Active</div>
+
+        </div>
+    </div>
+
+    <!-- Firebase SDKs & Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAvjFcKKiu4OMmQckYXMTejdBJh9tC6TjM",
+            authDomain: "sri-vishnu-priya-finance-c591f.firebaseapp.com",
+            databaseURL: "https://sri-vishnu-priya-finance-c591f-default-rtdb.firebaseio.com",
+            projectId: "sri-vishnu-priya-finance-c591f",
+            storageBucket: "sri-vishnu-priya-finance-c591f.firebasestorage.app",
+            messagingSenderId: "184676228358",
+            appId: "1:184676228358:web:c2b32b68debeeadadfd287",
+            measurementId: "G-E3TT96ZH1T"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const empId = user.email.split('@')[0]; 
+                const dbRef = ref(db);
+                let currentUserName = empId;
+                
+                try {
+                    // 1. Fetch Company Logo from settings
+                    const logoSnapshot = await get(child(dbRef, `settings/logo`));
+                    if (logoSnapshot.exists()) {
+                        const logoEl = document.getElementById('companyLogo');
+                        logoEl.src = logoSnapshot.val(); 
+                        logoEl.style.display = 'inline-block'; 
+                    }
+
+                    // 2. Fetch Employee Data
+                    const snapshot = await get(child(dbRef, `employees/${empId}`));
+                    
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        if (data.name) currentUserName = data.name;
+                        
+                        // Set Header Name
+                        document.getElementById('user-display-email').innerText = `Welcome, ${currentUserName}`;
+                        
+                        // Set ID Card Data
+                        document.getElementById('val-empid').innerText = empId;
+                        document.getElementById('val-name').innerText = data.name || "N/A";
+                        document.getElementById('val-role').innerText = data.designation || "COLLECTION AGENT";
+                        document.getElementById('val-branch').innerText = data.branch || "N/A";
+                        document.getElementById('val-mobile').innerText = data.mobile || "N/A";
+                        document.getElementById('val-joined').innerText = data.joinDate || "N/A";
+                        
+                        const statusEl = document.getElementById('val-status');
+                        const statusVal = data.status || "Active";
+                        statusEl.innerText = statusVal;
+                        if(statusVal.toLowerCase() !== "active") {
+                            statusEl.style.color = "#d32f2f"; 
+                        }
+                        
+                        if(data.photo && data.photo !== "N/A" && data.photo !== "") {
+                            document.getElementById('empPhoto').src = data.photo;
+                        }
+
+                        // Done Loading
+                        document.getElementById('loadingIndicator').style.display = 'none';
+                        document.getElementById('idCard').style.display = 'block';
+
+                    } else {
+                        document.getElementById('loadingIndicator').innerText = "Employee data not found in database.";
+                        document.getElementById('user-display-email').innerText = `Welcome, ${empId}`;
+                    }
+                } catch (error) { 
+                    console.error("Error fetching data:", error);
+                    document.getElementById('loadingIndicator').innerText = "Error loading ID Card.";
+                }
+            } else {
+                window.location.href = "index.html"; 
+            }
+        });
+
+        // --- THEME LOGIC ---
+        window.toggleTheme = function() {
+            const themes = ['default', 'light', 'dark'];
+            let currentTheme = localStorage.getItem('appTheme') || 'default';
+            let nextIndex = (themes.indexOf(currentTheme) + 1) % themes.length;
+            let themeName = themes[nextIndex];
+            
+            if(themeName === 'default') document.documentElement.removeAttribute('data-theme');
+            else document.documentElement.setAttribute('data-theme', themeName);
+            localStorage.setItem('appTheme', themeName);
+        }
+        
+        const savedTheme = localStorage.getItem('appTheme') || 'default';
+        if(savedTheme !== 'default') {
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+    </script>
+</body>
+</html>
