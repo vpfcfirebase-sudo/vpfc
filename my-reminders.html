@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sri Vishnu Priya Finance - My Reminders</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- THEME STYLES --- */
+        :root {
+            --primary-bg: #f0f2f5; 
+            --brand-color: #0c2046; 
+            --brand-gradient: linear-gradient(135deg, #0B3B60 0%, #1a5276 100%);
+            --accent-color: #E2A03F; 
+            --card-bg: #ffffff;
+            --text-main: #111827;
+            --text-muted: #4b5563;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --border-color: #e5e7eb;
+            --input-bg: #f8fafc;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', Arial, sans-serif; }
+        body { background-color: var(--primary-bg); color: var(--text-main); -webkit-tap-highlight-color: transparent; }
+
+        /* --- HEADER & BACK BUTTON --- */
+        .top-nav { background: var(--brand-gradient); padding: 20px 20px 25px 20px; border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); color: white; }
+        .header-top-row { display: flex; justify-content: space-between; align-items: center; }
+        .header-content h1 { font-size: 18px; font-weight: 700; color: var(--accent-color); margin: 0; }
+        
+        .action-bar { padding: 15px 20px; display: flex; align-items: center; }
+        .back-btn { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--brand-color); background: var(--card-bg); padding: 10px 15px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-decoration: none; border: 1px solid var(--border-color); }
+
+        /* --- FILTERS SECTION --- */
+        .filters-container { padding: 0 20px; display: flex; gap: 10px; margin-bottom: 20px; }
+        .filter-input { flex: 1; padding: 12px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 13px; font-weight: 600; background-color: var(--input-bg); color: var(--brand-color); outline: none; }
+        .filter-input:focus { border-color: var(--brand-color); }
+        .btn-clear { background: var(--danger); color: white; border: none; padding: 0 15px; border-radius: 10px; font-weight: 700; cursor: pointer; display: none; align-items: center; justify-content: center; gap: 5px; }
+        .btn-clear:active { opacity: 0.8; }
+
+        /* --- SUMMARY SECTION --- */
+        .summary-container { padding: 0 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+        .summary-card { background: var(--card-bg); padding: 12px 5px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: 1px solid var(--border-color); text-align: center; }
+        .summary-value { font-size: 18px; font-weight: 800; margin-bottom: 3px; }
+        .v-today { color: var(--success); }
+        .v-missed { color: var(--danger); }
+        .v-upcoming { color: var(--info); }
+        .summary-label { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+
+        /* --- REMINDER CARDS --- */
+        .reminders-list { padding: 0 20px 30px 20px; display: flex; flex-direction: column; gap: 15px; }
+        
+        .reminder-card { background: var(--card-bg); border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid var(--border-color); border-left: 5px solid var(--text-muted); position: relative; overflow: hidden; }
+        .reminder-card.today { border-left-color: var(--success); }
+        .reminder-card.missed { border-left-color: var(--danger); }
+        .reminder-card.upcoming { border-left-color: var(--info); }
+        .reminder-card.filtered { border-left-color: var(--accent-color); }
+        
+        .card-header { padding: 12px 15px; border-bottom: 1px dashed var(--border-color); display: flex; justify-content: space-between; align-items: center; background: #f8fafc; }
+        .card-hp { font-weight: 800; color: var(--brand-color); font-size: 15px; }
+        
+        .badge { padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+        .badge-today { background: #dcfce7; color: #166534; }
+        .badge-missed { background: #fee2e2; color: #991b1b; }
+        .badge-upcoming { background: #dbeafe; color: #1e40af; }
+        .badge-filtered { background: #fef3c7; color: #92400e; }
+        
+        .card-body { padding: 15px; }
+        .card-cust { font-size: 15px; font-weight: 700; color: var(--text-main); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        
+        .detail-row { display: flex; gap: 10px; margin-bottom: 8px; font-size: 13px; }
+        .detail-icon { color: var(--text-muted); width: 15px; text-align: center; margin-top: 2px; }
+        .detail-content strong { color: var(--brand-color); display: block; font-size: 11px; text-transform: uppercase; margin-bottom: 2px; }
+        .detail-content span { color: var(--text-main); font-weight: 600; }
+        .reason-text { color: var(--danger); font-weight: 700; }
+
+        .card-actions { padding: 10px 15px; background: #f8fafc; border-top: 1px solid var(--border-color); display: flex; gap: 10px; }
+        .btn-action { flex: 1; padding: 10px; border: none; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; text-decoration: none; }
+        .btn-call { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+        .btn-visit { background: var(--brand-color); color: white; }
+        .btn-action:active { opacity: 0.8; }
+
+        #loadingText { text-align: center; padding: 20px; font-size: 14px; color: var(--brand-color); font-weight: 600; }
+        #noDataText { text-align: center; padding: 30px 20px; font-size: 14px; color: var(--text-muted); display: none; }
+        
+        .section-heading { font-size: 13px; font-weight: 800; color: var(--brand-color); margin: 5px 0 10px 0; text-transform: uppercase; letter-spacing: 0.5px; padding: 0 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="top-nav">
+        <div class="header-top-row">
+            <div class="header-content">
+                <h1>SRI VISHNU PRIYA</h1>
+                <div style="font-size: 13px; opacity: 0.9; margin-top:3px; font-weight: 600;" id="userDisplay">My Reminders</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-bar">
+        <a href="dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+    </div>
+
+    <!-- DATE FILTER -->
+    <div class="filters-container">
+        <input type="date" id="filterDate" class="filter-input" onchange="fetchReminders()">
+        <button id="btnClear" class="btn-clear" onclick="clearFilter()"><i class="fas fa-times"></i> Clear</button>
+    </div>
+
+    <!-- SUMMARY SECTION -->
+    <div class="summary-container" id="summaryBox">
+        <div class="summary-card">
+            <div class="summary-value v-today" id="cToday">0</div>
+            <div class="summary-label">Today</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-value v-missed" id="cMissed">0</div>
+            <div class="summary-label">Missed</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-value v-upcoming" id="cUpcoming">0</div>
+            <div class="summary-label">Upcoming</div>
+        </div>
+    </div>
+
+    <div id="loadingText"><i class="fas fa-spinner fa-spin"></i> Finding your reminders...</div>
+    <div id="noDataText">You have no active Promise-to-Pay reminders!</div>
+
+    <!-- LISTS -->
+    <div id="listToday" style="display:none;"><div class="section-heading" id="headToday">🟢 Today's Reminders</div><div class="reminders-list" id="contToday"></div></div>
+    <div id="listMissed" style="display:none;"><div class="section-heading">🔴 Missed Reminders</div><div class="reminders-list" id="contMissed"></div></div>
+    <div id="listUpcoming" style="display:none;"><div class="section-heading">🔵 Upcoming Reminders</div><div class="reminders-list" id="contUpcoming"></div></div>
+
+    <!-- Firebase SDKs & Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAvjFcKKiu4OMmQckYXMTejdBJh9tC6TjM",
+            authDomain: "sri-vishnu-priya-finance-c591f.firebaseapp.com",
+            databaseURL: "https://sri-vishnu-priya-finance-c591f-default-rtdb.firebaseio.com",
+            projectId: "sri-vishnu-priya-finance-c591f",
+            storageBucket: "sri-vishnu-priya-finance-c591f.firebasestorage.app"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+        window.currentEmpId = null;
+
+        // Get Real Today's Date
+        const todayObj = new Date();
+        const realTodayStr = todayObj.getFullYear() + '-' + String(todayObj.getMonth() + 1).padStart(2, '0') + '-' + String(todayObj.getDate()).padStart(2, '0');
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                window.currentEmpId = user.email.split('@')[0];
+                document.getElementById('userDisplay').innerText = `${window.currentEmpId}'s Reminders`;
+                window.fetchReminders();
+            } else {
+                window.location.href = "index.html"; 
+            }
+        });
+
+        window.formatDisplayDate = function(dStr) {
+            if(!dStr) return "N/A";
+            const d = new Date(dStr);
+            const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+            return `${String(d.getDate()).padStart(2,'0')} ${months[d.getMonth()]} ${d.getFullYear()}`;
+        };
+
+        window.clearFilter = function() {
+            document.getElementById('filterDate').value = '';
+            window.fetchReminders();
+        };
+
+        window.fetchReminders = async function() {
+            try {
+                document.getElementById('loadingText').style.display = 'block';
+                document.getElementById('noDataText').style.display = 'none';
+                
+                const contToday = document.getElementById('contToday');
+                const contMissed = document.getElementById('contMissed');
+                const contUpcoming = document.getElementById('contUpcoming');
+                
+                contToday.innerHTML = ''; contMissed.innerHTML = ''; contUpcoming.innerHTML = '';
+                document.getElementById('listToday').style.display = 'none';
+                document.getElementById('listMissed').style.display = 'none';
+                document.getElementById('listUpcoming').style.display = 'none';
+
+                const filterVal = document.getElementById('filterDate').value;
+                const isFiltered = filterVal !== "";
+                
+                document.getElementById('btnClear').style.display = isFiltered ? 'flex' : 'none';
+                document.getElementById('summaryBox').style.display = isFiltered ? 'none' : 'grid';
+                
+                // Fetch Previous Month & Current Month
+                const currentMonthStr = realTodayStr.substring(0, 7);
+                let prevMonthDate = new Date(todayObj.getFullYear(), todayObj.getMonth() - 1, 1);
+                const prevMonthStr = prevMonthDate.getFullYear() + '-' + String(prevMonthDate.getMonth() + 1).padStart(2, '0');
+
+                let fetchMonths = [prevMonthStr, currentMonthStr];
+                
+                if (isFiltered) {
+                    const filterMonthStr = filterVal.substring(0, 7);
+                    if (!fetchMonths.includes(filterMonthStr)) fetchMonths.push(filterMonthStr);
+                }
+
+                let groupedVisits = {};
+
+                for (const m of fetchMonths) {
+                    const snapshot = await get(child(ref(db), `visits/${m}`));
+                    if (snapshot.exists()) {
+                        const visitsData = snapshot.val();
+                        for (const vId in visitsData) {
+                            const v = visitsData[vId];
+                            if (v.eid === window.currentEmpId) {
+                                // vId is the Firebase Push ID. It's perfectly chronological.
+                                v.pushId = vId; 
+                                
+                                // Keep only the latest entry for each HP number
+                                if (!groupedVisits[v.hp] || v.pushId > groupedVisits[v.hp].pushId) {
+                                    groupedVisits[v.hp] = v;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                let cToday = 0, cMissed = 0, cUpcoming = 0;
+                let cFiltered = 0;
+                let hasAnyReminders = false;
+
+                for (const hp in groupedVisits) {
+                    const v = groupedVisits[hp];
+
+                    // IMPORTANT: Only show if the LATEST status is exactly 'NOT PAID'
+                    if (v.stat === 'NOT PAID' && v.next && v.next.trim() !== '') {
+                        
+                        let category = '';
+                        let badgeHtml = '';
+                        let cardClass = '';
+
+                        if (isFiltered) {
+                            if (v.next === filterVal) {
+                                hasAnyReminders = true;
+                                category = 'filtered'; cardClass = 'filtered'; 
+                                badgeHtml = `<div class="badge badge-filtered">Promised Date</div>`; 
+                                cFiltered++;
+                            } else {
+                                continue; 
+                            }
+                        } else {
+                            hasAnyReminders = true;
+                            if (v.next === realTodayStr) {
+                                category = 'today'; cardClass = 'today'; badgeHtml = `<div class="badge badge-today">Due Today</div>`; cToday++;
+                            } else if (v.next < realTodayStr) {
+                                category = 'missed'; cardClass = 'missed'; badgeHtml = `<div class="badge badge-missed">Missed</div>`; cMissed++;
+                            } else {
+                                category = 'upcoming'; cardClass = 'upcoming'; badgeHtml = `<div class="badge badge-upcoming">Upcoming</div>`; cUpcoming++;
+                            }
+                        }
+
+                        const mobileStr = (v.custMobile && v.custMobile !== 'N/A') ? v.custMobile : '';
+                        const callBtn = mobileStr ? `<a href="tel:${mobileStr}" class="btn-action btn-call"><i class="fas fa-phone-alt"></i> Call</a>` : `<div class="btn-action btn-call" style="opacity:0.5;"><i class="fas fa-phone-slash"></i> No Number</div>`;
+                        
+                        const mapUrl = (v.loc && v.loc !== 'Location Denied' && v.loc !== 'N/A') ? `https://maps.google.com/?q=${v.loc}` : '#';
+                        const mapTarget = mapUrl !== '#' ? `target="_blank"` : ``;
+
+                        const cardHtml = `
+                            <div class="reminder-card ${cardClass}">
+                                <div class="card-header">
+                                    <div class="card-hp"><i class="fas fa-hashtag"></i> ${hp}</div>
+                                    ${badgeHtml}
+                                </div>
+                                <div class="card-body">
+                                    <div class="card-cust"><i class="fas fa-user-circle" style="color:var(--text-muted); font-size:18px;"></i> ${v.cname || 'Customer Name N/A'}</div>
+                                    
+                                    <div class="detail-row">
+                                        <div class="detail-icon"><i class="fas fa-calendar-check"></i></div>
+                                        <div class="detail-content">
+                                            <strong>Promised Date</strong>
+                                            <span>${window.formatDisplayDate(v.next)}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="detail-row">
+                                        <div class="detail-icon"><i class="fas fa-comment-dots" style="color:var(--danger);"></i></div>
+                                        <div class="detail-content">
+                                            <strong>Not Paid Reason</strong>
+                                            <span class="reason-text">${v.unr || 'No reason provided'}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="detail-row">
+                                        <div class="detail-icon"><i class="fas fa-map-marker-alt" style="color:var(--info);"></i></div>
+                                        <div class="detail-content">
+                                            <strong>Location / Area</strong>
+                                            <a href="${mapUrl}" ${mapTarget} style="color:var(--info); font-weight:600; text-decoration:none;">${v.vill || 'View on Map'}</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-actions">
+                                    ${callBtn}
+                                    <a href="customer-visit.html" class="btn-action btn-visit"><i class="fas fa-clipboard-check"></i> Update Visit</a>
+                                </div>
+                            </div>
+                        `;
+
+                        if (category === 'today') { contToday.innerHTML += cardHtml; document.getElementById('listToday').style.display = 'block'; }
+                        if (category === 'missed') { contMissed.innerHTML += cardHtml; document.getElementById('listMissed').style.display = 'block'; }
+                        if (category === 'upcoming') { contUpcoming.innerHTML += cardHtml; document.getElementById('listUpcoming').style.display = 'block'; }
+                        if (category === 'filtered') { 
+                            contToday.innerHTML += cardHtml; 
+                            document.getElementById('listToday').style.display = 'block'; 
+                            document.getElementById('headToday').innerHTML = `📅 Reminders for ${window.formatDisplayDate(filterVal)}`;
+                        }
+                    }
+                }
+
+                if (!isFiltered) {
+                    document.getElementById('cToday').innerText = cToday;
+                    document.getElementById('cMissed').innerText = cMissed;
+                    document.getElementById('cUpcoming').innerText = cUpcoming;
+                    document.getElementById('headToday').innerHTML = `🟢 Today's Reminders`;
+                }
+
+                if (!hasAnyReminders) {
+                    document.getElementById('noDataText').style.display = 'block';
+                    if (isFiltered) {
+                        document.getElementById('noDataText').innerText = `No reminders due on ${window.formatDisplayDate(filterVal)}.`;
+                    } else {
+                        document.getElementById('noDataText').innerText = `You have no active Promise-to-Pay reminders!`;
+                    }
+                }
+
+            } catch (error) {
+                console.error("Error loading reminders:", error);
+                alert("Failed to fetch reminders.");
+            } finally {
+                document.getElementById('loadingText').style.display = 'none';
+            }
+        };
+    </script>
+</body>
+</html>
