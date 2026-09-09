@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sri Vishnu Priya Finance - Stats</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- THEME STYLES --- */
+        :root {
+            --primary-bg: #f0f2f5; 
+            --brand-color: #0B3B60; 
+            --brand-gradient: linear-gradient(135deg, #0B3B60 0%, #1a5276 100%);
+            --accent-color: #E2A03F; 
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
+            --text-muted: #7f8c8d;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --border-color: #e0e0e0;
+        }
+
+        [data-theme="light"] {
+            --primary-bg: #f8f9fa; --brand-color: #2563eb; --brand-gradient: linear-gradient(135deg, #2563eb 0%, #60a5fa 100%); --accent-color: #ffffff; --card-bg: #ffffff; --text-main: #1f2937; --text-muted: #6b7280; --border-color: #e5e7eb;
+        }
+
+        [data-theme="dark"] {
+            --primary-bg: #121212; --brand-color: #1e1e1e; --brand-gradient: linear-gradient(135deg, #1f2937 0%, #111827 100%); --accent-color: #3b82f6; --card-bg: #1f2937; --text-main: #f3f4f6; --text-muted: #9ca3af; --border-color: #374151;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; transition: background-color 0.3s, color 0.3s; }
+        body { background-color: var(--primary-bg); color: var(--text-main); -webkit-tap-highlight-color: transparent; }
+
+        /* --- HEADER & TOP NAV --- */
+        .top-nav { background: var(--brand-gradient); padding: 20px 20px 25px 20px; border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .header-top-row { display: flex; justify-content: space-between; align-items: center; color: white; }
+        .header-actions i { font-size: 20px; margin-left: 15px; cursor: pointer; color: white; opacity: 0.9; }
+        .header-content h1 { font-size: 18px; font-weight: 700; color: var(--accent-color); margin: 0; }
+        
+        /* --- BACK BUTTON & FILTERS --- */
+        .action-bar { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .back-btn { 
+            display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; 
+            color: var(--brand-color); background: var(--card-bg); padding: 10px 15px; 
+            border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); cursor: pointer; 
+            border: 1px solid var(--border-color); text-decoration: none;
+        }
+        .back-btn:active { transform: scale(0.96); }
+
+        .month-selector { padding: 8px 10px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 13px; font-weight: 600; color: var(--brand-color); outline: none; background-color: var(--card-bg); }
+
+        /* --- DASHBOARD STATS VIEW --- */
+        .stats-container { padding: 0 20px 30px 20px; }
+        .section-title { font-size: 14px; font-weight: 700; color: var(--brand-color); margin: 20px 0 10px 0; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .section-title i { color: var(--accent-color); font-size: 14px; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .stat-card { background: var(--card-bg); padding: 18px 10px; border-radius: 12px; border: 1px solid var(--border-color); text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+        .stat-val { font-size: 19px; font-weight: 800; color: var(--brand-color); margin-bottom: 5px; transition: all 0.3s; }
+        .stat-val.success { color: var(--success); }
+        .stat-val.purple { color: #8b5cf6; }
+        .stat-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .loading-text { font-size: 12px; color: var(--accent-color); text-align: center; margin-top: 10px; display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="top-nav">
+        <div class="header-top-row">
+            <div class="header-content">
+                <h1>SRI VISHNU PRIYA</h1>
+                <div style="font-size: 13px; opacity: 0.9; margin-top:3px; font-weight: 600;" id="user-display-email">Loading...</div>
+            </div>
+            <div class="header-actions">
+                <i class="fas fa-palette" onclick="toggleTheme()" title="Change Theme"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-bar">
+        <a href="dashboard.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+        <select class="month-selector" id="monthSelect" onchange="fetchDashboardData()">
+            <option value="01">Jan</option><option value="02">Feb</option><option value="03">Mar</option>
+            <option value="04">Apr</option><option value="05">May</option><option value="06">Jun</option>
+            <option value="07">Jul</option><option value="08">Aug</option><option value="09" selected>Sep</option>
+            <option value="10">Oct</option><option value="11">Nov</option><option value="12">Dec</option>
+        </select>
+    </div>
+    <div id="loadingIndicator" class="loading-text"><i class="fas fa-spinner fa-spin"></i> Fetching live data...</div>
+
+    <div class="stats-container">
+        
+        <!-- REGULAR ACCOUNTS -->
+        <div class="section-title"><i class="fas fa-circle" style="color: #27ae60;"></i> Regular Accounts</div>
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-val" id="reg-assigned">0</div><div class="stat-label">Assigned</div></div>
+            <div class="stat-card"><div class="stat-val success" id="reg-completed">0</div><div class="stat-label">Completed</div></div>
+            <div class="stat-card"><div class="stat-val" id="reg-seized-count">0</div><div class="stat-label">Seized Count</div></div>
+            <div class="stat-card"><div class="stat-val" style="color: #0284c7;" id="reg-target-amt">₹0</div><div class="stat-label">Target Amt</div></div>
+            <div class="stat-card"><div class="stat-val success" id="reg-collected">₹0</div><div class="stat-label">Collected</div></div>
+            <div class="stat-card"><div class="stat-val" id="reg-seized-amt">₹0</div><div class="stat-label">Seized Amt</div></div>
+        </div>
+
+        <!-- MATURED ACCOUNTS -->
+        <div class="section-title"><i class="fas fa-circle" style="color: #f59e0b;"></i> Matured Accounts</div>
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-val" id="mat-assigned">0</div><div class="stat-label">Assigned</div></div>
+            <div class="stat-card"><div class="stat-val success" id="mat-completed">0</div><div class="stat-label">Completed</div></div>
+            <div class="stat-card"><div class="stat-val" id="mat-seized-count">0</div><div class="stat-label">Seized Count</div></div>
+            <div class="stat-card"><div class="stat-val" style="color: #f59e0b;" id="mat-target-amt">₹0</div><div class="stat-label">Target Amt</div></div>
+            <div class="stat-card"><div class="stat-val success" id="mat-collected">₹0</div><div class="stat-label">Collected</div></div>
+            <div class="stat-card"><div class="stat-val" id="mat-seized-amt">₹0</div><div class="stat-label">Seized Amt</div></div>
+        </div>
+
+        <!-- RECEIPTS OVERVIEW -->
+        <div class="section-title"><i class="fas fa-receipt" style="color: #f59e0b;"></i> Receipts Overview</div>
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-val" style="color: #0284c7;" id="rec-pcr">₹0</div><div class="stat-label" id="rec-pcr-label">PCR (0)</div></div>
+            <div class="stat-card"><div class="stat-val purple" id="rec-lock">₹0</div><div class="stat-label" id="rec-lock-label">LOCK (0)</div></div>
+            <div class="stat-card"><div class="stat-val success" id="rec-qr">₹0</div><div class="stat-label" id="rec-qr-label">QR (0)</div></div>
+            <div class="stat-card"><div class="stat-val" style="color: #f59e0b;" id="rec-op">₹0</div><div class="stat-label" id="rec-op-label">OP (0)</div></div>
+        </div>
+        
+        <!-- HOME VISITS OVERVIEW -->
+        <div class="section-title"><i class="fas fa-home" style="color: #8b5cf6;"></i> Home Visits Overview</div>
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-val" style="color: #0284c7;" id="vis-pcr">0</div><div class="stat-label">PCR Visits</div></div>
+            <div class="stat-card"><div class="stat-val purple" id="vis-lock">0</div><div class="stat-label">Lock Visits</div></div>
+            <div class="stat-card"><div class="stat-val success" id="vis-qr">0</div><div class="stat-label">QR Visits</div></div>
+            <div class="stat-card"><div class="stat-val" style="color: #f59e0b;" id="vis-op">0</div><div class="stat-label">OP Visits</div></div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAvjFcKKiu4OMmQckYXMTejdBJh9tC6TjM",
+            authDomain: "sri-vishnu-priya-finance-c591f.firebaseapp.com",
+            databaseURL: "https://sri-vishnu-priya-finance-c591f-default-rtdb.firebaseio.com",
+            projectId: "sri-vishnu-priya-finance-c591f",
+            storageBucket: "sri-vishnu-priya-finance-c591f.firebasestorage.app",
+            messagingSenderId: "184676228358",
+            appId: "1:184676228358:web:c2b32b68debeeadadfd287",
+            measurementId: "G-E3TT96ZH1T"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+        
+        window.db = db;
+        window.firebaseDbRef = ref;
+        window.firebaseDbGet = get;
+        window.firebaseDbChild = child;
+        window.currentEmpId = null;
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const empId = user.email.split('@')[0];
+                window.currentEmpId = empId;
+                let currentUserName = empId;
+                
+                try {
+                    const dbRef = ref(db);
+                    const snapshot = await get(child(dbRef, `employees/${empId}`));
+                    if (snapshot.exists()) {
+                        const employeeData = snapshot.val();
+                        if (employeeData.name) currentUserName = employeeData.name;
+                    }
+                } catch (error) { console.error(error); }
+                
+                document.getElementById('user-display-email').innerText = `Welcome, ${currentUserName}`;
+                
+                const date = new Date();
+                let monthNum = (date.getMonth() + 1).toString().padStart(2, '0');
+                document.getElementById('monthSelect').value = monthNum;
+                
+                window.fetchDashboardData();
+            } else {
+                window.location.href = "index.html"; 
+            }
+        });
+    </script>
+
+    <!-- UNIQUE ACCOUNT DATA LOGIC -->
+    <script>
+        async function fetchDashboardData() {
+            if(!window.currentEmpId || !window.db) return;
+            document.getElementById('loadingIndicator').style.display = 'block';
+            
+            const selectedMonthStr = document.getElementById('monthSelect').value;
+            const currentYear = new Date().getFullYear(); 
+            const yearMonthStr = `${currentYear}-${selectedMonthStr}`; 
+            const empId = window.currentEmpId; 
+            
+            try {
+                const dbRef = window.firebaseDbRef(window.db);
+                
+                // 1. Fetch Assignments
+                let regTargetAmt = 0; let matTargetAmt = 0;
+                let regAssignedCount = 0; let matAssignedCount = 0;
+                
+                const assignSnapshot = await window.firebaseDbGet(window.firebaseDbChild(dbRef, `assignments/${empId}/${yearMonthStr}`));
+                if(assignSnapshot.exists()) {
+                    const assignData = assignSnapshot.val();
+                    if(assignData.regularTargetAmt) regTargetAmt = assignData.regularTargetAmt;
+                    if(assignData.maturedTargetAmt) matTargetAmt = assignData.maturedTargetAmt;
+                    
+                    if(assignData.details) {
+                        for(const accId in assignData.details) {
+                            const accType = (assignData.details[accId].type || "Regular").toLowerCase();
+                            if(accType === "regular") regAssignedCount++;
+                            else if (accType === "matured") matAssignedCount++;
+                        }
+                    }
+                }
+
+                // 2. Fetch Visits (Group by HP Number for UNIQUE tracking)
+                const visitsSnapshot = await window.firebaseDbGet(window.firebaseDbChild(dbRef, `visits/${yearMonthStr}`));
+                
+                // Ikkada prathi account (HP) ni group chesthunnam
+                let groupedAccounts = {};
+
+                if(visitsSnapshot.exists()) {
+                    const visitsData = visitsSnapshot.val();
+                    
+                    // Firebase keys chronological ga untayi kabatti paatha nunchi kothadi chaduvuthundi
+                    for (const visitId in visitsData) {
+                        const visit = visitsData[visitId];
+                        
+                        if(visit.eid === empId && visit.hp) {
+                            if (!groupedAccounts[visit.hp]) {
+                                // Account first time kanipisthe initialize chesthunnam
+                                groupedAccounts[visit.hp] = {
+                                    totalCollected: 0,
+                                    accType: visit.accType || "Regular",
+                                    latestType: visit.type // e.g., PCR
+                                };
+                            }
+                            
+                            // Amount add chesthunnam
+                            groupedAccounts[visit.hp].totalCollected += (parseInt(visit.amt) || 0);
+                            
+                            // Latest ga em type (PCR/LOCK) kottaro update chesthunnam
+                            // Firebase varusa lo chaduvuthundi kabatti last vachinadhe final (latest) type avuthundi
+                            groupedAccounts[visit.hp].latestType = visit.type; 
+                        }
+                    }
+                }
+
+                // 3. Calculation part based on Unique Accounts
+                let regCollectedAmt = 0; let matCollectedAmt = 0;
+                let regCompletedCount = 0; let matCompletedCount = 0;
+                
+                let pcrAmt = 0; let pcrCount = 0;
+                let lockAmt = 0; let lockCount = 0;
+                let qrAmt = 0; let qrCount = 0;
+                let opAmt = 0; let opCount = 0;
+
+                // Group chesina prathi unique HP number ni theeskuni calculate chesthunnam
+                for (const hp in groupedAccounts) {
+                    const account = groupedAccounts[hp];
+                    const accTypeLower = account.accType.toLowerCase();
+
+                    // Regular / Matured Counts & Amounts
+                    if (accTypeLower === "regular") {
+                        regCompletedCount++; // Count only once per unique HP
+                        regCollectedAmt += account.totalCollected;
+                    } else if (accTypeLower === "matured") {
+                        matCompletedCount++;
+                        matCollectedAmt += account.totalCollected;
+                    }
+
+                    // Total Amount ni LATEST TYPE loki pampisthunnam (Meeru adigina transfer logic)
+                    if (account.latestType === "PCR") { pcrCount++; pcrAmt += account.totalCollected; }
+                    else if (account.latestType === "LOCK") { lockCount++; lockAmt += account.totalCollected; }
+                    else if (account.latestType === "QR") { qrCount++; qrAmt += account.totalCollected; }
+                    else if (account.latestType === "OP") { opCount++; opAmt += account.totalCollected; }
+                }
+
+                // --- UPDATE UI WITH CALCULATED NUMBERS ---
+                document.getElementById('reg-assigned').innerText = regAssignedCount;
+                document.getElementById('reg-target-amt').innerText = "₹" + regTargetAmt;
+                document.getElementById('reg-collected').innerText = "₹" + regCollectedAmt;
+                document.getElementById('reg-completed').innerText = regCompletedCount;
+                
+                document.getElementById('mat-assigned').innerText = matAssignedCount;
+                document.getElementById('mat-target-amt').innerText = "₹" + matTargetAmt;
+                document.getElementById('mat-collected').innerText = "₹" + matCollectedAmt;
+                document.getElementById('mat-completed').innerText = matCompletedCount;
+                
+                document.getElementById('rec-pcr').innerText = "₹" + pcrAmt;
+                document.getElementById('rec-pcr-label').innerText = `PCR (${pcrCount})`;
+                
+                document.getElementById('rec-lock').innerText = "₹" + lockAmt;
+                document.getElementById('rec-lock-label').innerText = `LOCK (${lockCount})`;
+                
+                document.getElementById('rec-qr').innerText = "₹" + qrAmt;
+                document.getElementById('rec-qr-label').innerText = `QR (${qrCount})`;
+                
+                document.getElementById('rec-op').innerText = "₹" + opAmt;
+                document.getElementById('rec-op-label').innerText = `OP (${opCount})`;
+                
+                document.getElementById('vis-pcr').innerText = pcrCount;
+                document.getElementById('vis-lock').innerText = lockCount;
+                document.getElementById('vis-qr').innerText = qrCount;
+                document.getElementById('vis-op').innerText = opCount;
+                
+            } catch (error) {
+                console.error("Error fetching live data:", error);
+                alert("Failed to load dashboard data. Check your connection.");
+            } finally {
+                document.getElementById('loadingIndicator').style.display = 'none';
+            }
+        }
+        
+        window.fetchDashboardData = fetchDashboardData;
+
+        // Theme Logic
+        const themes = ['default', 'light', 'dark'];
+        let currentThemeIndex = 0;
+        function applyTheme(themeName) {
+            if(themeName === 'default') document.documentElement.removeAttribute('data-theme');
+            else document.documentElement.setAttribute('data-theme', themeName);
+            localStorage.setItem('appTheme', themeName);
+        }
+        function toggleTheme() {
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            applyTheme(themes[currentThemeIndex]);
+        }
+        const savedTheme = localStorage.getItem('appTheme') || 'default';
+        currentThemeIndex = themes.indexOf(savedTheme);
+        applyTheme(savedTheme);
+        
+    </script>
+</body>
+</html>
