@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sri Vishnu Priya Finance - My Complaints</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- THEME STYLES --- */
+        :root {
+            --primary-bg: #f0f2f5; 
+            --brand-color: #0c2046; 
+            --brand-gradient: linear-gradient(135deg, #0B3B60 0%, #1a5276 100%);
+            --accent-color: #E2A03F; 
+            --card-bg: #ffffff;
+            --text-main: #111827;
+            --text-muted: #4b5563;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --border-color: #e5e7eb;
+            --input-bg: #f8fafc;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', Arial, sans-serif; }
+        body { background-color: var(--primary-bg); color: var(--text-main); -webkit-tap-highlight-color: transparent; }
+
+        /* --- HEADER & BACK BUTTON --- */
+        .top-nav { background: var(--brand-gradient); padding: 20px 20px 25px 20px; border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); color: white; }
+        .header-top-row { display: flex; justify-content: space-between; align-items: center; }
+        .header-content h1 { font-size: 18px; font-weight: 700; color: var(--accent-color); margin: 0; }
+        
+        .action-bar { padding: 15px 20px; display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .back-btn { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; font-size: 16px; color: var(--brand-color); background: var(--card-bg); border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-decoration: none; border: 1px solid var(--border-color); flex-shrink: 0; }
+        
+        .page-title { font-size: 16px; font-weight: 800; color: var(--brand-color); }
+
+        /* --- TABS --- */
+        .tabs-container { padding: 0 20px; display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btn { flex: 1; padding: 12px; text-align: center; font-size: 13px; font-weight: 700; border-radius: 10px; cursor: pointer; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-muted); transition: 0.2s; }
+        .tab-btn.active { background: var(--brand-color); color: white; border-color: var(--brand-color); }
+
+        /* --- RAISE COMPLAINT FORM --- */
+        .form-container { padding: 0 20px 30px 20px; }
+        .form-card { background: var(--card-bg); padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border-color); }
+        
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 12px; font-weight: 700; color: var(--brand-color); margin-bottom: 8px; }
+        .input-group input, .input-group textarea, .input-group select { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 13px; font-weight: 600; background: var(--input-bg); color: var(--text-main); outline: none; }
+        .input-group input:focus, .input-group textarea:focus, .input-group select:focus { border-color: var(--accent-color); }
+        .input-group textarea { resize: none; height: 90px; }
+        
+        .file-upload-box { border: 2px dashed var(--border-color); padding: 20px; text-align: center; border-radius: 10px; background: var(--input-bg); cursor: pointer; position: relative; overflow: hidden; }
+        .file-upload-box i { font-size: 24px; color: var(--text-muted); margin-bottom: 10px; }
+        .file-upload-box span { display: block; font-size: 12px; font-weight: 600; color: var(--brand-color); }
+        .file-upload-box input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+        #previewImage { max-width: 100%; max-height: 150px; margin-top: 10px; border-radius: 8px; display: none; }
+
+        .btn-submit { width: 100%; padding: 15px; background: var(--success); color: white; border: none; border-radius: 10px; font-size: 14px; font-weight: 800; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 10px; }
+        .btn-submit:active { transform: scale(0.98); }
+        .btn-submit:disabled { background: #9ca3af; cursor: not-allowed; }
+
+        /* --- COMPLAINTS HISTORY LIST --- */
+        .history-container { padding: 0 20px 30px 20px; display: none; flex-direction: column; gap: 15px; }
+        
+        .c-card { background: var(--card-bg); border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid var(--border-color); border-left: 5px solid; overflow: hidden; }
+        .c-card.pending { border-left-color: var(--danger); }
+        .c-card.cleared { border-left-color: var(--success); }
+        
+        .c-header { padding: 12px 15px; background: #f8fafc; border-bottom: 1px dashed var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .c-hp { font-weight: 800; color: var(--brand-color); font-size: 14px; display: flex; align-items: center; gap: 5px; }
+        .c-date { font-size: 11px; font-weight: 600; color: var(--text-muted); }
+        
+        .badge-status { padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+        .s-pending { background: #fee2e2; color: #991b1b; }
+        .s-cleared { background: #dcfce7; color: #166534; }
+        
+        .c-body { padding: 15px; }
+        .c-emp { font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+        .c-emp i { color: var(--info); }
+        
+        .c-details-box { background: var(--input-bg); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px; }
+        .c-details-box strong { color: var(--text-main); display: block; margin-bottom: 3px; }
+        
+        .c-proof-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; color: var(--brand-color); background: #e2e8f0; padding: 6px 12px; border-radius: 6px; text-decoration: none; }
+        
+        #loadingText, #submitLoading { text-align: center; padding: 20px; font-size: 14px; color: var(--brand-color); font-weight: 600; display: none; }
+        #noDataText { text-align: center; padding: 30px 20px; font-size: 14px; color: var(--text-muted); display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="top-nav">
+        <div class="header-top-row">
+            <div class="header-content">
+                <h1>SRI VISHNU PRIYA</h1>
+                <div style="font-size: 13px; opacity: 0.9; margin-top:3px; font-weight: 600;" id="userDisplay">My Complaints</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-bar">
+        <a href="dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+        <div class="page-title">Support Ticket</div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs-container">
+        <div class="tab-btn active" id="tabNew" onclick="switchTab('new')"><i class="fas fa-pen-square"></i> Raise Complaint</div>
+        <div class="tab-btn" id="tabHistory" onclick="switchTab('history')"><i class="fas fa-list-alt"></i> History</div>
+    </div>
+
+    <!-- TAB 1: RAISE COMPLAINT FORM -->
+    <div class="form-container" id="viewNew">
+        <div class="form-card">
+            <div class="input-group">
+                <label>Branch Employee Name</label>
+                <input type="text" id="empName" placeholder="Enter employee name..." required>
+            </div>
+            
+            <div class="input-group">
+                <label>HP Number (Customer)</label>
+                <input type="text" id="hpNumber" placeholder="e.g., HP12345" required style="text-transform: uppercase;">
+            </div>
+
+            <div class="input-group">
+                <label>Complaint Details</label>
+                <textarea id="compDetails" placeholder="Write exactly what the customer complained about..." required></textarea>
+            </div>
+
+            <div class="input-group">
+                <label>Attach Proof (Optional)</label>
+                <div class="file-upload-box">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span>Tap to attach Image / Screenshot</span>
+                    <input type="file" id="compProof" accept="image/*" onchange="previewFile()">
+                </div>
+                <div style="text-align: center;"><img id="previewImage"></div>
+            </div>
+
+            <div id="submitLoading"><i class="fas fa-spinner fa-spin"></i> Submitting Complaint...</div>
+            <button class="btn-submit" id="btnSubmit" onclick="submitComplaint()"><i class="fas fa-paper-plane"></i> Submit to Admin</button>
+        </div>
+    </div>
+
+    <!-- TAB 2: COMPLAINTS HISTORY -->
+    <div class="history-container" id="viewHistory">
+        <div id="loadingText"><i class="fas fa-spinner fa-spin"></i> Fetching your complaints...</div>
+        <div id="noDataText">You haven't raised any complaints yet.</div>
+        <div id="complaintsList"></div>
+    </div>
+
+    <!-- Firebase SDKs & Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getDatabase, ref as dbRef, get, set, push } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getStorage, ref as storageRef, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAvjFcKKiu4OMmQckYXMTejdBJh9tC6TjM",
+            authDomain: "sri-vishnu-priya-finance-c591f.firebaseapp.com",
+            databaseURL: "https://sri-vishnu-priya-finance-c591f-default-rtdb.firebaseio.com",
+            projectId: "sri-vishnu-priya-finance-c591f",
+            storageBucket: "sri-vishnu-priya-finance-c591f.firebasestorage.app"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+        const storage = getStorage(app);
+        
+        window.currentEmpId = null;
+        window.selectedImageData = null; // Store base64 image
+
+        // Current Date formatting
+        const todayObj = new Date();
+        const currentDateStr = todayObj.getFullYear() + '-' + String(todayObj.getMonth() + 1).padStart(2, '0') + '-' + String(todayObj.getDate()).padStart(2, '0');
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                window.currentEmpId = user.email.split('@')[0];
+                document.getElementById('userDisplay').innerText = `${window.currentEmpId}'s Complaints`;
+            } else {
+                window.location.href = "index.html"; 
+            }
+        });
+
+        window.switchTab = function(tabName) {
+            if(tabName === 'new') {
+                document.getElementById('viewNew').style.display = 'block';
+                document.getElementById('viewHistory').style.display = 'none';
+                document.getElementById('tabNew').classList.add('active');
+                document.getElementById('tabHistory').classList.remove('active');
+            } else {
+                document.getElementById('viewNew').style.display = 'none';
+                document.getElementById('viewHistory').style.display = 'flex';
+                document.getElementById('tabNew').classList.remove('active');
+                document.getElementById('tabHistory').classList.add('active');
+                window.fetchComplaints();
+            }
+        };
+
+        window.formatDisplayDate = function(dStr) {
+            if(!dStr) return "N/A";
+            const d = new Date(dStr);
+            const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+            return `${String(d.getDate()).padStart(2,'0')} ${months[d.getMonth()]} ${d.getFullYear()}`;
+        };
+
+        // Handle Image Preview
+        window.previewFile = function() {
+            const file = document.getElementById('compProof').files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onloadend = function () {
+                    window.selectedImageData = reader.result;
+                    document.getElementById('previewImage').src = reader.result;
+                    document.getElementById('previewImage').style.display = 'inline-block';
+                }
+                reader.readAsDataURL(file);
+            }
+        };
+
+        // Submit Complaint
+        window.submitComplaint = async function() {
+            const hp = document.getElementById('hpNumber').value.trim().toUpperCase();
+            const empName = document.getElementById('empName').value.trim();
+            const details = document.getElementById('compDetails').value.trim();
+
+            if(!hp || !empName || !details) {
+                alert("Please fill all required fields!");
+                return;
+            }
+
+            const btn = document.getElementById('btnSubmit');
+            const loader = document.getElementById('submitLoading');
+            btn.style.display = 'none';
+            loader.style.display = 'block';
+
+            try {
+                let proofUrl = "N/A";
+                
+                // Upload image if selected
+                if(window.selectedImageData) {
+                    const fileName = `complaint_proofs/${window.currentEmpId}_${Date.now()}.jpg`;
+                    const imgRef = storageRef(storage, fileName);
+                    await uploadString(imgRef, window.selectedImageData, 'data_url');
+                    proofUrl = await getDownloadURL(imgRef);
+                }
+
+                // Push to Realtime Database (Saved indefinitely under employee's ID)
+                const newComplaintRef = push(dbRef(db, `complaints/${window.currentEmpId}`));
+                
+                const complaintData = {
+                    id: newComplaintRef.key,
+                    eid: window.currentEmpId,
+                    hp: hp,
+                    branchEmpName: empName,
+                    details: details,
+                    proofUrl: proofUrl,
+                    date: currentDateStr,
+                    timestamp: Date.now(),
+                    status: 'PENDING' // 'PENDING' or 'CLEARED'
+                };
+
+                await set(newComplaintRef, complaintData);
+                
+                alert("Complaint Submitted Successfully!");
+                
+                // Reset form
+                document.getElementById('hpNumber').value = '';
+                document.getElementById('empName').value = '';
+                document.getElementById('compDetails').value = '';
+                document.getElementById('compProof').value = '';
+                document.getElementById('previewImage').style.display = 'none';
+                window.selectedImageData = null;
+
+                // Go to history tab
+                window.switchTab('history');
+
+            } catch(e) {
+                console.error("Error submitting complaint:", e);
+                alert("Failed to submit. Please check your internet connection.");
+            } finally {
+                btn.style.display = 'flex';
+                loader.style.display = 'none';
+            }
+        };
+
+        // Fetch History
+        window.fetchComplaints = async function() {
+            if(!window.currentEmpId) return;
+
+            try {
+                document.getElementById('loadingText').style.display = 'block';
+                document.getElementById('noDataText').style.display = 'none';
+                const listContainer = document.getElementById('complaintsList');
+                listContainer.innerHTML = '';
+
+                // Get all complaints for this employee (Not restricted by month)
+                const snapshot = await get(dbRef(db, `complaints/${window.currentEmpId}`));
+                
+                if (snapshot.exists()) {
+                    let complaintsArray = [];
+                    const data = snapshot.val();
+                    
+                    for(let key in data) {
+                        complaintsArray.push(data[key]);
+                    }
+
+                    // Sort: Pending first, then by Date (Latest first)
+                    complaintsArray.sort((a, b) => {
+                        if(a.status === 'PENDING' && b.status === 'CLEARED') return -1;
+                        if(a.status === 'CLEARED' && b.status === 'PENDING') return 1;
+                        return b.timestamp - a.timestamp;
+                    });
+
+                    complaintsArray.forEach(c => {
+                        let isPending = (c.status === 'PENDING');
+                        let cardClass = isPending ? 'pending' : 'cleared';
+                        let badgeClass = isPending ? 's-pending' : 's-cleared';
+                        let iconClass = isPending ? '<i class="fas fa-clock"></i>' : '<i class="fas fa-check-circle"></i>';
+                        
+                        let proofHtml = '';
+                        if(c.proofUrl && c.proofUrl !== 'N/A') {
+                            proofHtml = `<a href="${c.proofUrl}" target="_blank" class="c-proof-btn"><i class="fas fa-image"></i> View Proof</a>`;
+                        } else {
+                            proofHtml = `<span style="font-size:11px; color:var(--text-muted);">No Proof Attached</span>`;
+                        }
+
+                        const card = `
+                            <div class="c-card ${cardClass}">
+                                <div class="c-header">
+                                    <div class="c-hp"><i class="fas fa-hashtag"></i> ${c.hp}</div>
+                                    <div class="badge-status ${badgeClass}">${iconClass} ${c.status}</div>
+                                </div>
+                                <div class="c-body">
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                                        <div class="c-emp"><i class="fas fa-user-tie"></i> ${c.branchEmpName}</div>
+                                        <div class="c-date">${window.formatDisplayDate(c.date)}</div>
+                                    </div>
+                                    
+                                    <div class="c-details-box">
+                                        <strong>Complaint Details:</strong>
+                                        ${c.details}
+                                    </div>
+                                    
+                                    <div style="border-top: 1px solid #f1f5f9; padding-top: 10px; margin-top: 5px;">
+                                        ${proofHtml}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        listContainer.innerHTML += card;
+                    });
+                    
+                } else {
+                    document.getElementById('noDataText').style.display = 'block';
+                }
+
+            } catch(error) {
+                console.error("Error fetching complaints:", error);
+                alert("Failed to load history.");
+            } finally {
+                document.getElementById('loadingText').style.display = 'none';
+            }
+        };
+    </script>
+</body>
+</html>
