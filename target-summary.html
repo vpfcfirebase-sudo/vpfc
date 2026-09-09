@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sri Vishnu Priya Finance - Target Summary</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- THEME STYLES --- */
+        :root {
+            --primary-bg: #f0f2f5; 
+            --brand-color: #0c2046; 
+            --brand-gradient: linear-gradient(135deg, #0B3B60 0%, #1a5276 100%);
+            --accent-color: #E2A03F; 
+            --card-bg: #ffffff;
+            --text-main: #111827;
+            --text-muted: #4b5563;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f59e0b;
+            --border-color: #e5e7eb;
+            --input-bg: #f8fafc;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', Arial, sans-serif; }
+        body { background-color: var(--primary-bg); color: var(--text-main); -webkit-tap-highlight-color: transparent; }
+
+        /* --- HEADER & BACK BUTTON --- */
+        .top-nav { background: var(--brand-gradient); padding: 20px 20px 25px 20px; border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); color: white; }
+        .header-top-row { display: flex; justify-content: space-between; align-items: center; }
+        .header-content h1 { font-size: 18px; font-weight: 700; color: var(--accent-color); margin: 0; }
+        
+        .action-bar { padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; }
+        .back-btn { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--brand-color); background: var(--card-bg); padding: 10px 15px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-decoration: none; border: 1px solid var(--border-color); }
+
+        .filter-input { padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 13px; font-weight: 600; background-color: var(--input-bg); color: var(--brand-color); outline: none; }
+
+        /* --- PROGRESS SECTION --- */
+        .progress-container { padding: 0 20px; margin-bottom: 20px; }
+        .progress-card { background: var(--card-bg); padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: 1px solid var(--border-color); }
+        .progress-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13px; font-weight: 700; color: var(--brand-color); }
+        .progress-bar-bg { width: 100%; height: 10px; background: #e2e8f0; border-radius: 10px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: var(--success); width: 0%; transition: 0.5s; }
+        .target-stats { display: flex; justify-content: space-between; margin-top: 10px; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; }
+
+        /* --- TABS --- */
+        .tabs-container { padding: 0 20px; display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btn { flex: 1; padding: 12px; text-align: center; font-size: 13px; font-weight: 700; border-radius: 10px; cursor: pointer; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-muted); transition: 0.2s; }
+        .tab-btn.active-completed { background: #dcfce7; color: #166534; border-color: #86efac; }
+        .tab-btn.active-uncompleted { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+
+        /* --- CARDS --- */
+        .list-container { padding: 0 20px 30px 20px; display: flex; flex-direction: column; gap: 12px; }
+        
+        .t-card { background: var(--card-bg); border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid var(--border-color); border-left: 5px solid var(--text-muted); overflow: hidden; }
+        .t-card.completed { border-left-color: var(--success); }
+        .t-card.uncompleted { border-left-color: var(--danger); }
+        .t-card.not-visited { border-left-color: var(--warning); opacity: 0.9; }
+
+        .t-header { padding: 12px 15px; background: #f8fafc; border-bottom: 1px dashed var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .t-hp { font-weight: 800; color: var(--brand-color); font-size: 15px; display: flex; align-items: center; gap: 5px;}
+        
+        .t-badge { padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+        .bg-paid { background: #dcfce7; color: #166534; }
+        .bg-notvisited { background: #fef3c7; color: #92400e; }
+        .bg-visited { background: #fee2e2; color: #991b1b; }
+
+        .t-body { padding: 15px; font-size: 13px; line-height: 1.6; }
+        .t-row { display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding-bottom: 5px; margin-bottom: 5px; }
+        .t-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .t-label { color: var(--text-muted); font-weight: 600; }
+        .t-val { color: var(--text-main); font-weight: 700; }
+        
+        .act-matured { color: var(--accent-color); font-weight: 800; }
+        
+        .amt-text { color: var(--success); font-size: 15px; font-weight: 800; }
+        .reason-text { color: var(--danger); }
+        .visit-count { background: var(--accent-color); color: white; padding: 2px 6px; border-radius: 6px; font-size: 10px; font-weight: bold; margin-left:5px; }
+
+        #loadingText { text-align: center; padding: 20px; font-size: 14px; color: var(--brand-color); font-weight: 600; }
+        #noDataText { text-align: center; padding: 30px 20px; font-size: 14px; color: var(--text-muted); display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="top-nav">
+        <div class="header-top-row">
+            <div class="header-content">
+                <h1>SRI VISHNU PRIYA</h1>
+                <div style="font-size: 13px; opacity: 0.9; margin-top:3px; font-weight: 600;" id="userDisplay">Target Summary</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-bar">
+        <a href="dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+        <input type="month" id="filterMonth" class="filter-input" onchange="fetchSummary()">
+    </div>
+
+    <!-- PROGRESS BAR -->
+    <div class="progress-container">
+        <div class="progress-card">
+            <div class="progress-header">
+                <span>Target Progress</span>
+                <span id="percentText">0%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressBar"></div>
+            </div>
+            <div class="target-stats">
+                <span>Completed: <b id="statComp" style="color:var(--success);">0</b></span>
+                <span>Pending: <b id="statUncomp" style="color:var(--danger);">0</b></span>
+                <span>Total: <b id="statTotal">0</b></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs-container">
+        <div class="tab-btn active-completed" id="tabComp" onclick="switchTab('completed')">
+            Completed (<span id="countComp">0</span>)
+        </div>
+        <div class="tab-btn" id="tabUncomp" onclick="switchTab('uncompleted')">
+            Uncompleted (<span id="countUncomp">0</span>)
+        </div>
+    </div>
+
+    <div id="loadingText"><i class="fas fa-spinner fa-spin"></i> Fetching your target details...</div>
+    <div id="noDataText">No data found for this month.</div>
+
+    <!-- LIST CONTAINERS -->
+    <div id="listCompleted" class="list-container"></div>
+    <div id="listUncompleted" class="list-container" style="display: none;"></div>
+
+    <!-- Firebase SDKs & Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAvjFcKKiu4OMmQckYXMTejdBJh9tC6TjM",
+            authDomain: "sri-vishnu-priya-finance-c591f.firebaseapp.com",
+            databaseURL: "https://sri-vishnu-priya-finance-c591f-default-rtdb.firebaseio.com",
+            projectId: "sri-vishnu-priya-finance-c591f",
+            storageBucket: "sri-vishnu-priya-finance-c591f.firebasestorage.app"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+        window.currentEmpId = null;
+
+        const date = new Date();
+        document.getElementById('filterMonth').value = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                window.currentEmpId = user.email.split('@')[0];
+                document.getElementById('userDisplay').innerText = `${window.currentEmpId}'s Summary`;
+                window.fetchSummary();
+            } else {
+                window.location.href = "index.html"; 
+            }
+        });
+
+        window.formatDate = function(dStr) {
+            if(!dStr) return "N/A";
+            const d = new Date(dStr);
+            const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+            return `${String(d.getDate()).padStart(2,'0')}-${months[d.getMonth()]}-${d.getFullYear()}`;
+        };
+
+        window.switchTab = function(tabName) {
+            if (tabName === 'completed') {
+                document.getElementById('listCompleted').style.display = 'flex';
+                document.getElementById('listUncompleted').style.display = 'none';
+                document.getElementById('tabComp').classList.add('active-completed');
+                document.getElementById('tabUncomp').classList.remove('active-uncompleted');
+            } else {
+                document.getElementById('listCompleted').style.display = 'none';
+                document.getElementById('listUncompleted').style.display = 'flex';
+                document.getElementById('tabComp').classList.remove('active-completed');
+                document.getElementById('tabUncomp').classList.add('active-uncompleted');
+            }
+        };
+
+        window.fetchSummary = async function() {
+            try {
+                document.getElementById('loadingText').style.display = 'block';
+                document.getElementById('noDataText').style.display = 'none';
+                
+                const month = document.getElementById('filterMonth').value;
+                if(!month) return;
+
+                const contComp = document.getElementById('listCompleted');
+                const contUncomp = document.getElementById('listUncompleted');
+                contComp.innerHTML = ''; contUncomp.innerHTML = '';
+
+                // Fetch Assignments (Target List)
+                let assignedHPs = [];
+                const assignSnap = await get(child(ref(db), `assignments/${window.currentEmpId}/${month}/details`));
+                if (assignSnap.exists()) {
+                    assignedHPs = Object.keys(assignSnap.val());
+                }
+
+                // Fetch Visits
+                let groupedVisits = {};
+                const visitsSnap = await get(child(ref(db), `visits/${month}`));
+                
+                if (visitsSnap.exists()) {
+                    const visitsData = visitsSnap.val();
+                    for (const vId in visitsData) {
+                        const v = visitsData[vId];
+                        if (v.eid === window.currentEmpId) {
+                            if (!groupedVisits[v.hp]) {
+                                groupedVisits[v.hp] = { count: 0, latest: null };
+                            }
+                            groupedVisits[v.hp].count++;
+                            
+                            // Get Latest status based on chronological Push ID
+                            if (!groupedVisits[v.hp].latest || vId > groupedVisits[v.hp].latestId) {
+                                groupedVisits[v.hp].latest = v;
+                                groupedVisits[v.hp].latestId = vId;
+                            }
+                        }
+                    }
+                }
+
+                let completedArr = [];
+                let uncompletedArr = [];
+
+                // 1. Process Visited Accounts
+                for (const hp in groupedVisits) {
+                    const v = groupedVisits[hp].latest;
+                    const vCount = groupedVisits[hp].count;
+
+                    // Remove from assigned tracking so we don't duplicate
+                    const assignIdx = assignedHPs.indexOf(hp);
+                    if (assignIdx > -1) assignedHPs.splice(assignIdx, 1);
+
+                    if (v.stat === 'PAID') {
+                        completedArr.push(v);
+                    } else {
+                        uncompletedArr.push({ hp: hp, visited: true, count: vCount, data: v });
+                    }
+                }
+
+                // 2. Process Remaining Assigned Accounts (Not Visited at all)
+                assignedHPs.forEach(hp => {
+                    uncompletedArr.push({ hp: hp, visited: false });
+                });
+
+                // Update UI - Completed
+                completedArr.forEach(v => {
+                    // Fix: Account Type logic (Default to REGULAR if empty)
+                    let accTypeStr = v.actType ? v.actType.toUpperCase() : 'REGULAR';
+                    let typeClass = accTypeStr === 'MATURED' ? 'act-matured' : '';
+
+                    const card = `
+                        <div class="t-card completed">
+                            <div class="t-header">
+                                <div class="t-hp"><i class="fas fa-hashtag"></i> ${v.hp}</div>
+                                <div class="t-badge bg-paid">PAID</div>
+                            </div>
+                            <div class="t-body">
+                                <div class="t-row"><span class="t-label">Paid Date</span><span class="t-val">${window.formatDate(v.date)}</span></div>
+                                <div class="t-row"><span class="t-label">Account Type</span><span class="t-val ${typeClass}">${accTypeStr}</span></div>
+                                <div class="t-row"><span class="t-label">Payment Mode</span><span class="t-val">${v.type || 'N/A'}</span></div>
+                                <div class="t-row"><span class="t-label">Amount</span><span class="t-val amt-text">₹${v.amt || '0'}</span></div>
+                            </div>
+                        </div>
+                    `;
+                    contComp.innerHTML += card;
+                });
+
+                // Update UI - Uncompleted
+                uncompletedArr.forEach(item => {
+                    if (item.visited) {
+                        const v = item.data;
+                        const reason = v.unr || v.seizeRsn || 'N/A';
+                        const countBadge = item.count > 1 ? `<span class="visit-count">${item.count} Visits</span>` : `<span class="visit-count" style="background:#e5e7eb; color:var(--text-muted);">1 Visit</span>`;
+                        
+                        const card = `
+                            <div class="t-card uncompleted">
+                                <div class="t-header">
+                                    <div class="t-hp"><i class="fas fa-hashtag"></i> ${item.hp} ${countBadge}</div>
+                                    <div class="t-badge bg-visited">VISITED</div>
+                                </div>
+                                <div class="t-body">
+                                    <div class="t-row"><span class="t-label">Visit Date</span><span class="t-val">${window.formatDate(v.date)}</span></div>
+                                    <div class="t-row"><span class="t-label">Visit Time</span><span class="t-val">${v.time || 'N/A'}</span></div>
+                                    <div class="t-row" style="flex-direction:column;">
+                                        <span class="t-label" style="margin-bottom:3px;">Reason for Not Paid:</span>
+                                        <span class="t-val reason-text">${reason}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        contUncomp.innerHTML += card;
+                    } else {
+                        const card = `
+                            <div class="t-card not-visited">
+                                <div class="t-header">
+                                    <div class="t-hp"><i class="fas fa-hashtag"></i> ${item.hp}</div>
+                                    <div class="t-badge bg-notvisited">NOT VISITED</div>
+                                </div>
+                                <div class="t-body" style="text-align:center; padding: 25px 15px;">
+                                    <i class="fas fa-exclamation-circle" style="font-size:24px; color:var(--warning); margin-bottom:10px;"></i>
+                                    <div style="font-weight:700; color:var(--text-main);">No Visit Record Found</div>
+                                    <div style="font-size:11px; color:var(--text-muted); margin-top:5px;">You have not visited this assigned account yet this month.</div>
+                                </div>
+                            </div>
+                        `;
+                        contUncomp.innerHTML += card;
+                    }
+                });
+
+                // Update Counters & Progress Bar
+                const totalComp = completedArr.length;
+                const totalUncomp = uncompletedArr.length;
+                const totalTarget = totalComp + totalUncomp;
+                let percent = 0;
+                
+                if (totalTarget > 0) {
+                    percent = Math.round((totalComp / totalTarget) * 100);
+                }
+
+                document.getElementById('countComp').innerText = totalComp;
+                document.getElementById('countUncomp').innerText = totalUncomp;
+                
+                document.getElementById('statComp').innerText = totalComp;
+                document.getElementById('statUncomp').innerText = totalUncomp;
+                document.getElementById('statTotal').innerText = totalTarget;
+                
+                document.getElementById('percentText').innerText = `${percent}%`;
+                document.getElementById('progressBar').style.width = `${percent}%`;
+
+                if (totalTarget === 0) {
+                    document.getElementById('noDataText').style.display = 'block';
+                }
+
+            } catch (error) {
+                console.error("Error loading target summary:", error);
+                alert("Failed to load summary.");
+            } finally {
+                document.getElementById('loadingText').style.display = 'none';
+            }
+        };
+    </script>
+</body>
+</html>
