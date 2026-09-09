@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sri Vishnu Priya Finance - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-bg: #f0f2f5; --brand-color: #0B3B60; --brand-gradient: linear-gradient(135deg, #0B3B60 0%, #1a5276 100%);
+            --accent-color: #E2A03F; --card-bg: #ffffff; --text-main: #2c3e50; --text-muted: #7f8c8d;
+            --success: #27ae60; --danger: #e74c3c; --border-color: #e0e0e0; --input-bg: #fafafa;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; transition: background-color 0.3s, color 0.3s; }
+        body { background-color: var(--primary-bg); color: var(--text-main); -webkit-tap-highlight-color: transparent; }
+
+        .top-nav { background: var(--brand-gradient); padding: 20px 20px 35px 20px; border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .header-top-row { display: flex; justify-content: space-between; align-items: center; color: white; margin-bottom: 15px; }
+        .header-actions i { font-size: 20px; margin-left: 15px; cursor: pointer; color: white; opacity: 0.9; }
+        .header-content h1 { font-size: 18px; font-weight: 700; color: var(--accent-color); margin: 0; }
+        
+        .status-badge { display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); padding: 8px 15px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); cursor: pointer; }
+        #status-text { font-size: 13px; font-weight: 800; color: #ffbaba; letter-spacing: 0.5px; }
+
+        #menu-view { padding: 20px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding-bottom: 30px;}
+        .grid-item { background: var(--card-bg); border-radius: 16px; padding: 20px 15px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: 1px solid var(--border-color); cursor: pointer; display: flex; flex-direction: column; align-items: center; text-decoration: none; color: inherit; }
+        .grid-item:active { transform: scale(0.96); }
+        .icon-box { width: 50px; height: 50px; border-radius: 12px; background: var(--input-bg); color: var(--brand-color); display: flex; justify-content: center; align-items: center; font-size: 22px; margin-bottom: 12px; }
+        .grid-item h3 { font-size: 13px; font-weight: 600; color: var(--text-main); }
+    </style>
+</head>
+<body>
+    <div class="top-nav">
+        <div class="header-top-row">
+            <div class="header-content">
+                <h1>SRI VISHNU PRIYA</h1>
+                <div style="font-size: 13px; opacity: 0.9; margin-top:3px; font-weight: 600;" id="user-display-email">Loading...</div>
+            </div>
+            <div class="header-actions">
+                <i class="fas fa-sign-out-alt" onclick="handleLogout()" title="Logout"></i>
+            </div>
+        </div>
+        
+        <!-- DYNAMIC STATUS BADGE -->
+        <div class="status-badge" onclick="window.location.href='my-attendance.html'" title="Click to view Attendance">
+            <span id="status-text">🔴 OFFLINE</span>
+        </div>
+    </div>
+
+    <!-- MAIN MENU -->
+    <div id="menu-view">
+        <a href="dashboard-stats.html" class="grid-item">
+            <div class="icon-box"><i class="fas fa-chart-pie"></i></div><h3>Dashboard</h3>
+        </a>
+        <a href="id-card.html" class="grid-item">
+            <div class="icon-box"><i class="fas fa-id-badge"></i></div><h3>Digital ID Card</h3>
+        </a>
+        <a href="customer-visit.html" class="grid-item">
+            <div class="icon-box"><i class="fas fa-users"></i></div><h3>Customer Visit</h3>
+        </a>
+        <div class="grid-item" onclick="window.location.href='my-visits.html'">
+            <div class="icon-box"><i class="fas fa-clipboard-check"></i></div><h3>Visit Status</h3>
+        </div>
+        <div class="grid-item" onclick="window.location.href='my-reminders.html'">
+            <div class="icon-box"><i class="fas fa-bell"></i></div><h3>My Reminders</h3>
+        </div>
+        <div class="grid-item" onclick="window.location.href='target-summary.html'">
+            <div class="icon-box"><i class="fas fa-bullseye"></i></div><h3>Target Summary</h3>
+        </div>
+        <div class="grid-item" onclick="window.location.href='my-history.html'">
+            <div class="icon-box"><i class="fas fa-history"></i></div><h3>My History</h3>
+        </div>
+        <div class="grid-item" onclick="window.location.href='my-complaints.html'">
+            <div class="icon-box"><i class="fas fa-exclamation-triangle"></i></div><h3>My Complaints</h3>
+        </div>
+        <div class="grid-item" style="grid-column: span 2;" onclick="window.location.href='my-attendance.html'">
+            <div class="icon-box" style="color: #27ae60;"><i class="fas fa-user-clock"></i></div><h3>My Attendance</h3>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAvjFcKKiu4OMmQckYXMTejdBJh9tC6TjM",
+            authDomain: "sri-vishnu-priya-finance-c591f.firebaseapp.com",
+            databaseURL: "https://sri-vishnu-priya-finance-c591f-default-rtdb.firebaseio.com",
+            projectId: "sri-vishnu-priya-finance-c591f",
+            storageBucket: "sri-vishnu-priya-finance-c591f.firebasestorage.app"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+        
+        window.auth = auth;
+        window.firebaseSignOut = signOut;
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const empId = user.email.split('@')[0];
+                try {
+                    const snap = await get(child(ref(db), `employees/${empId}`));
+                    if (snap.exists() && snap.val().name) {
+                        document.getElementById('user-display-email').innerText = `Welcome, ${snap.val().name}`;
+                    } else {
+                        document.getElementById('user-display-email').innerText = `Welcome, ${empId}`;
+                    }
+
+                    // CHECK REAL ATTENDANCE STATUS
+                    const today = new Date();
+                    const yyyy = today.getFullYear();
+                    const mm = String(today.getMonth() + 1).padStart(2, '0');
+                    const dd = String(today.getDate()).padStart(2, '0');
+                    
+                    const attSnap = await get(child(ref(db), `attendance/${empId}/${yyyy}-${mm}/${yyyy}-${mm}-${dd}`));
+                    const statText = document.getElementById('status-text');
+                    
+                    if (attSnap.exists()) {
+                        const att = attSnap.val();
+                        if (att.onlineTime && !att.offlineTime) {
+                            statText.innerHTML = "🟢 ONLINE";
+                            statText.style.color = "#4ade80";
+                        }
+                    }
+                } catch (error) { console.error(error); }
+            } else {
+                window.location.href = "index.html";
+            }
+        });
+    </script>
+    <script>
+        function handleLogout() {
+            if(confirm("Are you sure you want to logout?")) {
+                window.firebaseSignOut(window.auth).then(() => { window.location.href = "index.html"; });
+            }
+        }
+    </script>
+</body>
+</html>
