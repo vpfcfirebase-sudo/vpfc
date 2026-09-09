@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sri Vishnu Priya Finance - My History</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- THEME STYLES --- */
+        :root {
+            --primary-bg: #f0f2f5; 
+            --brand-color: #0c2046; 
+            --brand-gradient: linear-gradient(135deg, #0B3B60 0%, #1a5276 100%);
+            --accent-color: #E2A03F; 
+            --card-bg: #ffffff;
+            --text-main: #111827;
+            --text-muted: #4b5563;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --border-color: #e5e7eb;
+            --input-bg: #f8fafc;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', Arial, sans-serif; }
+        body { background-color: var(--primary-bg); color: var(--text-main); -webkit-tap-highlight-color: transparent; }
+
+        /* --- HEADER & BACK BUTTON --- */
+        .top-nav { background: var(--brand-gradient); padding: 20px 20px 25px 20px; border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); color: white; }
+        .header-top-row { display: flex; justify-content: space-between; align-items: center; }
+        .header-content h1 { font-size: 18px; font-weight: 700; color: var(--accent-color); margin: 0; }
+        
+        .action-bar { padding: 15px 20px; display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+        .back-btn { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; font-size: 16px; color: var(--brand-color); background: var(--card-bg); border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-decoration: none; border: 1px solid var(--border-color); flex-shrink: 0; }
+
+        /* --- FILTERS --- */
+        .filter-input { flex: 1; padding: 10px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 13px; font-weight: 600; background-color: var(--input-bg); color: var(--brand-color); outline: none; }
+        .filter-input:focus { border-color: var(--brand-color); }
+        .select-type { width: 100%; margin-bottom: 15px; }
+        .filters-container { padding: 0 20px; display: flex; gap: 10px; margin-bottom: 15px; }
+
+        /* --- STATS GRID --- */
+        .stats-grid { padding: 0 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        
+        .stat-card { background: var(--card-bg); padding: 12px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px; }
+        .stat-icon { width: 35px; height: 35px; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 16px; color: white; }
+        .stat-info { display: flex; flex-direction: column; }
+        .stat-val { font-size: 14px; font-weight: 800; color: var(--text-main); }
+        .stat-label { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+
+        .bg-online { background: #3b82f6; }
+        .bg-offline { background: #64748b; }
+        .bg-km { background: #8b5cf6; }
+        .bg-visits { background: #f59e0b; }
+        .bg-receipts { background: #10b981; }
+
+        /* Hide Time Stats in Monthly View */
+        .time-stat { display: flex; }
+
+        /* --- TIMELINE --- */
+        .timeline-container { padding: 0 20px 30px 30px; position: relative; }
+        .timeline-container::before { content: ''; position: absolute; top: 0; left: 35px; height: 100%; width: 2px; background: var(--border-color); }
+        
+        .timeline-item { position: relative; margin-bottom: 20px; padding-left: 25px; }
+        .timeline-dot { position: absolute; top: 0; left: -11px; width: 24px; height: 24px; border-radius: 50%; background: var(--card-bg); border: 2px solid var(--brand-color); display: flex; justify-content: center; align-items: center; font-size: 10px; color: var(--brand-color); z-index: 2; }
+        .timeline-dot.dot-paid { border-color: var(--success); color: var(--success); }
+        .timeline-dot.dot-notpaid { border-color: var(--danger); color: var(--danger); }
+        .timeline-dot.dot-seizing { border-color: var(--warning); color: var(--warning); }
+        
+        .timeline-content { background: var(--card-bg); padding: 12px 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid var(--border-color); }
+        
+        .time-badge { font-size: 11px; font-weight: 700; color: var(--brand-color); margin-bottom: 5px; display: inline-block; background: #f1f5f9; padding: 2px 8px; border-radius: 10px; }
+        .date-badge { color: var(--danger); margin-right: 5px; }
+        
+        .tl-hp { font-size: 14px; font-weight: 800; color: var(--text-main); margin-bottom: 3px; }
+        .tl-name { font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
+        
+        .tl-details { font-size: 12px; border-top: 1px dashed var(--border-color); padding-top: 8px; }
+        .tl-amt { color: var(--success); font-weight: 800; font-size: 14px; }
+        .tl-reason { color: var(--danger); font-weight: 700; }
+
+        .section-title { font-size: 13px; font-weight: 800; color: var(--brand-color); margin: 0 20px 15px 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        #loadingText { text-align: center; padding: 20px; font-size: 14px; color: var(--brand-color); font-weight: 600; }
+        #noDataText { text-align: center; padding: 30px 20px; font-size: 14px; color: var(--text-muted); display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="top-nav">
+        <div class="header-top-row">
+            <div class="header-content">
+                <h1>SRI VISHNU PRIYA</h1>
+                <div style="font-size: 13px; opacity: 0.9; margin-top:3px; font-weight: 600;" id="userDisplay">My History</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ACTION BAR & FILTERS -->
+    <div class="action-bar">
+        <a href="dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+        <select id="viewType" class="filter-input" onchange="toggleView()">
+            <option value="daily">Daily History</option>
+            <option value="monthly">Monthly History</option>
+        </select>
+    </div>
+    
+    <div class="filters-container">
+        <input type="date" id="historyDate" class="filter-input" onchange="fetchHistory()">
+        <input type="month" id="historyMonth" class="filter-input" style="display:none;" onchange="fetchHistory()">
+    </div>
+
+    <!-- STATS SUMMARY -->
+    <div class="stats-grid">
+        <div class="stat-card time-stat" id="boxOnline">
+            <div class="stat-icon bg-online"><i class="fas fa-sign-in-alt"></i></div>
+            <div class="stat-info"><span class="stat-val" id="stOnline">N/A</span><span class="stat-label">Online Time</span></div>
+        </div>
+        <div class="stat-card time-stat" id="boxOffline">
+            <div class="stat-icon bg-offline"><i class="fas fa-sign-out-alt"></i></div>
+            <div class="stat-info"><span class="stat-val" id="stOffline">N/A</span><span class="stat-label">Offline Time</span></div>
+        </div>
+        <div class="stat-card" id="boxVisits">
+            <div class="stat-icon bg-visits"><i class="fas fa-users"></i></div>
+            <div class="stat-info"><span class="stat-val" id="stVisits">0</span><span class="stat-label">Total Visits</span></div>
+        </div>
+        <div class="stat-card" id="boxReceipts">
+            <div class="stat-icon bg-receipts"><i class="fas fa-receipt"></i></div>
+            <div class="stat-info"><span class="stat-val" id="stReceipts">0</span><span class="stat-label">Receipts</span></div>
+        </div>
+        <div class="stat-card" style="grid-column: span 2; justify-content: center;" id="boxKm">
+            <div class="stat-icon bg-km"><i class="fas fa-motorcycle"></i></div>
+            <div class="stat-info" style="align-items: center;"><span class="stat-val" id="stKm">0.00 Km</span><span class="stat-label">Distance Travelled</span></div>
+        </div>
+    </div>
+
+    <div class="section-title">Timeline of Visits</div>
+
+    <div id="loadingText"><i class="fas fa-spinner fa-spin"></i> Loading history...</div>
+    <div id="noDataText">No activity recorded for this selection.</div>
+
+    <!-- TIMELINE CONTAINER -->
+    <div class="timeline-container" id="timelineContainer"></div>
+
+    <!-- Firebase SDKs & Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAvjFcKKiu4OMmQckYXMTejdBJh9tC6TjM",
+            authDomain: "sri-vishnu-priya-finance-c591f.firebaseapp.com",
+            databaseURL: "https://sri-vishnu-priya-finance-c591f-default-rtdb.firebaseio.com",
+            projectId: "sri-vishnu-priya-finance-c591f",
+            storageBucket: "sri-vishnu-priya-finance-c591f.firebasestorage.app"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+        window.currentEmpId = null;
+
+        // Set Default Dates
+        const todayObj = new Date();
+        const localDateStr = todayObj.getFullYear() + '-' + String(todayObj.getMonth() + 1).padStart(2, '0') + '-' + String(todayObj.getDate()).padStart(2, '0');
+        const localMonthStr = todayObj.getFullYear() + '-' + String(todayObj.getMonth() + 1).padStart(2, '0');
+        
+        document.getElementById('historyDate').value = localDateStr;
+        document.getElementById('historyMonth').value = localMonthStr;
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                window.currentEmpId = user.email.split('@')[0];
+                document.getElementById('userDisplay').innerText = `${window.currentEmpId}'s History`;
+                window.fetchHistory();
+            } else {
+                window.location.href = "index.html"; 
+            }
+        });
+
+        window.toggleView = function() {
+            const type = document.getElementById('viewType').value;
+            if (type === 'daily') {
+                document.getElementById('historyDate').style.display = 'block';
+                document.getElementById('historyMonth').style.display = 'none';
+                
+                // Show online/offline time for daily
+                document.getElementById('boxOnline').style.display = 'flex';
+                document.getElementById('boxOffline').style.display = 'flex';
+                
+                document.getElementById('boxVisits').style.gridColumn = 'auto';
+            } else {
+                document.getElementById('historyDate').style.display = 'none';
+                document.getElementById('historyMonth').style.display = 'block';
+                
+                // Hide online/offline time for monthly (we just show total KM)
+                document.getElementById('boxOnline').style.display = 'none';
+                document.getElementById('boxOffline').style.display = 'none';
+                
+                document.getElementById('boxVisits').style.gridColumn = 'auto';
+            }
+            window.fetchHistory();
+        }
+
+        window.formatShortDate = function(dStr) {
+            if(!dStr) return "";
+            const d = new Date(dStr);
+            const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+            return `${String(d.getDate()).padStart(2,'0')} ${months[d.getMonth()]}`;
+        };
+
+        window.fetchHistory = async function() {
+            if(!window.currentEmpId) return;
+
+            try {
+                document.getElementById('loadingText').style.display = 'block';
+                document.getElementById('noDataText').style.display = 'none';
+                const timelineContainer = document.getElementById('timelineContainer');
+                timelineContainer.innerHTML = '';
+
+                const viewType = document.getElementById('viewType').value;
+                let targetDate = "";
+                let monthStr = "";
+
+                if(viewType === 'daily'){
+                    targetDate = document.getElementById('historyDate').value;
+                    if(!targetDate) return;
+                    monthStr = targetDate.substring(0, 7); 
+                } else {
+                    monthStr = document.getElementById('historyMonth').value;
+                    if(!monthStr) return;
+                }
+
+                // Reset Stats
+                let countVisits = 0;
+                let countReceipts = 0;
+                let totalKm = 0;
+                document.getElementById('stOnline').innerText = "N/A";
+                document.getElementById('stOffline').innerText = "N/A";
+
+                // 1. Fetch Attendance (Data will show N/A until Attendance form is built)
+                const attSnap = await get(child(ref(db), `attendance/${window.currentEmpId}/${monthStr}`));
+                if (attSnap.exists()) {
+                    const attData = attSnap.val();
+                    if(viewType === 'daily' && attData[targetDate]) {
+                        document.getElementById('stOnline').innerText = attData[targetDate].onlineTime || "N/A";
+                        document.getElementById('stOffline').innerText = attData[targetDate].offlineTime || "N/A";
+                        totalKm = parseFloat(attData[targetDate].distanceKm) || 0;
+                    } else if(viewType === 'monthly') {
+                        // Sum all KMs in the month
+                        for(let d in attData) {
+                            totalKm += parseFloat(attData[d].distanceKm) || 0;
+                        }
+                    }
+                }
+                document.getElementById('stKm').innerText = `${totalKm.toFixed(2)} Km`;
+
+                // 2. Fetch Visits for timeline
+                let historyData = [];
+                const visitsSnap = await get(child(ref(db), `visits/${monthStr}`));
+                
+                if (visitsSnap.exists()) {
+                    const visitsData = visitsSnap.val();
+                    for (const vId in visitsData) {
+                        const v = visitsData[vId];
+                        
+                        if (v.eid === window.currentEmpId) {
+                            if (viewType === 'daily') {
+                                if (v.date === targetDate) {
+                                    historyData.push(v);
+                                    countVisits++;
+                                    if(v.stat === 'PAID') countReceipts++;
+                                }
+                            } else {
+                                // Monthly
+                                historyData.push(v);
+                                countVisits++;
+                                if(v.stat === 'PAID') countReceipts++;
+                            }
+                        }
+                    }
+                }
+
+                document.getElementById('stVisits').innerText = countVisits;
+                document.getElementById('stReceipts').innerText = countReceipts;
+
+                if (historyData.length > 0) {
+                    // Sort visits: Date first, then time
+                    historyData.sort((a, b) => {
+                        let dateA = new Date(a.date).getTime() || 0;
+                        let dateB = new Date(b.date).getTime() || 0;
+                        if(dateA !== dateB) return dateA - dateB;
+                        
+                        let timeA = a.timestamp || 0;
+                        let timeB = b.timestamp || 0;
+                        return timeA - timeB; 
+                    });
+
+                    historyData.forEach(v => {
+                        let dotClass = '';
+                        let dotIcon = '';
+                        let detailHtml = '';
+
+                        if (v.stat === 'PAID') {
+                            dotClass = 'dot-paid'; dotIcon = '<i class="fas fa-check"></i>';
+                            detailHtml = `<div>Amount Collected: <span class="tl-amt">₹${v.amt || 0}</span> (${v.type || 'N/A'})</div>`;
+                        } else if (v.stat === 'NOT PAID') {
+                            dotClass = 'dot-notpaid'; dotIcon = '<i class="fas fa-times"></i>';
+                            detailHtml = `<div>Reason: <span class="tl-reason">${v.unr || 'N/A'}</span></div><div style="margin-top:3px; color:var(--text-muted);">Promise Date: ${window.formatShortDate(v.next) || 'N/A'}</div>`;
+                        } else {
+                            dotClass = 'dot-seizing'; dotIcon = '<i class="fas fa-exclamation"></i>';
+                            detailHtml = `<div>Remarks: <span class="tl-reason">${v.seizeRsn || 'N/A'}</span></div>`;
+                        }
+
+                        // Show Date in badge ONLY if in Monthly View
+                        let badgePrefix = '';
+                        if(viewType === 'monthly') {
+                            badgePrefix = `<span class="date-badge">${window.formatShortDate(v.date)}</span> | `;
+                        }
+
+                        const tlItem = `
+                            <div class="timeline-item">
+                                <div class="timeline-dot ${dotClass}">${dotIcon}</div>
+                                <div class="timeline-content">
+                                    <div class="time-badge"><i class="far fa-clock"></i> ${badgePrefix}${v.time || 'N/A'}</div>
+                                    <div class="tl-hp"><i class="fas fa-hashtag"></i> ${v.hp} <span style="float:right; font-size:10px; font-weight:800; border:1px solid; padding:2px 5px; border-radius:4px;" class="${dotClass}">${v.stat}</span></div>
+                                    <div class="tl-name">${v.cname || 'Customer Name N/A'}</div>
+                                    <div class="tl-details">${detailHtml}</div>
+                                </div>
+                            </div>
+                        `;
+                        timelineContainer.innerHTML += tlItem;
+                    });
+                } else {
+                    document.getElementById('noDataText').style.display = 'block';
+                }
+
+            } catch (error) {
+                console.error("Error fetching history:", error);
+                alert("Failed to load history.");
+            } finally {
+                document.getElementById('loadingText').style.display = 'none';
+            }
+        };
+    </script>
+</body>
+</html>
