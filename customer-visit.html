@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sri Vishnu Priya Finance - Customer Visit</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- THEME STYLES --- */
+        :root {
+            --primary-bg: #f0f2f5; 
+            --brand-color: #0c2046; 
+            --brand-gradient: linear-gradient(135deg, #0B3B60 0%, #1a5276 100%);
+            --accent-color: #E2A03F; 
+            --card-bg: #ffffff;
+            --text-main: #111827;
+            --text-muted: #4b5563;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f59e0b;
+            --border-color: #e5e7eb;
+            --input-bg: #f8fafc;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', Arial, sans-serif; }
+        body { background-color: var(--primary-bg); color: var(--text-main); -webkit-tap-highlight-color: transparent; padding-bottom: 30px; }
+
+        /* --- HEADER & BACK BUTTON --- */
+        .top-nav { background: var(--brand-gradient); padding: 20px 20px 25px 20px; border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); color: white; }
+        .header-top-row { display: flex; justify-content: space-between; align-items: center; }
+        .header-content h1 { font-size: 18px; font-weight: 700; color: var(--accent-color); margin: 0; }
+        
+        .action-bar { padding: 15px 20px; display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .back-btn { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; font-size: 16px; color: var(--brand-color); background: var(--card-bg); border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-decoration: none; border: 1px solid var(--border-color); flex-shrink: 0; }
+        
+        .page-title { font-size: 16px; font-weight: 800; color: var(--brand-color); }
+
+        /* --- FORM STYLES --- */
+        .form-container { padding: 0 20px; }
+        .form-card { background: var(--card-bg); padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border-color); }
+        
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 12px; font-weight: 700; color: var(--brand-color); margin-bottom: 8px; }
+        .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px; font-weight: 600; background: var(--input-bg); color: var(--text-main); outline: none; }
+        .input-group input:focus, .input-group select:focus, .input-group textarea:focus { border-color: var(--accent-color); }
+        .input-group textarea { resize: none; height: 70px; }
+
+        /* --- CONDITIONAL SECTIONS --- */
+        #paidSection, #notPaidSection { display: none; padding: 15px; background: #f1f5f9; border-radius: 10px; margin-bottom: 15px; border: 1px dashed var(--border-color); }
+        
+        /* --- LOCATION BUTTON --- */
+        .btn-location { width: 100%; padding: 12px; background: #e0f2fe; color: #0284c7; border: 1px dashed #7dd3fc; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 15px; }
+        .btn-location.success { background: #dcfce7; color: #166534; border-color: #86efac; }
+        
+        /* --- SUBMIT BUTTON --- */
+        .btn-submit { width: 100%; padding: 16px; background: var(--brand-color); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; box-shadow: 0 4px 10px rgba(11, 59, 96, 0.2); }
+        .btn-submit:active { transform: scale(0.98); }
+        .btn-submit:disabled { background: #9ca3af; cursor: not-allowed; box-shadow: none; }
+
+        #loadingText { text-align: center; padding: 20px; font-size: 14px; color: var(--brand-color); font-weight: 600; display: block; }
+        #formBody { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="top-nav">
+        <div class="header-top-row">
+            <div class="header-content">
+                <h1>SRI VISHNU PRIYA</h1>
+                <div style="font-size: 13px; opacity: 0.9; margin-top:3px; font-weight: 600;" id="userDisplay">Customer Visit</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-bar">
+        <a href="dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+        <div class="page-title">Update Customer Status</div>
+    </div>
+
+    <div id="loadingText"><i class="fas fa-spinner fa-spin"></i> Checking Status...</div>
+
+    <!-- MAIN FORM -->
+    <div class="form-container" id="formBody">
+        <div class="form-card">
+            
+            <div class="input-group">
+                <label>HP Number</label>
+                <input type="text" id="vHp" placeholder="Eg: HP12345" required style="text-transform: uppercase;">
+            </div>
+
+            <div class="input-group">
+                <label>Customer Name</label>
+                <input type="text" id="vName" placeholder="Enter Name (Optional)">
+            </div>
+
+            <div class="input-group">
+                <label>Account Type</label>
+                <select id="vActType">
+                    <option value="REGULAR">Regular</option>
+                    <option value="MATURED">Matured</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Visit Status</label>
+                <select id="vStatus" onchange="toggleSections()">
+                    <option value="" disabled selected>Select Status...</option>
+                    <option value="PAID">Paid (Amount Collected)</option>
+                    <option value="NOT PAID">Not Paid (Promise to Pay)</option>
+                    <option value="SEIZING">Seizing / Defaulter</option>
+                </select>
+            </div>
+
+            <!-- PAID SECTION -->
+            <div id="paidSection">
+                <div class="input-group">
+                    <label>Amount Collected (₹)</label>
+                    <input type="number" id="vAmt" placeholder="0">
+                </div>
+                <div class="input-group" style="margin-bottom:0;">
+                    <label>Payment Mode</label>
+                    <select id="vType">
+                        <option value="Cash">Cash</option>
+                        <option value="Google Pay">Google Pay</option>
+                        <option value="PhonePe">PhonePe</option>
+                        <option value="Other UPI">Other UPI</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- NOT PAID SECTION -->
+            <div id="notPaidSection">
+                <div class="input-group">
+                    <label>Next Promise Date</label>
+                    <input type="date" id="vNextDate">
+                </div>
+                <div class="input-group" style="margin-bottom:0;">
+                    <label>Reason / Remarks</label>
+                    <textarea id="vReason" placeholder="Why didn't they pay?"></textarea>
+                </div>
+            </div>
+
+            <button class="btn-location" id="btnLoc" onclick="getLocation()" type="button">
+                <i class="fas fa-map-marker-alt"></i> Get Live Location
+            </button>
+
+            <button class="btn-submit" id="btnSubmit" onclick="submitVisit()">
+                <i class="fas fa-cloud-upload-alt"></i> Submit Update
+            </button>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs & Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getDatabase, ref, push, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAvjFcKKiu4OMmQckYXMTejdBJh9tC6TjM",
+            authDomain: "sri-vishnu-priya-finance-c591f.firebaseapp.com",
+            databaseURL: "https://sri-vishnu-priya-finance-c591f-default-rtdb.firebaseio.com",
+            projectId: "sri-vishnu-priya-finance-c591f",
+            storageBucket: "sri-vishnu-priya-finance-c591f.firebasestorage.app"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+        
+        window.currentEmpId = null;
+        window.visitLocationLat = "";
+        window.visitLocationLng = "";
+
+        // Today's Date Info
+        const todayObj = new Date();
+        const year = todayObj.getFullYear();
+        const month = todayObj.getMonth();
+        const monthStr = `${year}-${String(month + 1).padStart(2, '0')}`;
+        const dateStr = `${monthStr}-${String(todayObj.getDate()).padStart(2, '0')}`;
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                window.currentEmpId = user.email.split('@')[0];
+                document.getElementById('userDisplay').innerText = `${window.currentEmpId} (Visit Entry)`;
+                
+                // --- 🚨 STRICT ATTENDANCE GATEKEEPER 🚨 ---
+                try {
+                    const attSnap = await get(child(ref(db), `attendance/${window.currentEmpId}/${monthStr}/${dateStr}`));
+                    if (attSnap.exists()) {
+                        const att = attSnap.val();
+                        if (!att.onlineTime || att.offlineTime) {
+                            alert("Please go online for duty.");
+                            window.location.href = "my-attendance.html";
+                            return;
+                        }
+                    } else {
+                        alert("Please go online for duty.");
+                        window.location.href = "my-attendance.html";
+                        return;
+                    }
+                } catch(e) {
+                    console.error("Attendance check failed", e);
+                }
+                
+                // Attendance pass ayithe form chupinchu
+                document.getElementById('loadingText').style.display = 'none';
+                document.getElementById('formBody').style.display = 'block';
+
+            } else {
+                window.location.href = "index.html"; 
+            }
+        });
+
+        // UI Logic
+        window.toggleSections = function() {
+            const status = document.getElementById('vStatus').value;
+            const paidSec = document.getElementById('paidSection');
+            const notPaidSec = document.getElementById('notPaidSection');
+
+            paidSec.style.display = 'none';
+            notPaidSec.style.display = 'none';
+
+            if(status === 'PAID') {
+                paidSec.style.display = 'block';
+            } else if(status === 'NOT PAID' || status === 'SEIZING') {
+                notPaidSec.style.display = 'block';
+            }
+        }
+
+        window.getLocation = function() {
+            const btn = document.getElementById('btnLoc');
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Getting Location...`;
+            
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((pos) => {
+                    window.visitLocationLat = pos.coords.latitude;
+                    window.visitLocationLng = pos.coords.longitude;
+                    btn.classList.add('success');
+                    btn.innerHTML = `<i class="fas fa-check-circle"></i> Location Captured`;
+                }, (error) => {
+                    alert("Please turn on GPS and allow location access.");
+                    btn.innerHTML = `<i class="fas fa-map-marker-alt"></i> Get Live Location`;
+                }, { enableHighAccuracy: true });
+            } else {
+                alert("Location is not supported by your browser.");
+            }
+        }
+
+        window.submitVisit = async function() {
+            const hp = document.getElementById('vHp').value.trim().toUpperCase();
+            const name = document.getElementById('vName').value.trim();
+            const actType = document.getElementById('vActType').value;
+            const status = document.getElementById('vStatus').value;
+            
+            if(!hp || !status) {
+                alert("HP Number and Status are mandatory!");
+                return;
+            }
+
+            if(!window.visitLocationLat) {
+                alert("Please click 'Get Live Location' before submitting.");
+                return;
+            }
+
+            const btn = document.getElementById('btnSubmit');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Saving...`;
+
+            let amt = "", type = "", next = "", reason = "";
+            if(status === 'PAID') {
+                amt = document.getElementById('vAmt').value;
+                type = document.getElementById('vType').value;
+                if(!amt) { alert("Enter Amount!"); btn.disabled=false; btn.innerHTML=`<i class="fas fa-cloud-upload-alt"></i> Submit Update`; return; }
+            } else {
+                next = document.getElementById('vNextDate').value;
+                reason = document.getElementById('vReason').value;
+                if(status === 'NOT PAID' && !next) { alert("Select Next Promise Date!"); btn.disabled=false; btn.innerHTML=`<i class="fas fa-cloud-upload-alt"></i> Submit Update`; return; }
+            }
+
+            // Exact Time
+            const now = new Date();
+            let hours = now.getHours();
+            let mins = now.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12; hours = hours ? hours : 12; 
+            mins = mins < 10 ? '0'+mins : mins;
+            const timeStr = `${hours}:${mins} ${ampm}`;
+
+            try {
+                const newVisitRef = push(ref(db, `visits/${monthStr}`));
+                const locStr = `${window.visitLocationLat},${window.visitLocationLng}`;
+
+                await set(newVisitRef, {
+                    eid: window.currentEmpId,
+                    hp: hp,
+                    cname: name,
+                    actType: actType,
+                    stat: status,
+                    amt: amt,
+                    type: type,
+                    next: next,
+                    unr: status === 'NOT PAID' ? reason : '',
+                    seizeRsn: status === 'SEIZING' ? reason : '',
+                    loc: locStr,
+                    date: dateStr,
+                    time: timeStr,
+                    timestamp: Date.now()
+                });
+
+                alert("Visit Updated Successfully!");
+                window.location.href = "dashboard.html";
+
+            } catch (error) {
+                console.error(error);
+                alert("Failed to submit. Please check your internet connection.");
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> Submit Update`;
+            }
+        }
+    </script>
+</body>
+</html>
