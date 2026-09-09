@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sri Vishnu Priya Finance - My Visits</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- THEME STYLES --- */
+        :root {
+            --primary-bg: #f0f2f5; 
+            --brand-color: #0c2046; 
+            --brand-gradient: linear-gradient(135deg, #0B3B60 0%, #1a5276 100%);
+            --accent-color: #E2A03F; 
+            --card-bg: #ffffff;
+            --text-main: #111827;
+            --text-muted: #4b5563;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f59e0b;
+            --border-color: #e5e7eb;
+            --input-bg: #f8fafc;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', Arial, sans-serif; }
+        body { background-color: var(--primary-bg); color: var(--text-main); -webkit-tap-highlight-color: transparent; }
+
+        /* --- HEADER & BACK BUTTON --- */
+        .top-nav { background: var(--brand-gradient); padding: 20px 20px 25px 20px; border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); color: white; }
+        .header-top-row { display: flex; justify-content: space-between; align-items: center; }
+        .header-content h1 { font-size: 18px; font-weight: 700; color: var(--accent-color); margin: 0; }
+        
+        .action-bar { padding: 15px 20px; display: flex; align-items: center; }
+        .back-btn { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--brand-color); background: var(--card-bg); padding: 10px 15px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-decoration: none; border: 1px solid var(--border-color); }
+
+        /* --- SUMMARY SECTION --- */
+        .summary-container { padding: 0 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .summary-card { background: var(--card-bg); padding: 15px 10px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: 1px solid var(--border-color); text-align: center; display: flex; flex-direction: column; justify-content: center; }
+        .summary-value { font-size: 18px; font-weight: 800; color: var(--brand-color); margin-bottom: 5px; }
+        .summary-value.success { color: var(--success); }
+        .summary-value.warning { color: var(--warning); font-size: 16px; }
+        .summary-label { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* --- FILTERS --- */
+        .filters-container { padding: 0 20px; display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+        .filter-input { flex: 1; min-width: 120px; padding: 10px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 13px; font-weight: 600; background-color: var(--input-bg); color: var(--brand-color); outline: none; }
+        .filter-input:focus { border-color: var(--brand-color); }
+        .search-full { width: 100%; flex: none; }
+
+        /* --- VISIT CARDS --- */
+        .visits-list { padding: 0 20px 30px 20px; display: flex; flex-direction: column; gap: 15px; }
+        
+        .visit-card { background: var(--card-bg); border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid var(--border-color); border-left: 5px solid var(--text-muted); overflow: hidden; position: relative; }
+        .visit-card.paid { border-left-color: var(--success); }
+        .visit-card.not-paid { border-left-color: var(--danger); }
+        .visit-card.seizing { border-left-color: var(--warning); }
+        
+        .card-header { padding: 12px 15px; border-bottom: 1px dashed var(--border-color); display: flex; justify-content: space-between; align-items: center; background: #f8fafc; }
+        .card-hp { font-weight: 800; color: var(--brand-color); font-size: 15px; display: flex; align-items: center; }
+        .card-time { font-size: 11px; font-weight: 600; color: var(--text-muted); }
+        
+        .card-body { padding: 15px; }
+        .card-cust { font-size: 14px; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
+        .card-details { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+        
+        /* Badges */
+        .status-badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; }
+        .badge-paid { background: #dcfce7; color: #166534; }
+        .badge-not-paid { background: #fee2e2; color: #991b1b; }
+        .badge-seizing { background: #fef3c7; color: #92400e; }
+        
+        .badge-direct { display: inline-block; padding: 3px 6px; border-radius: 4px; font-size: 9px; font-weight: 800; text-transform: uppercase; margin-left: 8px; background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; }
+
+        .count-badge { border-radius: 10px; padding: 2px 8px; font-size: 10px; margin-left: 8px; font-weight: 800; }
+        .count-single { background: #e5e7eb; color: var(--text-muted); }
+        .count-multi { background: var(--accent-color); color: white; }
+
+        .amt-highlight { font-size: 18px; font-weight: 800; color: var(--success); }
+        .reason-highlight { color: var(--danger); font-weight: 600; }
+
+        .visit-history-box { margin-top:12px; padding-top:12px; border-top:1px dashed var(--border-color); font-size:11px; }
+        .history-tag { display: inline-flex; align-items: center; background: #f1f5f9; border: 1px solid #e2e8f0; padding: 5px 10px; border-radius: 6px; color: var(--brand-color); font-weight: 700; margin: 4px 4px 0 0; cursor: pointer; transition: 0.2s; }
+        .history-tag:active { transform: scale(0.95); }
+        .history-tag.h-paid { border-color: #86efac; background: #f0fdf4; }
+        .history-tag.h-notpaid { border-color: #fca5a5; background: #fef2f2; }
+        .history-icon { margin-left: 5px; font-size: 10px; opacity: 0.7; }
+
+        .card-actions { padding: 10px 15px; background: #f8fafc; border-top: 1px solid var(--border-color); display: flex; gap: 10px; }
+        .btn-action { flex: 1; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; background: white; font-size: 12px; font-weight: 700; color: var(--brand-color); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .btn-action:active { background: var(--primary-bg); }
+
+        #loadingText { text-align: center; padding: 20px; font-size: 14px; color: var(--brand-color); font-weight: 600; }
+        #noDataText { text-align: center; padding: 30px 20px; font-size: 14px; color: var(--text-muted); display: none; }
+
+        /* --- IMAGE MODAL --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
+        .modal-content { background: white; padding: 15px; border-radius: 12px; width: 100%; max-width: 400px; max-height: 80vh; overflow-y: auto; text-align: center; }
+        .modal-close { background: var(--danger); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: 700; width: 100%; margin-top: 15px; cursor: pointer; }
+        .proof-img { width: 100%; height: auto; border-radius: 8px; margin-bottom: 10px; border: 1px solid var(--border-color); }
+        .proof-title { font-size: 12px; font-weight: 700; color: var(--brand-color); margin-bottom: 5px; text-transform: uppercase; text-align: left; border-top: 1px dashed var(--border-color); padding-top: 10px; margin-top: 10px; }
+        
+        .modal-loc-btn { display: flex; align-items: center; justify-content: center; gap: 8px; background: #e0f2fe; color: #0284c7; padding: 10px; border-radius: 8px; text-decoration: none; font-weight: 700; border: 1px solid #bae6fd; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="top-nav">
+        <div class="header-top-row">
+            <div class="header-content">
+                <h1>SRI VISHNU PRIYA</h1>
+                <div style="font-size: 13px; opacity: 0.9; margin-top:3px; font-weight: 600;" id="userDisplay">Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-bar">
+        <a href="dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+    </div>
+
+    <!-- 4-GRID SUMMARY SECTION -->
+    <div class="summary-container">
+        <div class="summary-card">
+            <div class="summary-value success" id="sumAmount">₹0</div>
+            <div class="summary-label">Collected</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-value" id="sumHouseVisits">0</div>
+            <div class="summary-label">House Visits</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-value" id="sumDirect" style="color: #0284c7;">0</div>
+            <div class="summary-label">Direct / No Visit</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-value warning" id="sumPending">0 / 0</div>
+            <div class="summary-label">Pending / Assigned</div>
+        </div>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filters-container">
+        <select id="viewType" class="filter-input" onchange="toggleView()">
+            <option value="daily">Daily View</option>
+            <option value="monthly">Monthly View</option>
+        </select>
+        
+        <input type="date" id="filterDate" class="filter-input" onchange="fetchMyVisits()">
+        <input type="month" id="filterMonth" class="filter-input" style="display:none;" onchange="fetchMyVisits()">
+        
+        <input type="text" id="searchHp" class="filter-input search-full" placeholder="Search HP Number..." onkeyup="filterCards()">
+    </div>
+
+    <div id="loadingText"><i class="fas fa-spinner fa-spin"></i> Fetching your visits...</div>
+    <div id="noDataText">No visits found for the selected filter.</div>
+
+    <!-- VISITS LIST CONTAINER -->
+    <div class="visits-list" id="visitsContainer">
+        <!-- Cards will be injected here via JS -->
+    </div>
+
+    <!-- PROOFS MODAL -->
+    <div class="modal-overlay" id="proofModal">
+        <div class="modal-content">
+            <div id="modalHeaderTitle" style="font-size: 15px; font-weight: 800; color: var(--brand-color); margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">Visit Details</div>
+            
+            <div id="modalImagesContainer"></div>
+            
+            <button class="modal-close" onclick="closeModal()">Close Details</button>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs & Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAvjFcKKiu4OMmQckYXMTejdBJh9tC6TjM",
+            authDomain: "sri-vishnu-priya-finance-c591f.firebaseapp.com",
+            databaseURL: "https://sri-vishnu-priya-finance-c591f-default-rtdb.firebaseio.com",
+            projectId: "sri-vishnu-priya-finance-c591f",
+            storageBucket: "sri-vishnu-priya-finance-c591f.firebasestorage.app"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+        
+        window.db = db;
+        window.firebaseDbRef = ref;
+        window.firebaseDbGet = get;
+        window.firebaseDbChild = child;
+        window.currentEmpId = null;
+        window.visitHistoryData = {}; // Global variable to store full visit details
+
+        const today = new Date();
+        const localDateStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+        const localMonthStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0');
+        
+        document.getElementById('filterDate').value = localDateStr;
+        document.getElementById('filterMonth').value = localMonthStr;
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                window.currentEmpId = user.email.split('@')[0];
+                document.getElementById('userDisplay').innerText = `My Visit Status`;
+                window.fetchMyVisits();
+            } else {
+                window.location.href = "index.html"; 
+            }
+        });
+
+        window.toggleView = function() {
+            const type = document.getElementById('viewType').value;
+            if (type === 'daily') {
+                document.getElementById('filterDate').style.display = 'block';
+                document.getElementById('filterMonth').style.display = 'none';
+            } else {
+                document.getElementById('filterDate').style.display = 'none';
+                document.getElementById('filterMonth').style.display = 'block';
+            }
+            window.fetchMyVisits();
+        }
+
+        window.formatDateShort = function(dStr) {
+            if(!dStr) return "N/A";
+            const d = new Date(dStr);
+            const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+            return `${String(d.getDate()).padStart(2,'0')}-${months[d.getMonth()]}`;
+        }
+
+        window.fetchMyVisits = async function() {
+            if(!window.currentEmpId) return;
+            
+            document.getElementById('loadingText').style.display = 'block';
+            document.getElementById('noDataText').style.display = 'none';
+            const container = document.getElementById('visitsContainer');
+            container.innerHTML = '';
+            window.visitHistoryData = {}; // Clear previous data
+            
+            const viewType = document.getElementById('viewType').value;
+            let yearMonthStr = "";
+            let targetDate = "";
+
+            if (viewType === 'daily') {
+                targetDate = document.getElementById('filterDate').value;
+                if(!targetDate) return;
+                yearMonthStr = targetDate.substring(0, 7); 
+            } else {
+                yearMonthStr = document.getElementById('filterMonth').value;
+                if(!yearMonthStr) return;
+            }
+            
+            let totalAmount = 0;
+            let totalAssigned = 0;
+            let monthlyVisitedHPs = new Set(); 
+
+            try {
+                const assignSnap = await window.firebaseDbGet(window.firebaseDbChild(window.firebaseDbRef(window.db), `assignments/${window.currentEmpId}/${yearMonthStr}/details`));
+                if (assignSnap.exists()) {
+                    totalAssigned = Object.keys(assignSnap.val()).length;
+                }
+
+                const snapshot = await window.firebaseDbGet(window.firebaseDbChild(window.firebaseDbRef(window.db), `visits/${yearMonthStr}`));
+                
+                if (snapshot.exists()) {
+                    const visitsData = snapshot.val();
+                    let groupedVisits = {};
+
+                    for (const vId in visitsData) {
+                        const v = visitsData[vId];
+                        
+                        if (v.eid === window.currentEmpId) {
+                            monthlyVisitedHPs.add(v.hp);
+
+                            if (viewType === 'daily' && v.date !== targetDate) {
+                                continue;
+                            }
+
+                            if (!groupedVisits[v.hp]) {
+                                groupedVisits[v.hp] = { count: 0, totalAmt: 0, historyArr: [], hasPhysicalVisit: false };
+                            }
+                            
+                            groupedVisits[v.hp].count++;
+                            groupedVisits[v.hp].totalAmt += (parseInt(v.amt) || 0);
+
+                            if (v.photoHouse && v.photoHouse !== "N/A" && v.photoHouse.trim() !== "") {
+                                groupedVisits[v.hp].hasPhysicalVisit = true;
+                            }
+
+                            // Add full visit object to history array
+                            groupedVisits[v.hp].historyArr.push(v);
+
+                            // Overwrite with latest data
+                            groupedVisits[v.hp].cname = v.cname || 'N/A';
+                            groupedVisits[v.hp].stat = v.stat;
+                            groupedVisits[v.hp].time = v.time || 'N/A';
+                            groupedVisits[v.hp].type = v.type;
+                            groupedVisits[v.hp].unr = v.unr;
+                            groupedVisits[v.hp].next = v.next;
+                            groupedVisits[v.hp].seizeRsn = v.seizeRsn;
+                            groupedVisits[v.hp].loc = v.loc;
+                        }
+                    }
+
+                    const hpKeys = Object.keys(groupedVisits).reverse();
+                    let houseVisitsCount = 0;
+                    let directVisitsCount = 0;
+
+                    if(hpKeys.length > 0) {
+                        for (const hp of hpKeys) {
+                            const v = groupedVisits[hp];
+                            totalAmount += v.totalAmt;
+                            
+                            // Store history in global map for easy access in modals
+                            window.visitHistoryData[hp] = v.historyArr;
+
+                            if (v.hasPhysicalVisit) {
+                                houseVisitsCount++;
+                            } else {
+                                directVisitsCount++;
+                            }
+
+                            let cardClass = '';
+                            let badgeClass = '';
+                            if(v.stat === 'PAID') { cardClass = 'paid'; badgeClass = 'badge-paid'; }
+                            else if(v.stat === 'NOT PAID') { cardClass = 'not-paid'; badgeClass = 'badge-not-paid'; }
+                            else if(v.stat === 'SEIZING') { cardClass = 'seizing'; badgeClass = 'badge-seizing'; }
+
+                            let detailsHtml = '';
+                            if(v.stat === 'PAID') {
+                                detailsHtml = `
+                                    <div class="amt-highlight">₹${v.totalAmt}</div>
+                                    <div><strong>Latest Mode:</strong> ${v.type || 'N/A'}</div>
+                                `;
+                            } else if(v.stat === 'NOT PAID') {
+                                detailsHtml = `
+                                    <div class="reason-highlight">Reason: ${v.unr || 'N/A'}</div>
+                                    <div><strong>Next Date:</strong> ${v.next || 'N/A'}</div>
+                                `;
+                            } else {
+                                detailsHtml = `<div class="reason-highlight">Remarks: ${v.seizeRsn || 'N/A'}</div>`;
+                            }
+
+                            // Generate Clickable History Tags
+                            let historyTagsHtml = '';
+                            v.historyArr.forEach((histObj, index) => {
+                                let hClass = histObj.stat === 'PAID' ? 'h-paid' : (histObj.stat === 'NOT PAID' ? 'h-notpaid' : '');
+                                let shortDate = window.formatDateShort(histObj.date);
+                                historyTagsHtml += `
+                                    <span class="history-tag ${hClass}" onclick="openHistoryModal('${hp}', ${index})" title="Click to view details">
+                                        ${shortDate} (${histObj.stat}) <i class="fas fa-external-link-alt history-icon"></i>
+                                    </span>`;
+                            });
+
+                            let historyHtml = '';
+                            if(v.historyArr.length > 0) {
+                                historyHtml = `
+                                    <div class="visit-history-box">
+                                        <div style="font-weight:700; color:var(--text-muted); margin-bottom:5px;"><i class="fas fa-calendar-alt"></i> Visit History (Tap to view details):</div>
+                                        <div>${historyTagsHtml}</div>
+                                    </div>
+                                `;
+                            }
+
+                            let visitBadge = v.count > 1 
+                                ? `<span class="count-badge count-multi">${v.count} VISITS</span>` 
+                                : `<span class="count-badge count-single">1 VISIT</span>`;
+                                
+                            let directBadge = (!v.hasPhysicalVisit) ? `<span class="badge-direct"><i class="fas fa-bolt"></i> No Visit</span>` : '';
+                            
+                            // For the main buttons, point to the LATEST index (length - 1)
+                            const latestIndex = v.historyArr.length - 1;
+
+                            const cardHtml = `
+                                <div class="visit-card ${cardClass}" data-hp="${hp}">
+                                    <div class="card-header">
+                                        <div class="card-hp"><i class="fas fa-hashtag"></i> ${hp} ${visitBadge} ${directBadge}</div>
+                                        <div class="card-time"><i class="far fa-clock"></i> Latest: ${v.time}</div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="status-badge ${badgeClass}">${v.stat}</div>
+                                        <div class="card-cust"><i class="fas fa-user"></i> ${v.cname}</div>
+                                        <div class="card-details">${detailsHtml}</div>
+                                        ${historyHtml}
+                                    </div>
+                                    <div class="card-actions">
+                                        <a href="https://maps.google.com/?q=${v.loc}" target="_blank" class="btn-action" style="text-decoration:none;">
+                                            <i class="fas fa-map-marker-alt"></i> Location
+                                        </a>
+                                        <button class="btn-action" onclick="openHistoryModal('${hp}', ${latestIndex})">
+                                            <i class="fas fa-image"></i> Proofs
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                            container.insertAdjacentHTML('beforeend', cardHtml);
+                        }
+                    } else {
+                        document.getElementById('noDataText').style.display = 'block';
+                    }
+
+                    document.getElementById('sumAmount').innerText = `₹${totalAmount}`;
+                    document.getElementById('sumHouseVisits').innerText = houseVisitsCount;
+                    document.getElementById('sumDirect').innerText = directVisitsCount;
+                    
+                    let pendingCount = totalAssigned - monthlyVisitedHPs.size;
+                    if(pendingCount < 0) pendingCount = 0;
+                    document.getElementById('sumPending').innerText = `${pendingCount} / ${totalAssigned}`;
+
+                } else {
+                    document.getElementById('noDataText').style.display = 'block';
+                    document.getElementById('sumAmount').innerText = `₹0`;
+                    document.getElementById('sumHouseVisits').innerText = '0';
+                    document.getElementById('sumDirect').innerText = '0';
+                    document.getElementById('sumPending').innerText = `${totalAssigned} / ${totalAssigned}`;
+                }
+                
+            } catch (error) {
+                console.error("Error fetching my visits:", error);
+                alert("Failed to load data.");
+            } finally {
+                document.getElementById('loadingText').style.display = 'none';
+            }
+        };
+
+        window.filterCards = function() {
+            const query = document.getElementById('searchHp').value.toLowerCase();
+            const cards = document.querySelectorAll('.visit-card');
+            cards.forEach(card => {
+                const hp = card.getAttribute('data-hp').toLowerCase();
+                if (hp.includes(query)) card.style.display = 'block';
+                else card.style.display = 'none';
+            });
+        };
+
+        // --- NEW DYNAMIC MODAL LOGIC ---
+        window.openHistoryModal = function(hp, index) {
+            const histObj = window.visitHistoryData[hp][index];
+            const container = document.getElementById('modalImagesContainer');
+            container.innerHTML = ''; 
+            
+            // Set Modal Title based on selected date
+            document.getElementById('modalHeaderTitle').innerText = `Visit Details: ${window.formatDateShort(histObj.date)} (${histObj.stat})`;
+
+            // Generate Location Button for that specific visit
+            if (histObj.loc && histObj.loc !== "N/A" && histObj.loc !== "Location Denied") {
+                container.innerHTML += `
+                    <a href="https://maps.google.com/?q=${histObj.loc}" target="_blank" class="modal-loc-btn">
+                        <i class="fas fa-map-marker-alt"></i> View Exact Location on Map
+                    </a>
+                `;
+            } else {
+                container.innerHTML += `<div style="color:var(--danger); font-size:12px; margin-bottom:15px; font-weight:600;"><i class="fas fa-exclamation-circle"></i> Location not captured for this date.</div>`;
+            }
+
+            // Generate Photos for that specific visit
+            let hasImages = false;
+            if(histObj.photoCust && histObj.photoCust !== 'N/A' && histObj.photoCust.trim() !== '') {
+                container.innerHTML += `<div class="proof-title">Customer Photo</div><img src="${histObj.photoCust}" class="proof-img" alt="Customer">`;
+                hasImages = true;
+            }
+            if(histObj.photoHouse && histObj.photoHouse !== 'N/A' && histObj.photoHouse.trim() !== '') {
+                container.innerHTML += `<div class="proof-title">House Photo</div><img src="${histObj.photoHouse}" class="proof-img" alt="House">`;
+                hasImages = true;
+            }
+            if(histObj.receiptUrl && histObj.receiptUrl !== 'N/A' && histObj.receiptUrl.trim() !== '') {
+                container.innerHTML += `<div class="proof-title">Receipt / Proof</div><img src="${histObj.receiptUrl}" class="proof-img" alt="Receipt">`;
+                hasImages = true;
+            }
+            
+            if(!hasImages) {
+                container.innerHTML += `<div style="color:var(--text-muted); font-size:14px; padding:20px;">No images uploaded for this specific date.</div>`;
+            }
+
+            document.getElementById('proofModal').style.display = 'flex';
+        };
+
+        window.closeModal = function() {
+            document.getElementById('proofModal').style.display = 'none';
+        };
+    </script>
+</body>
+</html>
