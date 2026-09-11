@@ -287,7 +287,6 @@
                     const att = attSnap.val();
                     if(att.onlineTime) document.getElementById('timeIn').innerText = att.onlineTime;
                     
-                    // Fixed logic: If offlineTime exists, they are offline but CAN go online again
                     if (att.offlineTime) {
                         document.getElementById('timeOut').innerText = att.offlineTime;
                         setUIState('offline'); 
@@ -417,7 +416,6 @@
 
             const attRef = ref(db, `attendance/${window.currentEmpId}/${realMonthStr}/${realDateStr}`);
             
-            // Using UPDATE instead of SET so that we don't overwrite totalKm or visits count
             await update(attRef, {
                 onlineTime: timeStr,
                 selfieUrl: photoUrl,
@@ -425,15 +423,30 @@
                 startLng: lng,
                 status: 'Present',
                 date: realDateStr,
-                offlineTime: null // This clears the old punch-out time allowing them to be active again
+                offlineTime: null 
             });
 
             document.getElementById('timeIn').innerText = timeStr;
-            document.getElementById('timeOut').innerText = '--:--'; // Clear UI
+            document.getElementById('timeOut').innerText = '--:--';
             setUIState('online');
             buildCalendar(realMonthStr); 
         }
 
+        // ==========================================
+        // HAVERSINE DISTANCE FORMULA
+        // ==========================================
+        function getDistanceKm(lat1, lon1, lat2, lon2) {
+            if (!lat1 || !lon1 || !lat2 || !lon2) return 0;
+            const R = 6371; 
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+            return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+        }
+
+        // ==========================================
+        // 🚨 FIXED: SAVE GPS LOCATION ON GO OFFLINE
+        // ==========================================
         window.handleGoOffline = async function() {
             if (window.todayVisitsCount < 3) {
                 const proceed = confirm(`Warning: You have done only ${window.todayVisitsCount} out of 3 required visits today.\n\nAre you sure you want to end your work day? This will be marked as a partial day.`);
@@ -443,22 +456,60 @@
                 if(!proceed) return;
             }
 
-            const now = new Date();
-            let hours = now.getHours();
-            let mins = now.getMinutes();
-            const ampm = hours >= 12 ? 'PM' : 'AM';
-            hours = hours % 12; hours = hours ? hours : 12; 
-            mins = mins < 10 ? '0'+mins : mins;
-            const timeStr = `${hours}:${mins} ${ampm}`;
+            document.getElementById('loadingText').innerText = "Getting Location to End Duty...";
+            document.getElementById('loadingText').style.display = 'block';
 
-            const attRef = ref(db, `attendance/${window.currentEmpId}/${realMonthStr}/${realDateStr}`);
-            await update(attRef, {
-                offlineTime: timeStr,
-                visitsCount: window.todayVisitsCount 
-            });
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(async (pos) => {
+                    const endLat = pos.coords.latitude;
+                    const endLng = pos.coords.longitude;
 
-            document.getElementById('timeOut').innerText = timeStr;
-            setUIState('offline'); // Reverted to offline state so they can punch in again if needed
+                    const now = new Date();
+                    let hours = now.getHours();
+                    let mins = now.getMinutes();
+                    const ampm = hours >= 12 ? 'PM' : 'AM';
+                    hours = hours % 12; hours = hours ? hours : 12; 
+                    mins = mins < 10 ? '0'+mins : mins;
+                    const timeStr = `${hours}:${mins} ${ampm}`;
+
+                    const attRef = ref(db, `attendance/${window.currentEmpId}/${realMonthStr}/${realDateStr}`);
+                    const snap = await get(attRef);
+                    let finalKm = 0;
+
+                    // Calculate Final Distance from last visit to Offline Point
+                    if(snap.exists()) {
+                        let data = snap.val();
+                        finalKm = parseFloat(data.totalKm || 0);
+                        let prevLat = parseFloat(data.lastLat || data.startLat);
+                        let prevLng = parseFloat(data.lastLng || data.startLng);
+
+                        if(!isNaN(prevLat) && !isNaN(prevLng)) {
+                            let addedKm = getDistanceKm(prevLat, prevLng, endLat, endLng);
+                            finalKm += addedKm;
+                        }
+                    }
+
+                    // Save Everything to Firebase
+                    await update(attRef, {
+                        offlineTime: timeStr,
+                        endLat: endLat,      // Saves Ending Latitude
+                        endLng: endLng,      // Saves Ending Longitude
+                        totalKm: parseFloat(finalKm.toFixed(2)),
+                        visitsCount: window.todayVisitsCount 
+                    });
+
+                    document.getElementById('loadingText').style.display = 'none';
+                    document.getElementById('timeOut').innerText = timeStr;
+                    setUIState('offline'); 
+                    
+                }, (error) => {
+                    document.getElementById('loadingText').style.display = 'none';
+                    alert("GPS Location is required to End Duty & Calculate Return Distance!");
+                }, { enableHighAccuracy: true });
+            } else {
+                document.getElementById('loadingText').style.display = 'none';
+                alert("Location not supported by browser.");
+            }
         }
 
         window.buildCalendar = async function(selMonthStr) {
