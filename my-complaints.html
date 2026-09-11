@@ -204,50 +204,19 @@
                 const container = document.getElementById('complaintsListContainer');
                 container.innerHTML = '';
 
-                // Fetching from database using the Deep Scanner method
-                const snapshot = await get(ref(db, `complaints`));
+                // FETCHING DIRECTLY FROM THIS EMPLOYEE'S NODE
+                // Telecaller saves directly to complaints/employeeId
+                const snapshot = await get(ref(db, `complaints/${window.currentEmpId}`));
                 
                 if (snapshot.exists()) {
                     let myComplaints = [];
                     const data = snapshot.val();
                     
-                    // Deep Scan
-                    function extractComplaints(node) {
-                        if (!node || typeof node !== 'object') return;
-                        
-                        if (node.details && (node.hp || node.branchEmpName || node.empName)) {
-                            let targetNameRaw = String(node.branchEmpName || node.empName || node.employeeName || node.targetName || "").toLowerCase().replace(/\s+/g, '');
-                            let targetIdRaw = String(node.targetEid || node.empId || node.employeeId || "").toLowerCase().replace(/\s+/g, '');
-                            let myNameRaw = String(window.currentEmpName).toLowerCase().replace(/\s+/g, '');
-                            let myIdRaw = String(window.currentEmpId).toLowerCase().replace(/\s+/g, '');
-
-                            let isMatch = false;
-
-                            if (targetNameRaw !== "") {
-                                if (targetNameRaw === myNameRaw || targetNameRaw === myIdRaw || myNameRaw.includes(targetNameRaw) || targetNameRaw.includes(myNameRaw)) {
-                                    isMatch = true;
-                                }
-                            }
-                            if (targetIdRaw !== "") {
-                                if (targetIdRaw === myIdRaw || targetIdRaw === myNameRaw) {
-                                    isMatch = true;
-                                }
-                            }
-                            if (String(node.eid).toLowerCase() === myIdRaw) {
-                                isMatch = true;
-                            }
-
-                            if (isMatch) {
-                                myComplaints.push(node);
-                                return;
-                            }
-                        }
-                        for (let key in node) {
-                            extractComplaints(node[key]);
+                    for (let key in data) {
+                        if(data[key] && typeof data[key] === 'object') {
+                            myComplaints.push(data[key]);
                         }
                     }
-
-                    extractComplaints(data);
 
                     // Sort: Pending Top -> Solved Bottom -> Latest First
                     myComplaints.sort((a, b) => {
@@ -276,6 +245,7 @@
                                 proofHtml = `<span style="font-size:11px; color:var(--text-muted); font-weight:700;"><i class="fas fa-times-circle"></i> No Proof Uploaded</span>`;
                             }
 
+                            // Handling mapped variables carefully
                             let raisedByText = c.raisedByName || c.raisedBy || c.eid || "ADMIN";
                             if(!raisedByText.toUpperCase().startsWith("TC:")) {
                                 raisedByText = "TC: " + raisedByText;
@@ -284,7 +254,8 @@
                             let displayDate = c.raisedDate || c.date || "N/A";
                             let statTimeHtml = (isSolved && c.solvedDate) ? `<div class="stat-time">Resolved: ${c.solvedDate}</div>` : '';
 
-                            let descText = c.description || c.details || "No details provided.";
+                            // Here is the fix: It looks for 'description' first (Telecaller), then 'details' (Old Employee App)
+                            let descText = c.description || c.details || "No description provided by Telecaller.";
 
                             // THE SCARY BOX DESIGN
                             const card = `
