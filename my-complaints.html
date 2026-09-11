@@ -65,26 +65,30 @@
         /* --- COMPLAINTS HISTORY LIST --- */
         .history-container { padding: 0 20px 30px 20px; display: none; flex-direction: column; gap: 15px; }
         
-        .c-card { background: var(--card-bg); border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid var(--border-color); border-left: 5px solid; overflow: hidden; }
-        .c-card.pending { border-left-color: var(--danger); }
-        .c-card.cleared { border-left-color: var(--success); }
+        .c-card { background: var(--card-bg); border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid var(--border-color); overflow: hidden; }
         
-        .c-header { padding: 12px 15px; background: #f8fafc; border-bottom: 1px dashed var(--border-color); display: flex; justify-content: space-between; align-items: center; }
-        .c-hp { font-weight: 800; color: var(--brand-color); font-size: 14px; display: flex; align-items: center; gap: 5px; }
-        .c-date { font-size: 11px; font-weight: 600; color: var(--text-muted); }
+        /* New Header Design */
+        .c-header { padding: 12px 15px; background: #f8fafc; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .c-date { font-size: 12px; font-weight: 800; color: var(--brand-color); display: flex; align-items: center; gap: 5px; }
         
-        .badge-status { padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
-        .s-pending { background: #fee2e2; color: #991b1b; }
-        .s-cleared { background: #dcfce7; color: #166534; }
+        .badge-status { padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; border: 1px solid; }
+        .s-pending { background: #fef2f2; color: #dc2626; border-color: #fca5a5; }
+        .s-cleared { background: #f0fdf4; color: #16a34a; border-color: #86efac; }
         
         .c-body { padding: 15px; }
-        .c-emp { font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
-        .c-emp i { color: var(--info); }
         
-        .c-details-box { background: var(--input-bg); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px; }
-        .c-details-box strong { color: var(--text-main); display: block; margin-bottom: 3px; }
+        /* Info Grid for HP, Raised By, etc. */
+        .info-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 15px; }
+        .info-row { display: flex; font-size: 13px; }
+        .info-label { font-weight: 700; color: var(--text-muted); width: 130px; flex-shrink: 0; }
+        .info-val { font-weight: 800; color: var(--text-main); }
+        .info-val.hp { color: var(--info); }
+        .info-val.emp { color: var(--danger); }
         
-        .c-proof-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; color: var(--brand-color); background: #e2e8f0; padding: 6px 12px; border-radius: 6px; text-decoration: none; }
+        .c-details-box { background: var(--input-bg); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 13px; color: var(--text-main); line-height: 1.5; margin-bottom: 12px; }
+        .c-details-box strong { color: var(--brand-color); display: block; margin-bottom: 5px; font-size: 12px; text-transform: uppercase; }
+        
+        .c-proof-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; color: var(--brand-color); background: #e2e8f0; padding: 8px 15px; border-radius: 8px; text-decoration: none; }
         
         #loadingText, #submitLoading { text-align: center; padding: 20px; font-size: 14px; color: var(--brand-color); font-weight: 600; display: none; }
         #noDataText { text-align: center; padding: 30px 20px; font-size: 14px; color: var(--text-muted); display: none; }
@@ -116,12 +120,12 @@
     <div class="form-container" id="viewNew">
         <div class="form-card">
             <div class="input-group">
-                <label>Branch Employee Name</label>
+                <label>Complaint Against (Employee Name)</label>
                 <input type="text" id="empName" placeholder="Enter employee name..." required>
             </div>
             
             <div class="input-group">
-                <label>HP Number (Customer)</label>
+                <label>Customer HP Number</label>
                 <input type="text" id="hpNumber" placeholder="e.g., HP12345" required style="text-transform: uppercase;">
             </div>
 
@@ -131,7 +135,7 @@
             </div>
 
             <div class="input-group">
-                <label>Attach Proof (Optional)</label>
+                <label>Attach Proofs (Optional)</label>
                 <div class="file-upload-box">
                     <i class="fas fa-cloud-upload-alt"></i>
                     <span>Tap to attach Image / Screenshot</span>
@@ -156,7 +160,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getDatabase, ref as dbRef, get, set, push } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getDatabase, ref as dbRef, get, set, push, child } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
         import { getStorage, ref as storageRef, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
 
         const firebaseConfig = {
@@ -173,16 +177,27 @@
         const storage = getStorage(app);
         
         window.currentEmpId = null;
-        window.selectedImageData = null; // Store base64 image
+        window.currentEmpName = null;
+        window.selectedImageData = null; 
 
         // Current Date formatting
         const todayObj = new Date();
         const currentDateStr = todayObj.getFullYear() + '-' + String(todayObj.getMonth() + 1).padStart(2, '0') + '-' + String(todayObj.getDate()).padStart(2, '0');
 
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
                 window.currentEmpId = user.email.split('@')[0];
-                document.getElementById('userDisplay').innerText = `${window.currentEmpId}'s Complaints`;
+                window.currentEmpName = window.currentEmpId; // Default fallback
+                
+                // Fetch the actual name of the Telecaller logged in
+                try {
+                    const snap = await get(child(dbRef(db), `employees/${window.currentEmpId}`));
+                    if(snap.exists() && snap.val().name) {
+                        window.currentEmpName = snap.val().name;
+                    }
+                } catch(e) {}
+
+                document.getElementById('userDisplay').innerText = `${window.currentEmpName}'s Complaints`;
             } else {
                 window.location.href = "index.html"; 
             }
@@ -210,7 +225,6 @@
             return `${String(d.getDate()).padStart(2,'0')} ${months[d.getMonth()]} ${d.getFullYear()}`;
         };
 
-        // Handle Image Preview
         window.previewFile = function() {
             const file = document.getElementById('compProof').files[0];
             if (file) {
@@ -224,7 +238,6 @@
             }
         };
 
-        // Submit Complaint
         window.submitComplaint = async function() {
             const hp = document.getElementById('hpNumber').value.trim().toUpperCase();
             const empName = document.getElementById('empName').value.trim();
@@ -243,7 +256,6 @@
             try {
                 let proofUrl = "N/A";
                 
-                // Upload image if selected
                 if(window.selectedImageData) {
                     const fileName = `complaint_proofs/${window.currentEmpId}_${Date.now()}.jpg`;
                     const imgRef = storageRef(storage, fileName);
@@ -251,26 +263,26 @@
                     proofUrl = await getDownloadURL(imgRef);
                 }
 
-                // Push to Realtime Database (Saved indefinitely under employee's ID)
+                // Push to Realtime Database
                 const newComplaintRef = push(dbRef(db, `complaints/${window.currentEmpId}`));
                 
                 const complaintData = {
                     id: newComplaintRef.key,
                     eid: window.currentEmpId,
+                    raisedBy: window.currentEmpName, // Saved explicitely 
                     hp: hp,
                     branchEmpName: empName,
                     details: details,
                     proofUrl: proofUrl,
                     date: currentDateStr,
                     timestamp: Date.now(),
-                    status: 'PENDING' // 'PENDING' or 'CLEARED'
+                    status: 'PENDING'
                 };
 
                 await set(newComplaintRef, complaintData);
                 
                 alert("Complaint Submitted Successfully!");
                 
-                // Reset form
                 document.getElementById('hpNumber').value = '';
                 document.getElementById('empName').value = '';
                 document.getElementById('compDetails').value = '';
@@ -278,7 +290,6 @@
                 document.getElementById('previewImage').style.display = 'none';
                 window.selectedImageData = null;
 
-                // Go to history tab
                 window.switchTab('history');
 
             } catch(e) {
@@ -290,7 +301,6 @@
             }
         };
 
-        // Fetch History
         window.fetchComplaints = async function() {
             if(!window.currentEmpId) return;
 
@@ -300,7 +310,6 @@
                 const listContainer = document.getElementById('complaintsList');
                 listContainer.innerHTML = '';
 
-                // Get all complaints for this employee (Not restricted by month)
                 const snapshot = await get(dbRef(db, `complaints/${window.currentEmpId}`));
                 
                 if (snapshot.exists()) {
@@ -311,7 +320,6 @@
                         complaintsArray.push(data[key]);
                     }
 
-                    // Sort: Pending first, then by Date (Latest first)
                     complaintsArray.sort((a, b) => {
                         if(a.status === 'PENDING' && b.status === 'CLEARED') return -1;
                         if(a.status === 'CLEARED' && b.status === 'PENDING') return 1;
@@ -320,27 +328,38 @@
 
                     complaintsArray.forEach(c => {
                         let isPending = (c.status === 'PENDING');
-                        let cardClass = isPending ? 'pending' : 'cleared';
                         let badgeClass = isPending ? 's-pending' : 's-cleared';
                         let iconClass = isPending ? '<i class="fas fa-clock"></i>' : '<i class="fas fa-check-circle"></i>';
                         
                         let proofHtml = '';
                         if(c.proofUrl && c.proofUrl !== 'N/A') {
-                            proofHtml = `<a href="${c.proofUrl}" target="_blank" class="c-proof-btn"><i class="fas fa-image"></i> View Proof</a>`;
+                            proofHtml = `<a href="${c.proofUrl}" target="_blank" class="c-proof-btn"><i class="fas fa-image"></i> View Attached Proof</a>`;
                         } else {
-                            proofHtml = `<span style="font-size:11px; color:var(--text-muted);">No Proof Attached</span>`;
+                            proofHtml = `<span style="font-size:11px; color:var(--text-muted); font-weight:600;">No Proofs Attached</span>`;
                         }
 
+                        // THE EXACT STRUCTURE REQUESTED
                         const card = `
-                            <div class="c-card ${cardClass}">
+                            <div class="c-card">
                                 <div class="c-header">
-                                    <div class="c-hp"><i class="fas fa-hashtag"></i> ${c.hp}</div>
+                                    <div class="c-date"><i class="far fa-calendar-alt"></i> ${window.formatDisplayDate(c.date)}</div>
                                     <div class="badge-status ${badgeClass}">${iconClass} ${c.status}</div>
                                 </div>
                                 <div class="c-body">
-                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                                        <div class="c-emp"><i class="fas fa-user-tie"></i> ${c.branchEmpName}</div>
-                                        <div class="c-date">${window.formatDisplayDate(c.date)}</div>
+                                    
+                                    <div class="info-grid">
+                                        <div class="info-row">
+                                            <div class="info-label">HP Number:</div>
+                                            <div class="info-val hp">${c.hp}</div>
+                                        </div>
+                                        <div class="info-row">
+                                            <div class="info-label">Raised By:</div>
+                                            <div class="info-val">${c.raisedBy || c.eid}</div>
+                                        </div>
+                                        <div class="info-row">
+                                            <div class="info-label">Complaint Against:</div>
+                                            <div class="info-val emp">${c.branchEmpName}</div>
+                                        </div>
                                     </div>
                                     
                                     <div class="c-details-box">
@@ -348,9 +367,10 @@
                                         ${c.details}
                                     </div>
                                     
-                                    <div style="border-top: 1px solid #f1f5f9; padding-top: 10px; margin-top: 5px;">
+                                    <div style="border-top: 1px solid #f1f5f9; padding-top: 12px; margin-top: 10px;">
                                         ${proofHtml}
                                     </div>
+
                                 </div>
                             </div>
                         `;
