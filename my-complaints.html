@@ -144,11 +144,13 @@
             }
         });
 
+        // Date formatter for matching Telecaller's format
         window.formatDisplayDate = function(dStr) {
             if(!dStr) return "N/A";
-            const parts = dStr.split('-');
-            if(parts.length === 3) return `${parts[2]}-${parts[1]}-${parts[0]}`;
-            return dStr;
+            // Telecaller saves as "DD-MM-YYYY HH:MM AM/PM"
+            // We just extract the DD-MM-YYYY part
+            const justDate = dStr.split(' ')[0];
+            return justDate;
         };
 
         window.fetchComplaints = async function() {
@@ -161,96 +163,64 @@
                 const tbody = document.getElementById('complaintsTableBody');
                 tbody.innerHTML = '';
 
-                const snapshot = await get(ref(db, `complaints`));
+                // FETCHING COMPLAINTS DIRECTLY FROM THIS EMPLOYEE'S ID NODE
+                // Because Telecallers save to: complaints/employeeId
+                const snapshot = await get(ref(db, `complaints/${window.currentEmpId}`));
                 
                 if (snapshot.exists()) {
                     let myComplaints = [];
                     const data = snapshot.val();
                     
-                    // DEEP SCAN FUNCTION: Database lo ekkada save ayyina vetiki thesthundi
-                    function extractComplaints(node) {
-                        if (!node || typeof node !== 'object') return;
-                        
-                        // Checking if the node is an actual complaint
-                        if (node.details && (node.hp || node.branchEmpName || node.empName)) {
-                            
-                            // Get Target Details (Flexibly checking various possible variable names TC app might use)
-                            let targetNameRaw = String(node.branchEmpName || node.empName || node.employeeName || node.targetName || "").toLowerCase().replace(/\s+/g, '');
-                            let targetIdRaw = String(node.targetEid || node.empId || node.employeeId || "").toLowerCase().replace(/\s+/g, '');
-                            
-                            let myNameRaw = String(window.currentEmpName).toLowerCase().replace(/\s+/g, '');
-                            let myIdRaw = String(window.currentEmpId).toLowerCase().replace(/\s+/g, '');
-
-                            // Flexible Matching: Exists in either Name or ID
-                            let isMatch = false;
-
-                            if (targetNameRaw !== "") {
-                                if (targetNameRaw === myNameRaw || targetNameRaw === myIdRaw || myNameRaw.includes(targetNameRaw) || targetNameRaw.includes(myNameRaw)) {
-                                    isMatch = true;
-                                }
-                            }
-                            if (targetIdRaw !== "") {
-                                if (targetIdRaw === myIdRaw || targetIdRaw === myNameRaw) {
-                                    isMatch = true;
-                                }
-                            }
-
-                            // If this employee themselves raised it (legacy code safety), also show it
-                            if (String(node.eid).toLowerCase() === myIdRaw) {
-                                isMatch = true;
-                            }
-
-                            if (isMatch) {
-                                // Add to array and stop going deeper inside this node
-                                myComplaints.push(node);
-                                return;
-                            }
-                        }
-                        
-                        // Keep digging inside database nodes
-                        for (let key in node) {
-                            extractComplaints(node[key]);
-                        }
+                    for(let key in data) {
+                        let c = data[key];
+                        if (c) myComplaints.push(c);
                     }
-
-                    // Start scanning database
-                    extractComplaints(data);
 
                     // Sort: Pending top, then by Latest Date
                     myComplaints.sort((a, b) => {
-                        let aStatus = (a.status === 'SOLVED' || a.status === 'CLEARED') ? 1 : 0;
-                        let bStatus = (b.status === 'SOLVED' || b.status === 'CLEARED') ? 1 : 0;
+                        let aStatus = (a.status === 'Solved' || a.status === 'CLEARED' || a.status === 'SOLVED') ? 1 : 0;
+                        let bStatus = (b.status === 'Solved' || b.status === 'CLEARED' || b.status === 'SOLVED') ? 1 : 0;
                         if(aStatus !== bStatus) return aStatus - bStatus;
-                        return (b.timestamp || 0) - (a.timestamp || 0);
+                        return 0; // Chronological order if status is same
                     });
 
                     if (myComplaints.length > 0) {
                         myComplaints.forEach(c => {
-                            let isSolved = (c.status === 'SOLVED' || c.status === 'CLEARED');
+                            // Check Telecaller's Status Variable
+                            let isSolved = (c.status === 'Solved' || c.status === 'CLEARED' || c.status === 'SOLVED');
                             let statText = isSolved ? 'SOLVED' : 'PENDING';
                             let badgeClass = isSolved ? 's-solved' : 's-pending';
                             
+                            // Check Telecaller's Proof Variable
                             let proofHtml = '';
-                            if(c.proofUrl && c.proofUrl !== 'N/A') {
+                            if(c.proof && c.proof !== 'N/A' && c.proof !== "") {
+                                proofHtml = `<a href="${c.proof}" target="_blank" class="proof-link"><i class="fas fa-link"></i> View</a>`;
+                            } else if(c.proofUrl && c.proofUrl !== 'N/A') {
                                 proofHtml = `<a href="${c.proofUrl}" target="_blank" class="proof-link"><i class="fas fa-link"></i> View</a>`;
                             } else {
                                 proofHtml = `<span style="font-size:11px; color:var(--text-muted); font-weight:600;">No Proof</span>`;
                             }
 
-                            // Format Raised By Name
-                            let raisedByText = c.raisedBy || c.telecallerName || c.eid || "ADMIN";
+                            // Check Telecaller's Raised By Variable
+                            let raisedByText = c.raisedByName || c.raisedBy || c.eid || "ADMIN";
                             if(!raisedByText.toUpperCase().startsWith("TC:")) {
                                 raisedByText = "TC: " + raisedByText;
                             }
 
-                            let statTimeHtml = (isSolved && c.solvedTime) ? `<div class="stat-time">${c.solvedTime}</div>` : '';
+                            // Check Telecaller's Date Variables
+                            let displayDate = c.raisedDate || c.date || "N/A";
+                            
+                            let statTimeHtml = (isSolved && c.solvedDate) ? `<div class="stat-time">${c.solvedDate}</div>` : '';
+
+                            // Check Telecaller's Description Variable
+                            let descText = c.description || c.details || "No details provided.";
 
                             const row = `
                                 <tr>
-                                    <td style="font-weight:700;">${window.formatDisplayDate(c.date)}</td>
+                                    <td style="font-weight:700; white-space:nowrap;">${window.formatDisplayDate(displayDate)}</td>
                                     <td><strong style="color:var(--text-main); font-size:13px;">${c.hp || 'N/A'}</strong></td>
                                     <td><span class="tc-badge">${raisedByText.toUpperCase()}</span></td>
-                                    <td style="max-width:200px; line-height:1.6; color:var(--text-muted); font-size:11px;">${c.details}</td>
+                                    <td style="max-width:200px; line-height:1.6; color:var(--text-muted); font-size:11px;">${descText}</td>
                                     <td>${proofHtml}</td>
                                     <td>
                                         <div class="badge-status ${badgeClass}">${statText}</div>
