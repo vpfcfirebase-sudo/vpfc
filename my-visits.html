@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- THEME STYLES --- */
         :root {
             --primary-bg: #f0f2f5; 
             --brand-color: #0c2046; 
@@ -26,7 +25,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', Arial, sans-serif; }
         body { background-color: var(--primary-bg); color: var(--text-main); -webkit-tap-highlight-color: transparent; }
 
-        /* --- HEADER & BACK BUTTON --- */
         .top-nav { background: var(--brand-gradient); padding: 20px 20px 25px 20px; border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); color: white; }
         .header-top-row { display: flex; justify-content: space-between; align-items: center; }
         .header-content h1 { font-size: 18px; font-weight: 700; color: var(--accent-color); margin: 0; }
@@ -34,7 +32,6 @@
         .action-bar { padding: 15px 20px; display: flex; align-items: center; }
         .back-btn { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--brand-color); background: var(--card-bg); padding: 10px 15px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-decoration: none; border: 1px solid var(--border-color); }
 
-        /* --- SUMMARY SECTION --- */
         .summary-container { padding: 0 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
         .summary-card { background: var(--card-bg); padding: 15px 10px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: 1px solid var(--border-color); text-align: center; display: flex; flex-direction: column; justify-content: center; }
         .summary-value { font-size: 18px; font-weight: 800; color: var(--brand-color); margin-bottom: 5px; }
@@ -42,13 +39,11 @@
         .summary-value.warning { color: var(--warning); font-size: 16px; }
         .summary-label { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
 
-        /* --- FILTERS --- */
         .filters-container { padding: 0 20px; display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
         .filter-input { flex: 1; min-width: 120px; padding: 10px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 13px; font-weight: 600; background-color: var(--input-bg); color: var(--brand-color); outline: none; }
         .filter-input:focus { border-color: var(--brand-color); }
         .search-full { width: 100%; flex: none; }
 
-        /* --- VISIT CARDS --- */
         .visits-list { padding: 0 20px 30px 20px; display: flex; flex-direction: column; gap: 15px; }
         
         .visit-card { background: var(--card-bg); border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid var(--border-color); border-left: 5px solid var(--text-muted); overflow: hidden; position: relative; }
@@ -64,7 +59,6 @@
         .card-cust { font-size: 14px; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
         .card-details { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
         
-        /* Badges */
         .status-badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; }
         .badge-paid { background: #dcfce7; color: #166534; }
         .badge-not-paid { background: #fee2e2; color: #991b1b; }
@@ -93,7 +87,6 @@
         #loadingText { text-align: center; padding: 20px; font-size: 14px; color: var(--brand-color); font-weight: 600; }
         #noDataText { text-align: center; padding: 30px 20px; font-size: 14px; color: var(--text-muted); display: none; }
 
-        /* --- IMAGE MODAL --- */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
         .modal-content { background: white; padding: 15px; border-radius: 12px; width: 100%; max-width: 400px; max-height: 80vh; overflow-y: auto; text-align: center; }
         .modal-close { background: var(--danger); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: 700; width: 100%; margin-top: 15px; cursor: pointer; }
@@ -118,7 +111,6 @@
         <a href="dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
     </div>
 
-    <!-- 4-GRID SUMMARY SECTION -->
     <div class="summary-container">
         <div class="summary-card">
             <div class="summary-value success" id="sumAmount">₹0</div>
@@ -138,15 +130,14 @@
         </div>
     </div>
 
-    <!-- FILTERS (Default: Monthly View) -->
     <div class="filters-container">
         <select id="viewType" class="filter-input" onchange="toggleView()">
-            <option value="monthly" selected>Monthly View (All Data)</option>
-            <option value="daily">Daily View (Specific Date)</option>
+            <option value="daily" selected>Daily View (Specific Date)</option>
+            <option value="monthly">Monthly View (All Data)</option>
         </select>
         
-        <input type="date" id="filterDate" class="filter-input" style="display:none;" onchange="fetchMyVisits()">
-        <input type="month" id="filterMonth" class="filter-input" onchange="fetchMyVisits()">
+        <input type="date" id="filterDate" class="filter-input" onchange="fetchMyVisits()">
+        <input type="month" id="filterMonth" class="filter-input" style="display:none;" onchange="fetchMyVisits()">
         
         <input type="text" id="searchHp" class="filter-input search-full" placeholder="Search HP Number..." onkeyup="filterCards()">
     </div>
@@ -154,12 +145,8 @@
     <div id="loadingText"><i class="fas fa-spinner fa-spin"></i> Fetching your visits...</div>
     <div id="noDataText">No visits found for the selected filter.</div>
 
-    <!-- VISITS LIST CONTAINER -->
-    <div class="visits-list" id="visitsContainer">
-        <!-- Cards will be injected here via JS -->
-    </div>
+    <div class="visits-list" id="visitsContainer"></div>
 
-    <!-- PROOFS MODAL -->
     <div class="modal-overlay" id="proofModal">
         <div class="modal-content">
             <div id="modalHeaderTitle" style="font-size: 15px; font-weight: 800; color: var(--brand-color); margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">Visit Details</div>
@@ -168,7 +155,6 @@
         </div>
     </div>
 
-    <!-- Firebase SDKs & Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
@@ -262,29 +248,23 @@
             let monthlyVisitedHPs = new Set(); 
 
             try {
-                // Fetch Total Assigned
                 const assignSnap = await window.firebaseDbGet(window.firebaseDbChild(window.firebaseDbRef(window.db), `assignments/${window.currentEmpId}/${yearMonthStr}/details`));
                 if (assignSnap.exists()) {
                     totalAssigned = Object.keys(assignSnap.val()).length;
                 }
 
-                // Fetch Monthly Visits
                 const snapshot = await window.firebaseDbGet(window.firebaseDbChild(window.firebaseDbRef(window.db), `visits/${yearMonthStr}`));
                 
                 if (snapshot.exists()) {
                     const visitsData = snapshot.val();
                     let groupedVisits = {};
 
+                    // First group ALL visits for the month to get the true count[span_4](start_span)[span_4](end_span)
                     for (const vId in visitsData) {
                         const v = visitsData[vId];
                         
                         if (v.eid === window.currentEmpId) {
                             monthlyVisitedHPs.add(v.hp);
-
-                            // Apply Daily Filter correctly (Skips to next iteration if dates don't match)
-                            if (viewType === 'daily' && v.date !== targetDate) {
-                                continue;
-                            }
 
                             if (!groupedVisits[v.hp]) {
                                 groupedVisits[v.hp] = { count: 0, totalAmt: 0, historyArr: [], hasPhysicalVisit: false };
@@ -299,7 +279,6 @@
 
                             groupedVisits[v.hp].historyArr.push(v);
 
-                            // Overwrite with latest data
                             groupedVisits[v.hp].cname = v.cname || 'N/A';
                             groupedVisits[v.hp].stat = v.stat || 'N/A';
                             groupedVisits[v.hp].time = v.time || 'N/A';
@@ -314,10 +293,19 @@
                     const hpKeys = Object.keys(groupedVisits).reverse();
                     let houseVisitsCount = 0;
                     let directVisitsCount = 0;
+                    let cardsRendered = 0;
 
                     if(hpKeys.length > 0) {
                         for (const hp of hpKeys) {
                             const v = groupedVisits[hp];
+                            
+                            // Filter specifically for daily view rendering[span_5](start_span)[span_5](end_span)
+                            if (viewType === 'daily') {
+                                const hasVisitToday = v.historyArr.some(hist => hist.date === targetDate);
+                                if (!hasVisitToday) continue; 
+                            }
+
+                            cardsRendered++;
                             totalAmount += v.totalAmt;
                             window.visitHistoryData[hp] = v.historyArr;
 
@@ -393,6 +381,10 @@
                                 </div>
                             `;
                             container.insertAdjacentHTML('beforeend', cardHtml);
+                        }
+
+                        if(cardsRendered === 0) {
+                            document.getElementById('noDataText').style.display = 'block';
                         }
                     } else {
                         document.getElementById('noDataText').style.display = 'block';
