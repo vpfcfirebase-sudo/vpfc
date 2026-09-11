@@ -63,14 +63,20 @@
         .timeline-container { padding: 0 20px 30px 30px; position: relative; }
         .timeline-container::before { content: ''; position: absolute; top: 0; left: 35px; height: 100%; width: 2px; background: var(--border-color); }
         
+        /* TRAVEL DISTANCE BADGE */
+        .travel-badge { position: relative; margin-bottom: 20px; padding-left: 10px; z-index: 10; display: flex; align-items: center; }
+        .travel-badge span { background: #f8fafc; border: 1.5px solid #cbd5e1; color: #475569; font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
         .timeline-item { position: relative; margin-bottom: 20px; padding-left: 25px; }
         .timeline-dot { position: absolute; top: 0; left: -11px; width: 24px; height: 24px; border-radius: 50%; background: var(--card-bg); border: 2px solid var(--brand-color); display: flex; justify-content: center; align-items: center; font-size: 10px; color: var(--brand-color); z-index: 2; }
         .timeline-dot.dot-paid { border-color: var(--success); color: var(--success); }
         .timeline-dot.dot-notpaid { border-color: var(--danger); color: var(--danger); }
         .timeline-dot.dot-seizing { border-color: var(--warning); color: var(--warning); }
+        .timeline-dot.dot-online { border-color: #3b82f6; color: #3b82f6; font-size:12px; }
         
         .timeline-content { background: var(--card-bg); padding: 12px 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid var(--border-color); }
-        
+        .timeline-content.online-content { background: #eff6ff; border-color: #bfdbfe; }
+
         .time-badge { font-size: 11px; font-weight: 700; color: var(--brand-color); margin-bottom: 5px; display: inline-block; background: #f1f5f9; padding: 2px 8px; border-radius: 10px; }
         .date-badge { color: var(--danger); margin-right: 5px; }
         
@@ -187,19 +193,15 @@
                 document.getElementById('historyDate').style.display = 'block';
                 document.getElementById('historyMonth').style.display = 'none';
                 
-                // Show online/offline time for daily
                 document.getElementById('boxOnline').style.display = 'flex';
                 document.getElementById('boxOffline').style.display = 'flex';
-                
                 document.getElementById('boxVisits').style.gridColumn = 'auto';
             } else {
                 document.getElementById('historyDate').style.display = 'none';
                 document.getElementById('historyMonth').style.display = 'block';
                 
-                // Hide online/offline time for monthly (we just show total KM)
                 document.getElementById('boxOnline').style.display = 'none';
                 document.getElementById('boxOffline').style.display = 'none';
-                
                 document.getElementById('boxVisits').style.gridColumn = 'auto';
             }
             window.fetchHistory();
@@ -211,6 +213,15 @@
             const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
             return `${String(d.getDate()).padStart(2,'0')} ${months[d.getMonth()]}`;
         };
+
+        function getDistanceKm(lat1, lon1, lat2, lon2) {
+            if (!lat1 || !lon1 || !lat2 || !lon2) return 0;
+            const R = 6371; 
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+            return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+        }
 
         window.fetchHistory = async function() {
             if(!window.currentEmpId) return;
@@ -234,31 +245,29 @@
                     if(!monthStr) return;
                 }
 
-                // Reset Stats
-                let countVisits = 0;
-                let countReceipts = 0;
-                let totalKm = 0;
+                // Stats Variables
+                let countVisits = 0; let countReceipts = 0; let totalKm = 0;
                 document.getElementById('stOnline').innerText = "N/A";
                 document.getElementById('stOffline').innerText = "N/A";
 
-                // 1. Fetch Attendance (Data will show N/A until Attendance form is built)
+                // Map Dates to Attendance Info (Crucial for GPS tracking per day)
+                let attMap = {};
+                
                 const attSnap = await get(child(ref(db), `attendance/${window.currentEmpId}/${monthStr}`));
                 if (attSnap.exists()) {
-                    const attData = attSnap.val();
-                    if(viewType === 'daily' && attData[targetDate]) {
-                        document.getElementById('stOnline').innerText = attData[targetDate].onlineTime || "N/A";
-                        document.getElementById('stOffline').innerText = attData[targetDate].offlineTime || "N/A";
-                        totalKm = parseFloat(attData[targetDate].distanceKm) || 0;
+                    attMap = attSnap.val();
+                    
+                    if(viewType === 'daily' && attMap[targetDate]) {
+                        document.getElementById('stOnline').innerText = attMap[targetDate].onlineTime || "N/A";
+                        document.getElementById('stOffline').innerText = attMap[targetDate].offlineTime || "N/A";
+                        totalKm = parseFloat(attMap[targetDate].totalKm) || 0;
                     } else if(viewType === 'monthly') {
-                        // Sum all KMs in the month
-                        for(let d in attData) {
-                            totalKm += parseFloat(attData[d].distanceKm) || 0;
-                        }
+                        for(let d in attMap) { totalKm += parseFloat(attMap[d].totalKm) || 0; }
                     }
                 }
-                document.getElementById('stKm').innerText = `${totalKm.toFixed(2)} Km`;
+                document.getElementById('stKm').innerText = `${totalKm.toFixed(1)} Km`;
 
-                // 2. Fetch Visits for timeline
+                // Fetch Visits
                 let historyData = [];
                 const visitsSnap = await get(child(ref(db), `visits/${monthStr}`));
                 
@@ -266,19 +275,11 @@
                     const visitsData = visitsSnap.val();
                     for (const vId in visitsData) {
                         const v = visitsData[vId];
-                        
                         if (v.eid === window.currentEmpId) {
-                            if (viewType === 'daily') {
-                                if (v.date === targetDate) {
-                                    historyData.push(v);
-                                    countVisits++;
-                                    if(v.stat === 'PAID') countReceipts++;
-                                }
-                            } else {
-                                // Monthly
-                                historyData.push(v);
-                                countVisits++;
-                                if(v.stat === 'PAID') countReceipts++;
+                            if (viewType === 'daily' && v.date === targetDate) {
+                                historyData.push(v); countVisits++; if(v.stat === 'PAID') countReceipts++;
+                            } else if (viewType === 'monthly') {
+                                historyData.push(v); countVisits++; if(v.stat === 'PAID') countReceipts++;
                             }
                         }
                     }
@@ -287,52 +288,123 @@
                 document.getElementById('stVisits').innerText = countVisits;
                 document.getElementById('stReceipts').innerText = countReceipts;
 
-                if (historyData.length > 0) {
-                    // Sort visits: Date first, then time
-                    historyData.sort((a, b) => {
-                        let dateA = new Date(a.date).getTime() || 0;
-                        let dateB = new Date(b.date).getTime() || 0;
-                        if(dateA !== dateB) return dateA - dateB;
-                        
-                        let timeA = a.timestamp || 0;
-                        let timeB = b.timestamp || 0;
-                        return timeA - timeB; 
+                if (historyData.length > 0 || (viewType === 'daily' && attMap[targetDate])) {
+                    
+                    // Group visits by Date
+                    let groupedByDate = {};
+                    historyData.forEach(v => {
+                        if(!groupedByDate[v.date]) groupedByDate[v.date] = [];
+                        groupedByDate[v.date].push(v);
                     });
 
-                    historyData.forEach(v => {
-                        let dotClass = '';
-                        let dotIcon = '';
-                        let detailHtml = '';
+                    // Sort Dates (Latest First or Earliest First)
+                    const sortedDates = Object.keys(groupedByDate).sort((a,b) => new Date(a) - new Date(b));
 
-                        if (v.stat === 'PAID') {
-                            dotClass = 'dot-paid'; dotIcon = '<i class="fas fa-check"></i>';
-                            detailHtml = `<div>Amount Collected: <span class="tl-amt">₹${v.amt || 0}</span> (${v.type || 'N/A'})</div>`;
-                        } else if (v.stat === 'NOT PAID') {
-                            dotClass = 'dot-notpaid'; dotIcon = '<i class="fas fa-times"></i>';
-                            detailHtml = `<div>Reason: <span class="tl-reason">${v.unr || 'N/A'}</span></div><div style="margin-top:3px; color:var(--text-muted);">Promise Date: ${window.formatShortDate(v.next) || 'N/A'}</div>`;
-                        } else {
-                            dotClass = 'dot-seizing'; dotIcon = '<i class="fas fa-exclamation"></i>';
-                            detailHtml = `<div>Remarks: <span class="tl-reason">${v.seizeRsn || 'N/A'}</span></div>`;
-                        }
+                    sortedDates.forEach(dateKey => {
+                        let dailyVisits = groupedByDate[dateKey];
+                        
+                        // Sort Visits Chronologically within the day
+                        dailyVisits.sort((a,b) => {
+                            let timeA = a.timestamp || new Date(a.date + ' ' + (a.time||'00:00')).getTime();
+                            let timeB = b.timestamp || new Date(b.date + ' ' + (b.time||'00:00')).getTime();
+                            return timeA - timeB; 
+                        });
 
-                        // Show Date in badge ONLY if in Monthly View
-                        let badgePrefix = '';
-                        if(viewType === 'monthly') {
-                            badgePrefix = `<span class="date-badge">${window.formatShortDate(v.date)}</span> | `;
-                        }
+                        let lastLat = null, lastLng = null;
 
-                        const tlItem = `
-                            <div class="timeline-item">
-                                <div class="timeline-dot ${dotClass}">${dotIcon}</div>
-                                <div class="timeline-content">
-                                    <div class="time-badge"><i class="far fa-clock"></i> ${badgePrefix}${v.time || 'N/A'}</div>
-                                    <div class="tl-hp"><i class="fas fa-hashtag"></i> ${v.hp} <span style="float:right; font-size:10px; font-weight:800; border:1px solid; padding:2px 5px; border-radius:4px;" class="${dotClass}">${v.stat}</span></div>
-                                    <div class="tl-name">${v.cname || 'Customer Name N/A'}</div>
-                                    <div class="tl-details">${detailHtml}</div>
+                        // 1. ONLINE START POINT (Top of Timeline)
+                        if(attMap[dateKey] && attMap[dateKey].startLat) {
+                            lastLat = parseFloat(attMap[dateKey].startLat);
+                            lastLng = parseFloat(attMap[dateKey].startLng);
+
+                            let badgePrefix = viewType === 'monthly' ? `<span class="date-badge">${window.formatShortDate(dateKey)}</span> | ` : '';
+                            
+                            timelineContainer.innerHTML += `
+                                <div class="timeline-item">
+                                    <div class="timeline-dot dot-online"><i class="fas fa-play"></i></div>
+                                    <div class="timeline-content online-content">
+                                        <div class="time-badge" style="background:#dbeafe;"><i class="far fa-clock"></i> ${badgePrefix}${attMap[dateKey].onlineTime || 'N/A'}</div>
+                                        <div class="tl-hp" style="color:#1e3a8a;"><i class="fas fa-sign-in-alt"></i> Started Duty (Online)</div>
+                                    </div>
                                 </div>
-                            </div>
-                        `;
-                        timelineContainer.innerHTML += tlItem;
+                            `;
+                        }
+
+                        // 2. VISITS LOOP WITH DISTANCE TAGS
+                        dailyVisits.forEach((v, index) => {
+                            let vLat = parseFloat(v.lat); let vLng = parseFloat(v.lng);
+                            
+                            // CALCULATE DISTANCE FROM PREVIOUS POINT
+                            if(lastLat && lastLng && vLat && vLng) {
+                                let dist = getDistanceKm(lastLat, lastLng, vLat, vLng);
+                                if(dist >= 0) {
+                                    timelineContainer.innerHTML += `
+                                        <div class="travel-badge">
+                                            <span><i class="fas fa-motorcycle" style="color:#8b5cf6;"></i> ${dist.toFixed(1)} KM</span>
+                                        </div>
+                                    `;
+                                }
+                            }
+
+                            // UPDATE LAST POINT TO THIS VISIT
+                            if(vLat && vLng) { lastLat = vLat; lastLng = vLng; }
+
+                            // RENDER VISIT CARD
+                            let dotClass = ''; let dotIcon = ''; let detailHtml = '';
+                            if (v.stat === 'PAID') {
+                                dotClass = 'dot-paid'; dotIcon = '<i class="fas fa-check"></i>';
+                                detailHtml = `<div>Collected: <span class="tl-amt">₹${v.amt || 0}</span> (${v.type || 'N/A'})</div>`;
+                            } else if (v.stat === 'NOT PAID') {
+                                dotClass = 'dot-notpaid'; dotIcon = '<i class="fas fa-times"></i>';
+                                detailHtml = `<div>Reason: <span class="tl-reason">${v.unr || 'N/A'}</span></div><div style="margin-top:3px; color:var(--text-muted);">Promise Date: ${window.formatShortDate(v.next) || 'N/A'}</div>`;
+                            } else {
+                                dotClass = 'dot-seizing'; dotIcon = '<i class="fas fa-exclamation"></i>';
+                                detailHtml = `<div>Remarks: <span class="tl-reason">${v.seizeRsn || 'N/A'}</span></div>`;
+                            }
+
+                            let badgePrefix = viewType === 'monthly' ? `<span class="date-badge">${window.formatShortDate(v.date)}</span> | ` : '';
+
+                            timelineContainer.innerHTML += `
+                                <div class="timeline-item">
+                                    <div class="timeline-dot ${dotClass}">${dotIcon}</div>
+                                    <div class="timeline-content">
+                                        <div class="time-badge"><i class="far fa-clock"></i> ${badgePrefix}${v.time || 'N/A'}</div>
+                                        <div class="tl-hp"><i class="fas fa-hashtag"></i> ${v.hp} <span style="float:right; font-size:10px; font-weight:800; border:1px solid; padding:2px 5px; border-radius:4px;" class="${dotClass}">${v.stat}</span></div>
+                                        <div class="tl-name">${v.cname || 'Customer Name N/A'}</div>
+                                        <div class="tl-details">${detailHtml}</div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+
+                        // 3. OFFLINE END POINT (Bottom of Timeline)
+                        if(attMap[dateKey] && attMap[dateKey].offlineTime) {
+                            let endLat = parseFloat(attMap[dateKey].endLat);
+                            let endLng = parseFloat(attMap[dateKey].endLng);
+
+                            // CALCULATE DISTANCE FOR RETURN JOURNEY (If End Location Exists)
+                            if(lastLat && lastLng && endLat && endLng) {
+                                let returnDist = getDistanceKm(lastLat, lastLng, endLat, endLng);
+                                if(returnDist > 0) {
+                                    timelineContainer.innerHTML += `
+                                        <div class="travel-badge">
+                                            <span><i class="fas fa-home" style="color:#64748b;"></i> ${returnDist.toFixed(1)} KM</span>
+                                        </div>
+                                    `;
+                                }
+                            }
+
+                            let badgePrefix = viewType === 'monthly' ? `<span class="date-badge">${window.formatShortDate(dateKey)}</span> | ` : '';
+                            timelineContainer.innerHTML += `
+                                <div class="timeline-item">
+                                    <div class="timeline-dot dot-online" style="border-color:#64748b; color:#64748b;"><i class="fas fa-stop"></i></div>
+                                    <div class="timeline-content" style="background:#f8fafc; border-color:#e2e8f0;">
+                                        <div class="time-badge" style="background:#e2e8f0; color:#475569;"><i class="far fa-clock"></i> ${badgePrefix}${attMap[dateKey].offlineTime || 'N/A'}</div>
+                                        <div class="tl-hp" style="color:#475569;"><i class="fas fa-sign-out-alt"></i> Duty Ended (Offline)</div>
+                                    </div>
+                                </div>
+                            `;
+                        }
                     });
                 } else {
                     document.getElementById('noDataText').style.display = 'block';
