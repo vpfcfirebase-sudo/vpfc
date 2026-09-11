@@ -14,9 +14,9 @@
             --brand-gradient: linear-gradient(135deg, #0B3B60 0%, #1a5276 100%);
             --accent-color: #E2A03F; 
             --card-bg: #ffffff;
-            --text-main: #111827;
-            --text-muted: #94a3b8;
-            --border-color: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #cbd5e1;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', Arial, sans-serif; }
@@ -31,31 +31,87 @@
         .back-btn { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; font-size: 16px; color: var(--brand-color); background: var(--card-bg); border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-decoration: none; border: 1px solid var(--border-color); flex-shrink: 0; }
         
         .page-container { padding: 0 20px 30px 20px; }
+        
+        .section-header { font-size: 14px; font-weight: 900; color: var(--brand-color); margin-bottom: 15px; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        /* --- TABLE CARD DESIGN --- */
-        .table-card { background: var(--card-bg); border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); border: 1px solid var(--border-color); overflow: hidden; margin-top: 10px; }
-        .table-header-title { padding: 15px 20px; border-bottom: 1px solid var(--border-color); font-size: 14px; font-weight: 800; color: var(--brand-color); display: flex; align-items: center; gap: 8px; }
+        /* --- STRICT WARNING CARD DESIGN --- */
+        .alert-card {
+            background: #ffffff;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            border-left: 6px solid #dc2626; /* Scary Red Left Border */
+            box-shadow: 0 5px 15px rgba(220, 38, 38, 0.1);
+            overflow: hidden;
+        }
         
-        .table-responsive { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; min-width: 650px; text-align: left; }
-        th { padding: 15px; font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; border-bottom: 1px solid var(--border-color); background: #f8fafc; letter-spacing: 0.5px; }
-        td { padding: 15px; font-size: 12px; font-weight: 600; color: var(--text-main); border-bottom: 1px solid #f1f5f9; vertical-align: top; }
-        tr:last-child td { border-bottom: none; }
+        .alert-card.solved {
+            border-left-color: #16a34a;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+        }
 
-        /* --- BADGES & LINKS --- */
-        .tc-badge { background: #e0e7ff; color: #4f46e5; padding: 5px 10px; border-radius: 8px; font-size: 10px; font-weight: 800; display: inline-block; white-space: nowrap; }
-        
-        .badge-status { padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 800; text-transform: uppercase; display: inline-block; }
-        .s-pending { background: #fee2e2; color: #dc2626; }
-        .s-solved { background: #dcfce7; color: #16a34a; }
-        
-        .stat-time { font-size: 9px; color: var(--text-muted); font-weight: 600; margin-top: 5px; white-space: nowrap; }
+        .ac-header {
+            background: #f8fafc;
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
 
-        .proof-link { color: #6366f1; text-decoration: none; font-weight: 800; display: flex; align-items: center; gap: 5px; font-size: 12px; }
-        .proof-link i { font-size: 14px; }
+        .ac-date { font-weight: 800; color: #1e293b; font-size: 13px; display: flex; align-items: center; gap: 6px; }
         
-        #loadingText { text-align: center; padding: 20px; font-size: 13px; color: var(--brand-color); font-weight: 600; }
-        #noDataText { text-align: center; padding: 40px 20px; font-size: 13px; color: var(--text-muted); display: none; font-weight: 600;}
+        .ac-status { font-weight: 900; font-size: 11px; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .ac-pending { background: #fef2f2; color: #b91c1c; border: 1px solid #f87171; animation: pulse 2s infinite; }
+        .ac-solved { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        .ac-body { padding: 15px; }
+        
+        .ac-row { display: flex; align-items: flex-start; margin-bottom: 12px; font-size: 13px; }
+        .ac-label { font-weight: 800; color: var(--text-muted); width: 100px; flex-shrink: 0; text-transform: uppercase; font-size: 11px; margin-top: 2px; }
+        .ac-val { font-weight: 800; color: var(--text-main); }
+        
+        .hp-badge { font-size: 14px; color: #0284c7; background: #e0f2fe; padding: 3px 8px; border-radius: 6px; border: 1px solid #bae6fd; }
+        .tc-badge { font-size: 11px; color: #4338ca; background: #e0e7ff; padding: 3px 8px; border-radius: 6px; border: 1px solid #c7d2fe; display: inline-flex; align-items: center; gap: 4px;}
+
+        /* RED COMPLAINT BOX inside the card */
+        .ac-desc-box {
+            background: #fff1f2;
+            border: 1px solid #fecdd3;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: #9f1239;
+            font-weight: 700;
+            line-height: 1.5;
+        }
+        
+        .ac-desc-box.solved-desc {
+            background: #f8fafc;
+            border-color: #e2e8f0;
+            color: #334155;
+        }
+        
+        .ac-desc-title { font-size: 11px; font-weight: 900; text-transform: uppercase; margin-bottom: 5px; opacity: 0.8; display: flex; align-items: center; gap: 5px;}
+
+        .ac-footer { border-top: 1px dashed var(--border-color); padding-top: 12px; display: flex; justify-content: space-between; align-items: center; }
+        
+        .proof-btn { color: #6366f1; text-decoration: none; font-weight: 800; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; background: #f1f5f9; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border-color);}
+        .proof-btn:active { background: #e2e8f0; }
+
+        .stat-time { font-size: 10px; color: var(--text-muted); font-weight: 700; }
+
+        #loadingText { text-align: center; padding: 20px; font-size: 14px; color: var(--brand-color); font-weight: 700; }
+        #noDataText { text-align: center; padding: 40px 20px; font-size: 14px; color: var(--text-muted); display: none; font-weight: 700;}
+        .empty-icon { font-size: 40px; color: #10b981; margin-bottom: 15px; display: block; opacity: 0.8; }
     </style>
 </head>
 <body>
@@ -75,31 +131,19 @@
 
     <div class="page-container">
         
-        <div class="table-card">
-            <div class="table-header-title">
-                <i class="fas fa-inbox" style="color:#6366f1;"></i> Pending & Solved Complaints
-            </div>
-            
-            <div id="loadingText"><i class="fas fa-circle-notch fa-spin"></i> Fetching complaints against you...</div>
-            <div id="noDataText"><i class="fas fa-check-circle" style="font-size:30px; color:#10b981; margin-bottom:10px; display:block;"></i>No complaints found against you. Great job!</div>
-            
-            <div class="table-responsive" id="tableContainer" style="display: none;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>HP Num</th>
-                            <th>Raised By</th>
-                            <th>Complaint Details</th>
-                            <th>Proof</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="complaintsTableBody">
-                        <!-- Data injected by JS -->
-                    </tbody>
-                </table>
-            </div>
+        <div class="section-header">
+            <i class="fas fa-exclamation-triangle" style="color:#dc2626;"></i> Action Required / Warnings
+        </div>
+        
+        <div id="loadingText"><i class="fas fa-circle-notch fa-spin"></i> Loading complaints...</div>
+        
+        <div id="noDataText">
+            <i class="fas fa-shield-check empty-icon"></i>
+            No official complaints found against you.<br>Keep up the good work!
+        </div>
+        
+        <div id="complaintsListContainer">
+            <!-- Cards injected by JS -->
         </div>
 
     </div>
@@ -137,18 +181,16 @@
                     }
                 } catch(e) {}
 
-                document.getElementById('userDisplay').innerText = `${window.currentEmpName}'s Complaints`;
+                document.getElementById('userDisplay').innerText = `${window.currentEmpName}'s Warnings`;
                 window.fetchComplaints();
             } else {
                 window.location.href = "index.html"; 
             }
         });
 
-        // Date formatter for matching Telecaller's format
+        // Date formatter
         window.formatDisplayDate = function(dStr) {
             if(!dStr) return "N/A";
-            // Telecaller saves as "DD-MM-YYYY HH:MM AM/PM"
-            // We just extract the DD-MM-YYYY part
             const justDate = dStr.split(' ')[0];
             return justDate;
         };
@@ -159,78 +201,125 @@
             try {
                 document.getElementById('loadingText').style.display = 'block';
                 document.getElementById('noDataText').style.display = 'none';
-                document.getElementById('tableContainer').style.display = 'none';
-                const tbody = document.getElementById('complaintsTableBody');
-                tbody.innerHTML = '';
+                const container = document.getElementById('complaintsListContainer');
+                container.innerHTML = '';
 
-                // FETCHING COMPLAINTS DIRECTLY FROM THIS EMPLOYEE'S ID NODE
-                // Because Telecallers save to: complaints/employeeId
-                const snapshot = await get(ref(db, `complaints/${window.currentEmpId}`));
+                // Fetching from database using the Deep Scanner method
+                const snapshot = await get(ref(db, `complaints`));
                 
                 if (snapshot.exists()) {
                     let myComplaints = [];
                     const data = snapshot.val();
                     
-                    for(let key in data) {
-                        let c = data[key];
-                        if (c) myComplaints.push(c);
+                    // Deep Scan
+                    function extractComplaints(node) {
+                        if (!node || typeof node !== 'object') return;
+                        
+                        if (node.details && (node.hp || node.branchEmpName || node.empName)) {
+                            let targetNameRaw = String(node.branchEmpName || node.empName || node.employeeName || node.targetName || "").toLowerCase().replace(/\s+/g, '');
+                            let targetIdRaw = String(node.targetEid || node.empId || node.employeeId || "").toLowerCase().replace(/\s+/g, '');
+                            let myNameRaw = String(window.currentEmpName).toLowerCase().replace(/\s+/g, '');
+                            let myIdRaw = String(window.currentEmpId).toLowerCase().replace(/\s+/g, '');
+
+                            let isMatch = false;
+
+                            if (targetNameRaw !== "") {
+                                if (targetNameRaw === myNameRaw || targetNameRaw === myIdRaw || myNameRaw.includes(targetNameRaw) || targetNameRaw.includes(myNameRaw)) {
+                                    isMatch = true;
+                                }
+                            }
+                            if (targetIdRaw !== "") {
+                                if (targetIdRaw === myIdRaw || targetIdRaw === myNameRaw) {
+                                    isMatch = true;
+                                }
+                            }
+                            if (String(node.eid).toLowerCase() === myIdRaw) {
+                                isMatch = true;
+                            }
+
+                            if (isMatch) {
+                                myComplaints.push(node);
+                                return;
+                            }
+                        }
+                        for (let key in node) {
+                            extractComplaints(node[key]);
+                        }
                     }
 
-                    // Sort: Pending top, then by Latest Date
+                    extractComplaints(data);
+
+                    // Sort: Pending Top -> Solved Bottom -> Latest First
                     myComplaints.sort((a, b) => {
                         let aStatus = (a.status === 'Solved' || a.status === 'CLEARED' || a.status === 'SOLVED') ? 1 : 0;
                         let bStatus = (b.status === 'Solved' || b.status === 'CLEARED' || b.status === 'SOLVED') ? 1 : 0;
                         if(aStatus !== bStatus) return aStatus - bStatus;
-                        return 0; // Chronological order if status is same
+                        return (b.timestamp || 0) - (a.timestamp || 0);
                     });
 
                     if (myComplaints.length > 0) {
                         myComplaints.forEach(c => {
-                            // Check Telecaller's Status Variable
                             let isSolved = (c.status === 'Solved' || c.status === 'CLEARED' || c.status === 'SOLVED');
-                            let statText = isSolved ? 'SOLVED' : 'PENDING';
-                            let badgeClass = isSolved ? 's-solved' : 's-pending';
                             
-                            // Check Telecaller's Proof Variable
+                            let cardClass = isSolved ? 'solved' : '';
+                            let statText = isSolved ? 'SOLVED' : 'PENDING ACTION';
+                            let badgeClass = isSolved ? 'ac-solved' : 'ac-pending';
+                            let iconClass = isSolved ? 'fas fa-check-double' : 'fas fa-exclamation-circle';
+                            let boxClass = isSolved ? 'solved-desc' : '';
+                            
                             let proofHtml = '';
                             if(c.proof && c.proof !== 'N/A' && c.proof !== "") {
-                                proofHtml = `<a href="${c.proof}" target="_blank" class="proof-link"><i class="fas fa-link"></i> View</a>`;
+                                proofHtml = `<a href="${c.proof}" target="_blank" class="proof-btn"><i class="fas fa-file-image"></i> Attached Proof</a>`;
                             } else if(c.proofUrl && c.proofUrl !== 'N/A') {
-                                proofHtml = `<a href="${c.proofUrl}" target="_blank" class="proof-link"><i class="fas fa-link"></i> View</a>`;
+                                proofHtml = `<a href="${c.proofUrl}" target="_blank" class="proof-btn"><i class="fas fa-file-image"></i> Attached Proof</a>`;
                             } else {
-                                proofHtml = `<span style="font-size:11px; color:var(--text-muted); font-weight:600;">No Proof</span>`;
+                                proofHtml = `<span style="font-size:11px; color:var(--text-muted); font-weight:700;"><i class="fas fa-times-circle"></i> No Proof Uploaded</span>`;
                             }
 
-                            // Check Telecaller's Raised By Variable
                             let raisedByText = c.raisedByName || c.raisedBy || c.eid || "ADMIN";
                             if(!raisedByText.toUpperCase().startsWith("TC:")) {
                                 raisedByText = "TC: " + raisedByText;
                             }
 
-                            // Check Telecaller's Date Variables
                             let displayDate = c.raisedDate || c.date || "N/A";
-                            
-                            let statTimeHtml = (isSolved && c.solvedDate) ? `<div class="stat-time">${c.solvedDate}</div>` : '';
+                            let statTimeHtml = (isSolved && c.solvedDate) ? `<div class="stat-time">Resolved: ${c.solvedDate}</div>` : '';
 
-                            // Check Telecaller's Description Variable
                             let descText = c.description || c.details || "No details provided.";
 
-                            const row = `
-                                <tr>
-                                    <td style="font-weight:700; white-space:nowrap;">${window.formatDisplayDate(displayDate)}</td>
-                                    <td><strong style="color:var(--text-main); font-size:13px;">${c.hp || 'N/A'}</strong></td>
-                                    <td><span class="tc-badge">${raisedByText.toUpperCase()}</span></td>
-                                    <td style="max-width:200px; line-height:1.6; color:var(--text-muted); font-size:11px;">${descText}</td>
-                                    <td>${proofHtml}</td>
-                                    <td>
-                                        <div class="badge-status ${badgeClass}">${statText}</div>
-                                        ${statTimeHtml}
-                                    </td>
-                                </tr>
+                            // THE SCARY BOX DESIGN
+                            const card = `
+                                <div class="alert-card ${cardClass}">
+                                    <div class="ac-header">
+                                        <div class="ac-date"><i class="far fa-calendar-alt"></i> ${window.formatDisplayDate(displayDate)}</div>
+                                        <div class="ac-status ${badgeClass}"><i class="${iconClass}"></i> ${statText}</div>
+                                    </div>
+                                    <div class="ac-body">
+                                        
+                                        <div class="ac-row">
+                                            <div class="ac-label">Raised By</div>
+                                            <div class="ac-val"><span class="tc-badge"><i class="fas fa-headset"></i> ${raisedByText.toUpperCase()}</span></div>
+                                        </div>
+                                        
+                                        <div class="ac-row">
+                                            <div class="ac-label">HP Number</div>
+                                            <div class="ac-val"><span class="hp-badge">${c.hp || 'N/A'}</span></div>
+                                        </div>
+
+                                        <div class="ac-desc-box ${boxClass}">
+                                            <div class="ac-desc-title"><i class="fas fa-bullhorn"></i> Official Complaint Details</div>
+                                            ${descText}
+                                        </div>
+
+                                        <div class="ac-footer">
+                                            ${proofHtml}
+                                            ${statTimeHtml}
+                                        </div>
+
+                                    </div>
+                                </div>
                             `;
-                            tbody.innerHTML += row;
+                            container.innerHTML += card;
                         });
-                        document.getElementById('tableContainer').style.display = 'block';
                     } else {
                         document.getElementById('noDataText').style.display = 'block';
                     }
