@@ -251,7 +251,7 @@
                 document.getElementById('stOnline').innerText = "N/A";
                 document.getElementById('stOffline').innerText = "N/A";
 
-                // Fetch All Attendance & Visits
+                // 1. Fetch All Attendance & Visits
                 const attSnap = await get(child(ref(db), `attendance/${window.currentEmpId}/${monthStr}`));
                 const attData = attSnap.exists() ? attSnap.val() : {};
 
@@ -263,6 +263,7 @@
                     // --- DAILY VIEW LOGIC (Sequence & Distance) ---
                     let dayAtt = attData[targetDate];
                     
+                    // Filter Visits for today
                     let dayVisits = [];
                     for(let vId in allVisitsData) {
                         let v = allVisitsData[vId];
@@ -276,6 +277,7 @@
                     // Sort visits chronologically
                     dayVisits.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
 
+                    // Build Sequence Nodes
                     let nodes = [];
                     
                     // A. PUNCH IN Node
@@ -300,7 +302,7 @@
                         });
                     });
 
-                    // C. PUNCH OUT Node (Will render even if GPS is missing)
+                    // C. PUNCH OUT Node
                     if (dayAtt && dayAtt.offlineTime) {
                         document.getElementById('stOffline').innerText = dayAtt.offlineTime;
                         let endLat = dayAtt.offlineLat || dayAtt.currentLat;
@@ -338,9 +340,13 @@
                             // Render distance badge for every node except START
                             if (index > 0) {
                                 if (node.hasValidDistance) {
-                                    distHtml = `<div class="dist-marker"><i class="fas fa-motorcycle"></i> Travelled: ${node.distFromPrev.toFixed(2)} km</div>`;
+                                    if (node.distFromPrev === 0) {
+                                        distHtml = `<div class="dist-marker" style="color:#0ea5e9; background:#e0f2fe; border-color:#bae6fd;"><i class="fas fa-map-pin"></i> Same Location (0.00 km)</div>`;
+                                    } else {
+                                        distHtml = `<div class="dist-marker"><i class="fas fa-motorcycle"></i> Travelled: ${node.distFromPrev.toFixed(2)} km</div>`;
+                                    }
                                 } else {
-                                    distHtml = `<div class="dist-marker no-gps"><i class="fas fa-motorcycle"></i> Travelled: 0.00 km (No GPS)</div>`;
+                                    distHtml = `<div class="dist-marker no-gps"><i class="fas fa-satellite-slash"></i> Location Not Captured</div>`;
                                 }
                             }
 
