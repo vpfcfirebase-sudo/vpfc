@@ -3,209 +3,284 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VPFC - Customer Visit Submission</title>
+    <title>Sri Vishnu Priya Finance - Customer Visit</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --primary-bg: #f0f2f5; --brand-color: #0c2046; --brand-gradient: linear-gradient(135deg, #0B3B60 0%, #1a5276 100%);
             --accent-color: #E2A03F; --card-bg: #ffffff; --text-main: #111827; --text-muted: #4b5563;
-            --success: #27ae60; --danger: #e74c3c; --warning: #f59e0b; --border-color: #e5e7eb; --input-bg: #f8fafc;
+            --success: #27ae60; --danger: #e74c3c; --border-color: #e5e7eb; --input-bg: #f8fafc;
         }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', Arial, sans-serif; }
+        body { background-color: var(--primary-bg); color: var(--text-main); -webkit-tap-highlight-color: transparent; }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--primary-bg); color: var(--text-main); -webkit-tap-highlight-color: transparent; padding-bottom: 30px;}
-
-        .top-nav { background: var(--brand-gradient); padding: 20px; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); color: white; display: flex; align-items: center; gap: 15px;}
-        .back-btn { display: inline-flex; align-items: center; justify-content: center; width: 35px; height: 35px; font-size: 16px; color: white; background: rgba(255,255,255,0.2); border-radius: 10px; text-decoration: none; }
-        .header-title { font-size: 18px; font-weight: 700; color: var(--accent-color); }
-
-        .form-container { background: var(--card-bg); margin: 20px; border-radius: 16px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid var(--border-color); }
+        .top-nav { background: var(--brand-gradient); padding: 20px 20px 25px 20px; border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); color: white; }
+        .header-top-row { display: flex; justify-content: space-between; align-items: center; }
+        .header-content h1 { font-size: 18px; font-weight: 700; color: var(--accent-color); margin: 0; }
         
-        .form-group { margin-bottom: 15px; }
-        .form-label { display: block; font-size: 12px; font-weight: 800; color: var(--brand-color); margin-bottom: 6px; text-transform: uppercase; }
-        .form-control { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 14px; font-weight: 600; background-color: var(--input-bg); color: var(--text-main); outline: none; transition: 0.2s; }
-        .form-control:focus { border-color: var(--brand-color); background: white; }
+        .action-bar { padding: 15px 20px; display: flex; align-items: center; }
+        .back-btn { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--brand-color); background: var(--card-bg); padding: 10px 15px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-decoration: none; border: 1px solid var(--border-color); }
 
-        /* Camera Upload Styles */
-        .file-upload-box { border: 2px dashed #cbd5e1; border-radius: 10px; padding: 15px; text-align: center; background: #f8fafc; position: relative; cursor: pointer; transition: 0.2s; margin-bottom: 10px;}
-        .file-upload-box i { font-size: 24px; color: var(--brand-color); margin-bottom: 5px; }
-        .file-upload-box p { font-size: 11px; font-weight: 700; color: var(--text-muted); margin: 0; }
-        .file-upload-box input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-        .file-upload-box.success { border-color: var(--success); background: #f0fdf4; color: var(--success); }
-        .file-upload-box.success i, .file-upload-box.success p { color: var(--success); }
+        .form-container { padding: 0 20px 30px 20px; }
+        .section-title { font-size: 13px; font-weight: 800; color: var(--brand-color); margin: 20px 0 10px 0; text-transform: uppercase; letter-spacing: 0.5px; display: flex; justify-content: space-between; }
+        
+        .accounts-scroll { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 10px; }
+        .accounts-scroll::-webkit-scrollbar { display: none; }
+        .acc-chip { background: var(--card-bg); border: 1px solid var(--border-color); padding: 10px 15px; border-radius: 12px; min-width: 120px; flex-shrink: 0; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .acc-chip.active { border-color: var(--brand-color); background: #e0f2fe; }
+        .acc-hp { font-weight: 800; font-size: 14px; color: var(--brand-color); }
+        .acc-amt { font-size: 12px; color: var(--success); font-weight: 600; margin-top: 3px; }
+        
+        .info-card { background: #fffbeb; border: 1px solid #fde68a; padding: 15px; border-radius: 12px; margin-bottom: 20px; display: none; }
+        .info-card h4 { color: #b45309; font-size: 13px; margin-bottom: 5px; }
+        .info-card p { font-size: 12px; color: #92400e; font-weight: 600; }
 
-        /* Radio Buttons */
-        .radio-group { display: flex; gap: 10px; }
-        .radio-btn { flex: 1; position: relative; }
-        .radio-btn input { display: none; }
-        .radio-label { display: block; padding: 10px; text-align: center; border: 1px solid var(--border-color); border-radius: 8px; font-size: 13px; font-weight: 700; color: var(--text-muted); cursor: pointer; background: var(--input-bg); transition: 0.2s; }
-        .radio-btn input:checked + .radio-label { background: var(--brand-color); color: white; border-color: var(--brand-color); }
+        .card-box { background: var(--card-bg); padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border-color); margin-bottom: 20px; }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; }
+        .input-group input, .input-group select { width: 100%; padding: 12px 15px; border: 1.5px solid var(--border-color); border-radius: 10px; font-size: 14px; background-color: var(--input-bg); color: var(--text-main); font-weight: 600; outline: none; }
+        .input-group input:focus, .input-group select:focus { border-color: var(--brand-color); }
+        
+        .file-upload { border: 2px dashed var(--border-color); padding: 15px; text-align: center; border-radius: 10px; background: var(--input-bg); cursor: pointer; position: relative; overflow: hidden; }
+        .file-upload input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+        .file-upload i { font-size: 20px; color: var(--brand-color); margin-bottom: 5px; }
+        .file-upload span { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); }
 
-        /* Status colors for main radio */
-        #stat_paid:checked + .radio-label { background: var(--success); border-color: var(--success); color: white;}
-        #stat_notpaid:checked + .radio-label { background: var(--danger); border-color: var(--danger); color: white;}
-        #stat_seizing:checked + .radio-label { background: var(--warning); border-color: var(--warning); color: white;}
+        #paidSection, #notPaidSection, #seizingSection { display: none; }
+        
+        .btn-submit { width: 100%; padding: 15px; background: var(--success); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 10px; box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3); }
+        .btn-submit:active { transform: scale(0.98); }
 
-        .btn-submit { width: 100%; padding: 15px; background: var(--brand-gradient); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-top: 10px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 4px 15px rgba(11, 59, 96, 0.3); }
+        #loadingOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; }
+        .loader-spinner { font-size: 40px; color: var(--brand-color); margin-bottom: 15px; }
 
-        /* Sections Hidden by Default */
-        #paidSection, #notPaidSection, #seizeSection, #houseVisitQn, #photoSection { display: none; }
-
-        /* GPS Status */
-        .gps-status { text-align: center; font-size: 12px; font-weight: 800; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 5px; }
-        .gps-searching { color: var(--warning); }
-        .gps-locked { color: var(--success); }
-
-        #loadingOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 1000; justify-content: center; align-items: center; flex-direction: column; }
+        /* Custom Radio for Yes/No Logic */
+        .radio-options { display: flex; gap: 10px; margin-top: 5px; }
+        .radio-options label { flex: 1; text-align: center; background: white; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; font-weight: 700; color: var(--brand-color); cursor: pointer; font-size: 13px; text-transform: none; }
+        .radio-options input[type="radio"] { display: none; }
+        .radio-options input[type="radio"]:checked + span { color: white; }
+        .radio-options label:has(input:checked) { background: var(--brand-color); border-color: var(--brand-color); color: white; }
     </style>
 </head>
 <body>
 
-    <div id="loadingOverlay">
-        <i class="fas fa-circle-notch fa-spin" style="font-size: 40px; color: var(--brand-color); margin-bottom: 15px;"></i>
-        <h3 id="loaderText" style="color:var(--text-main); font-size: 16px;">Acquiring Live GPS & Saving...</h3>
-    </div>
-
     <div class="top-nav">
-        <a href="dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
-        <div class="header-title">Customer Visit Form</div>
-    </div>
-
-    <div class="form-container">
-        
-        <!-- CUSTOMER DETAILS -->
-        <div class="form-group">
-            <label class="form-label">Customer Name</label>
-            <input type="text" id="custName" class="form-control" placeholder="Enter Customer Name">
-        </div>
-        <div class="form-group">
-            <label class="form-label">HP / Account No.</label>
-            <input type="text" id="hpNumber" class="form-control" placeholder="e.g., 90123" style="text-transform: uppercase;">
-        </div>
-
-        <!-- MAIN STATUS -->
-        <div class="form-group" style="margin-top: 25px;">
-            <label class="form-label">Visit Status</label>
-            <div class="radio-group">
-                <div class="radio-btn">
-                    <input type="radio" name="visitStatus" id="stat_paid" value="PAID" onchange="handleStatusChange()">
-                    <label class="radio-label" for="stat_paid">PAID</label>
-                </div>
-                <div class="radio-btn">
-                    <input type="radio" name="visitStatus" id="stat_notpaid" value="NOT PAID" onchange="handleStatusChange()">
-                    <label class="radio-label" for="stat_notpaid">NOT PAID</label>
-                </div>
-                <div class="radio-btn">
-                    <input type="radio" name="visitStatus" id="stat_seizing" value="SEIZING" onchange="handleStatusChange()">
-                    <label class="radio-label" for="stat_seizing">SEIZING</label>
-                </div>
+        <div class="header-top-row">
+            <div class="header-content">
+                <h1>SRI VISHNU PRIYA</h1>
+                <div style="font-size: 13px; opacity: 0.9; margin-top:3px; font-weight: 600;" id="user-display-email">Customer Visit</div>
             </div>
         </div>
+    </div>
 
-        <!-- ================= PAID SECTION ================= -->
-        <div id="paidSection">
-            <div class="form-group">
-                <label class="form-label">Payment Method</label>
-                <select id="payMethod" class="form-control" onchange="handlePaymentMethodChange()">
-                    <option value="">-- Select --</option>
-                    <option value="PCR">PCR (Cash Receipt)</option>
-                    <option value="Office QR">Office QR</option>
-                    <option value="OP">OP (Online Payment)</option>
+    <div class="action-bar">
+        <a href="dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+    </div>
+
+    <!-- STRICT LOADING GATEKEEPER -->
+    <div id="attendanceLoader" style="text-align: center; padding: 40px 20px; font-weight: 700; color: var(--brand-color); font-size: 15px;">
+        <i class="fas fa-shield-alt" style="font-size: 24px; margin-bottom:10px; display:block;"></i>
+        Verifying Attendance Status...
+    </div>
+
+    <!-- MAIN FORM (HIDDEN UNTIL VERIFIED) -->
+    <div class="form-container" id="mainFormContainer" style="display: none;">
+        
+        <div class="section-title">Your Assigned Accounts <span id="monthDisplay"></span></div>
+        <div class="accounts-scroll" id="accountsList">
+            <div style="font-size:12px; padding:10px;">Loading accounts...</div>
+        </div>
+
+        <div class="info-card" id="oldBalanceCard">
+            <h4><i class="fas fa-history"></i> Previous Record Found</h4>
+            <p id="oldBalanceText">---</p>
+        </div>
+
+        <div class="card-box">
+            <div class="input-group">
+                <label>Assigned HP Number</label>
+                <input type="text" id="hpNumber" placeholder="Enter or select from above" required>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div class="input-group">
+                    <label>Customer Name</label>
+                    <input type="text" id="custName" placeholder="Name">
+                </div>
+                <div class="input-group">
+                    <label>Mobile Number</label>
+                    <input type="tel" id="custMobile" placeholder="Mobile">
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Location / Area</label>
+                <input type="text" id="locationArea" placeholder="e.g. Narasapuram">
+            </div>
+            
+            <div class="input-group">
+                <label style="color:var(--brand-color); font-size:14px;">Select Visit Status</label>
+                <select id="visitStatus" onchange="handleStatusChange()">
+                    <option value="">-- Select Status --</option>
+                    <option value="PAID">🟢 PAID</option>
+                    <option value="NOT PAID">🔴 NOT PAID</option>
+                    <option value="SEIZING">🟠 SEIZING</option>
                 </select>
             </div>
-            
-            <div class="form-group">
-                <label class="form-label">Amount Collected (₹)</label>
-                <input type="number" id="collectedAmt" class="form-control" placeholder="Enter Amount">
+        </div>
+
+        <!-- === PAID SECTION === -->
+        <div class="card-box" id="paidSection">
+            <div class="input-group">
+                <label>Amount Paid (₹)</label>
+                <input type="number" id="paidAmount" placeholder="Amount">
+            </div>
+            <div class="input-group">
+                <label>Payment Mode</label>
+                <select id="paymentMode" onchange="handlePaymentMode()">
+                    <option value="PCR">PCR</option>
+                    <option value="LOCK">Lock Amount</option>
+                    <option value="QR">Office QR</option>
+                    <option value="OP">OP</option>
+                </select>
             </div>
 
-            <!-- YES/NO QUESTION FOR QR & OP -->
-            <div class="form-group" id="houseVisitQn">
-                <label class="form-label">Did you visit the customer's house?</label>
-                <div class="radio-group">
-                    <div class="radio-btn">
-                        <input type="radio" name="houseVisited" id="visit_yes" value="YES" onchange="handleHouseVisitChange()">
-                        <label class="radio-label" for="visit_yes">Yes, Visited</label>
-                    </div>
-                    <div class="radio-btn">
-                        <input type="radio" name="houseVisited" id="visit_no" value="NO" onchange="handleHouseVisitChange()">
-                        <label class="radio-label" for="visit_no">No, Didn't Visit</label>
-                    </div>
+            <div id="lockFields" style="display: none; background: #f1f5f9; padding:10px; border-radius:8px; margin-bottom:15px;">
+                <div class="input-group">
+                    <label>Are you entered PPFC App?</label>
+                    <select id="ppfcEntered" onchange="handlePPFC()">
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+                <div class="input-group" id="ppfcReasonBox" style="display: none;">
+                    <label>Reason for no PPFC entry</label>
+                    <input type="text" id="ppfcReason" placeholder="Type reason">
+                </div>
+            </div>
+
+            <div id="opFields" style="display: none; background: #f1f5f9; padding:10px; border-radius:8px; margin-bottom:15px;">
+                <div class="input-group">
+                    <label>Who did you pay OP to?</label>
+                    <input type="text" id="opPerson" placeholder="Person Name">
+                </div>
+                <div class="input-group">
+                    <label>Receipt Given?</label>
+                    <select id="opReceiptGiven">
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- DYNAMIC YES/NO QUESTION FOR QR/OP -->
+            <div class="input-group" id="houseVisitQnGroup" style="display: none; background: #fffbeb; padding:15px; border-radius:10px; border:1px solid #fde68a;">
+                <label style="color:#b45309; font-size:13px; text-transform:none;">Did you visit the customer's house?</label>
+                <div class="radio-options">
+                    <label><input type="radio" name="houseVisited" value="Yes" onchange="handleHouseVisit()"><span>Yes, Visited</span></label>
+                    <label><input type="radio" name="houseVisited" value="No" onchange="handleHouseVisit()"><span>No</span></label>
+                </div>
+            </div>
+            
+            <div class="input-group" id="receiptImgGroup">
+                <label id="receiptImgLabel">Payment Receipt Image</label>
+                <div class="file-upload">
+                    <!-- CAMERA ONLY FOR RECEIPTS -->
+                    <input type="file" id="imgReceipt" accept="image/*" capture="environment">
+                    <i class="fas fa-camera"></i><span id="imgReceiptName">Take Receipt Photo</span>
+                </div>
+            </div>
+            
+            <div id="qrExtraFields" style="display: none;">
+                <div class="input-group">
+                    <label>Extra Screenshot 1</label>
+                    <input type="file" id="imgExtra1" accept="image/*" style="padding: 8px;">
+                </div>
+                <div class="input-group">
+                    <label>Extra Screenshot 2</label>
+                    <input type="file" id="imgExtra2" accept="image/*" style="padding: 8px;">
                 </div>
             </div>
         </div>
 
-        <!-- ================= NOT PAID SECTION ================= -->
-        <div id="notPaidSection">
-            <div class="form-group">
-                <label class="form-label">Reason for Not Paying</label>
-                <textarea id="npReason" class="form-control" rows="2" placeholder="Write specific reason..."></textarea>
+        <!-- === NOT PAID SECTION === -->
+        <div class="card-box" id="notPaidSection">
+            <div class="input-group">
+                <label>Reason For Not Paying</label>
+                <input type="text" id="notPaidReason" placeholder="Valid Reason">
             </div>
-            <div class="form-group">
-                <label class="form-label">Promise To Pay (PTP) Date</label>
-                <input type="date" id="npDate" class="form-control">
-            </div>
-        </div>
-
-        <!-- ================= SEIZING SECTION ================= -->
-        <div id="seizeSection">
-            <div class="form-group">
-                <label class="form-label">Seizing Remarks / Reason</label>
-                <textarea id="szReason" class="form-control" rows="2" placeholder="Write remarks..."></textarea>
+            <div class="input-group">
+                <label>Next Promised Date</label>
+                <input type="date" id="promisedDate">
             </div>
         </div>
 
-        <!-- ================= DYNAMIC CAMERA UPLOADS ================= -->
-        <!-- Note: capture="environment" forces the rear camera and blocks gallery on mobile devices -->
-        <div id="photoSection" style="margin-top: 25px;">
-            <label class="form-label" style="border-bottom: 2px solid var(--border-color); padding-bottom: 5px; margin-bottom: 15px;"><i class="fas fa-camera"></i> Live Camera Uploads</label>
+        <!-- === SEIZING SECTION === -->
+        <div class="card-box" id="seizingSection">
+            <div class="input-group">
+                <label>Seizing Reason / Remarks</label>
+                <input type="text" id="seizeReason" placeholder="Enter details">
+            </div>
+        </div>
+
+        <!-- COMMON PHOTOS SECTION -->
+        <div class="card-box" id="commonPhotos" style="display:none;">
             
-            <!-- PCR Receipt (Only for PCR) -->
-            <div class="file-upload-box" id="box_pcrReceipt" style="display:none;">
-                <i class="fas fa-receipt"></i>
-                <p id="lbl_pcrReceipt">Take PCR Receipt Photo</p>
-                <input type="file" id="img_pcrReceipt" accept="image/*" capture="environment" onchange="markUploaded('box_pcrReceipt', 'lbl_pcrReceipt')">
+            <div class="input-group" id="grpCustomer" style="display:none;">
+                <label>Customer Photo (Mandatory)</label>
+                <div class="file-upload">
+                    <!-- CAMERA ONLY -->
+                    <input type="file" id="imgCustomer" accept="image/*" capture="environment">
+                    <i class="fas fa-user-circle"></i><span id="imgCustomerName">Take Customer Photo</span>
+                </div>
             </div>
 
-            <!-- Customer Photo -->
-            <div class="file-upload-box" id="box_custPhoto" style="display:none;">
-                <i class="fas fa-user-check"></i>
-                <p id="lbl_custPhoto">Take Customer Photo</p>
-                <input type="file" id="img_custPhoto" accept="image/*" capture="environment" onchange="markUploaded('box_custPhoto', 'lbl_custPhoto')">
+            <div class="input-group" id="grpHouse" style="display:none;">
+                <label>House / Vehicle Photo (Mandatory)</label>
+                <div class="file-upload">
+                    <!-- CAMERA ONLY -->
+                    <input type="file" id="imgHouse" accept="image/*" capture="environment">
+                    <i class="fas fa-home"></i><span id="imgHouseName">Take House/Vehicle Photo</span>
+                </div>
             </div>
 
-            <!-- House/Vehicle Photo -->
-            <div class="file-upload-box" id="box_housePhoto" style="display:none;">
-                <i class="fas fa-home"></i>
-                <p id="lbl_housePhoto">Take House / Vehicle Photo</p>
-                <input type="file" id="img_housePhoto" accept="image/*" capture="environment" onchange="markUploaded('box_housePhoto', 'lbl_housePhoto')">
+            <div class="input-group" id="grpBike1" style="display:none;">
+                <label>Bike Photo 1 (Mandatory)</label>
+                <div class="file-upload">
+                    <!-- CAMERA ONLY -->
+                    <input type="file" id="imgBike1" accept="image/*" capture="environment">
+                    <i class="fas fa-motorcycle"></i><span id="imgBike1Name">Take Bike Photo 1</span>
+                </div>
             </div>
 
-            <!-- Bike Photos (Only for Seizing) -->
-            <div class="file-upload-box" id="box_bike1" style="display:none;">
-                <i class="fas fa-motorcycle"></i>
-                <p id="lbl_bike1">Take Bike Photo 1</p>
-                <input type="file" id="img_bike1" accept="image/*" capture="environment" onchange="markUploaded('box_bike1', 'lbl_bike1')">
+            <div class="input-group" id="grpBike2" style="display:none;">
+                <label>Bike Photo 2 (Mandatory)</label>
+                <div class="file-upload">
+                    <!-- CAMERA ONLY -->
+                    <input type="file" id="imgBike2" accept="image/*" capture="environment">
+                    <i class="fas fa-motorcycle"></i><span id="imgBike2Name">Take Bike Photo 2</span>
+                </div>
             </div>
-            <div class="file-upload-box" id="box_bike2" style="display:none;">
-                <i class="fas fa-motorcycle"></i>
-                <p id="lbl_bike2">Take Bike Photo 2</p>
-                <input type="file" id="img_bike2" accept="image/*" capture="environment" onchange="markUploaded('box_bike2', 'lbl_bike2')">
-            </div>
+            
+            <button class="btn-submit" onclick="submitVisitData()">
+                <i class="fas fa-check-circle"></i> Submit Visit Data
+            </button>
+            <div style="text-align:center; font-size:11px; font-weight:800; color:var(--danger); margin-top:10px;"><i class="fas fa-satellite"></i> Strict GPS Location Required</div>
         </div>
-
-        <button class="btn-submit" onclick="submitVisitData()"><i class="fas fa-paper-plane"></i> Submit Visit Report</button>
-        <div class="gps-status gps-searching" id="gpsStatus"><i class="fas fa-satellite"></i> GPS Required to Submit</div>
     </div>
 
-    <!-- Firebase SDKs -->
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay">
+        <i class="fas fa-spinner fa-spin loader-spinner"></i>
+        <h3 style="color:var(--brand-color);" id="loadingText">Processing...</h3>
+        <p style="font-size:12px; color:var(--text-muted); margin-top:5px;">Please wait, compressing images...</p>
+    </div>
+
+    <!-- Firebase SDKs & Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
-        import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
+        import { getDatabase, ref, get, child, set, push, update } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAvjFcKKiu4OMmQckYXMTejdBJh9tC6TjM",
@@ -220,255 +295,524 @@
         const db = getDatabase(app);
         const storage = getStorage(app);
         
+        window.db = db;
+        window.storage = storage;
+        window.firebaseDbRef = ref;
+        window.firebaseDbGet = get;
+        window.firebaseDbChild = child;
+        window.firebaseDbSet = set;
+        window.firebaseDbPush = push;
+        window.firebaseDbUpdate = update; 
+        window.firebaseStorageRef = storageRef;
+        window.firebaseUploadBytes = uploadBytes;
+        window.firebaseGetDownloadURL = getDownloadURL;
+        
         window.currentEmpId = null;
+        window.currentEmpName = "";
+        window.currentBranch = "";
+        window.currentEmpMobile = "N/A";
+        window.selectedAccType = "Regular"; 
+        
+        const dateObj = new Date();
+        const yyyy = dateObj.getFullYear();
+        const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const dd = String(dateObj.getDate()).padStart(2, '0');
+        window.currentYearMonth = `${yyyy}-${mm}`;
+        window.currentDateOnly = `${yyyy}-${mm}-${dd}`;
+        
+        document.getElementById('monthDisplay').innerText = `(${window.currentYearMonth})`;
 
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
                 window.currentEmpId = user.email.split('@')[0];
+
+                // === 🚨 STRICT ATTENDANCE GATEKEEPER 🚨 ===
+                try {
+                    const attSnap = await get(child(ref(db), `attendance/${window.currentEmpId}/${window.currentYearMonth}/${window.currentDateOnly}`));
+                    
+                    if (attSnap.exists()) {
+                        const att = attSnap.val();
+                        if (!att.onlineTime || att.offlineTime) {
+                            alert("Please go online for duty.");
+                            window.location.replace("my-attendance.html");
+                            return; 
+                        }
+                    } else {
+                        alert("Please go online for duty.");
+                        window.location.replace("my-attendance.html");
+                        return; 
+                    }
+                } catch(e) {
+                    alert("Network error while checking attendance!");
+                    window.location.replace("dashboard.html");
+                    return;
+                }
+
+                document.getElementById('attendanceLoader').style.display = 'none';
+                document.getElementById('mainFormContainer').style.display = 'block';
+
+                try {
+                    const snapshot = await get(child(ref(db), `employees/${window.currentEmpId}`));
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        window.currentEmpName = data.name || window.currentEmpId;
+                        window.currentBranch = data.branch || "N/A";
+                        window.currentEmpMobile = data.mobile || "N/A";
+                        document.getElementById('user-display-email').innerText = `Visit Agent: ${window.currentEmpName}`;
+                    }
+                    loadAssignedAccounts();
+                } catch (error) { console.error(error); }
             } else {
                 window.location.href = "index.html"; 
             }
         });
 
-        // UI Logic Variables
-        const secPaid = document.getElementById('paidSection');
-        const secNotPaid = document.getElementById('notPaidSection');
-        const secSeize = document.getElementById('seizeSection');
-        const secPhotos = document.getElementById('photoSection');
-        const qnHouse = document.getElementById('houseVisitQn');
+        async function loadAssignedAccounts() {
+            const listDiv = document.getElementById('accountsList');
+            try {
+                const snapshot = await get(child(ref(db), `assignments/${window.currentEmpId}/${window.currentYearMonth}/details`));
+                if (snapshot.exists()) {
+                    listDiv.innerHTML = "";
+                    const details = snapshot.val();
+                    for(const hp in details) {
+                        const amt = details[hp].amt || 0;
+                        const type = details[hp].type || "Regular";
+                        
+                        const chip = document.createElement('div');
+                        chip.className = 'acc-chip';
+                        chip.innerHTML = `<div class="acc-hp">${hp}</div><div class="acc-amt">₹${amt} (${type})</div>`;
+                        chip.onclick = () => selectAccount(hp, chip, type);
+                        listDiv.appendChild(chip);
+                    }
+                } else {
+                    listDiv.innerHTML = `<div style="font-size:12px; padding:10px; color:var(--danger);">No accounts assigned for this month.</div>`;
+                }
+            } catch (error) { console.error(error); }
+        }
 
-        // Photo Boxes
-        const boxPcr = document.getElementById('box_pcrReceipt');
-        const boxCust = document.getElementById('box_custPhoto');
-        const boxHouse = document.getElementById('box_housePhoto');
-        const boxBike1 = document.getElementById('box_bike1');
-        const boxBike2 = document.getElementById('box_bike2');
+        window.selectAccount = async function(hp, chipElement, accType) {
+            document.querySelectorAll('.acc-chip').forEach(c => c.classList.remove('active'));
+            if(chipElement) chipElement.classList.add('active');
+            
+            document.getElementById('hpNumber').value = hp;
+            window.selectedAccType = accType; 
+            
+            try {
+                const visitsSnap = await get(child(ref(db), `visits/${window.currentYearMonth}`));
+                let totalPaid = 0; let latestType = "None";
+                if(visitsSnap.exists()) {
+                    const visitsData = visitsSnap.val();
+                    for(const vId in visitsData) {
+                        const v = visitsData[vId];
+                        if(v.hp === hp) {
+                            totalPaid += (parseInt(v.amt) || 0);
+                            latestType = v.type || "None"; 
+                        }
+                    }
+                }
+                const balCard = document.getElementById('oldBalanceCard');
+                if(totalPaid > 0) {
+                    balCard.style.display = 'block';
+                    document.getElementById('oldBalanceText').innerText = `Total Paid this month: ₹${totalPaid} | Current Status: ${latestType}`;
+                } else {
+                    balCard.style.display = 'none';
+                }
+            } catch(e) { console.error(e); }
+        }
+    </script>
 
-        // File Inputs
-        const imgPcr = document.getElementById('img_pcrReceipt');
-        const imgCust = document.getElementById('img_custPhoto');
-        const imgHouse = document.getElementById('img_housePhoto');
-        const imgBike1 = document.getElementById('img_bike1');
-        const imgBike2 = document.getElementById('img_bike2');
+    <script>
+        document.getElementById('imgReceipt').onchange = function() { document.getElementById('imgReceiptName').innerText = this.files[0] ? "Photo Captured ✓" : 'Take Receipt Photo'; document.getElementById('imgReceiptName').style.color = this.files[0] ? 'var(--success)' : 'var(--brand-color)';}
+        document.getElementById('imgCustomer').onchange = function() { document.getElementById('imgCustomerName').innerText = this.files[0] ? "Photo Captured ✓" : 'Take Customer Photo'; document.getElementById('imgCustomerName').style.color = this.files[0] ? 'var(--success)' : 'var(--brand-color)';}
+        document.getElementById('imgHouse').onchange = function() { document.getElementById('imgHouseName').innerText = this.files[0] ? "Photo Captured ✓" : 'Take House/Vehicle Photo'; document.getElementById('imgHouseName').style.color = this.files[0] ? 'var(--success)' : 'var(--brand-color)';}
+        document.getElementById('imgBike1').onchange = function() { document.getElementById('imgBike1Name').innerText = this.files[0] ? "Photo Captured ✓" : 'Take Bike Photo 1'; document.getElementById('imgBike1Name').style.color = this.files[0] ? 'var(--success)' : 'var(--brand-color)';}
+        document.getElementById('imgBike2').onchange = function() { document.getElementById('imgBike2Name').innerText = this.files[0] ? "Photo Captured ✓" : 'Take Bike Photo 2'; document.getElementById('imgBike2Name').style.color = this.files[0] ? 'var(--success)' : 'var(--brand-color)';}
 
         function hideAllPhotos() {
-            boxPcr.style.display = 'none';
-            boxCust.style.display = 'none';
-            boxHouse.style.display = 'none';
-            boxBike1.style.display = 'none';
-            boxBike2.style.display = 'none';
+            document.getElementById('grpCustomer').style.display = 'none';
+            document.getElementById('grpHouse').style.display = 'none';
+            document.getElementById('grpBike1').style.display = 'none';
+            document.getElementById('grpBike2').style.display = 'none';
+        }
+
+        function handleStatusChange() {
+            const status = document.getElementById('visitStatus').value;
+            document.getElementById('paidSection').style.display = (status === 'PAID') ? 'block' : 'none';
+            document.getElementById('notPaidSection').style.display = (status === 'NOT PAID') ? 'block' : 'none';
+            document.getElementById('seizingSection').style.display = (status === 'SEIZING') ? 'block' : 'none';
             
-            // Reset files
-            imgPcr.value = ''; imgCust.value = ''; imgHouse.value = ''; imgBike1.value = ''; imgBike2.value = '';
-            document.querySelectorAll('.file-upload-box').forEach(b => { b.classList.remove('success'); });
-            document.getElementById('lbl_pcrReceipt').innerText = 'Take PCR Receipt Photo';
-            document.getElementById('lbl_custPhoto').innerText = 'Take Customer Photo';
-            document.getElementById('lbl_housePhoto').innerText = 'Take House / Vehicle Photo';
-            document.getElementById('lbl_bike1').innerText = 'Take Bike Photo 1';
-            document.getElementById('lbl_bike2').innerText = 'Take Bike Photo 2';
-        }
-
-        window.markUploaded = function(boxId, lblId) {
-            document.getElementById(boxId).classList.add('success');
-            document.getElementById(lblId).innerText = 'Photo Captured Successfully!';
-        }
-
-        window.handleStatusChange = function() {
-            const status = document.querySelector('input[name="visitStatus"]:checked').value;
-            secPaid.style.display = 'none';
-            secNotPaid.style.display = 'none';
-            secSeize.style.display = 'none';
-            secPhotos.style.display = 'block';
-            qnHouse.style.display = 'none';
+            document.getElementById('commonPhotos').style.display = (status !== '') ? 'block' : 'none';
             
             hideAllPhotos();
-            document.getElementById('payMethod').value = '';
-
-            if (status === 'PAID') {
-                secPaid.style.display = 'block';
-            } else if (status === 'NOT PAID') {
-                secNotPaid.style.display = 'block';
-                // Not Paid Requires ONLY House Photo
-                boxHouse.style.display = 'block';
-            } else if (status === 'SEIZING') {
-                secSeize.style.display = 'block';
-                // Seizing requires ONLY 2 Bike Photos
-                boxBike1.style.display = 'block';
-                boxBike2.style.display = 'block';
-            }
-        }
-
-        window.handlePaymentMethodChange = function() {
-            const method = document.getElementById('payMethod').value;
-            hideAllPhotos();
-            qnHouse.style.display = 'none';
+            document.getElementById('houseVisitQnGroup').style.display = 'none';
             document.querySelectorAll('input[name="houseVisited"]').forEach(r => r.checked = false);
 
-            if (method === 'PCR') {
-                // PCR Requirements
-                boxPcr.style.display = 'block';
-                boxCust.style.display = 'block';
-                boxHouse.style.display = 'block';
-            } else if (method === 'Office QR' || method === 'OP') {
-                // Ask Question
-                qnHouse.style.display = 'block';
+            if(status === 'PAID') {
+                handlePaymentMode();
+            } else if (status === 'NOT PAID') {
+                // NOT PAID Needs Both Customer & House
+                document.getElementById('grpCustomer').style.display = 'block';
+                document.getElementById('grpHouse').style.display = 'block';
+            } else if (status === 'SEIZING') {
+                // SEIZING Needs Only 2 Bike Photos
+                document.getElementById('grpBike1').style.display = 'block';
+                document.getElementById('grpBike2').style.display = 'block';
             }
         }
 
-        window.handleHouseVisitChange = function() {
-            const visited = document.querySelector('input[name="houseVisited"]:checked').value;
-            hideAllPhotos(); // Clear old selections
-            if (visited === 'YES') {
-                boxCust.style.display = 'block';
-                boxHouse.style.display = 'block';
-            }
-        }
-
-        // =====================================
-        // STRICT GPS & SUBMISSION ENGINE
-        // =====================================
-        window.submitVisitData = function() {
-            // Basic Validation
-            const hp = document.getElementById('hpNumber').value.trim().toUpperCase();
-            const cname = document.getElementById('custName').value.trim();
-            const statNode = document.querySelector('input[name="visitStatus"]:checked');
+        function handlePaymentMode() {
+            const mode = document.getElementById('paymentMode').value;
+            const lbl = document.getElementById('receiptImgLabel');
             
-            if(!hp || !cname) return alert("Please enter Customer Name and HP Number!");
-            if(!statNode) return alert("Please select a Visit Status!");
+            document.getElementById('lockFields').style.display = 'none';
+            document.getElementById('opFields').style.display = 'none';
+            document.getElementById('qrExtraFields').style.display = 'none';
+            document.getElementById('receiptImgGroup').style.display = 'block';
             
-            const status = statNode.value;
+            document.getElementById('houseVisitQnGroup').style.display = 'none';
+            hideAllPhotos();
 
-            // Deep Validation Based on Logic
-            if (status === 'PAID') {
-                const method = document.getElementById('payMethod').value;
-                const amt = document.getElementById('collectedAmt').value;
-                if(!method || !amt) return alert("Select Payment Method and Enter Amount!");
+            if(mode === 'PCR' || mode === 'LOCK') {
+                if(mode === 'PCR') lbl.innerText = "PCR Receipt Image";
+                if(mode === 'LOCK') { lbl.innerText = "Lock Amount Proof"; document.getElementById('lockFields').style.display = 'block'; handlePPFC(); }
                 
-                if (method === 'PCR') {
-                    if(!imgPcr.files[0] || !imgCust.files[0] || !imgHouse.files[0]) return alert("Please capture PCR Receipt, Customer, and House Photos!");
-                } else {
-                    const visitQn = document.querySelector('input[name="houseVisited"]:checked');
-                    if(!visitQn) return alert("Please select if you visited the customer's house!");
-                    if(visitQn.value === 'YES') {
-                        if(!imgCust.files[0] || !imgHouse.files[0]) return alert("Please capture Customer and House Photos!");
+                // Compulsory Customer & House for PCR/Lock
+                document.getElementById('grpCustomer').style.display = 'block';
+                document.getElementById('grpHouse').style.display = 'block';
+            } 
+            else if(mode === 'QR' || mode === 'OP') {
+                if(mode === 'QR') { lbl.innerText = "QR Payment Screenshot"; document.getElementById('qrExtraFields').style.display = 'block'; }
+                if(mode === 'OP') { lbl.innerText = "OP Receipt Image"; document.getElementById('opFields').style.display = 'block'; }
+                
+                // Show Dynamic Question
+                document.getElementById('houseVisitQnGroup').style.display = 'block';
+            }
+        }
+
+        window.handleHouseVisit = function() {
+            const visited = document.querySelector('input[name="houseVisited"]:checked');
+            if(visited && visited.value === 'Yes') {
+                document.getElementById('grpCustomer').style.display = 'block';
+                document.getElementById('grpHouse').style.display = 'block';
+            } else {
+                document.getElementById('grpCustomer').style.display = 'none';
+                document.getElementById('grpHouse').style.display = 'none';
+            }
+        }
+
+        function handlePPFC() {
+            const isEntered = document.getElementById('ppfcEntered').value;
+            document.getElementById('ppfcReasonBox').style.display = (isEntered === 'No') ? 'block' : 'none';
+        }
+
+        // Distance Formula (Haversine)
+        function getDistanceKm(lat1, lon1, lat2, lon2) {
+            if (!lat1 || !lon1 || !lat2 || !lon2) return 0;
+            const R = 6371; 
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+            return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+        }
+
+        // Image Compressor
+        async function compressImage(file, maxWidth = 800, maxHeight = 800, quality = 0.6) {
+            return new Promise((resolve, reject) => {
+                if(!file) return resolve(null);
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = event => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        let width = img.width; let height = img.height;
+                        if (width > height) {
+                            if (width > maxWidth) { height = Math.round(height *= maxWidth / width); width = maxWidth; }
+                        } else {
+                            if (height > maxHeight) { width = Math.round(width *= maxHeight / height); height = maxHeight; }
+                        }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width; canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        canvas.toBlob((blob) => {
+                            resolve(new File([blob], file.name, { type: 'image/jpeg', lastModified: Date.now() }));
+                        }, 'image/jpeg', quality);
+                    };
+                    img.onerror = (err) => reject(err);
+                };
+                reader.onerror = (err) => reject(err);
+            });
+        }
+
+        // === SUBMISSION STRICT VALIDATION ===
+        window.submitVisitData = function() {
+            const hp = document.getElementById('hpNumber').value.trim();
+            const status = document.getElementById('visitStatus').value;
+            
+            if(!hp || !status) { alert("Please select HP Number and Visit Status."); return; }
+
+            // 1. Validation Logic
+            if (status === 'PAID') {
+                const mode = document.getElementById('paymentMode').value;
+                if(!document.getElementById('paidAmount').value) return alert("Enter Paid Amount");
+                if(!document.getElementById('imgReceipt').files[0]) return alert("Payment Receipt photo is mandatory!");
+
+                if(mode === 'PCR' || mode === 'LOCK') {
+                    if(!document.getElementById('imgCustomer').files[0] || !document.getElementById('imgHouse').files[0]) {
+                        return alert("Customer Photo and House Photo are mandatory for PCR/Lock!");
+                    }
+                } else if(mode === 'QR' || mode === 'OP') {
+                    const visited = document.querySelector('input[name="houseVisited"]:checked');
+                    if(!visited) return alert("Please answer if you visited the customer's house.");
+                    if(visited.value === 'Yes') {
+                        if(!document.getElementById('imgCustomer').files[0] || !document.getElementById('imgHouse').files[0]) {
+                            return alert("Since you visited the house, Customer & House photos are mandatory!");
+                        }
                     }
                 }
             } else if (status === 'NOT PAID') {
-                if(!document.getElementById('npReason').value.trim()) return alert("Enter reason for Not Paying!");
-                if(!imgHouse.files[0]) return alert("Please capture House Photo!");
+                if(!document.getElementById('notPaidReason').value.trim()) return alert("Enter reason for Not Paying!");
+                if(!document.getElementById('imgCustomer').files[0] || !document.getElementById('imgHouse').files[0]) {
+                    return alert("Customer Photo and House Photo are mandatory for NOT PAID!");
+                }
             } else if (status === 'SEIZING') {
-                if(!document.getElementById('szReason').value.trim()) return alert("Enter Seizing Remarks!");
-                if(!imgBike1.files[0] || !imgBike2.files[0]) return alert("Please capture both Bike Photos!");
+                if(!document.getElementById('seizeReason').value.trim()) return alert("Enter seizing reason!");
+                if(!document.getElementById('imgBike1').files[0] || !document.getElementById('imgBike2').files[0]) {
+                    return alert("Both Bike Photos are mandatory for SEIZING!");
+                }
             }
 
-            // GET EXACT LIVE GPS (Mandatory)
-            document.getElementById('loaderText').innerText = "Acquiring GPS Signal...";
+            // 2. STRICT GPS REQUIREMENT
             document.getElementById('loadingOverlay').style.display = 'flex';
+            document.getElementById('loadingText').innerText = "Acquiring GPS Signal...";
 
             if ("geolocation" in navigator) {
                 navigator.geolocation.getCurrentPosition(
-                    (position) => {
+                    async (position) => {
                         const lat = position.coords.latitude;
                         const lng = position.coords.longitude;
-                        processUploadsAndSave(lat, lng, status);
+                        const locStr = `${lat},${lng}`;
+                        await processAndUploadData(locStr, lat, lng);
                     },
-                    (error) => {
+                    async (error) => {
                         document.getElementById('loadingOverlay').style.display = 'none';
-                        alert("GPS ERROR: Could not get your location. Please turn on Location/GPS and try again!");
-                    },
-                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                        alert("🔴 GPS ERROR: Failed to get Live Location. Please enable GPS and Location Permissions to submit data.");
+                    }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
                 );
             } else {
                 document.getElementById('loadingOverlay').style.display = 'none';
-                alert("GPS is not supported on this device/browser.");
+                alert("🔴 GPS is not supported on this device.");
             }
         }
 
-        async function processUploadsAndSave(lat, lng, status) {
-            document.getElementById('loaderText').innerText = "Uploading Photos & Saving Data...";
-            
-            const visitId = Date.now().toString();
-            const today = new Date();
-            const dateStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
-            const monthStr = dateStr.substring(0, 7);
-            const timeStr = today.toLocaleTimeString();
-
-            let uploadPromises = [];
-            let urls = { pcr: 'N/A', cust: 'N/A', house: 'N/A', bike1: 'N/A', bike2: 'N/A' };
-
-            // Helper to upload
-            const uploadFile = async (fileObj, path, key) => {
-                if(fileObj) {
-                    const imgRef = sRef(storage, `visit_proofs/${monthStr}/${visitId}_${path}.jpg`);
-                    await uploadBytes(imgRef, fileObj);
-                    urls[key] = await getDownloadURL(imgRef);
-                }
-            };
-
+        async function uploadImageFile(file, folderPath) {
+            if(!file) return "N/A";
             try {
-                if(status === 'PAID') {
-                    await uploadFile(imgPcr.files[0], 'pcr', 'pcr');
-                    await uploadFile(imgCust.files[0], 'cust', 'cust');
-                    await uploadFile(imgHouse.files[0], 'house', 'house');
-                } else if(status === 'NOT PAID') {
-                    await uploadFile(imgHouse.files[0], 'house', 'house');
-                } else if(status === 'SEIZING') {
-                    await uploadFile(imgBike1.files[0], 'bike1', 'bike1');
-                    await uploadFile(imgBike2.files[0], 'bike2', 'bike2');
-                }
+                const compressedFile = await compressImage(file);
+                const fileName = `${folderPath}/${Date.now()}_img.jpg`;
+                const imgRef = window.firebaseStorageRef(window.storage, fileName);
+                await window.firebaseUploadBytes(imgRef, compressedFile);
+                return await window.firebaseGetDownloadURL(imgRef);
+            } catch (err) {
+                return "N/A";
+            }
+        }
 
-                // Prepare Data Object
+        async function processAndUploadData(locationString, vLat = 0, vLng = 0) {
+            document.getElementById('loadingText').innerText = "Uploading Photos... Do not close";
+            
+            try {
+                const hp = document.getElementById('hpNumber').value.trim().toUpperCase();
+                const status = document.getElementById('visitStatus').value;
+                const cname = document.getElementById('custName').value.trim();
+                const cmobile = document.getElementById('custMobile').value.trim();
+                const carea = document.getElementById('locationArea').value.trim();
+                
+                const urlCustomer = await uploadImageFile(document.getElementById('imgCustomer').files[0], 'visits/customers');
+                const urlHouse = await uploadImageFile(document.getElementById('imgHouse').files[0], 'visits/houses');
+                
+                document.getElementById('loadingText').innerText = "Saving Data...";
+
                 let visitData = {
-                    vid: visitId,
                     eid: window.currentEmpId,
-                    hp: document.getElementById('hpNumber').value.trim().toUpperCase(),
-                    cname: document.getElementById('custName').value.trim(),
-                    stat: status,
-                    date: dateStr,
-                    time: timeStr,
+                    ename: window.currentEmpName,
+                    empMobile: window.currentEmpMobile,
+                    branch: window.currentBranch,
+                    hp: hp, 
+                    accType: window.selectedAccType, 
+                    cname: cname, 
+                    custMobile: cmobile, 
+                    vill: carea,
+                    stat: status, 
+                    loc: locationString,
+                    lat: vLat, 
+                    lng: vLng, 
+                    time: new Date().toLocaleTimeString(),
+                    date: window.currentDateOnly,
                     timestamp: Date.now(),
-                    lat: lat,
-                    lng: lng
+                    photoCust: urlCustomer, 
+                    photoHouse: urlHouse
                 };
 
                 if(status === 'PAID') {
-                    visitData.type = document.getElementById('payMethod').value;
-                    visitData.amt = document.getElementById('collectedAmt').value;
-                    visitData.pcrUrl = urls.pcr;
-                    visitData.custUrl = urls.cust;
-                    visitData.houseUrl = urls.house;
+                    const pMode = document.getElementById('paymentMode').value;
+                    visitData.type = pMode;
+                    visitData.amt = document.getElementById('paidAmount').value;
+                    visitData.receiptUrl = await uploadImageFile(document.getElementById('imgReceipt').files[0], 'visits/receipts');
                     
                     const visited = document.querySelector('input[name="houseVisited"]:checked');
                     if(visited) visitData.houseVisited = visited.value;
 
-                    // Set primary photoUrl for timeline display
-                    if(urls.pcr !== 'N/A') visitData.photoUrl = urls.pcr;
-                    else if(urls.house !== 'N/A') visitData.photoUrl = urls.house;
-
-                } else if(status === 'NOT PAID') {
-                    visitData.unr = document.getElementById('npReason').value.trim();
-                    visitData.next = document.getElementById('npDate').value;
-                    visitData.houseUrl = urls.house;
-                    visitData.photoUrl = urls.house; // For timeline display
-                } else if(status === 'SEIZING') {
-                    visitData.seizeRsn = document.getElementById('szReason').value.trim();
-                    visitData.bike1Url = urls.bike1;
-                    visitData.bike2Url = urls.bike2;
-                    visitData.photoUrl = urls.bike1; // For timeline display
+                    if(pMode === 'LOCK') {
+                        visitData.ppfc = document.getElementById('ppfcEntered').value;
+                        if(visitData.ppfc === 'No') visitData.ppfcRsn = document.getElementById('ppfcReason').value;
+                    }
+                    else if(pMode === 'QR') {
+                        visitData.exImg1 = await uploadImageFile(document.getElementById('imgExtra1').files[0], 'visits/receipts');
+                        visitData.exImg2 = await uploadImageFile(document.getElementById('imgExtra2').files[0], 'visits/receipts');
+                    }
+                    else if(pMode === 'OP') {
+                        visitData.opTo = document.getElementById('opPerson').value;
+                        visitData.opReceipt = document.getElementById('opReceiptGiven').value;
+                    }
+                } 
+                else if (status === 'NOT PAID') {
+                    visitData.type = "NOT PAID";
+                    visitData.unr = document.getElementById('notPaidReason').value;
+                    visitData.next = document.getElementById('promisedDate').value;
+                } 
+                else if (status === 'SEIZING') {
+                    visitData.type = "SEIZING";
+                    visitData.seizeRsn = document.getElementById('seizeReason').value;
+                    visitData.bike1Url = await uploadImageFile(document.getElementById('imgBike1').files[0], 'visits/bikes');
+                    visitData.bike2Url = await uploadImageFile(document.getElementById('imgBike2').files[0], 'visits/bikes');
                 }
 
-                // Save to Firebase
-                await set(ref(db, `visits/${monthStr}/${visitId}`), visitData);
+                // 1. Save Visit Data
+                const dbRef = window.firebaseDbRef(window.db, `visits/${window.currentYearMonth}`);
+                const newVisitRef = window.firebaseDbPush(dbRef);
+                await window.firebaseDbSet(newVisitRef, visitData);
+                
+                // 2. KILOMETER TRACKING UPDATE LOGIC
+                if (vLat !== 0 && vLng !== 0) {
+                    try {
+                        const attRefPath = `attendance/${window.currentEmpId}/${window.currentYearMonth}/${window.currentDateOnly}`;
+                        const attRef = window.firebaseDbRef(window.db, attRefPath);
+                        const attSnap = await window.firebaseDbGet(attRef);
+                        
+                        if (attSnap.exists()) {
+                            const attData = attSnap.val();
+                            let prevLat = parseFloat(attData.lastLat || attData.startLat);
+                            let prevLng = parseFloat(attData.lastLng || attData.startLng);
+                            let currentKm = parseFloat(attData.totalKm || 0);
+                            
+                            if (!isNaN(prevLat) && !isNaN(prevLng)) {
+                                let addedKm = getDistanceKm(prevLat, prevLng, vLat, vLng);
+                                currentKm += addedKm;
+                            }
+                            
+                            await window.firebaseDbUpdate(attRef, {
+                                totalKm: parseFloat(currentKm.toFixed(2)),
+                                distanceKm: parseFloat(currentKm.toFixed(2)),
+                                lastLat: vLat,
+                                lastLng: vLng
+                            });
+                        }
+                    } catch(err) {
+                        console.error("Distance tracking error:", err);
+                    }
+                }
+
+                // 3. Send Telegram Notification
+                document.getElementById('loadingText').innerText = "Sending Notifications...";
+                await sendToTelegram(visitData);
 
                 document.getElementById('loadingOverlay').style.display = 'none';
-                alert("Visit Report Submitted Successfully!");
-                window.location.href = "my-history.html"; // Redirect to history to see the new entry
+                alert("Visit Data Submitted Successfully!");
+                window.location.reload();
 
             } catch (error) {
                 console.error(error);
                 document.getElementById('loadingOverlay').style.display = 'none';
-                alert("Error saving data. Please check internet connection.");
+                alert("Error submitting data. Please try again.");
             }
+        }
+
+        // --- TELEGRAM MESSAGE LOGIC ---
+        async function sendToTelegram(data) {
+            try {
+                const dbRef = window.firebaseDbRef(window.db);
+                let token = null;
+                let targetChatIds = new Set(); 
+
+                const adminSnap = await window.firebaseDbGet(window.firebaseDbChild(dbRef, `adminSettings`));
+                if (adminSnap.exists()) {
+                    token = adminSnap.val().telegramBotToken;
+                    if (adminSnap.val().adminChatId) targetChatIds.add(adminSnap.val().adminChatId);
+                }
+
+                if (!token) return; 
+
+                if (data.branch && data.branch !== "N/A") {
+                    const branchesSnap = await window.firebaseDbGet(window.firebaseDbChild(dbRef, `branches`));
+                    if (branchesSnap.exists()) {
+                        const branchesData = branchesSnap.val();
+                        for (const key in branchesData) {
+                            if (branchesData[key].name === data.branch) {
+                                if (branchesData[key].chatId && branchesData[key].chatId.trim() !== "") {
+                                    targetChatIds.add(branchesData[key].chatId.trim());
+                                }
+                                break; 
+                            }
+                        }
+                    }
+                }
+
+                if (targetChatIds.size > 0) {
+                    let msg = `🚨 *New Customer Visit*\n\n`;
+                    msg += `👤 *Agent:* ${data.ename} (ID: ${data.eid})\n`;
+                    msg += `📱 *Agent Ph:* ${data.empMobile}\n`; 
+                    msg += `🏦 *Branch:* ${data.branch}\n`;
+                    msg += `📝 *HP No:* ${data.hp} (*${data.accType}*)\n`; 
+                    msg += `👤 *Customer Name:* ${data.cname || 'N/A'}\n`;
+                    msg += `📞 *Cust Mobile:* ${data.custMobile || 'N/A'}\n`; 
+                    
+                    if(data.stat === 'PAID') {
+                        msg += `\n🟢 *Status:* PAID\n`;
+                        msg += `💰 *Amount:* ₹${data.amt}\n`;
+                        msg += `💳 *Mode:* ${data.type}\n`;
+                    } else if(data.stat === 'NOT PAID') {
+                        msg += `\n🔴 *Status:* NOT PAID\n`;
+                        msg += `🛑 *Reason:* ${data.unr || 'N/A'}\n`; 
+                        msg += `📅 *Next Date:* ${data.next || 'N/A'}\n`; 
+                    } else if(data.stat === 'SEIZING') {
+                        msg += `\n🟠 *Status:* SEIZING\n`;
+                        msg += `🛑 *Remarks:* ${data.seizeRsn || 'N/A'}\n`;
+                    }
+                    
+                    msg += `\n📍 *Location:* [View Map](https://maps.google.com/?q=${data.loc})\n`;
+                    msg += `\n📸 *PROOFS:*`;
+                    if (data.photoCust && data.photoCust !== "N/A") msg += `\n[👤 Customer Photo](${data.photoCust})`;
+                    if (data.photoHouse && data.photoHouse !== "N/A") msg += `\n[🏠 House Photo](${data.photoHouse})`;
+                    if (data.receiptUrl && data.receiptUrl !== "N/A") msg += `\n[🧾 Payment Receipt](${data.receiptUrl})`;
+
+                    const tgUrl = `https://api.telegram.org/bot${token}/sendMessage`;
+
+                    for (const chatId of targetChatIds) {
+                        await fetch(tgUrl, {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({ 
+                                chat_id: chatId, 
+                                text: msg, 
+                                parse_mode: "Markdown",
+                                disable_web_page_preview: false 
+                            })
+                        });
+                    }
+                }
+            } catch(e) { console.log("Telegram Error", e); }
         }
     </script>
 </body>
