@@ -101,7 +101,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        // Added 'set' import for live location updates
+        import { getDatabase, ref, get, child, set } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAvjFcKKiu4OMmQckYXMTejdBJh9tC6TjM",
@@ -117,6 +118,7 @@
         
         window.auth = auth;
         window.firebaseSignOut = signOut;
+        window.locationWatcher = null;
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -139,6 +141,8 @@
                     const statText = document.getElementById('status-text');
                     const kmDisplay = document.getElementById('today-km-display');
                     
+                    let isOnline = false;
+
                     if (attSnap.exists()) {
                         const att = attSnap.val();
                         
@@ -146,6 +150,7 @@
                         if (att.onlineTime && !att.offlineTime) {
                             statText.innerHTML = "🟢 ONLINE";
                             statText.style.color = "#4ade80";
+                            isOnline = true;
                         }
                         
                         // Update Today's KM
@@ -153,6 +158,44 @@
                             kmDisplay.innerText = parseFloat(att.totalKm).toFixed(1) + " KM";
                         }
                     }
+
+                    // ==========================================
+                    // REAL-TIME GPS TRACKING ENGINE
+                    // ==========================================
+                    if (isOnline) {
+                        if ("geolocation" in navigator) {
+                            window.locationWatcher = navigator.geolocation.watchPosition(async (pos) => {
+                                const lat = pos.coords.latitude;
+                                const lng = pos.coords.longitude;
+                                
+                                try {
+                                    // Push directly to Firebase liveLocations node continuously
+                                    await set(ref(db, `liveLocations/${empId.toLowerCase()}`), {
+                                        lat: lat,
+                                        lng: lng,
+                                        time: new Date().toLocaleTimeString(),
+                                        status: "Online",
+                                        lastUpdated: Date.now()
+                                    });
+                                } catch(e) {
+                                    console.error("GPS Sync Error:", e);
+                                }
+                            }, (err) => {
+                                console.warn("GPS Error:", err);
+                            }, {
+                                enableHighAccuracy: true,
+                                maximumAge: 5000,
+                                timeout: 10000
+                            });
+                        }
+                    } else {
+                        // If offline, stop tracking and update status in database
+                        if (window.locationWatcher) {
+                            navigator.geolocation.clearWatch(window.locationWatcher);
+                        }
+                        await set(ref(db, `liveLocations/${empId.toLowerCase()}/status`), "Offline");
+                    }
+
                 } catch (error) { console.error(error); }
             } else {
                 window.location.href = "index.html";
@@ -162,6 +205,7 @@
     <script>
         function handleLogout() {
             if(confirm("Are you sure you want to logout?")) {
+                if(window.locationWatcher) navigator.geolocation.clearWatch(window.locationWatcher);
                 window.firebaseSignOut(window.auth).then(() => { window.location.href = "index.html"; });
             }
         }
