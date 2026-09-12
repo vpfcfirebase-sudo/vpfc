@@ -73,7 +73,8 @@
         .timeline-content { background: var(--card-bg); padding: 12px 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid var(--border-color); }
         
         /* Distance Traveled Marker */
-        .dist-marker { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 800; color: #4f46e5; background: #e0e7ff; padding: 4px 10px; border-radius: 12px; border: 1px dashed #c7d2fe; margin-bottom: 10px; }
+        .dist-marker { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 800; color: #4f46e5; background: #e0e7ff; padding: 4px 10px; border-radius: 12px; border: 1px dashed #c7d2fe; margin-bottom: 10px; }
+        .dist-marker.no-gps { color: #64748b; background: #f1f5f9; border-color: #cbd5e1; }
 
         .time-badge { font-size: 11px; font-weight: 700; color: var(--brand-color); margin-bottom: 5px; display: inline-block; background: #f1f5f9; padding: 2px 8px; border-radius: 10px; }
         .date-badge { color: var(--danger); margin-right: 5px; }
@@ -211,14 +212,14 @@
         // Mathematical Function to calculate Distance between 2 GPS Coordinates (Haversine Formula)
         function getDistanceInKm(lat1, lon1, lat2, lon2) {
             if (!lat1 || !lon1 || !lat2 || !lon2) return 0;
-            var R = 6371; // Radius of the earth in km
+            var R = 6371; 
             var dLat = (lat2 - lat1) * (Math.PI / 180);
             var dLon = (lon2 - lon1) * (Math.PI / 180);
             var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
                     Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
                     Math.sin(dLon / 2) * Math.sin(dLon / 2);
             var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            return R * c; // Distance in km
+            return R * c; 
         }
 
         window.fetchHistory = async function() {
@@ -250,7 +251,7 @@
                 document.getElementById('stOnline').innerText = "N/A";
                 document.getElementById('stOffline').innerText = "N/A";
 
-                // 1. Fetch All Attendance & Visits
+                // Fetch All Attendance & Visits
                 const attSnap = await get(child(ref(db), `attendance/${window.currentEmpId}/${monthStr}`));
                 const attData = attSnap.exists() ? attSnap.val() : {};
 
@@ -262,7 +263,6 @@
                     // --- DAILY VIEW LOGIC (Sequence & Distance) ---
                     let dayAtt = attData[targetDate];
                     
-                    // Filter Visits for today
                     let dayVisits = [];
                     for(let vId in allVisitsData) {
                         let v = allVisitsData[vId];
@@ -276,45 +276,54 @@
                     // Sort visits chronologically
                     dayVisits.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
 
-                    // Build Sequence Nodes
                     let nodes = [];
                     
                     // A. PUNCH IN Node
                     if (dayAtt && dayAtt.onlineTime) {
                         document.getElementById('stOnline').innerText = dayAtt.onlineTime;
-                        if (dayAtt.startLat && dayAtt.startLng) {
-                            nodes.push({ type: 'START', time: dayAtt.onlineTime, lat: parseFloat(dayAtt.startLat), lng: parseFloat(dayAtt.startLng) });
-                        }
+                        nodes.push({ 
+                            type: 'START', 
+                            time: dayAtt.onlineTime, 
+                            lat: dayAtt.startLat ? parseFloat(dayAtt.startLat) : null, 
+                            lng: dayAtt.startLng ? parseFloat(dayAtt.startLng) : null 
+                        });
                     }
 
                     // B. VISITS Nodes
                     dayVisits.forEach(v => {
-                        if (v.lat && v.lng) {
-                            nodes.push({ type: 'VISIT', data: v, time: v.time, lat: parseFloat(v.lat), lng: parseFloat(v.lng) });
-                        } else {
-                            nodes.push({ type: 'VISIT', data: v, time: v.time, lat: null, lng: null });
-                        }
+                        nodes.push({ 
+                            type: 'VISIT', 
+                            data: v, 
+                            time: v.time, 
+                            lat: v.lat ? parseFloat(v.lat) : null, 
+                            lng: v.lng ? parseFloat(v.lng) : null 
+                        });
                     });
 
-                    // C. PUNCH OUT Node
+                    // C. PUNCH OUT Node (Will render even if GPS is missing)
                     if (dayAtt && dayAtt.offlineTime) {
                         document.getElementById('stOffline').innerText = dayAtt.offlineTime;
-                        // Use offline coordinates, or fallback to currentLat which holds the last updated position
                         let endLat = dayAtt.offlineLat || dayAtt.currentLat;
                         let endLng = dayAtt.offlineLng || dayAtt.currentLng;
-                        if (endLat && endLng) {
-                            nodes.push({ type: 'END', time: dayAtt.offlineTime, lat: parseFloat(endLat), lng: parseFloat(endLng) });
-                        }
+                        nodes.push({ 
+                            type: 'END', 
+                            time: dayAtt.offlineTime, 
+                            lat: endLat ? parseFloat(endLat) : null, 
+                            lng: endLng ? parseFloat(endLng) : null 
+                        });
                     }
 
                     // Calculate Distance Sequence
                     let prevValidNode = null;
-                    nodes.forEach(node => {
+                    nodes.forEach((node, index) => {
                         node.distFromPrev = 0;
-                        if (node.lat && node.lng) {
-                            if (prevValidNode) {
+                        node.hasValidDistance = false;
+                        
+                        if (node.lat && node.lng && !isNaN(node.lat) && !isNaN(node.lng)) {
+                            if (prevValidNode !== null) {
                                 let d = getDistanceInKm(prevValidNode.lat, prevValidNode.lng, node.lat, node.lng);
                                 node.distFromPrev = d;
+                                node.hasValidDistance = true;
                                 overallTotalKm += d;
                             }
                             prevValidNode = node;
@@ -323,10 +332,16 @@
 
                     // Render Nodes
                     if (nodes.length > 0) {
-                        nodes.forEach(node => {
+                        nodes.forEach((node, index) => {
                             let distHtml = '';
-                            if (node.distFromPrev > 0) {
-                                distHtml = `<div class="dist-marker"><i class="fas fa-motorcycle"></i> Travelled: ${node.distFromPrev.toFixed(2)} km</div>`;
+                            
+                            // Render distance badge for every node except START
+                            if (index > 0) {
+                                if (node.hasValidDistance) {
+                                    distHtml = `<div class="dist-marker"><i class="fas fa-motorcycle"></i> Travelled: ${node.distFromPrev.toFixed(2)} km</div>`;
+                                } else {
+                                    distHtml = `<div class="dist-marker no-gps"><i class="fas fa-motorcycle"></i> Travelled: 0.00 km (No GPS)</div>`;
+                                }
                             }
 
                             if (node.type === 'START') {
@@ -404,7 +419,6 @@
                             }
                         }
 
-                        // Recalculate daily sum exactly to match
                         dayVisits.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
                         let nodes = [];
                         if (dayAtt && dayAtt.startLat && dayAtt.startLng) {
@@ -468,7 +482,6 @@
                     }
                 }
 
-                // Show final counts
                 document.getElementById('stVisits').innerText = countVisits;
                 document.getElementById('stReceipts').innerText = countReceipts;
                 document.getElementById('stKm').innerText = `${overallTotalKm.toFixed(2)} Km`;
