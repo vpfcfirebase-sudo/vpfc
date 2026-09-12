@@ -333,13 +333,9 @@
                             
                             if (index > 0) {
                                 if (node.hasValidDistance) {
-                                    if (node.distFromPrev === 0) {
-                                        distHtml = `<div class="dist-marker" style="color:#0ea5e9; background:#e0f2fe; border-color:#bae6fd;"><i class="fas fa-map-pin"></i> Same Location (0.00 km)</div>`;
-                                    } else {
-                                        distHtml = `<div class="dist-marker"><i class="fas fa-motorcycle"></i> Travelled: ${node.distFromPrev.toFixed(2)} km</div>`;
-                                    }
+                                    // NO SPECIAL FORMAT FOR 0.00 KM - JUST NORMAL TEXT
+                                    distHtml = `<div class="dist-marker"><i class="fas fa-motorcycle"></i> Travelled: ${node.distFromPrev.toFixed(2)} km</div>`;
                                 } else {
-                                    // Clearer error text for missing old data
                                     distHtml = `<div class="dist-marker no-gps"><i class="fas fa-satellite-slash"></i> Location Not Captured</div>`;
                                 }
                             }
