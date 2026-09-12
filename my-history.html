@@ -55,22 +55,26 @@
         .bg-km { background: #8b5cf6; }
         .bg-visits { background: #f59e0b; }
         .bg-receipts { background: #10b981; }
-
-        /* Hide Time Stats in Monthly View */
         .time-stat { display: flex; }
 
         /* --- TIMELINE --- */
         .timeline-container { padding: 0 20px 30px 30px; position: relative; }
-        .timeline-container::before { content: ''; position: absolute; top: 0; left: 35px; height: 100%; width: 2px; background: var(--border-color); }
+        .timeline-container::before { content: ''; position: absolute; top: 0; left: 35px; height: 100%; width: 2px; background: #cbd5e1; }
         
-        .timeline-item { position: relative; margin-bottom: 20px; padding-left: 25px; }
+        .timeline-item { position: relative; margin-bottom: 25px; padding-left: 25px; }
         .timeline-dot { position: absolute; top: 0; left: -11px; width: 24px; height: 24px; border-radius: 50%; background: var(--card-bg); border: 2px solid var(--brand-color); display: flex; justify-content: center; align-items: center; font-size: 10px; color: var(--brand-color); z-index: 2; }
-        .timeline-dot.dot-paid { border-color: var(--success); color: var(--success); }
-        .timeline-dot.dot-notpaid { border-color: var(--danger); color: var(--danger); }
-        .timeline-dot.dot-seizing { border-color: var(--warning); color: var(--warning); }
+        
+        .dot-paid { border-color: var(--success); color: var(--success); }
+        .dot-notpaid { border-color: var(--danger); color: var(--danger); }
+        .dot-seizing { border-color: var(--warning); color: var(--warning); }
+        .dot-start { border-color: #3b82f6; color: #3b82f6; background: #eff6ff;}
+        .dot-end { border-color: #64748b; color: #64748b; background: #f8fafc;}
         
         .timeline-content { background: var(--card-bg); padding: 12px 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid var(--border-color); }
         
+        /* Distance Traveled Marker */
+        .dist-marker { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 800; color: #4f46e5; background: #e0e7ff; padding: 4px 10px; border-radius: 12px; border: 1px dashed #c7d2fe; margin-bottom: 10px; }
+
         .time-badge { font-size: 11px; font-weight: 700; color: var(--brand-color); margin-bottom: 5px; display: inline-block; background: #f1f5f9; padding: 2px 8px; border-radius: 10px; }
         .date-badge { color: var(--danger); margin-right: 5px; }
         
@@ -116,11 +120,11 @@
     <div class="stats-grid">
         <div class="stat-card time-stat" id="boxOnline">
             <div class="stat-icon bg-online"><i class="fas fa-sign-in-alt"></i></div>
-            <div class="stat-info"><span class="stat-val" id="stOnline">N/A</span><span class="stat-label">Online Time</span></div>
+            <div class="stat-info"><span class="stat-val" id="stOnline">N/A</span><span class="stat-label">Duty Started</span></div>
         </div>
         <div class="stat-card time-stat" id="boxOffline">
             <div class="stat-icon bg-offline"><i class="fas fa-sign-out-alt"></i></div>
-            <div class="stat-info"><span class="stat-val" id="stOffline">N/A</span><span class="stat-label">Offline Time</span></div>
+            <div class="stat-info"><span class="stat-val" id="stOffline">N/A</span><span class="stat-label">Duty Ended</span></div>
         </div>
         <div class="stat-card" id="boxVisits">
             <div class="stat-icon bg-visits"><i class="fas fa-users"></i></div>
@@ -132,13 +136,13 @@
         </div>
         <div class="stat-card" style="grid-column: span 2; justify-content: center;" id="boxKm">
             <div class="stat-icon bg-km"><i class="fas fa-motorcycle"></i></div>
-            <div class="stat-info" style="align-items: center;"><span class="stat-val" id="stKm">0.00 Km</span><span class="stat-label">Distance Travelled</span></div>
+            <div class="stat-info" style="align-items: center;"><span class="stat-val" id="stKm">0.00 Km</span><span class="stat-label">Total Route Distance</span></div>
         </div>
     </div>
 
-    <div class="section-title">Timeline of Visits</div>
+    <div class="section-title">Step-by-Step Route Timeline</div>
 
-    <div id="loadingText"><i class="fas fa-spinner fa-spin"></i> Loading history...</div>
+    <div id="loadingText"><i class="fas fa-spinner fa-spin"></i> Calculating distance...</div>
     <div id="noDataText">No activity recorded for this selection.</div>
 
     <!-- TIMELINE CONTAINER -->
@@ -154,8 +158,7 @@
             apiKey: "AIzaSyAvjFcKKiu4OMmQckYXMTejdBJh9tC6TjM",
             authDomain: "sri-vishnu-priya-finance-c591f.firebaseapp.com",
             databaseURL: "https://sri-vishnu-priya-finance-c591f-default-rtdb.firebaseio.com",
-            projectId: "sri-vishnu-priya-finance-c591f",
-            storageBucket: "sri-vishnu-priya-finance-c591f.firebasestorage.app"
+            projectId: "sri-vishnu-priya-finance-c591f"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -163,7 +166,6 @@
         const db = getDatabase(app);
         window.currentEmpId = null;
 
-        // Set Default Dates
         const todayObj = new Date();
         const localDateStr = todayObj.getFullYear() + '-' + String(todayObj.getMonth() + 1).padStart(2, '0') + '-' + String(todayObj.getDate()).padStart(2, '0');
         const localMonthStr = todayObj.getFullYear() + '-' + String(todayObj.getMonth() + 1).padStart(2, '0');
@@ -186,20 +188,14 @@
             if (type === 'daily') {
                 document.getElementById('historyDate').style.display = 'block';
                 document.getElementById('historyMonth').style.display = 'none';
-                
-                // Show online/offline time for daily
                 document.getElementById('boxOnline').style.display = 'flex';
                 document.getElementById('boxOffline').style.display = 'flex';
-                
                 document.getElementById('boxVisits').style.gridColumn = 'auto';
             } else {
                 document.getElementById('historyDate').style.display = 'none';
                 document.getElementById('historyMonth').style.display = 'block';
-                
-                // Hide online/offline time for monthly (we just show total KM)
                 document.getElementById('boxOnline').style.display = 'none';
                 document.getElementById('boxOffline').style.display = 'none';
-                
                 document.getElementById('boxVisits').style.gridColumn = 'auto';
             }
             window.fetchHistory();
@@ -211,6 +207,19 @@
             const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
             return `${String(d.getDate()).padStart(2,'0')} ${months[d.getMonth()]}`;
         };
+
+        // Mathematical Function to calculate Distance between 2 GPS Coordinates (Haversine Formula)
+        function getDistanceInKm(lat1, lon1, lat2, lon2) {
+            if (!lat1 || !lon1 || !lat2 || !lon2) return 0;
+            var R = 6371; // Radius of the earth in km
+            var dLat = (lat2 - lat1) * (Math.PI / 180);
+            var dLon = (lon2 - lon1) * (Math.PI / 180);
+            var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                    Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c; // Distance in km
+        }
 
         window.fetchHistory = async function() {
             if(!window.currentEmpId) return;
@@ -234,109 +243,235 @@
                     if(!monthStr) return;
                 }
 
-                // Reset Stats
                 let countVisits = 0;
                 let countReceipts = 0;
-                let totalKm = 0;
+                let overallTotalKm = 0;
+                
                 document.getElementById('stOnline').innerText = "N/A";
                 document.getElementById('stOffline').innerText = "N/A";
 
-                // 1. Fetch Attendance (Data will show N/A until Attendance form is built)
+                // 1. Fetch All Attendance & Visits
                 const attSnap = await get(child(ref(db), `attendance/${window.currentEmpId}/${monthStr}`));
-                if (attSnap.exists()) {
-                    const attData = attSnap.val();
-                    if(viewType === 'daily' && attData[targetDate]) {
-                        document.getElementById('stOnline').innerText = attData[targetDate].onlineTime || "N/A";
-                        document.getElementById('stOffline').innerText = attData[targetDate].offlineTime || "N/A";
-                        totalKm = parseFloat(attData[targetDate].distanceKm) || 0;
-                    } else if(viewType === 'monthly') {
-                        // Sum all KMs in the month
-                        for(let d in attData) {
-                            totalKm += parseFloat(attData[d].distanceKm) || 0;
+                const attData = attSnap.exists() ? attSnap.val() : {};
+
+                const visitsSnap = await get(child(ref(db), `visits/${monthStr}`));
+                const allVisitsData = visitsSnap.exists() ? visitsSnap.val() : {};
+
+                // Generate Data based on View Type
+                if (viewType === 'daily') {
+                    // --- DAILY VIEW LOGIC (Sequence & Distance) ---
+                    let dayAtt = attData[targetDate];
+                    
+                    // Filter Visits for today
+                    let dayVisits = [];
+                    for(let vId in allVisitsData) {
+                        let v = allVisitsData[vId];
+                        if(v.eid === window.currentEmpId && v.date === targetDate) {
+                            dayVisits.push(v);
+                            countVisits++;
+                            if(v.stat === 'PAID') countReceipts++;
                         }
                     }
-                }
-                document.getElementById('stKm').innerText = `${totalKm.toFixed(2)} Km`;
 
-                // 2. Fetch Visits for timeline
-                let historyData = [];
-                const visitsSnap = await get(child(ref(db), `visits/${monthStr}`));
-                
-                if (visitsSnap.exists()) {
-                    const visitsData = visitsSnap.val();
-                    for (const vId in visitsData) {
-                        const v = visitsData[vId];
-                        
-                        if (v.eid === window.currentEmpId) {
-                            if (viewType === 'daily') {
-                                if (v.date === targetDate) {
-                                    historyData.push(v);
-                                    countVisits++;
-                                    if(v.stat === 'PAID') countReceipts++;
+                    // Sort visits chronologically
+                    dayVisits.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+
+                    // Build Sequence Nodes
+                    let nodes = [];
+                    
+                    // A. PUNCH IN Node
+                    if (dayAtt && dayAtt.onlineTime) {
+                        document.getElementById('stOnline').innerText = dayAtt.onlineTime;
+                        if (dayAtt.startLat && dayAtt.startLng) {
+                            nodes.push({ type: 'START', time: dayAtt.onlineTime, lat: parseFloat(dayAtt.startLat), lng: parseFloat(dayAtt.startLng) });
+                        }
+                    }
+
+                    // B. VISITS Nodes
+                    dayVisits.forEach(v => {
+                        if (v.lat && v.lng) {
+                            nodes.push({ type: 'VISIT', data: v, time: v.time, lat: parseFloat(v.lat), lng: parseFloat(v.lng) });
+                        } else {
+                            nodes.push({ type: 'VISIT', data: v, time: v.time, lat: null, lng: null });
+                        }
+                    });
+
+                    // C. PUNCH OUT Node
+                    if (dayAtt && dayAtt.offlineTime) {
+                        document.getElementById('stOffline').innerText = dayAtt.offlineTime;
+                        // Use offline coordinates, or fallback to currentLat which holds the last updated position
+                        let endLat = dayAtt.offlineLat || dayAtt.currentLat;
+                        let endLng = dayAtt.offlineLng || dayAtt.currentLng;
+                        if (endLat && endLng) {
+                            nodes.push({ type: 'END', time: dayAtt.offlineTime, lat: parseFloat(endLat), lng: parseFloat(endLng) });
+                        }
+                    }
+
+                    // Calculate Distance Sequence
+                    let prevValidNode = null;
+                    nodes.forEach(node => {
+                        node.distFromPrev = 0;
+                        if (node.lat && node.lng) {
+                            if (prevValidNode) {
+                                let d = getDistanceInKm(prevValidNode.lat, prevValidNode.lng, node.lat, node.lng);
+                                node.distFromPrev = d;
+                                overallTotalKm += d;
+                            }
+                            prevValidNode = node;
+                        }
+                    });
+
+                    // Render Nodes
+                    if (nodes.length > 0) {
+                        nodes.forEach(node => {
+                            let distHtml = '';
+                            if (node.distFromPrev > 0) {
+                                distHtml = `<div class="dist-marker"><i class="fas fa-motorcycle"></i> Travelled: ${node.distFromPrev.toFixed(2)} km</div>`;
+                            }
+
+                            if (node.type === 'START') {
+                                timelineContainer.innerHTML += `
+                                    <div class="timeline-item">
+                                        <div class="timeline-dot dot-start"><i class="fas fa-sign-in-alt"></i></div>
+                                        <div class="timeline-content" style="border: 1px solid #93c5fd; background: #eff6ff;">
+                                            <div style="font-size: 14px; font-weight: 800; color: #1e3a8a;">Duty Started (Punch IN)</div>
+                                            <div style="font-size: 12px; color: #3b82f6; font-weight: 600; margin-top: 4px;"><i class="far fa-clock"></i> ${node.time}</div>
+                                        </div>
+                                    </div>
+                                `;
+                            } 
+                            else if (node.type === 'END') {
+                                timelineContainer.innerHTML += `
+                                    <div class="timeline-item">
+                                        <div class="timeline-dot dot-end"><i class="fas fa-sign-out-alt"></i></div>
+                                        ${distHtml}
+                                        <div class="timeline-content" style="border: 1px solid #cbd5e1; background: #f8fafc;">
+                                            <div style="font-size: 14px; font-weight: 800; color: #334155;">Duty Ended (Punch OUT)</div>
+                                            <div style="font-size: 12px; color: #64748b; font-weight: 600; margin-top: 4px;"><i class="far fa-clock"></i> ${node.time}</div>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                            else if (node.type === 'VISIT') {
+                                let v = node.data;
+                                let dotClass = '', dotIcon = '', detailHtml = '';
+
+                                if (v.stat === 'PAID') {
+                                    dotClass = 'dot-paid'; dotIcon = '<i class="fas fa-check"></i>';
+                                    detailHtml = `<div>Amount Collected: <span class="tl-amt">₹${v.amt || 0}</span> (${v.type || 'N/A'})</div>`;
+                                } else if (v.stat === 'NOT PAID') {
+                                    dotClass = 'dot-notpaid'; dotIcon = '<i class="fas fa-times"></i>';
+                                    detailHtml = `<div>Reason: <span class="tl-reason">${v.unr || 'N/A'}</span></div><div style="margin-top:3px; color:var(--text-muted);">Promise: ${window.formatShortDate(v.next) || 'N/A'}</div>`;
+                                } else {
+                                    dotClass = 'dot-seizing'; dotIcon = '<i class="fas fa-exclamation"></i>';
+                                    detailHtml = `<div>Remarks: <span class="tl-reason">${v.seizeRsn || 'N/A'}</span></div>`;
                                 }
-                            } else {
-                                // Monthly
+
+                                timelineContainer.innerHTML += `
+                                    <div class="timeline-item">
+                                        <div class="timeline-dot ${dotClass}">${dotIcon}</div>
+                                        ${distHtml}
+                                        <div class="timeline-content">
+                                            <div class="time-badge"><i class="far fa-clock"></i> ${v.time || 'N/A'}</div>
+                                            <div class="tl-hp"><i class="fas fa-hashtag"></i> ${v.hp} <span style="float:right; font-size:10px; font-weight:800; border:1px solid; padding:2px 5px; border-radius:4px;" class="${dotClass}">${v.stat}</span></div>
+                                            <div class="tl-name">${v.cname || 'Customer Name N/A'}</div>
+                                            <div class="tl-details">${detailHtml}</div>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                        });
+                    } else {
+                        document.getElementById('noDataText').style.display = 'block';
+                    }
+
+                } else {
+                    // --- MONTHLY VIEW LOGIC ---
+                    let historyData = [];
+
+                    // Sum KMs logic day by day
+                    for(let dateKey in attData) {
+                        let dayAtt = attData[dateKey];
+                        let dayVisits = [];
+                        
+                        for(let vId in allVisitsData) {
+                            let v = allVisitsData[vId];
+                            if(v.eid === window.currentEmpId && v.date === dateKey) {
+                                dayVisits.push(v);
                                 historyData.push(v);
                                 countVisits++;
                                 if(v.stat === 'PAID') countReceipts++;
                             }
                         }
+
+                        // Recalculate daily sum exactly to match
+                        dayVisits.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+                        let nodes = [];
+                        if (dayAtt && dayAtt.startLat && dayAtt.startLng) {
+                            nodes.push({ lat: parseFloat(dayAtt.startLat), lng: parseFloat(dayAtt.startLng) });
+                        }
+                        dayVisits.forEach(v => {
+                            if (v.lat && v.lng) nodes.push({ lat: parseFloat(v.lat), lng: parseFloat(v.lng) });
+                        });
+                        if (dayAtt && dayAtt.offlineTime) {
+                            let endLat = dayAtt.offlineLat || dayAtt.currentLat;
+                            let endLng = dayAtt.offlineLng || dayAtt.currentLng;
+                            if (endLat && endLng) nodes.push({ lat: parseFloat(endLat), lng: parseFloat(endLng) });
+                        }
+
+                        let prevValidNode = null;
+                        nodes.forEach(node => {
+                            if (prevValidNode) {
+                                overallTotalKm += getDistanceInKm(prevValidNode.lat, prevValidNode.lng, node.lat, node.lng);
+                            }
+                            prevValidNode = node;
+                        });
+                    }
+
+                    if (historyData.length > 0) {
+                        historyData.sort((a, b) => {
+                            let dateA = new Date(a.date).getTime() || 0;
+                            let dateB = new Date(b.date).getTime() || 0;
+                            if(dateA !== dateB) return dateA - dateB;
+                            let timeA = a.timestamp || 0;
+                            let timeB = b.timestamp || 0;
+                            return timeA - timeB; 
+                        });
+
+                        historyData.forEach(v => {
+                            let dotClass = '', dotIcon = '', detailHtml = '';
+                            if (v.stat === 'PAID') {
+                                dotClass = 'dot-paid'; dotIcon = '<i class="fas fa-check"></i>';
+                                detailHtml = `<div>Amount Collected: <span class="tl-amt">₹${v.amt || 0}</span></div>`;
+                            } else if (v.stat === 'NOT PAID') {
+                                dotClass = 'dot-notpaid'; dotIcon = '<i class="fas fa-times"></i>';
+                                detailHtml = `<div>Reason: <span class="tl-reason">${v.unr || 'N/A'}</span></div>`;
+                            } else {
+                                dotClass = 'dot-seizing'; dotIcon = '<i class="fas fa-exclamation"></i>';
+                                detailHtml = `<div>Remarks: <span class="tl-reason">${v.seizeRsn || 'N/A'}</span></div>`;
+                            }
+
+                            timelineContainer.innerHTML += `
+                                <div class="timeline-item">
+                                    <div class="timeline-dot ${dotClass}">${dotIcon}</div>
+                                    <div class="timeline-content">
+                                        <div class="time-badge"><span class="date-badge">${window.formatShortDate(v.date)}</span> | <i class="far fa-clock"></i> ${v.time || 'N/A'}</div>
+                                        <div class="tl-hp"><i class="fas fa-hashtag"></i> ${v.hp} <span style="float:right; font-size:10px; font-weight:800; border:1px solid; padding:2px 5px; border-radius:4px;" class="${dotClass}">${v.stat}</span></div>
+                                        <div class="tl-name">${v.cname || 'Customer Name N/A'}</div>
+                                        <div class="tl-details">${detailHtml}</div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        document.getElementById('noDataText').style.display = 'block';
                     }
                 }
 
+                // Show final counts
                 document.getElementById('stVisits').innerText = countVisits;
                 document.getElementById('stReceipts').innerText = countReceipts;
-
-                if (historyData.length > 0) {
-                    // Sort visits: Date first, then time
-                    historyData.sort((a, b) => {
-                        let dateA = new Date(a.date).getTime() || 0;
-                        let dateB = new Date(b.date).getTime() || 0;
-                        if(dateA !== dateB) return dateA - dateB;
-                        
-                        let timeA = a.timestamp || 0;
-                        let timeB = b.timestamp || 0;
-                        return timeA - timeB; 
-                    });
-
-                    historyData.forEach(v => {
-                        let dotClass = '';
-                        let dotIcon = '';
-                        let detailHtml = '';
-
-                        if (v.stat === 'PAID') {
-                            dotClass = 'dot-paid'; dotIcon = '<i class="fas fa-check"></i>';
-                            detailHtml = `<div>Amount Collected: <span class="tl-amt">₹${v.amt || 0}</span> (${v.type || 'N/A'})</div>`;
-                        } else if (v.stat === 'NOT PAID') {
-                            dotClass = 'dot-notpaid'; dotIcon = '<i class="fas fa-times"></i>';
-                            detailHtml = `<div>Reason: <span class="tl-reason">${v.unr || 'N/A'}</span></div><div style="margin-top:3px; color:var(--text-muted);">Promise Date: ${window.formatShortDate(v.next) || 'N/A'}</div>`;
-                        } else {
-                            dotClass = 'dot-seizing'; dotIcon = '<i class="fas fa-exclamation"></i>';
-                            detailHtml = `<div>Remarks: <span class="tl-reason">${v.seizeRsn || 'N/A'}</span></div>`;
-                        }
-
-                        // Show Date in badge ONLY if in Monthly View
-                        let badgePrefix = '';
-                        if(viewType === 'monthly') {
-                            badgePrefix = `<span class="date-badge">${window.formatShortDate(v.date)}</span> | `;
-                        }
-
-                        const tlItem = `
-                            <div class="timeline-item">
-                                <div class="timeline-dot ${dotClass}">${dotIcon}</div>
-                                <div class="timeline-content">
-                                    <div class="time-badge"><i class="far fa-clock"></i> ${badgePrefix}${v.time || 'N/A'}</div>
-                                    <div class="tl-hp"><i class="fas fa-hashtag"></i> ${v.hp} <span style="float:right; font-size:10px; font-weight:800; border:1px solid; padding:2px 5px; border-radius:4px;" class="${dotClass}">${v.stat}</span></div>
-                                    <div class="tl-name">${v.cname || 'Customer Name N/A'}</div>
-                                    <div class="tl-details">${detailHtml}</div>
-                                </div>
-                            </div>
-                        `;
-                        timelineContainer.innerHTML += tlItem;
-                    });
-                } else {
-                    document.getElementById('noDataText').style.display = 'block';
-                }
+                document.getElementById('stKm').innerText = `${overallTotalKm.toFixed(2)} Km`;
 
             } catch (error) {
                 console.error("Error fetching history:", error);
