@@ -209,7 +209,7 @@
             return `${String(d.getDate()).padStart(2,'0')} ${months[d.getMonth()]}`;
         };
 
-        // Mathematical Function to calculate Distance between 2 GPS Coordinates (Haversine Formula)
+        // Mathematical Function to calculate Distance between 2 GPS Coordinates
         function getDistanceInKm(lat1, lon1, lat2, lon2) {
             if (!lat1 || !lon1 || !lat2 || !lon2) return 0;
             var R = 6371; 
@@ -251,19 +251,17 @@
                 document.getElementById('stOnline').innerText = "N/A";
                 document.getElementById('stOffline').innerText = "N/A";
 
-                // 1. Fetch All Attendance & Visits
+                // Fetch Attendance & Visits
                 const attSnap = await get(child(ref(db), `attendance/${window.currentEmpId}/${monthStr}`));
                 const attData = attSnap.exists() ? attSnap.val() : {};
 
                 const visitsSnap = await get(child(ref(db), `visits/${monthStr}`));
                 const allVisitsData = visitsSnap.exists() ? visitsSnap.val() : {};
 
-                // Generate Data based on View Type
+                // Generate Data
                 if (viewType === 'daily') {
-                    // --- DAILY VIEW LOGIC (Sequence & Distance) ---
                     let dayAtt = attData[targetDate];
                     
-                    // Filter Visits for today
                     let dayVisits = [];
                     for(let vId in allVisitsData) {
                         let v = allVisitsData[vId];
@@ -274,35 +272,30 @@
                         }
                     }
 
-                    // Sort visits chronologically
                     dayVisits.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
 
-                    // Build Sequence Nodes
                     let nodes = [];
                     
-                    // A. PUNCH IN Node
                     if (dayAtt && dayAtt.onlineTime) {
                         document.getElementById('stOnline').innerText = dayAtt.onlineTime;
                         nodes.push({ 
                             type: 'START', 
                             time: dayAtt.onlineTime, 
-                            lat: dayAtt.startLat ? parseFloat(dayAtt.startLat) : null, 
-                            lng: dayAtt.startLng ? parseFloat(dayAtt.startLng) : null 
+                            lat: (dayAtt.startLat != null && dayAtt.startLat !== "") ? parseFloat(dayAtt.startLat) : null, 
+                            lng: (dayAtt.startLng != null && dayAtt.startLng !== "") ? parseFloat(dayAtt.startLng) : null 
                         });
                     }
 
-                    // B. VISITS Nodes
                     dayVisits.forEach(v => {
                         nodes.push({ 
                             type: 'VISIT', 
                             data: v, 
                             time: v.time, 
-                            lat: v.lat ? parseFloat(v.lat) : null, 
-                            lng: v.lng ? parseFloat(v.lng) : null 
+                            lat: (v.lat != null && v.lat !== "") ? parseFloat(v.lat) : null, 
+                            lng: (v.lng != null && v.lng !== "") ? parseFloat(v.lng) : null 
                         });
                     });
 
-                    // C. PUNCH OUT Node
                     if (dayAtt && dayAtt.offlineTime) {
                         document.getElementById('stOffline').innerText = dayAtt.offlineTime;
                         let endLat = dayAtt.offlineLat || dayAtt.currentLat;
@@ -310,18 +303,19 @@
                         nodes.push({ 
                             type: 'END', 
                             time: dayAtt.offlineTime, 
-                            lat: endLat ? parseFloat(endLat) : null, 
-                            lng: endLng ? parseFloat(endLng) : null 
+                            lat: (endLat != null && endLat !== "") ? parseFloat(endLat) : null, 
+                            lng: (endLng != null && endLng !== "") ? parseFloat(endLng) : null 
                         });
                     }
 
-                    // Calculate Distance Sequence
+                    // Calculate Distances
                     let prevValidNode = null;
                     nodes.forEach((node, index) => {
                         node.distFromPrev = 0;
                         node.hasValidDistance = false;
                         
-                        if (node.lat && node.lng && !isNaN(node.lat) && !isNaN(node.lng)) {
+                        // Strict parsing checks
+                        if (node.lat !== null && node.lng !== null && !isNaN(node.lat) && !isNaN(node.lng)) {
                             if (prevValidNode !== null) {
                                 let d = getDistanceInKm(prevValidNode.lat, prevValidNode.lng, node.lat, node.lng);
                                 node.distFromPrev = d;
@@ -337,7 +331,6 @@
                         nodes.forEach((node, index) => {
                             let distHtml = '';
                             
-                            // Render distance badge for every node except START
                             if (index > 0) {
                                 if (node.hasValidDistance) {
                                     if (node.distFromPrev === 0) {
@@ -346,6 +339,7 @@
                                         distHtml = `<div class="dist-marker"><i class="fas fa-motorcycle"></i> Travelled: ${node.distFromPrev.toFixed(2)} km</div>`;
                                     }
                                 } else {
+                                    // Clearer error text for missing old data
                                     distHtml = `<div class="dist-marker no-gps"><i class="fas fa-satellite-slash"></i> Location Not Captured</div>`;
                                 }
                             }
@@ -410,7 +404,6 @@
                     // --- MONTHLY VIEW LOGIC ---
                     let historyData = [];
 
-                    // Sum KMs logic day by day
                     for(let dateKey in attData) {
                         let dayAtt = attData[dateKey];
                         let dayVisits = [];
@@ -431,17 +424,17 @@
                             nodes.push({ lat: parseFloat(dayAtt.startLat), lng: parseFloat(dayAtt.startLng) });
                         }
                         dayVisits.forEach(v => {
-                            if (v.lat && v.lng) nodes.push({ lat: parseFloat(v.lat), lng: parseFloat(v.lng) });
+                            if (v.lat != null && v.lng != null && v.lat !== "") nodes.push({ lat: parseFloat(v.lat), lng: parseFloat(v.lng) });
                         });
                         if (dayAtt && dayAtt.offlineTime) {
                             let endLat = dayAtt.offlineLat || dayAtt.currentLat;
                             let endLng = dayAtt.offlineLng || dayAtt.currentLng;
-                            if (endLat && endLng) nodes.push({ lat: parseFloat(endLat), lng: parseFloat(endLng) });
+                            if (endLat != null && endLng != null && endLat !== "") nodes.push({ lat: parseFloat(endLat), lng: parseFloat(endLng) });
                         }
 
                         let prevValidNode = null;
                         nodes.forEach(node => {
-                            if (prevValidNode) {
+                            if (prevValidNode && !isNaN(node.lat)) {
                                 overallTotalKm += getDistanceInKm(prevValidNode.lat, prevValidNode.lng, node.lat, node.lng);
                             }
                             prevValidNode = node;
