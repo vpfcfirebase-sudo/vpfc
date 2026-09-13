@@ -116,7 +116,6 @@
         </div>
     </div>
 
-    <!-- ACTION BAR WITH MONTH FILTER -->
     <div class="action-bar">
         <a href="dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
         <input type="month" id="monthFilter" class="filter-input" onchange="changeMonth()">
@@ -124,7 +123,6 @@
 
     <div id="loadingText"><i class="fas fa-spinner fa-spin"></i> Loading Data...</div>
 
-    <!-- PUNCH IN/OUT CARD -->
     <div class="attendance-card" id="attCard" style="display:none;">
         <div id="statusBadge" class="status-badge status-offline">🔴 You are Offline</div>
         
@@ -141,9 +139,9 @@
 
         <button class="btn-punch btn-punch-in" id="btnGoOnline" onclick="openCamera()"><i class="fas fa-camera"></i> Take Selfie & Go Online</button>
         <button class="btn-punch btn-punch-out" id="btnGoOffline" style="display:none;" onclick="handleGoOffline()"><i class="fas fa-sign-out-alt"></i> End Work (Go Offline)</button>
+        <div id="liveTrackStatus" style="font-size:10px; color:var(--success); font-weight:700; margin-top:10px; display:none;"><i class="fas fa-satellite-dish"></i> GPS Tracking is Active</div>
     </div>
 
-    <!-- TARGET CARD -->
     <div class="target-card" id="targetCard" style="display:none;">
         <div class="t-header">
             <span>Today's Visits Target</span>
@@ -155,7 +153,6 @@
         <div class="t-message" id="visitMessage">You need <span>3 more visits</span> to complete today's target.</div>
     </div>
 
-    <!-- MONTHLY CALENDAR & SUMMARY -->
     <div class="cal-container">
         <div class="cal-header">
             <span id="calMonthYear">Loading...</span>
@@ -179,9 +176,7 @@
         <div class="cal-weekdays">
             <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
         </div>
-        <div class="cal-days" id="calGrid">
-            <!-- Days injected via JS -->
-        </div>
+        <div class="cal-days" id="calGrid"></div>
         <div class="cal-legends">
             <div class="leg-item"><div class="leg-dot day-present"></div> Present (>3)</div>
             <div class="leg-item"><div class="leg-dot day-warning"></div> Partial (<3)</div>
@@ -189,7 +184,6 @@
         </div>
     </div>
 
-    <!-- CAMERA MODAL -->
     <div id="cameraModal">
         <div class="cam-box">
             <h3 style="color:var(--brand-color); margin-bottom:10px;">Attendance Selfie</h3>
@@ -225,20 +219,21 @@
         const db = getDatabase(app);
         const storage = getStorage(app);
         
+        window.db = db;
         window.currentEmpId = null;
         window.todayVisitsCount = 0;
+        window.trackingInterval = null; // Robust Force Interval
 
-        // REAL TODAY'S DATE LOGIC
         const realTodayObj = new Date();
         const rYear = realTodayObj.getFullYear();
         const rMonth = realTodayObj.getMonth();
         const rDate = String(realTodayObj.getDate()).padStart(2, '0');
-        const realMonthStr = `${rYear}-${String(rMonth + 1).padStart(2, '0')}`;
-        const realDateStr = `${realMonthStr}-${rDate}`;
+        window.realMonthStr = `${rYear}-${String(rMonth + 1).padStart(2, '0')}`;
+        window.realDateStr = `${window.realMonthStr}-${rDate}`;
 
         const monthsNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         
-        document.getElementById('monthFilter').value = realMonthStr;
+        document.getElementById('monthFilter').value = window.realMonthStr;
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -250,11 +245,76 @@
             }
         });
 
+        // ==========================================
+        // ROBUST FORCE LIVE TRACKING (Runs every 10 secs)
+        // ==========================================
+        window.startLiveTracking = function() {
+            document.getElementById('liveTrackStatus').style.display = 'block';
+            
+            if(window.trackingInterval) clearInterval(window.trackingInterval);
+
+            const pushLocation = () => {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(async (pos) => {
+                        const lat = pos.coords.latitude;
+                        const lng = pos.coords.longitude;
+                        const timeStr = new Date().toLocaleTimeString();
+                        
+                        // Force Push to Live Radar
+                        update(ref(db, `liveLocations/${window.currentEmpId}`), {
+                            lat: lat, lng: lng, time: timeStr, status: "Online", lastUpdated: Date.now()
+                        });
+
+                        // Calculate KM for History
+                        const attRefPath = `attendance/${window.currentEmpId}/${window.realMonthStr}/${window.realDateStr}`;
+                        const attRef = ref(db, attRefPath);
+                        const attSnap = await get(attRef);
+                        
+                        if (attSnap.exists()) {
+                            const attData = attSnap.val();
+                            let prevLat = parseFloat(attData.lastLat || attData.startLat);
+                            let prevLng = parseFloat(attData.lastLng || attData.startLng);
+                            let currentKm = parseFloat(attData.totalKm || attData.distanceKm || 0);
+                            
+                            if (!isNaN(prevLat) && !isNaN(prevLng)) {
+                                const R = 6371; 
+                                const dLat = (lat - prevLat) * Math.PI / 180;
+                                const dLon = (lng - prevLng) * Math.PI / 180;
+                                const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(prevLat * Math.PI / 180) * Math.cos(lat * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+                                const addedKm = R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+                                
+                                // Update KM only if moved more than 20 meters to prevent GPS bounce
+                                if(addedKm > 0.02) { currentKm += addedKm; }
+                            }
+                            
+                            update(attRef, {
+                                totalKm: parseFloat(currentKm.toFixed(2)),
+                                distanceKm: parseFloat(currentKm.toFixed(2)),
+                                lastLat: lat, lastLng: lng
+                            });
+                        }
+                    }, (err) => { console.log("Force Tracking GPS Error:", err); }, { enableHighAccuracy: true, maximumAge: 0 });
+                }
+            };
+
+            // Call immediately once, then loop every 10 seconds
+            pushLocation();
+            window.trackingInterval = setInterval(pushLocation, 10000);
+        };
+
+        window.stopLiveTracking = function() {
+            if (window.trackingInterval !== null) {
+                clearInterval(window.trackingInterval);
+                window.trackingInterval = null;
+            }
+            document.getElementById('liveTrackStatus').style.display = 'none';
+        };
+
         window.changeMonth = async function() {
             document.getElementById('loadingText').style.display = 'block';
             const selectedMonthStr = document.getElementById('monthFilter').value;
             
-            if (selectedMonthStr === realMonthStr) {
+            if (selectedMonthStr === window.realMonthStr) {
                 document.getElementById('attCard').style.display = 'block';
                 document.getElementById('targetCard').style.display = 'block';
                 await loadLiveTodayData(); 
@@ -269,20 +329,18 @@
 
         async function loadLiveTodayData() {
             try {
-                const visitsSnap = await get(child(ref(db), `visits/${realMonthStr}`));
+                const visitsSnap = await get(child(ref(db), `visits/${window.realMonthStr}`));
                 let vCount = 0;
                 if (visitsSnap.exists()) {
                     const vData = visitsSnap.val();
                     for (const vId in vData) {
-                        if (vData[vId].eid === window.currentEmpId && vData[vId].date === realDateStr) {
-                            vCount++;
-                        }
+                        if (vData[vId].eid === window.currentEmpId && vData[vId].date === window.realDateStr) { vCount++; }
                     }
                 }
                 window.todayVisitsCount = vCount;
                 updateVisitsUI(vCount);
 
-                const attSnap = await get(child(ref(db), `attendance/${window.currentEmpId}/${realMonthStr}/${realDateStr}`));
+                const attSnap = await get(child(ref(db), `attendance/${window.currentEmpId}/${window.realMonthStr}/${window.realDateStr}`));
                 if (attSnap.exists()) {
                     const att = attSnap.val();
                     if(att.onlineTime) document.getElementById('timeIn').innerText = att.onlineTime;
@@ -297,27 +355,21 @@
                 } else {
                     setUIState('offline');
                 }
-            } catch (e) {
-                console.error(e);
-            }
+            } catch (e) { console.error(e); }
         }
 
         function updateVisitsUI(count) {
             document.getElementById('visitCountText').innerText = `${count} / 3`;
             let percent = (count / 3) * 100;
             if (percent > 100) percent = 100;
-            
             const pFill = document.getElementById('visitProgress');
             pFill.style.width = `${percent}%`;
-            
             const msg = document.getElementById('visitMessage');
             if (count >= 3) {
-                pFill.classList.add('completed');
-                msg.classList.add('success');
+                pFill.classList.add('completed'); msg.classList.add('success');
                 msg.innerHTML = `Great! You have completed <span>${count} visits</span> today.`;
             } else {
-                pFill.classList.remove('completed');
-                msg.classList.remove('success');
+                pFill.classList.remove('completed'); msg.classList.remove('success');
                 msg.innerHTML = `You need <span>${3 - count} more visits</span> to complete today's target.`;
             }
         }
@@ -332,11 +384,13 @@
                 badge.innerText = '🔴 You are Offline';
                 btnIn.style.display = 'flex';
                 btnOut.style.display = 'none';
+                window.stopLiveTracking(); 
             } else if (state === 'online') {
                 badge.className = 'status-badge status-online';
                 badge.innerText = '🟢 You are Online';
                 btnIn.style.display = 'none';
                 btnOut.style.display = 'flex';
+                window.startLiveTracking(); 
             }
         }
 
@@ -346,7 +400,7 @@
             const video = document.getElementById('videoFeed');
             
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                alert("Camera support not found! Cannot proceed with punch-in.");
+                alert("Camera support not found! Attempting punch-in without photo.");
                 return;
             }
             
@@ -360,11 +414,9 @@
             if(mediaStream) { mediaStream.getTracks().forEach(track => track.stop()); mediaStream = null; }
             document.getElementById('cameraModal').style.display = 'none';
             document.getElementById('camStatus').innerText = "";
+            document.getElementById('captureBtn').disabled = false;
         }
 
-        // ==========================================
-        // STRICT PUNCH IN (WITH GPS)
-        // ==========================================
         window.processPunchIn = async function() {
             const video = document.getElementById('videoFeed');
             const canvas = document.getElementById('photoCanvas');
@@ -372,7 +424,7 @@
             const status = document.getElementById('camStatus');
 
             btn.disabled = true;
-            status.innerText = "Getting location & saving...";
+            status.innerText = "Getting Location & Saving...";
 
             canvas.width = video.videoWidth; canvas.height = video.videoHeight;
             canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -392,16 +444,15 @@
                         
                         await executePunchIn(url, lat, lng);
                         closeCamera();
-                        btn.disabled = false;
                     } catch(e) {
                         status.innerText = "Error uploading. Try again.";
                         btn.disabled = false;
                     }
                 }, (error) => {
-                    alert("🔴 GPS ERROR: Location is required to Punch In. Please enable GPS.");
+                    alert("GPS ERROR: Enable Location Services to Punch In!");
                     btn.disabled = false;
                     status.innerText = "";
-                }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
+                }, { enableHighAccuracy: true });
             } else {
                 alert("Location not supported by browser.");
                 btn.disabled = false;
@@ -417,27 +468,24 @@
             mins = mins < 10 ? '0'+mins : mins;
             const timeStr = `${hours}:${mins} ${ampm}`;
 
-            const attRef = ref(db, `attendance/${window.currentEmpId}/${realMonthStr}/${realDateStr}`);
+            const attRef = ref(db, `attendance/${window.currentEmpId}/${window.realMonthStr}/${window.realDateStr}`);
             
             await update(attRef, {
                 onlineTime: timeStr,
                 selfieUrl: photoUrl,
-                startLat: lat,
-                startLng: lng,
+                startLat: lat, startLng: lng,
+                lastLat: lat, lastLng: lng,
                 status: 'Present',
-                date: realDateStr,
+                date: window.realDateStr,
                 offlineTime: null 
             });
 
             document.getElementById('timeIn').innerText = timeStr;
             document.getElementById('timeOut').innerText = '--:--'; 
             setUIState('online');
-            buildCalendar(realMonthStr); 
+            buildCalendar(window.realMonthStr); 
         }
 
-        // ==========================================
-        // STRICT PUNCH OUT (WITH GPS)
-        // ==========================================
         window.handleGoOffline = async function() {
             if (window.todayVisitsCount < 3) {
                 const proceed = confirm(`Warning: You have done only ${window.todayVisitsCount} out of 3 required visits today.\n\nAre you sure you want to end your work day? This will be marked as a partial day.`);
@@ -447,63 +495,50 @@
                 if(!proceed) return;
             }
 
-            document.getElementById('loadingText').innerText = "Acquiring GPS Signal for Punch Out...";
-            document.getElementById('loadingText').style.display = 'block';
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(async (pos) => {
+                    const lat = pos.coords.latitude;
+                    const lng = pos.coords.longitude;
 
-            if (!navigator.geolocation) {
-                alert("GPS Location not supported by browser.");
-                document.getElementById('loadingText').style.display = 'none';
-                return;
+                    const now = new Date();
+                    let hours = now.getHours();
+                    let mins = now.getMinutes();
+                    const ampm = hours >= 12 ? 'PM' : 'AM';
+                    hours = hours % 12; hours = hours ? hours : 12; 
+                    mins = mins < 10 ? '0'+mins : mins;
+                    const timeStr = `${hours}:${mins} ${ampm}`;
+
+                    const attRef = ref(db, `attendance/${window.currentEmpId}/${window.realMonthStr}/${window.realDateStr}`);
+                    await update(attRef, {
+                        offlineTime: timeStr,
+                        offlineLat: lat, offlineLng: lng,
+                        visitsCount: window.todayVisitsCount 
+                    });
+
+                    await update(ref(db, `liveLocations/${window.currentEmpId}`), {
+                        status: "Offline", time: timeStr, lastUpdated: Date.now()
+                    });
+
+                    document.getElementById('timeOut').innerText = timeStr;
+                    setUIState('offline');
+                }, (error) => {
+                    alert("GPS ERROR: Location is required to Punch Out.");
+                }, { enableHighAccuracy: true });
             }
-
-            navigator.geolocation.getCurrentPosition(async (pos) => {
-                const lat = pos.coords.latitude;
-                const lng = pos.coords.longitude;
-
-                const now = new Date();
-                let hours = now.getHours();
-                let mins = now.getMinutes();
-                const ampm = hours >= 12 ? 'PM' : 'AM';
-                hours = hours % 12; hours = hours ? hours : 12; 
-                mins = mins < 10 ? '0'+mins : mins;
-                const timeStr = `${hours}:${mins} ${ampm}`;
-
-                const attRef = ref(db, `attendance/${window.currentEmpId}/${realMonthStr}/${realDateStr}`);
-                await update(attRef, {
-                    offlineTime: timeStr,
-                    offlineLat: lat,    // Saving strictly for History distance calculation
-                    offlineLng: lng,    // Saving strictly for History distance calculation
-                    visitsCount: window.todayVisitsCount 
-                });
-
-                document.getElementById('timeOut').innerText = timeStr;
-                setUIState('offline'); 
-                document.getElementById('loadingText').style.display = 'none';
-
-            }, (error) => {
-                document.getElementById('loadingText').style.display = 'none';
-                alert("🔴 GPS ERROR: Location is required to Punch Out. Please enable GPS.");
-            }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
         }
 
-        // ==========================================
-        // CALENDAR RENDERING
-        // ==========================================
         window.buildCalendar = async function(selMonthStr) {
             const selYear = parseInt(selMonthStr.split('-')[0]);
             const selMonthIdx = parseInt(selMonthStr.split('-')[1]) - 1;
-            
             document.getElementById('calMonthYear').innerText = `${monthsNames[selMonthIdx]} ${selYear}`;
-
             const grid = document.getElementById('calGrid');
             grid.innerHTML = '';
 
             const firstDay = new Date(selYear, selMonthIdx, 1).getDay();
             const daysInMonth = new Date(selYear, selMonthIdx + 1, 0).getDate();
             const currentDay = realTodayObj.getDate();
-            
-            const isCurrentMonth = (selMonthStr === realMonthStr);
-            const isPastMonth = (selMonthStr < realMonthStr);
+            const isCurrentMonth = (selMonthStr === window.realMonthStr);
+            const isPastMonth = (selMonthStr < window.realMonthStr);
 
             let attMap = {};
             try {
@@ -512,17 +547,13 @@
             } catch(e) {}
 
             let cPresent = 0, cPartial = 0, cAbsent = 0;
-
-            for(let i = 0; i < firstDay; i++) {
-                grid.innerHTML += `<div class="day-cell day-empty"></div>`;
-            }
+            for(let i = 0; i < firstDay; i++) { grid.innerHTML += `<div class="day-cell day-empty"></div>`; }
 
             for(let i = 1; i <= daysInMonth; i++) {
                 let cellClass = "day-cell";
                 let dayStr = `${selYear}-${String(selMonthIdx + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
                 
                 if (isCurrentMonth && i === currentDay) cellClass += " day-today";
-
                 let shouldEvaluate = isPastMonth || (isCurrentMonth && i <= currentDay);
 
                 if (shouldEvaluate) {
@@ -530,21 +561,12 @@
                         let vCount = attMap[dayStr].visitsCount || 0;
                         if(isCurrentMonth && i === currentDay) vCount = window.todayVisitsCount; 
                         
-                        if (vCount >= 3) {
-                            cellClass += " day-present"; 
-                            cPresent++;
-                        } else {
-                            cellClass += " day-warning"; 
-                            cPartial++;
-                        }
+                        if (vCount >= 3) { cellClass += " day-present"; cPresent++; } 
+                        else { cellClass += " day-warning"; cPartial++; }
                     } else {
-                        if (isPastMonth || (isCurrentMonth && i < currentDay)) {
-                            cellClass += " day-absent"; 
-                            cAbsent++;
-                        }
+                        if (isPastMonth || (isCurrentMonth && i < currentDay)) { cellClass += " day-absent"; cAbsent++; }
                     }
                 }
-
                 grid.innerHTML += `<div class="${cellClass}">${i}</div>`;
             }
 
