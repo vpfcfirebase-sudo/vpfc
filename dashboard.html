@@ -55,11 +55,11 @@
                 <span id="status-text">🔴 OFFLINE</span>
             </div>
             
-            <!-- TODAY'S TRAVEL KM CARD -->
-            <div class="km-card" onclick="window.location.href='my-attendance.html'">
+            <!-- EXACT POINT-TO-POINT KM CARD -->
+            <div class="km-card" onclick="window.location.href='my-history.html'">
                 <div class="km-info">
                     <p>Today's Travel</p>
-                    <h2 id="today-km-display">0.0 KM</h2>
+                    <h2 id="today-km-display">0.00 KM</h2>
                 </div>
                 <div class="km-icon"><i class="fas fa-route"></i></div>
             </div>
@@ -101,7 +101,6 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        // Added 'set' import for live location updates
         import { getDatabase, ref, get, child, set } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
         const firebaseConfig = {
@@ -120,6 +119,19 @@
         window.firebaseSignOut = signOut;
         window.locationWatcher = null;
 
+        // Math Formula for Exact Coordinates Distance
+        function getDistanceInKm(lat1, lon1, lat2, lon2) {
+            if (!lat1 || !lon1 || !lat2 || !lon2) return 0;
+            var R = 6371; 
+            var dLat = (lat2 - lat1) * (Math.PI / 180);
+            var dLon = (lon2 - lon1) * (Math.PI / 180);
+            var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                    Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c; 
+        }
+
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const empId = user.email.split('@')[0];
@@ -131,36 +143,91 @@
                         document.getElementById('user-display-email').innerText = `Welcome, ${empId}`;
                     }
 
-                    // CHECK REAL ATTENDANCE STATUS & KILOMETERS
+                    // DATE SETUP
                     const today = new Date();
                     const yyyy = today.getFullYear();
                     const mm = String(today.getMonth() + 1).padStart(2, '0');
                     const dd = String(today.getDate()).padStart(2, '0');
+                    const monthStr = `${yyyy}-${mm}`;
+                    const dateStr = `${yyyy}-${mm}-${dd}`;
                     
-                    const attSnap = await get(child(ref(db), `attendance/${empId}/${yyyy}-${mm}/${yyyy}-${mm}-${dd}`));
+                    const attSnap = await get(child(ref(db), `attendance/${empId}/${monthStr}/${dateStr}`));
+                    const visitsSnap = await get(child(ref(db), `visits/${monthStr}`));
+                    
                     const statText = document.getElementById('status-text');
                     const kmDisplay = document.getElementById('today-km-display');
                     
                     let isOnline = false;
+                    let dayAtt = null;
 
                     if (attSnap.exists()) {
-                        const att = attSnap.val();
-                        
-                        // Check if Online
-                        if (att.onlineTime && !att.offlineTime) {
+                        dayAtt = attSnap.val();
+                        if (dayAtt.onlineTime && !dayAtt.offlineTime) {
                             statText.innerHTML = "🟢 ONLINE";
                             statText.style.color = "#4ade80";
                             isOnline = true;
                         }
-                        
-                        // Update Today's KM
-                        if (att.totalKm !== undefined) {
-                            kmDisplay.innerText = parseFloat(att.totalKm).toFixed(1) + " KM";
-                        }
                     }
 
+                    // ========================================================
+                    // STRICT POINT-TO-POINT DISTANCE CALCULATION (No Bouncing)
+                    // ========================================================
+                    let exactTotalKm = 0;
+                    let routeNodes = [];
+
+                    if (dayAtt) {
+                        // Node 1: Punch IN Location
+                        if (dayAtt.startLat && dayAtt.startLng) {
+                            routeNodes.push({ lat: parseFloat(dayAtt.startLat), lng: parseFloat(dayAtt.startLng) });
+                        }
+
+                        // Nodes 2+: All Visits Locations
+                        let dayVisits = [];
+                        if (visitsSnap.exists()) {
+                            const allVisits = visitsSnap.val();
+                            for (let vId in allVisits) {
+                                let v = allVisits[vId];
+                                if (v.eid === empId && v.date === dateStr) {
+                                    dayVisits.push(v);
+                                }
+                            }
+                        }
+                        
+                        // Sort visits by time to map the exact journey flow
+                        dayVisits.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+                        dayVisits.forEach(v => {
+                            if (v.lat && v.lng && v.lat !== "") {
+                                routeNodes.push({ lat: parseFloat(v.lat), lng: parseFloat(v.lng) });
+                            }
+                        });
+
+                        // Last Node: Punch OUT Location (If Duty Ended)
+                        if (dayAtt.offlineTime) {
+                            let endLat = dayAtt.offlineLat || dayAtt.currentLat;
+                            let endLng = dayAtt.offlineLng || dayAtt.currentLng;
+                            if (endLat && endLng) {
+                                routeNodes.push({ lat: parseFloat(endLat), lng: parseFloat(endLng) });
+                            }
+                        }
+
+                        // Calculate distances strictly between these firm locations
+                        let prevNode = null;
+                        routeNodes.forEach(node => {
+                            if (!isNaN(node.lat) && !isNaN(node.lng)) {
+                                if (prevNode !== null) {
+                                    exactTotalKm += getDistanceInKm(prevNode.lat, prevNode.lng, node.lat, node.lng);
+                                }
+                                prevNode = node;
+                            }
+                        });
+                    }
+
+                    // UPDATE DASHBOARD WITH EXACT ROUTE DISTANCE
+                    kmDisplay.innerText = exactTotalKm.toFixed(2) + " KM";
+
+
                     // ==========================================
-                    // REAL-TIME GPS TRACKING ENGINE
+                    // ADMIN LIVE RADAR TRACKING (Background Push)
                     // ==========================================
                     if (isOnline) {
                         if ("geolocation" in navigator) {
@@ -169,7 +236,7 @@
                                 const lng = pos.coords.longitude;
                                 
                                 try {
-                                    // Push directly to Firebase liveLocations node continuously
+                                    // Pushes to Admin map only. DOES NOT affect the dashboard KM anymore!
                                     await set(ref(db, `liveLocations/${empId.toLowerCase()}`), {
                                         lat: lat,
                                         lng: lng,
@@ -189,7 +256,6 @@
                             });
                         }
                     } else {
-                        // If offline, stop tracking and update status in database
                         if (window.locationWatcher) {
                             navigator.geolocation.clearWatch(window.locationWatcher);
                         }
