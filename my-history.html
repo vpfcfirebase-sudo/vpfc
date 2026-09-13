@@ -221,7 +221,7 @@
             return R * c; 
         }
 
-        // Time Parser for Accuracy
+        // Accurately extracts milliseconds from 12hr or 24hr time string
         function getTs(timeStr, dateStr) {
             if (!timeStr) return Date.now();
             let match = timeStr.toString().match(/(\d+):(\d+)(?::(\d+))?\s*(AM|PM|am|pm)?/);
@@ -275,10 +275,15 @@
                 const allVisitsData = visitsSnap.exists() ? visitsSnap.val() : {};
 
                 // ==========================================
-                // DAILY VIEW (SMART DISTANCE SPLITTER LOGIC)
+                // DAILY VIEW (TIME-BASED SMART SPLITTER)
                 // ==========================================
                 if (viewType === 'daily') {
                     let dayAtt = attData[targetDate];
+                    
+                    let liveTrackedDistance = 0;
+                    if (dayAtt) {
+                        liveTrackedDistance = parseFloat(dayAtt.totalKm || dayAtt.distanceKm || 0);
+                    }
                     
                     let dayVisits = [];
                     for(let vId in allVisitsData) {
@@ -321,17 +326,19 @@
                         });
                     }
 
-                    // 1. Preparation
+                    // 1. Preparation: Add timestamps and basic variables
                     nodes.forEach(n => {
                         n.ts = getTs(n.time, targetDate);
                         n.hasValidDistance = false;
-                        n.distFromPrev = 0;
-                        n.displayDist = 0;
+                        n.distFromPrev = 0;    // Minimum straight line
+                        n.displayDist = 0;     // Final split distance
+                        n.timeDiff = 0;        // Time gap from prev node
                     });
 
-                    // 2. Straight Line Math
+                    // 2. Straight Line Math & Time Gaps
                     let prevValidNode = null;
                     let straightTotal = 0;
+                    let totalTimeDiff = 0;
                     let validNodesCount = 0;
 
                     nodes.forEach((node, index) => {
@@ -342,44 +349,37 @@
                                 node.distFromPrev = d;
                                 node.hasValidDistance = true;
                                 straightTotal += d;
+
+                                let tDiff = node.ts - prevValidNode.ts;
+                                if(tDiff < 0) tDiff = 0;
+                                node.timeDiff = tDiff;
+                                totalTimeDiff += tDiff;
                             }
                             prevValidNode = node;
                         }
                     });
 
-                    // 3. Smart Distribution of Actual Tracked Distance
-                    let liveTrackedDistance = dayAtt ? parseFloat(dayAtt.totalKm || dayAtt.distanceKm || 0) : 0;
+                    // 3. Time-Based Distribution of Actual Tracked Distance
                     overallTotalKm = Math.max(straightTotal, liveTrackedDistance);
 
-                    if (overallTotalKm > straightTotal && straightTotal > 0) {
-                        // Distribute proportionally based on route structure
+                    if (overallTotalKm > straightTotal && totalTimeDiff > 0) {
+                        // Spread the "Extra Tracked KM" based on the time it took between visits
+                        let extraDist = overallTotalKm - straightTotal;
                         nodes.forEach(node => {
                             if (node.hasValidDistance) {
-                                node.displayDist = (node.distFromPrev / straightTotal) * overallTotalKm;
-                            }
-                        });
-                    } else if (overallTotalKm > 0 && straightTotal === 0 && validNodesCount > 1) {
-                        // Distribute proportionally based on Time spent travelling (fixes 0.00km bug)
-                        let firstValid = nodes.find(n => n.lat !== null);
-                        let lastValid = [...nodes].reverse().find(n => n.lat !== null);
-                        let totalTime = lastValid.ts - firstValid.ts;
-
-                        let lastTs = firstValid.ts;
-                        nodes.forEach(node => {
-                            if (node.hasValidDistance) {
-                                let segTime = node.ts - lastTs;
-                                if (totalTime > 0 && segTime > 0) {
-                                    node.displayDist = (segTime / totalTime) * overallTotalKm;
-                                } else {
-                                    node.displayDist = overallTotalKm / (validNodesCount - 1);
-                                }
-                                lastTs = node.ts;
+                                node.displayDist = node.distFromPrev + (node.timeDiff / totalTimeDiff) * extraDist;
                             }
                         });
                     } else {
-                        // Exact match fallback
+                        // Fallback
                         nodes.forEach(node => {
-                            if (node.hasValidDistance) node.displayDist = node.distFromPrev;
+                            if (node.hasValidDistance) {
+                                if(overallTotalKm > 0 && straightTotal === 0 && validNodesCount > 1) {
+                                    node.displayDist = overallTotalKm / (validNodesCount - 1);
+                                } else {
+                                    node.displayDist = node.distFromPrev;
+                                }
+                            }
                         });
                     }
 
@@ -390,7 +390,6 @@
                             
                             if (index > 0) {
                                 if (node.hasValidDistance) {
-                                    // THIS WILL NOW SHOW THE EXACT SPLIT ROUTE DISTANCE!
                                     let dVal = parseFloat(node.displayDist);
                                     distHtml = `<div class="dist-marker"><i class="fas fa-motorcycle"></i> Travelled: ${dVal.toFixed(2)} km</div>`;
                                 } else {
