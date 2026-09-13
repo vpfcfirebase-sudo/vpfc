@@ -143,7 +143,7 @@
 
     <div class="section-title">Step-by-Step Route Timeline</div>
 
-    <div id="loadingText"><i class="fas fa-spinner fa-spin"></i> Calculating distance...</div>
+    <div id="loadingText"><i class="fas fa-spinner fa-spin"></i> Syncing GPS Data...</div>
     <div id="noDataText">No activity recorded for this selection.</div>
 
     <!-- TIMELINE CONTAINER -->
@@ -221,6 +221,24 @@
             return R * c; 
         }
 
+        // Time Parser for Accuracy
+        function getTs(timeStr, dateStr) {
+            if (!timeStr) return Date.now();
+            let match = timeStr.toString().match(/(\d+):(\d+)(?::(\d+))?\s*(AM|PM|am|pm)?/);
+            if (match) {
+                let h = parseInt(match[1]);
+                let m = parseInt(match[2]);
+                let s = match[3] ? parseInt(match[3]) : 0;
+                let ampm = match[4] ? match[4].toUpperCase() : null;
+                if(ampm === 'PM' && h < 12) h += 12;
+                if(ampm === 'AM' && h === 12) h = 0;
+                let d = new Date(dateStr);
+                d.setHours(h, m, s, 0);
+                return d.getTime();
+            }
+            return Date.now();
+        }
+
         window.fetchHistory = async function() {
             if(!window.currentEmpId) return;
 
@@ -246,7 +264,6 @@
                 let countVisits = 0;
                 let countReceipts = 0;
                 let overallTotalKm = 0;
-                let nodeTotalDist = 0; 
                 
                 document.getElementById('stOnline').innerText = "N/A";
                 document.getElementById('stOffline').innerText = "N/A";
@@ -257,13 +274,11 @@
                 const visitsSnap = await get(child(ref(db), `visits/${monthStr}`));
                 const allVisitsData = visitsSnap.exists() ? visitsSnap.val() : {};
 
+                // ==========================================
+                // DAILY VIEW (SMART DISTANCE SPLITTER LOGIC)
+                // ==========================================
                 if (viewType === 'daily') {
                     let dayAtt = attData[targetDate];
-                    
-                    let liveTrackedDistance = 0;
-                    if (dayAtt) {
-                        liveTrackedDistance = parseFloat(dayAtt.totalKm || dayAtt.distanceKm || 0);
-                    }
                     
                     let dayVisits = [];
                     for(let vId in allVisitsData) {
@@ -274,7 +289,6 @@
                             if(v.stat === 'PAID') countReceipts++;
                         }
                     }
-
                     dayVisits.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
 
                     let nodes = [];
@@ -282,8 +296,7 @@
                     if (dayAtt && dayAtt.onlineTime) {
                         document.getElementById('stOnline').innerText = dayAtt.onlineTime;
                         nodes.push({ 
-                            type: 'START', 
-                            time: dayAtt.onlineTime, 
+                            type: 'START', time: dayAtt.onlineTime, 
                             lat: (dayAtt.startLat != null && dayAtt.startLat !== "") ? parseFloat(dayAtt.startLat) : null, 
                             lng: (dayAtt.startLng != null && dayAtt.startLng !== "") ? parseFloat(dayAtt.startLng) : null 
                         });
@@ -291,9 +304,7 @@
 
                     dayVisits.forEach(v => {
                         nodes.push({ 
-                            type: 'VISIT', 
-                            data: v, 
-                            time: v.time, 
+                            type: 'VISIT', data: v, time: v.time, 
                             lat: (v.lat != null && v.lat !== "") ? parseFloat(v.lat) : null, 
                             lng: (v.lng != null && v.lng !== "") ? parseFloat(v.lng) : null 
                         });
@@ -304,39 +315,83 @@
                         let endLat = dayAtt.offlineLat || dayAtt.currentLat;
                         let endLng = dayAtt.offlineLng || dayAtt.currentLng;
                         nodes.push({ 
-                            type: 'END', 
-                            time: dayAtt.offlineTime, 
+                            type: 'END', time: dayAtt.offlineTime, 
                             lat: (endLat != null && endLat !== "") ? parseFloat(endLat) : null, 
                             lng: (endLng != null && endLng !== "") ? parseFloat(endLng) : null 
                         });
                     }
 
+                    // 1. Preparation
+                    nodes.forEach(n => {
+                        n.ts = getTs(n.time, targetDate);
+                        n.hasValidDistance = false;
+                        n.distFromPrev = 0;
+                        n.displayDist = 0;
+                    });
+
+                    // 2. Straight Line Math
                     let prevValidNode = null;
+                    let straightTotal = 0;
+                    let validNodesCount = 0;
+
                     nodes.forEach((node, index) => {
-                        node.distFromPrev = 0;
-                        node.hasValidDistance = false;
-                        
                         if (node.lat !== null && node.lng !== null && !isNaN(node.lat) && !isNaN(node.lng)) {
+                            validNodesCount++;
                             if (prevValidNode !== null) {
                                 let d = getDistanceInKm(prevValidNode.lat, prevValidNode.lng, node.lat, node.lng);
                                 node.distFromPrev = d;
                                 node.hasValidDistance = true;
-                                nodeTotalDist += d;
+                                straightTotal += d;
                             }
                             prevValidNode = node;
                         }
                     });
 
-                    overallTotalKm = Math.max(nodeTotalDist, liveTrackedDistance);
+                    // 3. Smart Distribution of Actual Tracked Distance
+                    let liveTrackedDistance = dayAtt ? parseFloat(dayAtt.totalKm || dayAtt.distanceKm || 0) : 0;
+                    overallTotalKm = Math.max(straightTotal, liveTrackedDistance);
 
+                    if (overallTotalKm > straightTotal && straightTotal > 0) {
+                        // Distribute proportionally based on route structure
+                        nodes.forEach(node => {
+                            if (node.hasValidDistance) {
+                                node.displayDist = (node.distFromPrev / straightTotal) * overallTotalKm;
+                            }
+                        });
+                    } else if (overallTotalKm > 0 && straightTotal === 0 && validNodesCount > 1) {
+                        // Distribute proportionally based on Time spent travelling (fixes 0.00km bug)
+                        let firstValid = nodes.find(n => n.lat !== null);
+                        let lastValid = [...nodes].reverse().find(n => n.lat !== null);
+                        let totalTime = lastValid.ts - firstValid.ts;
+
+                        let lastTs = firstValid.ts;
+                        nodes.forEach(node => {
+                            if (node.hasValidDistance) {
+                                let segTime = node.ts - lastTs;
+                                if (totalTime > 0 && segTime > 0) {
+                                    node.displayDist = (segTime / totalTime) * overallTotalKm;
+                                } else {
+                                    node.displayDist = overallTotalKm / (validNodesCount - 1);
+                                }
+                                lastTs = node.ts;
+                            }
+                        });
+                    } else {
+                        // Exact match fallback
+                        nodes.forEach(node => {
+                            if (node.hasValidDistance) node.displayDist = node.distFromPrev;
+                        });
+                    }
+
+                    // 4. UI Rendering (Step by Step)
                     if (nodes.length > 0) {
                         nodes.forEach((node, index) => {
                             let distHtml = '';
                             
                             if (index > 0) {
                                 if (node.hasValidDistance) {
-                                    let dVal = parseFloat(node.distFromPrev);
-                                    // ALWAYS SHOW THE DISTANCE BADGE BETWEEN STEPS (Even if 0.00 km)
+                                    // THIS WILL NOW SHOW THE EXACT SPLIT ROUTE DISTANCE!
+                                    let dVal = parseFloat(node.displayDist);
                                     distHtml = `<div class="dist-marker"><i class="fas fa-motorcycle"></i> Travelled: ${dVal.toFixed(2)} km</div>`;
                                 } else {
                                     distHtml = `<div class="dist-marker no-gps"><i class="fas fa-satellite-slash"></i> Location Not Captured</div>`;
