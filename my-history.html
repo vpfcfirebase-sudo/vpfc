@@ -260,7 +260,6 @@
                 if (viewType === 'daily') {
                     let dayAtt = attData[targetDate];
                     
-                    // GET EXACT LIVE TRACKED DISTANCE FROM DASHBOARD LOGIC
                     let liveTrackedDistance = 0;
                     if (dayAtt) {
                         liveTrackedDistance = parseFloat(dayAtt.totalKm || dayAtt.distanceKm || 0);
@@ -328,7 +327,6 @@
                         }
                     });
 
-                    // Sync Top Box with Dashboard Tracked Distance
                     overallTotalKm = Math.max(nodeTotalDist, liveTrackedDistance);
 
                     if (nodes.length > 0) {
@@ -338,10 +336,8 @@
                             if (index > 0) {
                                 if (node.hasValidDistance) {
                                     let dVal = parseFloat(node.distFromPrev);
-                                    // HIDE EXACT 0.00 KM BADGE ENTIRELY
-                                    if (dVal >= 0.01) { 
-                                        distHtml = `<div class="dist-marker"><i class="fas fa-motorcycle"></i> Travelled: ${dVal.toFixed(2)} km</div>`;
-                                    }
+                                    // ALWAYS SHOW THE DISTANCE BADGE BETWEEN STEPS (Even if 0.00 km)
+                                    distHtml = `<div class="dist-marker"><i class="fas fa-motorcycle"></i> Travelled: ${dVal.toFixed(2)} km</div>`;
                                 } else {
                                     distHtml = `<div class="dist-marker no-gps"><i class="fas fa-satellite-slash"></i> Location Not Captured</div>`;
                                 }
